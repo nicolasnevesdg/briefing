@@ -12,12 +12,12 @@
 
     <style>
         body {
-            font-family: 'Space Grotesk', sans-serif; /* Fonte principal */
+            font-family: 'Space Grotesk', sans-serif; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Centraliza verticalmente */
-            height: 100vh; /* Altura da tela */
+            justify-content: center; 
+            height: 100vh; 
             margin: 0;
             background-color: #f9f9f9;
         }
@@ -30,18 +30,18 @@
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
-            background-color: white; /* Fundo branco para o container */
+            background-color: white;
         }
 
         h2 {
-            font-weight: 700; /* Negrito */
+            font-weight: 700; 
             margin: 10px 0;
         }
 
         p {
-            font-weight: 400; /* Regular */
+            font-weight: 400; 
             margin: 10px 0;
-            color: #333; /* Cor do texto */
+            color: #333; 
         }
 
         input[type="text"], textarea {
@@ -50,7 +50,7 @@
             margin: 8px 0;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-weight: 400; /* Regular */
+            font-weight: 400; 
         }
 
         button {
@@ -63,14 +63,13 @@
             cursor: pointer;
             border-radius: 4px;
             margin-top: 10px;
-            font-weight: 600; /* Semibold */
+            font-weight: 600; 
         }
 
         button:hover {
-            background-color: #0056b3; /* Efeito hover para botões */
+            background-color: #0056b3; 
         }
 
-        /* Ícone de Login */
         .login-icon {
             position: fixed;
             top: 20px;
@@ -79,7 +78,6 @@
             cursor: pointer;
         }
 
-        /* Pop-up de Login */
         #loginModal {
             display: none;
             position: fixed;
@@ -100,7 +98,6 @@
             text-align: center;
         }
 
-        /* Mensagem de boas-vindas */
         #boasVindas {
             display: flex;
             flex-direction: column;
@@ -108,7 +105,7 @@
         }
 
         #formulario {
-            display: none; /* Inicialmente escondido */
+            display: none; 
         }
 
         .hidden {
@@ -118,12 +115,10 @@
 </head>
 <body>
 
-<!-- Ícone de Login -->
 <div class="login-icon" onclick="abrirLogin()">
     🔒
 </div>
 
-<!-- Pop-up de Login -->
 <div id="loginModal">
     <div id="loginForm">
         <h2>Acesso Restrito</h2>
@@ -133,14 +128,12 @@
     </div>
 </div>
 
-<!-- Mensagem de Boas-Vindas -->
 <div id="boasVindas" class="container">
     <h2>Opa, Nícolas aqui. Tudo certo?</h2>
     <p>Este é um Briefing para criação de Identidade Visual, que será usado para estudo e conceituação do seu projeto. A partir dele, poderei fazer um orçamento com mais clareza. Por favor, preencha todas as questões e adicione informações que julgue ser essencial.</p>
     <button onclick="iniciarFormulario()">Iniciar</button>
 </div>
 
-<!-- Formulário para responder as perguntas -->
 <div id="formulario" class="container">
     <h2>Responda o Formulário</h2>
     <input type="text" id="nomeEmpresa" placeholder="Nome da empresa" required>
@@ -148,30 +141,27 @@
     <button onclick="salvarResposta()">Enviar Resposta</button>
 </div>
 
-<!-- Lista de Respostas (apenas visível para quem tiver a senha) -->
 <div id="listaRespostas" class="container hidden">
     <h2>Lista de Respostas</h2>
     <ul id="respostas"></ul>
 </div>
 
-<!-- Botões de Edição e Logout (apenas visíveis para quem tiver a senha) -->
 <div id="editarPerguntas" class="container hidden">
     <button onclick="adicionarPergunta()">Adicionar Pergunta</button>
     <button onclick="salvarAlteracoes()">Salvar Alterações</button>
     <button onclick="logout()">Logout</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
     (function(){
         emailjs.init("Ybbp6smg9DuW75J5-"); // Substitua pelo seu User ID
     })();
 
-    const senhaCorreta = "1234"; // Substitua pela senha desejada
+    const senhaCorreta = "1234"; 
     const respostasSalvas = [];
-    let perguntas = [{ texto: "Como está você?" }]; // Lista inicial com perguntas
+    let perguntas = [{ texto: "Como está você?" }]; 
 
-    // Funções para abrir e fechar o login
     function abrirLogin() {
         document.getElementById("loginModal").style.display = "flex";
     }
@@ -180,54 +170,47 @@
         document.getElementById("loginModal").style.display = "none";
     }
 
-    // Função para validar login
     function login() {
         const senha = document.getElementById("password").value;
         if (senha === senhaCorreta) {
             document.getElementById("listaRespostas").classList.remove("hidden");
             document.getElementById("editarPerguntas").classList.remove("hidden");
             fecharLogin();
-            renderizarPerguntas(true); // Renderizar perguntas editáveis
+            renderizarPerguntas(true); 
             mostrarRespostas();
         } else {
             alert("Senha incorreta. Tente novamente.");
         }
     }
 
-    // Função de logout
     function logout() {
         document.getElementById("listaRespostas").classList.add("hidden");
         document.getElementById("editarPerguntas").classList.add("hidden");
-        renderizarPerguntas(false); // Renderizar perguntas como texto não editável para logout
+        renderizarPerguntas(false); 
     }
 
-    // Função para iniciar o formulário
     function iniciarFormulario() {
-        document.getElementById("boasVindas").style.display = "none"; // Esconder boas-vindas
-        document.getElementById("formulario").style.display = "block"; // Mostrar formulário
-        renderizarPerguntas(false); // Renderizar perguntas como texto não editável
+        document.getElementById("boasVindas").style.display = "none"; 
+        document.getElementById("formulario").style.display = "block"; 
+        renderizarPerguntas(false); 
     }
 
-    // Função para renderizar o formulário com as perguntas
     function renderizarPerguntas(editavel) {
         const perguntasContainer = document.getElementById("perguntasContainer");
-        perguntasContainer.innerHTML = ""; // Limpa perguntas anteriores
+        perguntasContainer.innerHTML = ""; 
 
         perguntas.forEach((pergunta, index) => {
             const perguntaElement = document.createElement("div");
             perguntaElement.className = "pergunta";
             if (editavel) {
-                // Campo de texto editável para perguntas quando logado
                 perguntaElement.innerHTML = `<input type="text" value="${pergunta.texto}" onchange="editarPergunta(${index}, this.value)">`;
             } else {
-                // Campo para resposta (textarea) para visitantes
                 perguntaElement.innerHTML = `<label>${pergunta.texto}</label><textarea placeholder="Digite sua resposta aqui"></textarea>`;
             }
             perguntasContainer.appendChild(perguntaElement);
         });
     }
 
-    // Função para salvar a resposta no array e enviar por email
     function salvarResposta() {
         const nomeEmpresa = document.getElementById("nomeEmpresa").value;
         if (!nomeEmpresa) {
@@ -241,13 +224,12 @@
             return;
         }
 
-        // Enviar e-mail usando EmailJS
         const templateParams = {
             empresa: nomeEmpresa,
-            respostas: respostas // Passa as respostas como um array
+            respostas: respostas
         };
 
-        emailjs.send('service_u2ejyh4', 'template_oph1959', templateParams) // Substitua com seu Service ID e Template ID
+        emailjs.send('service_u2ejyh4', 'template_oph1959', templateParams)
             .then(function(response) {
                 console.log('SUCCESS!', response.status, response.text);
                 alert("Respostas enviadas com sucesso!");
@@ -256,39 +238,36 @@
                 alert("Falha ao enviar as respostas. Tente novamente.");
             });
 
-        // Adiciona as respostas à lista
         respostasSalvas.push({ nome: nomeEmpresa, respostas });
-        document.getElementById("formulario").reset(); // Limpa o formulário
+        document.getElementById("formulario").reset(); 
     }
 
-    // Função para mostrar as respostas salvas
-    function mostrarRespostas() {
-        const respostasList = document.getElementById("respostas");
-        respostasList.innerHTML = ""; // Limpa a lista anterior
-        respostasSalvas.forEach(resposta => {
-            const li = document.createElement("li");
-            li.textContent = `${resposta.nome}: ${resposta.respostas.join(", ")}`;
-            respostasList.appendChild(li);
-        });
-    }
-
-    // Função para editar perguntas
     function editarPergunta(index, novoTexto) {
         perguntas[index].texto = novoTexto;
     }
 
-    // Função para adicionar novas perguntas
     function adicionarPergunta() {
         const novaPergunta = prompt("Digite a nova pergunta:");
         if (novaPergunta) {
             perguntas.push({ texto: novaPergunta });
-            renderizarPerguntas(true); // Atualiza a lista de perguntas
+            renderizarPerguntas(true); 
         }
     }
 
-    // Função para salvar alterações (ainda não implementada)
+    function mostrarRespostas() {
+        const respostasContainer = document.getElementById("respostas");
+        respostasContainer.innerHTML = ""; 
+
+        respostasSalvas.forEach((resposta) => {
+            const li = document.createElement("li");
+            li.textContent = `Empresa: ${resposta.nome}, Respostas: ${resposta.respostas.join(", ")}`;
+            respostasContainer.appendChild(li);
+        });
+    }
+
     function salvarAlteracoes() {
-        alert("Alterações salvas com sucesso!"); // Implementar lógica de salvamento
+        alert("Alterações salvas com sucesso!");
+        renderizarPerguntas(true); 
     }
 </script>
 </body>
