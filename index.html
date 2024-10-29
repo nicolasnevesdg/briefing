@@ -161,7 +161,12 @@
     <button onclick="logout()">Logout</button>
 </div>
 
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
+    (function(){
+        emailjs.init("Ybbp6smg9DuW75J5-"); // Substitua pelo seu User ID
+    })();
+
     const senhaCorreta = "1234"; // Substitua pela senha desejada
     const respostasSalvas = [];
     let perguntas = [{ texto: "Como está você?" }]; // Lista inicial com perguntas
@@ -222,90 +227,7 @@
         });
     }
 
-    // Função para salvar a resposta no array
-    function salvarResposta() {
-        const nomeEmpresa = document.getElementById("nomeEmpresa").value;
-        if (!nomeEmpresa) {
-            alert("Por favor, insira o nome da empresa.");
-            return;
-        }
-
-        const respostas = Array.from(document.querySelectorAll("#perguntasContainer textarea")).map(textarea => textarea.value);
-
-        if (respostas.some(resposta => !resposta)) {
-            alert("Por favor, responda todas as perguntas.");
-            return;
-        }
-
-        // Adiciona as respostas a lista
-        respostasSalvas.push({ nome: nomeEmpresa, respostas });
-        alert("Respostas salvas com sucesso!");
-        document.getElementById("formulario").reset(); // Limpa o formulário
-    }
-
-    // Função para editar pergunta
-    function editarPergunta(index, novoTexto) {
-        perguntas[index].texto = novoTexto;
-    }
-
-    // Função para adicionar nova pergunta
-    function adicionarPergunta() {
-        const novaPergunta = prompt("Digite a nova pergunta:");
-        if (novaPergunta) {
-            perguntas.push({ texto: novaPergunta });
-            renderizarPerguntas(true); // Atualiza a lista de perguntas
-        }
-    }
-
-    // Função para mostrar as respostas salvas
-    function mostrarRespostas() {
-        const respostasContainer = document.getElementById("respostas");
-        respostasContainer.innerHTML = ""; // Limpa as respostas anteriores
-
-        respostasSalvas.forEach((resposta, index) => {
-            const li = document.createElement("li");
-            li.textContent = `Empresa: ${resposta.nome}, Respostas: ${resposta.respostas.join(", ")}`;
-            respostasContainer.appendChild(li);
-        });
-    }
-
-    // Função para salvar alterações feitas nas perguntas
-    function salvarAlteracoes() {
-        alert("Alterações salvas com sucesso!");
-        renderizarPerguntas(true); // Atualiza as perguntas
-    }
-</script>
-</body>
-
-<!-- Adicione o seguinte script no final do body -->
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
-    (function(){
-        emailjs.init("Ybbp6smg9DuW75J5-"); // Substitua pelo seu User ID
-    })();
-
-    const perguntas = [
-        { texto: "Como está você?" },
-        // Adicione outras perguntas aqui
-    ];
-    const respostasSalvas = [];
-
-    document.getElementById("iniciarButton").onclick = function() {
-        document.getElementById("boasVindas").style.display = "none";
-        document.getElementById("formulario").style.display = "flex";
-        renderizarPerguntas();
-    };
-
-    function renderizarPerguntas() {
-        const container = document.getElementById("perguntasContainer");
-        container.innerHTML = ""; // Limpa perguntas anteriores
-        perguntas.forEach((pergunta, index) => {
-            const textarea = document.createElement("textarea");
-            textarea.placeholder = pergunta.texto;
-            container.appendChild(textarea);
-        });
-    }
-
+    // Função para salvar a resposta no array e enviar por e-mail
     function salvarResposta() {
         const nomeEmpresa = document.getElementById("nomeEmpresa").value;
         if (!nomeEmpresa) {
@@ -325,19 +247,52 @@
             respostas: respostas.join(", ")
         };
 
-        emailjs.send('service_u2ejyh4', 'template_oph1959', templateParams) // Substitua com seu Service ID e Template ID
+        emailjs.send('service_d26kk69', 'template_b97kl2j', templateParams)
             .then(function(response) {
                 console.log('SUCCESS!', response.status, response.text);
                 alert("Respostas enviadas com sucesso!");
             }, function(error) {
                 console.log('FAILED...', error);
-                alert("Falha ao enviar as respostas. Tente novamente.");
+                alert("Falha ao enviar as respostas.");
             });
 
-        // Adiciona as respostas à lista
-        respostasSalvas.push({ nome: nomeEmpresa, respostas });
-        document.getElementById("formulario").reset(); // Limpa o formulário
+        // Salvar respostas localmente
+        respostasSalvas.push({ empresa: nomeEmpresa, respostas });
+        mostrarRespostas();
+        document.getElementById("formulario").reset(); // Resetar formulário
+    }
+
+    // Função para mostrar as respostas na lista
+    function mostrarRespostas() {
+        const listaRespostas = document.getElementById("respostas");
+        listaRespostas.innerHTML = ""; // Limpa a lista de respostas
+
+        respostasSalvas.forEach((resposta, index) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${resposta.empresa}: ${resposta.respostas.join(", ")}`;
+            listaRespostas.appendChild(listItem);
+        });
+    }
+
+    // Função para editar perguntas
+    function editarPergunta(index, novoTexto) {
+        perguntas[index].texto = novoTexto;
+    }
+
+    // Função para adicionar nova pergunta
+    function adicionarPergunta() {
+        const novaPerguntaTexto = prompt("Digite a nova pergunta:");
+        if (novaPerguntaTexto) {
+            perguntas.push({ texto: novaPerguntaTexto });
+            renderizarPerguntas(true); // Atualiza a lista de perguntas
+        }
+    }
+
+    // Função para salvar alterações (opcional)
+    function salvarAlteracoes() {
+        // Aqui você pode implementar a lógica para salvar as alterações feitas nas perguntas
+        alert("Alterações salvas! (esta função pode ser implementada conforme necessário)");
     }
 </script>
-
+</body>
 </html>
