@@ -44,7 +44,7 @@
             color: #333; 
         }
 
-        input[type="text"], textarea {
+        input[type="text"], input[type="email"] {
             width: 100%;
             padding: 8px;
             margin: 8px 0;
@@ -70,86 +70,25 @@
             background-color: #0056b3; 
         }
 
-        .login-icon {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        #loginModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-
-        #loginForm {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            width: 300px;
-            text-align: center;
-        }
-
-        #boasVindas {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
         #formulario {
             display: none; 
-        }
-
-        .hidden {
-            display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="login-icon" onclick="abrirLogin()">
-    🔒
-</div>
-
-<div id="loginModal">
-    <div id="loginForm">
-        <h2>Acesso Restrito</h2>
-        <input type="password" id="password" placeholder="Digite a senha" required>
-        <button onclick="login()">Entrar</button>
-        <button onclick="fecharLogin()">Cancelar</button>
-    </div>
-</div>
-
-<div id="boasVindas" class="container">
+<div class="container">
     <h2>Opa, Nícolas aqui. Tudo certo?</h2>
-    <p>Este é um Briefing para criação de Identidade Visual, que será usado para estudo e conceituação do seu projeto. A partir dele, poderei fazer um orçamento com mais clareza. Por favor, preencha todas as questões e adicione informações que julgue ser essencial.</p>
+    <p>Por favor, preencha as informações abaixo:</p>
     <button onclick="iniciarFormulario()">Iniciar</button>
 </div>
 
 <div id="formulario" class="container">
     <h2>Responda o Formulário</h2>
     <input type="text" id="nomeEmpresa" placeholder="Nome da empresa" required>
-    <div id="perguntasContainer"></div>
+    <input type="text" id="nomeCliente" placeholder="Nome do cliente" required>
+    <input type="email" id="emailCliente" placeholder="Email do cliente" required>
     <button onclick="salvarResposta()">Enviar Resposta</button>
-</div>
-
-<div id="listaRespostas" class="container hidden">
-    <h2>Lista de Respostas</h2>
-    <ul id="respostas"></ul>
-</div>
-
-<div id="editarPerguntas" class="container hidden">
-    <button onclick="adicionarPergunta()">Adicionar Pergunta</button>
-    <button onclick="salvarAlteracoes()">Salvar Alterações</button>
-    <button onclick="logout()">Logout</button>
 </div>
 
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
@@ -158,116 +97,36 @@
         emailjs.init("Ybbp6smg9DuW75J5-"); // Substitua pelo seu User ID
     })();
 
-    const senhaCorreta = "1234"; 
-    const respostasSalvas = [];
-    let perguntas = [{ texto: "Como está você?" }]; 
-
-    function abrirLogin() {
-        document.getElementById("loginModal").style.display = "flex";
-    }
-
-    function fecharLogin() {
-        document.getElementById("loginModal").style.display = "none";
-    }
-
-    function login() {
-        const senha = document.getElementById("password").value;
-        if (senha === senhaCorreta) {
-            document.getElementById("listaRespostas").classList.remove("hidden");
-            document.getElementById("editarPerguntas").classList.remove("hidden");
-            fecharLogin();
-            renderizarPerguntas(true); 
-            mostrarRespostas();
-        } else {
-            alert("Senha incorreta. Tente novamente.");
-        }
-    }
-
-    function logout() {
-        document.getElementById("listaRespostas").classList.add("hidden");
-        document.getElementById("editarPerguntas").classList.add("hidden");
-        renderizarPerguntas(false); 
-    }
-
     function iniciarFormulario() {
-        document.getElementById("boasVindas").style.display = "none"; 
+        document.querySelector(".container").style.display = "none"; 
         document.getElementById("formulario").style.display = "block"; 
-        renderizarPerguntas(false); 
-    }
-
-    function renderizarPerguntas(editavel) {
-        const perguntasContainer = document.getElementById("perguntasContainer");
-        perguntasContainer.innerHTML = ""; 
-
-        perguntas.forEach((pergunta, index) => {
-            const perguntaElement = document.createElement("div");
-            perguntaElement.className = "pergunta";
-            if (editavel) {
-                perguntaElement.innerHTML = `<input type="text" value="${pergunta.texto}" onchange="editarPergunta(${index}, this.value)">`;
-            } else {
-                perguntaElement.innerHTML = `<label>${pergunta.texto}</label><textarea placeholder="Digite sua resposta aqui"></textarea>`;
-            }
-            perguntasContainer.appendChild(perguntaElement);
-        });
     }
 
     function salvarResposta() {
         const nomeEmpresa = document.getElementById("nomeEmpresa").value;
-        if (!nomeEmpresa) {
-            alert("Por favor, insira o nome da empresa.");
-            return;
-        }
+        const nomeCliente = document.getElementById("nomeCliente").value;
+        const emailCliente = document.getElementById("emailCliente").value;
 
-        const respostas = Array.from(document.querySelectorAll("#perguntasContainer textarea")).map(textarea => textarea.value);
-        if (respostas.some(resposta => !resposta)) {
-            alert("Por favor, responda todas as perguntas.");
+        if (!nomeEmpresa || !nomeCliente || !emailCliente) {
+            alert("Por favor, preencha todos os campos.");
             return;
         }
 
         const templateParams = {
             empresa: nomeEmpresa,
-            respostas: respostas
+            cliente: nomeCliente,
+            email: emailCliente
         };
 
         emailjs.send('service_u2ejyh4', 'template_oph1959', templateParams)
             .then(function(response) {
                 console.log('SUCCESS!', response.status, response.text);
                 alert("Respostas enviadas com sucesso!");
+                document.getElementById("formulario").reset(); // Reseta o formulário após o envio
             }, function(error) {
                 console.log('FAILED...', error);
                 alert("Falha ao enviar as respostas. Tente novamente.");
             });
-
-        respostasSalvas.push({ nome: nomeEmpresa, respostas });
-        document.getElementById("formulario").reset(); 
-    }
-
-    function editarPergunta(index, novoTexto) {
-        perguntas[index].texto = novoTexto;
-    }
-
-    function adicionarPergunta() {
-        const novaPergunta = prompt("Digite a nova pergunta:");
-        if (novaPergunta) {
-            perguntas.push({ texto: novaPergunta });
-            renderizarPerguntas(true); 
-        }
-    }
-
-    function mostrarRespostas() {
-        const respostasContainer = document.getElementById("respostas");
-        respostasContainer.innerHTML = ""; 
-
-        respostasSalvas.forEach((resposta) => {
-            const li = document.createElement("li");
-            li.textContent = `Empresa: ${resposta.nome}, Respostas: ${resposta.respostas.join(", ")}`;
-            respostasContainer.appendChild(li);
-        });
-    }
-
-    function salvarAlteracoes() {
-        alert("Alterações salvas com sucesso!");
-        renderizarPerguntas(true); 
     }
 </script>
 </body>
