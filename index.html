@@ -38,12 +38,6 @@
             margin: 10px 0;
         }
 
-        p {
-            font-weight: 400; 
-            margin: 10px 0;
-            color: #333; 
-        }
-
         input[type="text"], input[type="email"] {
             width: 100%;
             padding: 8px;
@@ -69,10 +63,6 @@
         button:hover {
             background-color: #0056b3; 
         }
-
-        #formulario {
-            display: none; 
-        }
     </style>
 </head>
 <body>
@@ -83,7 +73,7 @@
     <button onclick="iniciarFormulario()">Iniciar</button>
 </div>
 
-<div id="formulario" class="container">
+<div id="formulario" class="container" style="display:none;">
     <h2>Responda o Formulário</h2>
     <input type="text" id="nomeEmpresa" placeholder="Nome da empresa" required>
     <input type="text" id="nomeCliente" placeholder="Nome do cliente" required>
