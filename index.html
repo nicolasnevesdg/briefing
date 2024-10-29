@@ -161,7 +161,10 @@
     <button onclick="logout()">Logout</button>
 </div>
 
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script 
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
 <script>
     (function(){
         emailjs.init("Ybbp6smg9DuW75J5-"); // Substitua pelo seu User ID
@@ -267,7 +270,7 @@
         const listaRespostas = document.getElementById("respostas");
         listaRespostas.innerHTML = ""; // Limpa a lista de respostas
 
-        respostasSalvas.forEach((resposta, index) => {
+        respostasSalvas.forEach((resposta) => {
             const listItem = document.createElement("li");
             listItem.textContent = `${resposta.empresa}: ${resposta.respostas.join(", ")}`;
             listaRespostas.appendChild(listItem);
