@@ -75,9 +75,9 @@
 
 <div id="formulario" class="container" style="display:none;">
     <h2>Responda o Formulário</h2>
-    <input type="text" id="nomeEmpresa" placeholder="Nome da empresa" required>
-    <input type="text" id="nomeCliente" placeholder="Nome do cliente" required>
-    <input type="email" id="emailCliente" placeholder="Email do cliente" required>
+    <input type="text" id="empresa" placeholder="Nome da empresa" required>
+    <input type="text" id="cliente" placeholder="Nome do cliente" required>
+    <input type="email" id="email" placeholder="Email do cliente" required>
     <button onclick="salvarResposta()">Enviar Resposta</button>
 </div>
 
@@ -94,19 +94,19 @@
     }
 
     function salvarResposta() {
-        const nomeEmpresa = document.getElementById("nomeEmpresa").value;
-        const nomeCliente = document.getElementById("nomeCliente").value;
-        const emailCliente = document.getElementById("emailCliente").value;
+        const empresa = document.getElementById("empresa").value;
+        const cliente = document.getElementById("cliente").value;
+        const email = document.getElementById("email").value;
 
-        if (!nomeEmpresa || !nomeCliente || !emailCliente) {
+        if (!empresa || !cliente || !email) {
             alert("Por favor, preencha todos os campos.");
             return;
         }
 
         const templateParams = {
-            empresa: nomeEmpresa,
-            cliente: nomeCliente,
-            email: emailCliente
+            empresa: empresa,
+            cliente: cliente,
+            email: email
         };
 
         emailjs.send('service_u2ejyh4', 'template_oph1959', templateParams)
