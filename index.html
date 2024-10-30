@@ -1,12 +1,14 @@
-<html lang="pt-br"><head>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Briefing - Identidade Visual</title>
     
     <!-- Link para a fonte Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -104,7 +106,7 @@
             z-index: -1;
         }
     </style>
-<style type="text/css"></style><style type="text/css" id="operaUserStyle"></style></head>
+</head>
 <body>
 
 <!-- Imagens de fundo -->
@@ -115,7 +117,7 @@
 <img src="https://i.imgur.com/1zz3hAR.png" alt="Imagem inferior" class="bottom-image">
 
 <!-- Tela inicial de boas-vindas -->
-<div id="welcome-screen" class="container">
+<div id="welcome-screen" class="container visible">
     <h2>Bem-vindo(a) ao Briefing de Identidade Visual!</h2>
     <p>Antes de começarmos, precisarei de algumas informações para entender melhor suas necessidades.</p>
     <button onclick="showNextBox('box1')">Iniciar</button>
@@ -126,13 +128,13 @@
     <h2>Primeiro, preciso de algumas informações suas e de sua empresa.</h2>
     <form id="form-stage1">
         <label>Nome da Empresa</label>
-        <input type="text" name="company_name" required="">
+        <input type="text" name="company_name" required>
 
         <label>Nome do Cliente</label>
-        <input type="text" name="client_name" required="">
+        <input type="text" name="client_name" required>
 
         <label>Email do Cliente</label>
-        <input type="email" name="client_email" required="">
+        <input type="email" name="client_email" required>
 
         <button type="button" onclick="showNextBox('box2')">Próxima Etapa</button>
     </form>
@@ -143,10 +145,10 @@
     <h2>Agora eu quero saber o Propósito da sua empresa.</h2>
     <form id="form-stage2">
         <label>Qual é a missão da sua empresa?</label>
-        <textarea name="company_mission" required=""></textarea>
+        <textarea name="company_mission" required></textarea>
 
         <label>Qual o público-alvo?</label>
-        <textarea name="target_audience" required=""></textarea>
+        <textarea name="target_audience" required></textarea>
 
         <button type="button" onclick="showNextBox('box3')">Próxima Etapa</button>
     </form>
@@ -157,34 +159,34 @@
     <h2>Agora, me fale mais sobre o serviço prestado.</h2>
     <form id="form-stage3">
         <label>Qual é o produto ou serviço a ser desenvolvido?</label>
-        <textarea name="product_service" required=""></textarea>
+        <textarea name="product_service" required></textarea>
         <p>ex.: Produtos de beleza, rede de cafeteria</p>
 
         <label>É um produto/serviço novo? Há quanto tempo está no mercado?</label>
-        <textarea name="product_service_time" required=""></textarea>
+        <textarea name="product_service_time" required></textarea>
 
         <label>Qual o público-alvo e o mercado-alvo?</label>
-        <textarea name="audience_market" required=""></textarea>
+        <textarea name="audience_market" required></textarea>
         <p>Faixa etária; sexo; classe social; ocupação profissional de seus consumidores e também do mercado.</p>
 
         <label>Cite adjetivos para seu produto/serviço.</label>
-        <textarea name="product_service_adjectives" required=""></textarea>
+        <textarea name="product_service_adjectives" required></textarea>
         <p>Ex.: Moderno, infantil, feminino.</p>
 
         <label>Cite adjetivos que NÃO condizem com seu produto/serviço.</label>
-        <textarea name="not_product_service_adjectives" required=""></textarea>
+        <textarea name="not_product_service_adjectives" required></textarea>
         <p>Ex.: Colorida, conservadora, etc.</p>
 
         <label>Quais seus principais concorrentes?</label>
-        <textarea name="main_competitors" required=""></textarea>
+        <textarea name="main_competitors" required></textarea>
         <p>Concorrente diretos e indiretos; Se possível, forneça URL's (Links) dos concorrentes.</p>
 
         <label>Qual o diferencial do seu produto/serviço em relação aos seus concorrentes?</label>
-        <textarea name="product_service_difference" required=""></textarea>
+        <textarea name="product_service_difference" required></textarea>
         <p>Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
 
         <label>Qual mensagem sua marca deve transmitir aos seus consumidores?</label>
-        <textarea name="brand_message" required=""></textarea>
+        <textarea name="brand_message" required></textarea>
         <p>Ex.: Temos o serviço mais seguro e que, ao mesmo tempo, irá facilitar seu dia-a-dia.</p>
 
         <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
@@ -196,24 +198,24 @@
     <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
     <form id="form-stage4">
         <label>Quais cores representam sua marca?</label>
-        <textarea name="brand_colors" required=""></textarea>
+        <textarea name="brand_colors" required></textarea>
 
         <label>Possui algum símbolo ou logotipo em mente?</label>
-        <textarea name="brand_logo_ideas" required=""></textarea>
+        <textarea name="brand_logo_ideas" required></textarea>
 
         <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
     </form>
 </div>
 
 <!-- Quinta etapa -->
-<div id="box5" class="container visible">
+<div id="box5" class="container">
     <h2>Agora, apenas algumas informações para seu orçamento.</h2>
     <form id="form-stage5">
         <label>Qual é o seu orçamento estimado?</label>
-        <input type="text" name="budget" required="">
+        <input type="text" name="budget" required>
 
         <label>Qual é o prazo desejado para o projeto?</label>
-        <input type="text" name="timeline" required="">
+        <input type="text" name="timeline" required>
 
         <button type="button" onclick="sendEmail()">Finalizar</button>
     </form>
@@ -267,6 +269,5 @@
     }
 </script>
 
-
-
-</body></html>
+</body>
+</html>
