@@ -190,7 +190,7 @@
         <label>Qual é o prazo desejado para o projeto?</label>
         <input type="text" name="timeline" required>
 
-        <button type="button" onclick="showNextBox('box6')">Finalizar</button>
+        <button type="button" onclick="sendEmail()">Finalizar</button>
     </form>
 </div>
 
@@ -221,24 +221,24 @@
         document.getElementById(nextBoxId).classList.add('visible');
     }
 
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const allFormsData = new FormData();
-            document.querySelectorAll('form').forEach(f => {
-                new FormData(f).forEach((value, key) => allFormsData.append(key, value));
-            });
-
-            emailjs.sendForm('service_u2ejyh4', 'template_oph1959', allFormsData)
-                .then(function() {
-                    alert("Mensagem enviada com sucesso!");
-                    document.getElementById("box6").classList.add('visible');
-                }, function(error) {
-                    alert("Falha ao enviar a mensagem. Tente novamente.");
-                    console.log('Erro:', error);
-                });
+    function sendEmail() {
+        const allFormsData = new FormData();
+        
+        // Coletar dados de todas as etapas do formulário
+        document.querySelectorAll('form').forEach(form => {
+            new FormData(form).forEach((value, key) => allFormsData.append(key, value));
         });
-    });
+
+        // Enviar os dados usando EmailJS
+        emailjs.sendForm('service_u2ejyh4', 'template_oph1959', allFormsData)
+            .then(function() {
+                alert("Mensagem enviada com sucesso!");
+                showNextBox('box6'); // Mostrar tela final
+            }, function(error) {
+                alert("Falha ao enviar a mensagem. Tente novamente.");
+                console.log('Erro:', error);
+            });
+    }
 </script>
 
 </body>
