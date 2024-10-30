@@ -45,7 +45,8 @@
         .container {
             max-width: 600px;
             width: 100%;
-            padding: 20px;
+            max-height: 60vh; /* Limitar altura do container */
+            padding: 100px; /* Padding de 100px */
             border: 1px solid #ccc;
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -53,6 +54,7 @@
             background-color: white;
             display: none;
             z-index: 1;
+            overflow-y: auto; /* Adicionar rolagem vertical */
         }
 
         .container.visible {
@@ -228,15 +230,16 @@
     <p style="text-align: center;">
         www.instagram.com/nicolasneves.dg/<br>
         onicolasneves@gmail.com<br>
-        21 98823-3083
+         21 98823-3083
     </p>
 </div>
 
-<!-- Script para EmailJS e navegação -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="text/javascript">
     (function() {
-        emailjs.init("30ExYEmkHsvuz-0RK"); // Substitua com sua Public Key
+        emailjs.init({
+            publicKey: "30ExYEmkHsvuz-0RK", // Substitua pela sua chave pública
+        });
     })();
 
     function showNextBox(nextBoxId) {
