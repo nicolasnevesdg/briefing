@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +12,12 @@
 
     <style>
         body {
-            font-family: 'Space Grotesk', sans-serif; 
+            font-family: 'Space Grotesk', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; 
-            height: 100vh; 
+            justify-content: center;
+            height: 100vh;
             margin: 0;
             background-color: #f9f9f9;
         }
@@ -31,18 +31,18 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: left;
             background-color: white;
+            display: none;
         }
 
         h2 {
-            font-weight: 700; 
+            font-weight: 700;
             margin: 10px 0;
             text-align: center;
         }
 
-        p {
-            font-weight: 400; 
-            color: #333; 
-            text-align: center;
+        p, label {
+            font-weight: 400;
+            color: #333;
         }
 
         input[type="text"], input[type="email"], textarea {
@@ -51,7 +51,7 @@
             margin: 8px 0;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-weight: 400; 
+            font-weight: 400;
         }
 
         button {
@@ -64,71 +64,140 @@
             cursor: pointer;
             border-radius: 4px;
             margin-top: 10px;
-            font-weight: 600; 
+            font-weight: 600;
         }
 
         button:hover {
-            background-color: #0056b3; 
+            background-color: #0056b3;
         }
 
-        .hidden {
-            display: none;
+        .visible {
+            display: block;
         }
     </style>
 </head>
 <body>
 
-<!-- Tela de Boas-Vindas -->
-<div id="boasVindas" class="container">
-    <h2>Bem-vindo(a)!</h2>
-    <p>Este é um Briefing para criação de Identidade Visual, que será usado para estudo e conceituação do seu projeto. Por favor, preencha todas as questões para que possamos prosseguir.</p>
-    <button onclick="iniciarFormulario()">Iniciar</button>
-</div>
+<!-- Caixa de boas-vindas -->
+<div id="box1" class="container visible">
+    <h2>Primeiro, preciso de algumas informações suas e de sua empresa.</h2>
+    <form id="form-stage1">
+        <label>Nome da Empresa</label>
+        <input type="text" name="company_name" required>
 
-<!-- Formulário de Contato -->
-<div id="formulario" class="container hidden">
-    <h2>Contato</h2>
-    <form id="contact-form">
-        <input type="hidden" name="contact_number" value="697483"> <!-- Número estático como exemplo -->
-        
-        <label>Nome</label>
-        <input type="text" name="user_name" required>
-        
-        <label>Email</label>
-        <input type="email" name="user_email" required>
-        
-        <label>Mensagem</label>
-        <textarea name="message" required></textarea>
-        
-        <button type="submit">Enviar</button>
+        <label>Nome do Cliente</label>
+        <input type="text" name="client_name" required>
+
+        <label>Email do Cliente</label>
+        <input type="email" name="client_email" required>
+
+        <button type="button" onclick="showNextBox('box2')">Próxima Etapa</button>
     </form>
 </div>
 
-<!-- Script do EmailJS -->
+<!-- Caixa de propósito -->
+<div id="box2" class="container">
+    <h2>Agora eu quero saber o Propósito da sua empresa.</h2>
+    <form id="form-stage2">
+        <label>Qual é a missão da sua empresa?</label>
+        <textarea name="company_mission" required></textarea>
+
+        <label>Qual o público-alvo?</label>
+        <textarea name="target_audience" required></textarea>
+
+        <button type="button" onclick="showNextBox('box3')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Caixa sobre o serviço prestado -->
+<div id="box3" class="container">
+    <h2>Agora, me fale mais sobre o serviço prestado.</h2>
+    <form id="form-stage3">
+        <label>Quais serviços você oferece?</label>
+        <textarea name="services_offered" required></textarea>
+
+        <label>Quais são os diferenciais do seu serviço?</label>
+        <textarea name="service_differentiators" required></textarea>
+
+        <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Caixa sobre identidade visual -->
+<div id="box4" class="container">
+    <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
+    <form id="form-stage4">
+        <label>Quais cores representam sua marca?</label>
+        <textarea name="brand_colors" required></textarea>
+
+        <label>Possui algum símbolo ou logotipo em mente?</label>
+        <textarea name="brand_logo_ideas" required></textarea>
+
+        <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Caixa de informações para orçamento -->
+<div id="box5" class="container">
+    <h2>Agora, apenas algumas informações para seu orçamento.</h2>
+    <form id="form-stage5">
+        <label>Qual é o seu orçamento estimado?</label>
+        <input type="text" name="budget" required>
+
+        <label>Qual é o prazo desejado para o projeto?</label>
+        <input type="text" name="timeline" required>
+
+        <button type="button" onclick="showNextBox('box6')">Finalizar</button>
+    </form>
+</div>
+
+<!-- Caixa de agradecimento final -->
+<div id="box6" class="container">
+    <h2>Uffa! Acabamos!</h2>
+    <p>Muito obrigado pelas respostas.<br>
+       Retornarei em breve com seu orçamento.</p>
+    <p style="font-weight: 600; text-align: center;">Nícolas Neves</p>
+    <p style="text-align: center;">
+        www.instagram.com/nicolasneves.dg/<br>
+        onicolasneves@gmail.com<br>
+        21 98823-3083
+    </p>
+</div>
+
+<!-- Script para EmailJS e navegação -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="text/javascript">
     (function() {
         emailjs.init("30ExYEmkHsvuz-0RK"); // Substitua com sua Public Key
     })();
 
-    // Função para alternar da tela de boas-vindas para o formulário
-    function iniciarFormulario() {
-        document.getElementById("boasVindas").style.display = "none";
-        document.getElementById("formulario").style.display = "block";
+    // Função para exibir a próxima caixa e ocultar a atual
+    function showNextBox(nextBoxId) {
+        document.querySelectorAll('.container').forEach(box => {
+            box.classList.remove('visible');
+        });
+        document.getElementById(nextBoxId).classList.add('visible');
     }
 
-    // Envio do formulário pelo EmailJS
-    document.getElementById('contact-form').addEventListener('submit', function(event) {
-        event.preventDefault();
+    // Envio de formulário com EmailJS (ajustado para várias etapas)
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        emailjs.sendForm('service_u2ejyh4', 'template_oph1959', this)
-            .then(function() {
-                alert("Mensagem enviada com sucesso!");
-                document.getElementById("contact-form").reset(); // Reseta o formulário após envio
-            }, function(error) {
-                alert("Falha ao enviar a mensagem. Tente novamente.");
-                console.log('Erro:', error);
+            const allFormsData = new FormData();
+            document.querySelectorAll('form').forEach(f => {
+                new FormData(f).forEach((value, key) => allFormsData.append(key, value));
             });
+
+            emailjs.sendForm('service_u2ejyh4', 'template_oph1959', allFormsData)
+                .then(function() {
+                    alert("Mensagem enviada com sucesso!");
+                    document.getElementById("box6").classList.add('visible');
+                }, function(error) {
+                    alert("Falha ao enviar a mensagem. Tente novamente.");
+                    console.log('Erro:', error);
+                });
+        });
     });
 </script>
 
