@@ -81,10 +81,11 @@
     <button onclick="salvarResposta()">Enviar Resposta</button>
 </div>
 
+<!-- Script do EmailJS -->
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 <script>
-    (function(){
-        emailjs.init("30ExYEmkHsvuz-0RK"); // Substitua pelo seu User ID
+    (function() {
+        emailjs.init("30ExYEmkHsvuz-0RK"); // Public Key
     })();
 
     function iniciarFormulario() {
