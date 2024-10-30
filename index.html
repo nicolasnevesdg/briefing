@@ -29,13 +29,20 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            text-align: left;
             background-color: white;
         }
 
         h2 {
             font-weight: 700; 
             margin: 10px 0;
+            text-align: center;
+        }
+
+        p {
+            font-weight: 400; 
+            color: #333; 
+            text-align: center;
         }
 
         input[type="text"], input[type="email"], textarea {
@@ -63,11 +70,23 @@
         button:hover {
             background-color: #0056b3; 
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- Tela de Boas-Vindas -->
+<div id="boasVindas" class="container">
+    <h2>Bem-vindo(a)!</h2>
+    <p>Este é um Briefing para criação de Identidade Visual, que será usado para estudo e conceituação do seu projeto. Por favor, preencha todas as questões para que possamos prosseguir.</p>
+    <button onclick="iniciarFormulario()">Iniciar</button>
+</div>
+
+<!-- Formulário de Contato -->
+<div id="formulario" class="container hidden">
     <h2>Contato</h2>
     <form id="contact-form">
         <input type="hidden" name="contact_number" value="697483"> <!-- Número estático como exemplo -->
@@ -91,6 +110,12 @@
     (function() {
         emailjs.init("30ExYEmkHsvuz-0RK"); // Substitua com sua Public Key
     })();
+
+    // Função para alternar da tela de boas-vindas para o formulário
+    function iniciarFormulario() {
+        document.getElementById("boasVindas").style.display = "none";
+        document.getElementById("formulario").style.display = "block";
+    }
 
     // Envio do formulário pelo EmailJS
     document.getElementById('contact-form').addEventListener('submit', function(event) {
