@@ -38,7 +38,7 @@
             margin: 10px 0;
         }
 
-        input[type="text"], input[type="email"] {
+        input[type="text"], input[type="email"], textarea {
             width: 100%;
             padding: 8px;
             margin: 8px 0;
@@ -68,57 +68,44 @@
 <body>
 
 <div class="container">
-    <h2>Opa, Nícolas aqui. Tudo certo?</h2>
-    <p>Por favor, preencha as informações abaixo:</p>
-    <button onclick="iniciarFormulario()">Iniciar</button>
-</div>
-
-<div id="formulario" class="container" style="display:none;">
-    <h2>Responda o Formulário</h2>
-    <input type="text" id="empresa" placeholder="Nome da empresa" required>
-    <input type="text" id="cliente" placeholder="Nome do cliente" required>
-    <input type="email" id="email" placeholder="Email do cliente" required>
-    <button onclick="salvarResposta()">Enviar Resposta</button>
+    <h2>Contato</h2>
+    <form id="contact-form">
+        <input type="hidden" name="contact_number" value="697483"> <!-- Número estático como exemplo -->
+        
+        <label>Nome</label>
+        <input type="text" name="user_name" required>
+        
+        <label>Email</label>
+        <input type="email" name="user_email" required>
+        
+        <label>Mensagem</label>
+        <textarea name="message" required></textarea>
+        
+        <button type="submit">Enviar</button>
+    </form>
 </div>
 
 <!-- Script do EmailJS -->
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-<script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
     (function() {
-        emailjs.init("30ExYEmkHsvuz-0RK"); // Public Key
+        emailjs.init("30ExYEmkHsvuz-0RK"); // Substitua com sua Public Key
     })();
 
-    function iniciarFormulario() {
-        document.querySelector(".container").style.display = "none"; 
-        document.getElementById("formulario").style.display = "block"; 
-    }
+    // Envio do formulário pelo EmailJS
+    document.getElementById('contact-form').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-    function salvarResposta() {
-        const empresa = document.getElementById("empresa").value;
-        const cliente = document.getElementById("cliente").value;
-        const email = document.getElementById("email").value;
-
-        if (!empresa || !cliente || !email) {
-            alert("Por favor, preencha todos os campos.");
-            return;
-        }
-
-        const templateParams = {
-            empresa: empresa,
-            cliente: cliente,
-            email: email
-        };
-
-        emailjs.send('service_u2ejyh4', 'template_oph1959', templateParams)
-            .then(function(response) {
-                console.log('SUCCESS!', response.status, response.text);
-                alert("Respostas enviadas com sucesso!");
-                document.getElementById("formulario").reset(); // Reseta o formulário após o envio
+        emailjs.sendForm('service_u2ejyh4', 'template_oph1959', this)
+            .then(function() {
+                alert("Mensagem enviada com sucesso!");
+                document.getElementById("contact-form").reset(); // Reseta o formulário após envio
             }, function(error) {
-                console.log('FAILED...', error);
-                alert("Falha ao enviar as respostas. Tente novamente.");
+                alert("Falha ao enviar a mensagem. Tente novamente.");
+                console.log('Erro:', error);
             });
-    }
+    });
 </script>
+
 </body>
 </html>
