@@ -20,6 +20,25 @@
             height: 100vh;
             margin: 0;
             background-color: #f9f9f9;
+            overflow: hidden;
+        }
+
+        /* Imagens de fundo */
+        .background-image {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 150px;
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .background-left {
+            left: 0;
+        }
+
+        .background-right {
+            right: 0;
         }
 
         .container {
@@ -32,6 +51,7 @@
             text-align: left;
             background-color: white;
             display: none;
+            z-index: 1;
         }
 
         .container.visible {
@@ -77,6 +97,10 @@
     </style>
 </head>
 <body>
+
+<!-- Imagens de fundo -->
+<img src="left-image.jpg" alt="Imagem lateral esquerda" class="background-image background-left">
+<img src="right-image.jpg" alt="Imagem lateral direita" class="background-image background-right">
 
 <!-- Tela inicial de boas-vindas -->
 <div id="welcome-screen" class="container visible">
@@ -178,7 +202,6 @@
         emailjs.init("30ExYEmkHsvuz-0RK"); // Substitua com sua Public Key
     })();
 
-    // Função para exibir a próxima caixa e ocultar a atual
     function showNextBox(nextBoxId) {
         document.querySelectorAll('.container').forEach(box => {
             box.classList.remove('visible');
@@ -186,11 +209,9 @@
         document.getElementById(nextBoxId).classList.add('visible');
     }
 
-    // Envio de formulário com EmailJS (ajustado para várias etapas)
     document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', function(event) {
             event.preventDefault();
-
             const allFormsData = new FormData();
             document.querySelectorAll('form').forEach(f => {
                 new FormData(f).forEach((value, key) => allFormsData.append(key, value));
