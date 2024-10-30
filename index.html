@@ -7,7 +7,7 @@
     
     <!-- Link para a fonte Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 
     <style>
@@ -33,20 +33,22 @@
             opacity: 0.3;
             z-index: -1;
         }
+        .background-left { left: 0; }
+        .background-right { right: 0; }
 
-        .background-left {
-            left: 0;
-        }
-
-        .background-right {
-            right: 0;
+        /* Imagem fixa na parte inferior */
+        .bottom-image {
+            position: fixed;
+            bottom: 100px;
+            width: 200px;
+            z-index: -1;
         }
 
         .container {
             max-width: 600px;
             width: 100%;
-            max-height: 60vh; /* Limitar altura do container */
-            padding: 100px; /* Padding de 100px */
+            max-height: 60vh;
+            padding: 100px;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -54,7 +56,7 @@
             background-color: white;
             display: none;
             z-index: 1;
-            overflow-y: auto; /* Adicionar rolagem vertical */
+            overflow-y: auto;
         }
 
         .container.visible {
@@ -97,177 +99,150 @@
         button:hover {
             background-color: #0056b3;
         }
-
-        /* Imagem fixa na parte inferior */
-        .bottom-image {
-            position: fixed;
-            bottom: 100px;
-            width: 200px;
-            z-index: -1;
-        }
     </style>
 </head>
 <body>
 
-<!-- Imagens de fundo -->
-<img src="https://i.imgur.com/IEMj3Hr.png" alt="Imagem lateral esquerda" class="background-image background-left">
-<img src="https://i.imgur.com/ETrGBo4.png" alt="Imagem lateral direita" class="background-image background-right">
+    <!-- Imagens de fundo -->
+    <img src="https://i.imgur.com/IEMj3Hr.png" alt="Imagem lateral esquerda" class="background-image background-left">
+    <img src="https://i.imgur.com/ETrGBo4.png" alt="Imagem lateral direita" class="background-image background-right">
+    <img src="https://i.imgur.com/1zz3hAR.png" alt="Imagem inferior" class="bottom-image">
 
-<!-- Imagem fixa na parte inferior -->
-<img src="https://i.imgur.com/1zz3hAR.png" alt="Imagem inferior" class="bottom-image">
+    <!-- Tela inicial de boas-vindas -->
+    <div id="welcome-screen" class="container visible">
+        <h2>Bem-vindo(a) ao Briefing de Identidade Visual!</h2>
+        <p>Antes de começarmos, precisarei de algumas informações para entender melhor suas necessidades.</p>
+        <button onclick="showNextBox('box1')">Iniciar</button>
+    </div>
 
-<!-- Tela inicial de boas-vindas -->
-<div id="welcome-screen" class="container visible">
-    <h2>Bem-vindo(a) ao Briefing de Identidade Visual!</h2>
-    <p>Antes de começarmos, precisarei de algumas informações para entender melhor suas necessidades.</p>
-    <button onclick="showNextBox('box1')">Iniciar</button>
-</div>
+    <!-- Primeira etapa -->
+    <div id="box1" class="container">
+        <h2>Primeiro, preciso de algumas informações suas e de sua empresa.</h2>
+        <form id="form-stage1">
+            <label>Nome da Empresa</label>
+            <input type="text" name="company_name" required>
 
-<!-- Primeira etapa -->
-<div id="box1" class="container">
-    <h2>Primeiro, preciso de algumas informações suas e de sua empresa.</h2>
-    <form id="form-stage1">
-        <label>Nome da Empresa</label>
-        <input type="text" name="company_name" required>
+            <label>Nome do Cliente</label>
+            <input type="text" name="client_name" required>
 
-        <label>Nome do Cliente</label>
-        <input type="text" name="client_name" required>
+            <label>Email do Cliente</label>
+            <input type="email" name="client_email" required>
 
-        <label>Email do Cliente</label>
-        <input type="email" name="client_email" required>
+            <button type="button" onclick="showNextBox('box2')">Próxima Etapa</button>
+        </form>
+    </div>
 
-        <button type="button" onclick="showNextBox('box2')">Próxima Etapa</button>
-    </form>
-</div>
+    <!-- Segunda etapa -->
+    <div id="box2" class="container">
+        <h2>Agora eu quero saber o Propósito da sua empresa.</h2>
+        <form id="form-stage2">
+            <label>Qual é a missão da sua empresa?</label>
+            <textarea name="company_mission" required></textarea>
 
-<!-- Segunda etapa -->
-<div id="box2" class="container">
-    <h2>Agora eu quero saber o Propósito da sua empresa.</h2>
-    <form id="form-stage2">
-        <label>Qual é a missão da sua empresa?</label>
-        <textarea name="company_mission" required></textarea>
+            <label>Qual o público-alvo?</label>
+            <textarea name="target_audience" required></textarea>
 
-        <label>Qual o público-alvo?</label>
-        <textarea name="target_audience" required></textarea>
+            <button type="button" onclick="showNextBox('box3')">Próxima Etapa</button>
+        </form>
+    </div>
 
-        <button type="button" onclick="showNextBox('box3')">Próxima Etapa</button>
-    </form>
-</div>
+    <!-- Terceira etapa -->
+    <div id="box3" class="container">
+        <h2>Agora, me fale mais sobre o serviço prestado.</h2>
+        <form id="form-stage3">
+            <label>Qual é o produto ou serviço a ser desenvolvido?</label>
+            <textarea name="product_service" required></textarea>
+            <p>ex.: Produtos de beleza, rede de cafeteria</p>
 
-<!-- Terceira etapa -->
-<div id="box3" class="container">
-    <h2>Agora, me fale mais sobre o serviço prestado.</h2>
-    <form id="form-stage3">
-        <label>Qual é o produto ou serviço a ser desenvolvido?</label>
-        <textarea name="product_service" required></textarea>
-        <p>ex.: Produtos de beleza, rede de cafeteria</p>
+            <label>É um produto/serviço novo? Há quanto tempo está no mercado?</label>
+            <textarea name="product_service_time" required></textarea>
 
-        <label>É um produto/serviço novo? Há quanto tempo está no mercado?</label>
-        <textarea name="product_service_time" required></textarea>
+            <label>Qual o público-alvo e o mercado-alvo?</label>
+            <textarea name="audience_market" required></textarea>
+            <p>Faixa etária; sexo; classe social; ocupação profissional de seus consumidores e também do mercado.</p>
 
-        <label>Qual o público-alvo e o mercado-alvo?</label>
-        <textarea name="audience_market" required></textarea>
-        <p>Faixa etária; sexo; classe social; ocupação profissional de seus consumidores e também do mercado.</p>
+            <label>Cite adjetivos para seu produto/serviço.</label>
+            <textarea name="product_service_adjectives" required></textarea>
+            <p>Ex.: Moderno, infantil, feminino.</p>
 
-        <label>Cite adjetivos para seu produto/serviço.</label>
-        <textarea name="product_service_adjectives" required></textarea>
-        <p>Ex.: Moderno, infantil, feminino.</p>
+            <label>Cite adjetivos que NÃO condizem com seu produto/serviço.</label>
+            <textarea name="not_product_service_adjectives" required></textarea>
+            <p>Ex.: Colorida, conservadora, etc.</p>
 
-        <label>Cite adjetivos que NÃO condizem com seu produto/serviço.</label>
-        <textarea name="not_product_service_adjectives" required></textarea>
-        <p>Ex.: Colorida, conservadora, etc.</p>
+            <label>Quais seus principais concorrentes?</label>
+            <textarea name="main_competitors" required></textarea>
+            <p>Concorrente diretos e indiretos; Se possível, forneça URLs dos concorrentes.</p>
 
-        <label>Quais seus principais concorrentes?</label>
-        <textarea name="main_competitors" required></textarea>
-        <p>Concorrente diretos e indiretos; Se possível, forneça URL's (Links) dos concorrentes.</p>
+            <label>Qual o diferencial do seu produto/serviço em relação aos seus concorrentes?</label>
+            <textarea name="product_service_difference" required></textarea>
+            <p>Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
 
-        <label>Qual o diferencial do seu produto/serviço em relação aos seus concorrentes?</label>
-        <textarea name="product_service_difference" required></textarea>
-        <p>Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
+            <label>Qual mensagem sua marca deve transmitir aos seus consumidores?</label>
+            <textarea name="brand_message" required></textarea>
+            <p>Ex.: Temos o serviço mais seguro e que, ao mesmo tempo, irá facilitar seu dia-a-dia.</p>
 
-        <label>Qual mensagem sua marca deve transmitir aos seus consumidores?</label>
-        <textarea name="brand_message" required></textarea>
-        <p>Ex.: Temos o serviço mais seguro e que, ao mesmo tempo, irá facilitar seu dia-a-dia.</p>
+            <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
+        </form>
+    </div>
 
-        <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
-    </form>
-</div>
+    <!-- Quarta etapa -->
+    <div id="box4" class="container">
+        <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
+        <form id="form-stage4">
+            <label>Quais cores representam sua marca?</label>
+            <textarea name="brand_colors" required></textarea>
 
-<!-- Quarta etapa -->
-<div id="box4" class="container">
-    <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
-    <form id="form-stage4">
-        <label>Quais cores representam sua marca?</label>
-        <textarea name="brand_colors" required></textarea>
+            <label>Possui algum símbolo ou logotipo em mente?</label>
+            <textarea name="brand_logo_ideas" required></textarea>
 
-        <label>Possui algum símbolo ou logotipo em mente?</label>
-        <textarea name="brand_logo_ideas" required></textarea>
+            <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
+        </form>
+    </div>
 
-        <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
-    </form>
-</div>
+    <!-- Quinta etapa -->
+    <div id="box5" class="container">
+        <h2>Agora, apenas algumas informações para seu orçamento.</h2>
+        <form id="form-stage5">
+            <label>Qual é o seu orçamento estimado?</label>
+            <input type="text" name="budget" required>
 
-<!-- Quinta etapa -->
-<div id="box5" class="container">
-    <h2>Agora, apenas algumas informações para seu orçamento.</h2>
-    <form id="form-stage5">
-        <label>Qual é o seu orçamento estimado?</label>
-        <input type="text" name="budget" required>
+            <label>Qual é o prazo desejado para o projeto?</label>
+            <input type="text" name="timeline" required>
 
-        <label>Qual é o prazo desejado para o projeto?</label>
-        <input type="text" name="timeline" required>
+            <button type="button" onclick="sendEmail()">Finalizar</button>
+        </form>
+    </div>
 
-        <button type="button" onclick="sendEmail()">Finalizar</button>
-    </form>
-</div>
+    <!-- Tela final de agradecimento -->
+    <div id="box6" class="container">
+        <h2>Uffa! Acabamos!</h2>
+        <p>Muito obrigado pelas respostas.<br>Retornarei em breve com seu orçamento.</p>
+        <p style="font-weight: 600; text-align: center;">Nícolas Neves</p>
+        <p style="text-align: center;">
+            www.instagram.com/nicolasneves.dg/<br>
+            onicolasneves@gmail.com<br>
+            21 98823-3083
+        </p>
+    </div>
 
-<!-- Tela final de agradecimento -->
-<div id="box6" class="container">
-    <h2>Uffa! Acabamos!</h2>
-    <p>Muito obrigado pelas respostas.<br>
-       Retornarei em breve com seu orçamento.</p>
-    <p style="font-weight: 600; text-align: center;">Nícolas Neves</p>
-    <p style="text-align: center;">
-        www.instagram.com/nicolasneves.dg/<br>
-        onicolasneves@gmail.com<br>
-         21 98823-3083
-    </p>
-</div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        emailjs.init("30ExYEmkHsvuz-0RK");
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script type="text/javascript">
-    (function() {
-        emailjs.init({
-            publicKey: "30ExYEmkHsvuz-0RK", // Substitua pela sua chave pública
-        });
-    })();
+        function showNextBox(nextBoxId) {
+            document.querySelectorAll('.container').forEach(box => box.classList.remove('visible'));
+            document.getElementById(nextBoxId).classList.add('visible');
+        }
 
-    function showNextBox(nextBoxId) {
-        document.querySelectorAll('.container').forEach(box => {
-            box.classList.remove('visible');
-        });
-        document.getElementById(nextBoxId).classList.add('visible');
-    }
+        function sendEmail() {
+            const formData = new FormData();
+            document.querySelectorAll('input, textarea').forEach(input => formData.append(input.name, input.value));
 
-    function sendEmail() {
-        const allFormsData = new FormData();
-        
-        // Coletar dados de todas as etapas do formulário
-        document.querySelectorAll('form').forEach(form => {
-            new FormData(form).forEach((value, key) => allFormsData.append(key, value));
-        });
-
-        // Enviar os dados usando EmailJS
-        emailjs.sendForm('service_u2ejyh4', 'template_oph1959', allFormsData)
-            .then(function() {
-                alert("Mensagem enviada com sucesso!");
-                showNextBox('box6'); // Mostrar tela final
-            }, function(error) {
-                alert("Falha ao enviar a mensagem. Tente novamente.");
-                console.log('Erro:', error);
-            });
-    }
-</script>
+            emailjs.sendForm('service_u2ejyh4', 'template_oph1959', formData)
+                .then(() => showNextBox('box6'))
+                .catch(error => console.error('Erro no envio:', error));
+        }
+    </script>
 
 </body>
 </html>
