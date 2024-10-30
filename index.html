@@ -21,6 +21,7 @@
             margin: 0;
             background-color: #f9f9f9;
             overflow: hidden;
+            position: relative;
         }
 
         /* Imagens de fundo */
@@ -94,6 +95,14 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        /* Imagem fixa na parte inferior */
+        .bottom-image {
+            position: fixed;
+            bottom: 200px;
+            width: 400px;
+            z-index: -1;
+        }
     </style>
 </head>
 <body>
@@ -101,6 +110,9 @@
 <!-- Imagens de fundo -->
 <img src="https://i.imgur.com/IEMj3Hr.png" alt="Imagem lateral esquerda" class="background-image background-left">
 <img src="https://i.imgur.com/ETrGBo4.png" alt="Imagem lateral direita" class="background-image background-right">
+
+<!-- Imagem fixa na parte inferior -->
+<img src="https://i.imgur.com/1zz3hAR.png" alt="Imagem inferior" class="bottom-image">
 
 <!-- Tela inicial de boas-vindas -->
 <div id="welcome-screen" class="container visible">
