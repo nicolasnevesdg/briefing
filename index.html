@@ -188,6 +188,14 @@
         <p class="subtext">Digite um email válido.</p>
         <input type="email" name="client_email" required>
 
+        <label>Onde a sua empresa atua?</label>
+        <p class="subtext">(País, cidade, região ou apenas online)</p>
+        <input type="text" name="company_location" required>
+
+        <label>A empresa tem website ou rede social?</label>
+        <p class="subtext">Deixe o @ da rede social e/ou endereço do website.</p>
+        <input type="text" name="social_media_website" required>
+
         <button type="button" onclick="showNextBox('box2')">Próxima Etapa</button>
     </form>
 </div>
@@ -213,11 +221,11 @@
     <h2>Agora, me fale mais sobre o serviço prestado.</h2>
     <form id="form-stage3">
         <label>Qual é o produto ou serviço a ser desenvolvido?</label>
-        <p class="subtext">ex.: Produtos de beleza, rede de cafeteria</p>
+        <p class="subtext">Ex.: Produtos de beleza, rede de cafeteria.</p>
         <textarea name="product_service" required></textarea>
 
         <label>É um produto/serviço novo? Há quanto tempo está no mercado?</label>
-        <p class="subtext">Informe se é novo e o tempo de mercado.</p>
+        <p class="subtext">Ex.: Produtos de beleza, rede de cafeteria.</p>
         <textarea name="product_service_time" required></textarea>
 
         <label>Qual o público-alvo e o mercado-alvo?</label>
