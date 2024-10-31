@@ -117,43 +117,6 @@
         button:hover {
             background-color: #333333;
         }
-
-        /* Estilo para os botões de navegação */
-        .nav-button {
-            width: 40px;
-            height: 40px;
-            background-color: #d3d3d3; /* Cor cinza claro */
-            color: white;
-            border: none;
-            cursor: not-allowed; /* Cursor indicando que está inativo */
-            position: fixed;
-            bottom: 20px;
-            z-index: 2;
-            opacity: 0.5; /* Opacidade para indicar que está inativo */
-            padding: unset; /* Removendo padding */
-        }
-
-        .nav-button.active {
-            background-color: #000; /* Cor ativa */
-            cursor: pointer; /* Cursor indicando que está ativo */
-            opacity: 1; /* Opacidade normal quando ativo */
-        }
-
-        .up-button {
-            right: 70px; /* Ajustado para o canto inferior direito */
-        }
-
-        .down-button {
-            right: 20px; /* Ajustado para o canto inferior direito */
-        }
-
-        /* Imagem fixa na parte inferior */
-        .bottom-image {
-            position: fixed;
-            bottom: 8%;
-            width: 200px;
-            z-index: -1;
-        }
     </style>
 </head>
 <body>
@@ -300,10 +263,6 @@
     <button onclick="showNextBox('welcome-screen')">Voltar ao Início</button>
 </div>
 
-<!-- Botões de navegação -->
-<button class="nav-button up-button" onclick="navigate(-1)" disabled>↑</button>
-<button class="nav-button down-button" onclick="navigate(1)" disabled>↓</button>
-
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="text/javascript">
     (function() {
@@ -314,28 +273,10 @@
 
     let currentBox = 0; // Inicializa na tela de boas-vindas
     const boxes = ['box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'welcome-screen'];
-    const upButton = document.querySelector('.up-button');
-    const downButton = document.querySelector('.down-button');
-
-    function updateNavButtons() {
-        // Atualiza o estado dos botões
-        upButton.disabled = currentBox === 0;
-        downButton.disabled = currentBox === boxes.length - 1;
-
-        // Verifica se estamos em uma etapa onde podemos avançar
-        if (currentBox < boxes.length - 1) {
-            const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
-            downButton.disabled = !currentForm.checkValidity(); // Desabilita se o formulário não for válido
-        }
-
-        // Atualiza a aparência dos botões
-        upButton.classList.toggle('active', !upButton.disabled);
-        downButton.classList.toggle('active', !downButton.disabled);
-    }
 
     function showNextBox(nextBoxId) {
         const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
-        
+
         // Para telas que não são de formulário, permite avançar
         if (currentBox === 0 || currentBox === boxes.length - 1) {
             // Atualiza a caixa atual
@@ -344,7 +285,6 @@
             });
             document.getElementById(nextBoxId).classList.add('visible');
             currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
-            updateNavButtons(); // Atualiza o estado dos botões de navegação
             return;
         }
 
@@ -360,19 +300,6 @@
         });
         document.getElementById(nextBoxId).classList.add('visible');
         currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
-        updateNavButtons(); // Atualiza o estado dos botões de navegação
-    }
-
-    function navigate(direction) {
-        // Atualiza a caixa atual
-        currentBox += direction;
-
-        // Garante que o índice atual fique dentro do intervalo
-        if (currentBox < 0) currentBox = 0;
-        if (currentBox >= boxes.length) currentBox = boxes.length - 1;
-
-        // Exibe a caixa correspondente
-        showNextBox(boxes[currentBox]);
     }
 
     function sendEmail() {
