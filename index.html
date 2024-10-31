@@ -74,7 +74,7 @@
         }
 
         form#form-stage5 > div {
-            margin-bottom: 30px;
+        margin-bottom: 30px;
         }
         
         /* Estilo para perguntas */
@@ -246,8 +246,16 @@
         <textarea name="negative_adjectives" required></textarea>
 
         <label>Quais seus principais concorrentes?</label>
-        <p class="subtext">Concorrente diretos e indiretos.</p>
-        <textarea name="competitors" required></textarea>
+        <p class="subtext">Concorrente diretos e indiretos; Se possível, forneça URL's (Links) dos concorrentes.</p>
+        <textarea name="main_competitors" required></textarea>
+
+        <label>Qual o diferencial do seu produto/serviço em relação aos seus concorrentes?</label>
+        <p class="subtext">Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
+        <textarea name="product_service_differential" required></textarea>
+
+        <label>Qual mensagem sua marca deve transmitir aos seus consumidores?</label>
+        <p class="subtext">Ex.: Temos o serviço mais seguro e que, ao mesmo tempo, irá facilitar seu dia-a-dia.</p>
+        <textarea name="brand_message" required></textarea>
 
         <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
     </form>
@@ -255,19 +263,15 @@
 
 <!-- Quarta etapa -->
 <div id="box4" class="container">
-    <h2>Chegamos à parte das referências e inspirações.</h2>
+    <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
     <form id="form-stage4">
-        <label>Me mostre 3 marcas que você ama.</label>
-        <p class="subtext">Cite marcas de qualquer área.</p>
-        <textarea name="favorite_brands" required></textarea>
+        <label>Quais cores representam sua marca?</label>
+        <p class="subtext">Ex.: Azul, verde, vermelho.</p>
+        <textarea name="brand_colors" required></textarea>
 
-        <label>Referências de marcas com o que você não gosta.</label>
-        <p class="subtext">Marcas que não são do seu agrado e por quê.</p>
-        <textarea name="unfavorite_brands" required></textarea>
-
-        <label>Algum detalhe que você quer que eu saiba sobre a sua empresa?</label>
-        <p class="subtext">Fique à vontade para adicionar mais informações.</p>
-        <textarea name="additional_details" required></textarea>
+        <label>Quais estilos visuais você prefere?</label>
+        <p class="subtext">Ex.: Moderno, clássico, minimalista.</p>
+        <textarea name="visual_styles" required></textarea>
 
         <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
     </form>
@@ -275,64 +279,163 @@
 
 <!-- Quinta etapa -->
 <div id="box5" class="container">
-    <h2>Por fim, finalize o seu briefing.</h2>
+    <h2>Agora, apenas algumas informações para seu orçamento.</h2>
     <form id="form-stage5">
-        <label>Como você gostaria de ser abordado?</label>
-        <p class="subtext">Ex.: Amigável, direto, etc.</p>
-        <textarea name="preferred_approach" required></textarea>
+        <label>Precisa de um manual de uso da marca?</label>
+        <p class="subtext">Um manual é utilizado para regrar as aplicações da sua identidade visual no futuro, evitando a má utilização.</p>
+        <div>
+            <label><input type="checkbox" name="brand_manual" value="Sim" > Sim</label>
+            <label><input type="checkbox" name="brand_manual" value="Não" > Não</label>
+        </div>
 
-        <label>Algum outro ponto que você gostaria de acrescentar?</label>
-        <p class="subtext">Fique à vontade.</p>
-        <textarea name="final_notes"></textarea>
+        <label>Qual serviço adicional você gostaria que seja criado?</label>
+        <p class="subtext">Marque todos que forem desejados.</p>
+        <div>
+            <label><input type="checkbox" name="additional_services" value="Cartão de visita" > Cartão de visita</label>
+            <label><input type="checkbox" name="additional_services" value="Papel timbrado A4" > Papel timbrado A4</label>
+            <label><input type="checkbox" name="additional_services" value="Pasta A4" > Pasta A4</label>
+            <label><input type="checkbox" name="additional_services" value="Perfil para facebook" > Perfil para facebook</label>
+            <label><input type="checkbox" name="additional_services" value="Perfil para twitter" > Perfil para twitter</label>
+            <label><input type="checkbox" name="additional_services" value="Perfil para instagram" > Perfil para instagram</label>
+            <label><input type="checkbox" name="additional_services" value="Envelope A4" > Envelope A4</label>
+            <label><input type="checkbox" name="additional_services" value="Envelope carta" > Envelope carta</label>
+            <label><input type="checkbox" name="additional_services" value="Modelo de apresentação A4" > Modelo de apresentação A4</label>
+            <label><input type="checkbox" name="additional_services" value="Capa para facebook" > Capa para facebook</label>
+            <label><input type="checkbox" name="additional_services" value="Capa para linkedin" > Capa para linkedin</label>
+            <label><input type="checkbox" name="additional_services" value="Outro" > Outro</label>
+        </div>
 
-        <button type="submit">Enviar</button>
+        <label>É a favor da utilização de fontes pagas?</label>
+        <p class="subtext">Utilização de tipografias pagas trazem maior originalidade para uma identidade visual, por terem melhor qualidade e maiores opções. Para utilizá-las, é necessário comprar o direito de uso comercial. O valor pode variar.</p>
+        <div>
+            <label><input type="checkbox" name="paid_fonts" value="Sim" > Sim</label>
+            <label><input type="checkbox" name="paid_fonts" value="Não" > Não</label>
+        </div>
+
+        <label>Possui alguma informação ou observação adicional que seja importante no projeto? Requerimento específico?</label>
+        <p class="subtext">Fique à vontade para contribuir com outras informações.</p>
+        <textarea name="additional_info"></textarea>
+
+        <label>Possui alguma condição/restrição que influencie no projeto?</label>
+        <textarea name="project_restrictions"></textarea>
+
+        <label>Qual o prazo disponível para criação do projeto?</label>
+        <p class="subtext">Urgência pode fazer com que haja um acréscimo no valor final.</p>
+        <textarea name="project_timeline" required></textarea>
+
+        <button type="button" onclick="sendEmail()">Finalizar</button>
     </form>
 </div>
 
+<!-- Tela final -->
+<div id="box6" class="container">
+    <h2>Uffa! Acabamos!</h2>
+    <p>Muito obrigado pelas respostas. Retornarei em breve com seu orçamento.</p>
+    <p>Nícolas Neves</p>
+    <p>Contatos:</p>
+    <p><a href="https://www.instagram.com/nicolasneves.dg/" target="_blank">Instagram</a></p>
+    <p>onicolasneves@gmail.com</p>
+    <p>21 98823-3083</p>
+    <button onclick="showNextBox('welcome-screen')">Voltar ao Início</button>
+</div>
+
 <!-- Botões de navegação -->
-<button class="nav-button up-button" onclick="navigate('up')" disabled></button>
-<button class="nav-button down-button" onclick="navigate('down')" disabled></button>
+<button class="nav-button up-button" onclick="navigate(-1)" disabled>↑</button>
+<button class="nav-button down-button" onclick="navigate(1)" disabled>↓</button>
 
-<script>
-    let currentBox = 0;
-    const boxes = document.querySelectorAll('.container');
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
+    (function() {
+        emailjs.init({
+            publicKey: "30ExYEmkHsvuz-0RK",
+        });
+    })();
 
-    function showNextBox(boxId) {
-        boxes[currentBox].classList.remove('visible');
-        currentBox++;
-        boxes[currentBox].classList.add('visible');
-        updateNavButtons();
-    }
-
-    function navigate(direction) {
-        if (direction === 'up' && currentBox > 0) {
-            boxes[currentBox].classList.remove('visible');
-            currentBox--;
-            boxes[currentBox].classList.add('visible');
-        } else if (direction === 'down' && currentBox < boxes.length - 1) {
-            boxes[currentBox].classList.remove('visible');
-            currentBox++;
-            boxes[currentBox].classList.add('visible');
-        }
-        updateNavButtons();
-    }
+    let currentBox = 0; // Inicializa na tela de boas-vindas
+    const boxes = ['box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'welcome-screen'];
+    const upButton = document.querySelector('.up-button');
+    const downButton = document.querySelector('.down-button');
 
     function updateNavButtons() {
-        const upButton = document.querySelector('.up-button');
-        const downButton = document.querySelector('.down-button');
+        // Atualiza o estado dos botões
         upButton.disabled = currentBox === 0;
         downButton.disabled = currentBox === boxes.length - 1;
-        upButton.classList.toggle('active', currentBox > 0);
-        downButton.classList.toggle('active', currentBox < boxes.length - 1);
+
+        // Verifica se estamos em uma etapa onde podemos avançar
+        if (currentBox < boxes.length - 1) {
+            const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
+            downButton.disabled = !currentForm.checkValidity(); // Desabilita se o formulário não for válido
+        }
+
+        // Atualiza a aparência dos botões
+        upButton.classList.toggle('active', !upButton.disabled);
+        downButton.classList.toggle('active', !downButton.disabled);
     }
 
     function checkStage1() {
-        const form = document.getElementById('form-stage1');
-        if (form.checkValidity()) {
+        const currentForm = document.getElementById('form-stage1');
+        if (currentForm.checkValidity()) {
             showNextBox('box2');
         } else {
-            form.reportValidity();
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
         }
+    }
+
+    function showNextBox(nextBoxId) {
+        const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
+        
+        // Para telas que não são de formulário, permite avançar
+        if (currentBox === 0 || currentBox === boxes.length - 1) {
+            // Atualiza a caixa atual
+            document.querySelectorAll('.container').forEach(box => {
+                box.classList.remove('visible');
+            });
+            document.getElementById(nextBoxId).classList.add('visible');
+            currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
+            updateNavButtons(); // Atualiza o estado dos botões de navegação
+            return;
+        }
+
+        // Verifica se o formulário atual é válido antes de avançar
+        if (currentForm && !currentForm.checkValidity()) {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+            return; // Impede a navegação
+        }
+
+        // Atualiza a caixa atual
+        document.querySelectorAll('.container').forEach(box => {
+            box.classList.remove('visible');
+        });
+        document.getElementById(nextBoxId).classList.add('visible');
+        currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
+        updateNavButtons(); // Atualiza o estado dos botões de navegação
+    }
+
+    function navigate(direction) {
+        const nextBoxId = boxes[currentBox + direction];
+        if (nextBoxId) {
+            showNextBox(nextBoxId);
+        }
+    }
+
+    function sendEmail() {
+        const currentForm = document.getElementById('form-stage5');
+        if (!currentForm.checkValidity()) {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+            return; // Impede o envio se o formulário não for válido
+        }
+
+        // Coleta dados do formulário
+        const formData = new FormData(currentForm);
+        const data = Object.fromEntries(formData.entries());
+
+        // Enviar email
+        emailjs.send('service_u2ejyh4', 'template_oph1959', data)
+            .then(() => {
+                showNextBox('box6'); // Avança para a tela final
+            }, (error) => {
+                console.error('Erro ao enviar email:', error);
+            });
     }
 </script>
 
