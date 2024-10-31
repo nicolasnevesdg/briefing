@@ -196,7 +196,7 @@
         <p class="subtext">Deixe o @ da rede social e/ou endereço do website.</p>
         <input type="text" name="social_media_website" required>
 
-        <button type="button" onclick="showNextBox('box2')">Próxima Etapa</button>
+        <button type="button" id="next-stage1" onclick="checkStage1()">Próxima Etapa</button>
     </form>
 </div>
 
@@ -238,13 +238,13 @@
 
         <label>Cite adjetivos que NÃO condizem com seu produto/serviço.</label>
         <p class="subtext">Ex.: Colorida, conservadora, etc.</p>
-        <textarea name="not_product_service_adjectives" required></textarea>
+        <textarea name="negative_adjectives" required></textarea>
 
         <label>Quais seus principais concorrentes?</label>
         <p class="subtext">Concorrente diretos e indiretos; Se possível, forneça URL's (Links) dos concorrentes.</p>
         <textarea name="main_competitors" required></textarea>
 
-        <label>Qual o diferencial do seu produto/serviço em relação ao seus concorrentes?</label>
+        <label>Qual o diferencial do seu produto/serviço em relação aos seus concorrentes?</label>
         <p class="subtext">Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
         <textarea name="product_service_differential" required></textarea>
 
@@ -331,6 +331,15 @@
         // Atualiza a aparência dos botões
         upButton.classList.toggle('active', !upButton.disabled);
         downButton.classList.toggle('active', !downButton.disabled);
+    }
+
+    function checkStage1() {
+        const currentForm = document.getElementById('form-stage1');
+        if (currentForm.checkValidity()) {
+            showNextBox('box2');
+        } else {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+        }
     }
 
     function showNextBox(nextBoxId) {
