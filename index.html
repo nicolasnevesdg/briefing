@@ -72,6 +72,19 @@
             color: #333;
         }
 
+        /* Estilo para perguntas */
+        label {
+            font-weight: 500;
+        }
+
+        /* Estilo para subtextos */
+        .subtext {
+            font-weight: 100;
+            font-style: italic;
+            margin: 0;
+            color: #555;
+        }
+
         input[type="text"], input[type="email"], textarea {
             width: 100%;
             padding: 8px;
@@ -103,6 +116,27 @@
 
         button:hover {
             background-color: #333333;
+        }
+
+        /* Estilo para os botões de navegação */
+        .nav-button {
+            width: 40px;
+            height: 40px;
+            background-color: #000;
+            color: white;
+            border: none;
+            cursor: pointer;
+            position: fixed;
+            bottom: 20px;
+            z-index: 2;
+        }
+
+        .up-button {
+            left: 20px;
+        }
+
+        .down-button {
+            left: 70px;
         }
 
         /* Imagem fixa na parte inferior */
@@ -167,34 +201,34 @@
     <form id="form-stage3">
         <label>Qual é o produto ou serviço a ser desenvolvido?</label>
         <textarea name="product_service" required></textarea>
-        <p>ex.: Produtos de beleza, rede de cafeteria</p>
+        <p class="subtext">ex.: Produtos de beleza, rede de cafeteria</p>
 
         <label>É um produto/serviço novo? Há quanto tempo está no mercado?</label>
         <textarea name="product_service_time" required></textarea>
 
         <label>Qual o público-alvo e o mercado-alvo?</label>
         <textarea name="audience_market" required></textarea>
-        <p>Faixa etária; sexo; classe social; ocupação profissional de seus consumidores e também do mercado.</p>
+        <p class="subtext">Faixa etária; sexo; classe social; ocupação profissional de seus consumidores e também do mercado.</p>
 
         <label>Cite adjetivos para seu produto/serviço.</label>
         <textarea name="product_service_adjectives" required></textarea>
-        <p>Ex.: Moderno, infantil, feminino.</p>
+        <p class="subtext">Ex.: Moderno, infantil, feminino.</p>
 
         <label>Cite adjetivos que NÃO condizem com seu produto/serviço.</label>
         <textarea name="not_product_service_adjectives" required></textarea>
-        <p>Ex.: Colorida, conservadora, etc.</p>
+        <p class="subtext">Ex.: Colorida, conservadora, etc.</p>
 
         <label>Quais seus principais concorrentes?</label>
         <textarea name="main_competitors" required></textarea>
-        <p>Concorrente diretos e indiretos; Se possível, forneça URL's (Links) dos concorrentes.</p>
+        <p class="subtext">Concorrente diretos e indiretos; Se possível, forneça URL's (Links) dos concorrentes.</p>
 
         <label>Qual o diferencial do seu produto/serviço em relação aos seus concorrentes?</label>
         <textarea name="product_service_difference" required></textarea>
-        <p>Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
+        <p class="subtext">Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
 
         <label>Qual mensagem sua marca deve transmitir aos seus consumidores?</label>
         <textarea name="brand_message" required></textarea>
-        <p>Ex.: Temos o serviço mais seguro e que, ao mesmo tempo, irá facilitar seu dia-a-dia.</p>
+        <p class="subtext">Ex.: Temos o serviço mais seguro e que, ao mesmo tempo, irá facilitar seu dia-a-dia.</p>
 
         <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
     </form>
@@ -218,28 +252,31 @@
 <div id="box5" class="container">
     <h2>Agora, apenas algumas informações para seu orçamento.</h2>
     <form id="form-stage5">
-        <label>Qual é o seu orçamento estimado?</label>
-        <input type="text" name="budget" required>
+        <label>Qual é o orçamento disponível para este projeto?</label>
+        <textarea name="project_budget" required></textarea>
 
-        <label>Qual é o prazo desejado para o projeto?</label>
-        <input type="text" name="timeline" required>
+        <label>Qual o prazo para conclusão?</label>
+        <textarea name="completion_time" required></textarea>
 
         <button type="button" onclick="sendEmail()">Finalizar</button>
     </form>
 </div>
 
-<!-- Tela final de agradecimento -->
+<!-- Tela final -->
 <div id="box6" class="container">
     <h2>Uffa! Acabamos!</h2>
-    <p>Muito obrigado pelas respostas.<br>
-       Retornarei em breve com seu orçamento.</p>
-    <p style="font-weight: 600; text-align: center;">Nícolas Neves</p>
-    <p style="text-align: center;">
-        www.instagram.com/nicolasneves.dg/<br>
-        onicolasneves@gmail.com<br>
-         21 98823-3083
-    </p>
+    <p>Muito obrigado pelas respostas. Retornarei em breve com seu orçamento.</p>
+    <p>Nícolas Neves</p>
+    <p>Contatos:</p>
+    <p><a href="https://www.instagram.com/nicolasneves.dg/" target="_blank">Instagram</a></p>
+    <p>onicolasneves@gmail.com</p>
+    <p>21 98823-3083</p>
+    <button onclick="showNextBox('welcome-screen')">Voltar ao Início</button>
 </div>
+
+<!-- Botões de navegação -->
+<button class="nav-button up-button" onclick="showNextBox('box5')">↑</button>
+<button class="nav-button down-button" onclick="showNextBox('box2')">↓</button>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="text/javascript">
