@@ -440,20 +440,15 @@
     }
 
 function sendEmail() {
-    // Coleta dados de todas as etapas do formulário
-    const data = {};
-    const allStages = ["form-stage1", "form-stage2", "form-stage3", "form-stage4", "form-stage5"];
+        const currentForm = document.getElementById('form-stage1', 'form-stage2', 'form-stage3', 'form-stage4', 'form-stage5');
+        if (!currentForm.checkValidity()) {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+            return; // Impede o envio se o formulário não for válido
+        }
 
-    allStages.forEach(stageId => {
-        const form = document.getElementById(stageId);
-        new FormData(form).forEach((value, key) => data[key] = value);
-    });
-
-    // Envio de email com todos os dados coletados
-    emailjs.send("service_u2ejyh4", "template_oph1959", data)
-        .then(() => alert("Formulário enviado com sucesso!"))
-        .catch(error => alert("Erro ao enviar: " + JSON.stringify(error)));
-}
+        // Coleta dados do formulário
+        const formData = new FormData(currentForm);
+        const data = Object.fromEntries(formData.entries());
 
         // Enviar email
         emailjs.send('service_u2ejyh4', 'template_oph1959', data)
