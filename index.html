@@ -159,6 +159,14 @@
             width: 200px;
             z-index: -1;
         }
+
+        div#welcome-screen > h2 {
+        font-size: 35px;
+        }
+
+        div#welcome-screen > h2 > i {
+        font-weight: 200;
+        }
     </style>
 </head>
 <body>
@@ -172,8 +180,8 @@
 
 <!-- Tela inicial de boas-vindas -->
 <div id="welcome-screen" class="container visible">
-    <h2>Bem-vindo(a) ao Briefing de Identidade Visual!</h2>
-    <p>Antes de começarmos, precisarei de algumas informações para entender melhor suas necessidades.</p>
+    <h2>Opa, Nícolas aqui. <i>Tudo certo?</i></h2>
+    <p>Este é um <b>Briefing para criação de Identidade Visual</b>, que será usado para estudo e conceituação do seu projeto. A partir dele, poderei fazer um orçamento com mais clareza. Por favor, preencha todas as questões e adicione informações que julgue ser essencial.</p>
     <button onclick="showNextBox('box1')">Iniciar</button>
 </div>
 
@@ -265,13 +273,26 @@
 <div id="box4" class="container">
     <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
     <form id="form-stage4">
-        <label>Quais cores representam sua marca?</label>
-        <p class="subtext">Ex.: Azul, verde, vermelho.</p>
-        <textarea name="brand_colors" required></textarea>
+        <label>Existe alguma logo antiga? Se sim, quais motivos te levam a querer mudar?</label>
+        <p class="subtext">(Por favor, mande o logo antigo para o meu Whatsapp).</p>
+        <textarea name="old_logo_reason" required></textarea>
 
-        <label>Quais estilos visuais você prefere?</label>
-        <p class="subtext">Ex.: Moderno, clássico, minimalista.</p>
-        <textarea name="visual_styles" required></textarea>
+        <label>Qual o texto (nome da empresa, escrito corretamente) que deverá vir no logo?</label>
+        <textarea name="logo_text" required></textarea>
+
+        <label>Possui algum slogan? Qual? Deseja que o slogan seja agregado de alguma forma na marca?</label>
+        <textarea name="slogan" required></textarea>
+
+        <label>Possui preferência de cores a serem usadas na marca?</label>
+        <textarea name="preferred_colors" required></textarea>
+
+        <label>Possui algum estilo, que tenha preferência, ou algo que deseja que faça parte da composição?</label>
+        <p class="subtext">Me ajude a entender como sua logo deve se comportar visualmente.</p>
+        <textarea name="design_style" required></textarea>
+
+        <label>Onde a marca irá ser usada?</label>
+        <p class="subtext">Produtos impressos? (Uniforme, Embalagem, Papelaria, Banner, Pôster, etc); Online? (Websites, Blogs, Aplicativo, Mobile, Tablet, Redes Sociais, etc).</p>
+        <textarea name="usage_location" required></textarea>
 
         <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
     </form>
