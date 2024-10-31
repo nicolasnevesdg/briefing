@@ -258,60 +258,8 @@
 
 <!-- Quarta etapa -->
 <div id="box4" class="container">
-    <h2>Agora, apenas algumas informações para seu orçamento.</h2>
-    <form id="form-stage4">
-        <label>Precisa de um manual de uso da marca?</label>
-        <p class="subtext">Um manual é utilizado para regrar as aplicações da sua identidade visual no futuro, evitando a má utilização.</p>
-        <select name="brand_manual" required>
-            <option value="" disabled selected>Selecione</option>
-            <option value="sim">Sim</option>
-            <option value="nao">Não</option>
-        </select>
-
-        <label>Qual serviço adicional você gostaria que seja criado?</label>
-        <p class="subtext">Marque todos que forem desejados.</p>
-        <div>
-            <input type="checkbox" name="additional_services" value="cartao_visita" required> Cartão de visita<br>
-            <input type="checkbox" name="additional_services" value="papel_timbrado"> Papel timbrado A4<br>
-            <input type="checkbox" name="additional_services" value="pasta_a4"> Pasta A4<br>
-            <input type="checkbox" name="additional_services" value="perfil_facebook"> Perfil para Facebook<br>
-            <input type="checkbox" name="additional_services" value="perfil_twitter"> Perfil para Twitter<br>
-            <input type="checkbox" name="additional_services" value="perfil_instagram"> Perfil para Instagram<br>
-            <input type="checkbox" name="additional_services" value="envelope_a4"> Envelope A4<br>
-            <input type="checkbox" name="additional_services" value="envelope_carta"> Envelope carta<br>
-            <input type="checkbox" name="additional_services" value="modelo_apresentacao"> Modelo de apresentação A4<br>
-            <input type="checkbox" name="additional_services" value="capa_facebook"> Capa para Facebook<br>
-            <input type="checkbox" name="additional_services" value="capa_linkedin"> Capa para LinkedIn<br>
-            <input type="checkbox" name="additional_services" value="outro"> Outro<br>
-        </div>
-
-        <label>É a favor da utilização de fontes pagas?</label>
-        <p class="subtext">Utilização de tipografias pagas trazem maior originalidade para uma identidade visual, por terem melhor qualidade e maiores opções. Para utilizá-las, é necessário comprar o direito de uso comercial. O valor pode variar.</p>
-        <select name="paid_fonts" required>
-            <option value="" disabled selected>Selecione</option>
-            <option value="sim">Sim</option>
-            <option value="nao">Não</option>
-        </select>
-
-        <label>Possui alguma informação ou observação adicional que seja importante no projeto? Requerimento específico?</label>
-        <p class="subtext">Fique à vontade para contribuir com outras informações.</p>
-        <textarea name="additional_info"></textarea>
-
-        <label>Possui alguma condição/restrição que influencie no projeto?</label>
-        <textarea name="conditions_restrictions"></textarea>
-
-        <label>Qual o prazo disponível para criação do projeto?</label>
-        <p class="subtext">Urgência pode fazer com que haja um acréscimo no valor final.</p>
-        <textarea name="project_deadline" required></textarea>
-
-        <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
-    </form>
-</div>
-
-<!-- Quinta etapa -->
-<div id="box5" class="container">
     <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
-    <form id="form-stage5">
+    <form id="form-stage4">
         <label>Quais cores representam sua marca?</label>
         <p class="subtext">Ex.: Azul, verde, vermelho.</p>
         <textarea name="brand_colors" required></textarea>
@@ -319,6 +267,56 @@
         <label>Quais estilos visuais você prefere?</label>
         <p class="subtext">Ex.: Moderno, clássico, minimalista.</p>
         <textarea name="visual_styles" required></textarea>
+
+        <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Quinta etapa -->
+<div id="box5" class="container">
+    <h2>Agora, apenas algumas informações para seu orçamento.</h2>
+    <form id="form-stage5">
+        <label>Precisa de um manual de uso da marca?</label>
+        <p class="subtext">Um manual é utilizado para regrar as aplicações da sua identidade visual no futuro, evitando a má utilização.</p>
+        <div>
+            <label><input type="checkbox" name="brand_manual" value="Sim" required> Sim</label>
+            <label><input type="checkbox" name="brand_manual" value="Não" required> Não</label>
+        </div>
+
+        <label>Qual serviço adicional você gostaria que seja criado?</label>
+        <p class="subtext">Marque todos que forem desejados.</p>
+        <div>
+            <label><input type="checkbox" name="additional_services" value="Cartão de visita" required> Cartão de visita</label>
+            <label><input type="checkbox" name="additional_services" value="Papel timbrado A4" required> Papel timbrado A4</label>
+            <label><input type="checkbox" name="additional_services" value="Pasta A4" required> Pasta A4</label>
+            <label><input type="checkbox" name="additional_services" value="Perfil para facebook" required> Perfil para facebook</label>
+            <label><input type="checkbox" name="additional_services" value="Perfil para twitter" required> Perfil para twitter</label>
+            <label><input type="checkbox" name="additional_services" value="Perfil para instagram" required> Perfil para instagram</label>
+            <label><input type="checkbox" name="additional_services" value="Envelope A4" required> Envelope A4</label>
+            <label><input type="checkbox" name="additional_services" value="Envelope carta" required> Envelope carta</label>
+            <label><input type="checkbox" name="additional_services" value="Modelo de apresentação A4" required> Modelo de apresentação A4</label>
+            <label><input type="checkbox" name="additional_services" value="Capa para facebook" required> Capa para facebook</label>
+            <label><input type="checkbox" name="additional_services" value="Capa para linkedin" required> Capa para linkedin</label>
+            <label><input type="checkbox" name="additional_services" value="Outro" required> Outro</label>
+        </div>
+
+        <label>É a favor da utilização de fontes pagas?</label>
+        <p class="subtext">Utilização de tipografias pagas trazem maior originalidade para uma identidade visual, por terem melhor qualidade e maiores opções. Para utilizá-las, é necessário comprar o direito de uso comercial. O valor pode variar.</p>
+        <div>
+            <label><input type="checkbox" name="paid_fonts" value="Sim" required> Sim</label>
+            <label><input type="checkbox" name="paid_fonts" value="Não" required> Não</label>
+        </div>
+
+        <label>Possui alguma informação ou observação adicional que seja importante no projeto? Requerimento específico?</label>
+        <p class="subtext">Fique à vontade para contribuir com outras informações.</p>
+        <textarea name="additional_info" required></textarea>
+
+        <label>Possui alguma condição/restrição que influencie no projeto?</label>
+        <textarea name="project_restrictions" required></textarea>
+
+        <label>Qual o prazo disponível para criação do projeto?</label>
+        <p class="subtext">Urgência pode fazer com que haja um acréscimo no valor final.</p>
+        <textarea name="project_timeline" required></textarea>
 
         <button type="button" onclick="sendEmail()">Finalizar</button>
     </form>
@@ -409,33 +407,32 @@
     }
 
     function navigate(direction) {
-        // Atualiza a caixa atual
-        currentBox += direction;
-
-        // Garante que o índice atual fique dentro do intervalo
-        if (currentBox < 0) currentBox = 0;
-        if (currentBox >= boxes.length) currentBox = boxes.length - 1;
-
-        // Exibe a caixa correspondente
-        showNextBox(boxes[currentBox]);
+        const nextBoxId = boxes[currentBox + direction];
+        if (nextBoxId) {
+            showNextBox(nextBoxId);
+        }
     }
 
     function sendEmail() {
-        const allFormsData = new FormData();
+        const currentForm = document.getElementById('form-stage5');
+        if (!currentForm.checkValidity()) {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+            return; // Impede o envio se o formulário não for válido
+        }
 
-        boxes.slice(1, -1).forEach(box => {
-            const formData = new FormData(document.getElementById(`form-${box.split('box')[1]}`));
-            formData.forEach((value, key) => allFormsData.append(key, value));
-        });
+        // Coleta dados do formulário
+        const formData = new FormData(currentForm);
+        const data = Object.fromEntries(formData.entries());
 
-        // Envia o email
-        emailjs.sendForm('service_xxxxx', 'template_oph1959', allFormsData)
+        // Enviar email
+        emailjs.send('service_9w1rcnl', 'template_oph1959', data)
             .then(() => {
                 showNextBox('box6'); // Avança para a tela final
             }, (error) => {
-                alert('Erro ao enviar: ' + JSON.stringify(error));
+                console.error('Erro ao enviar email:', error);
             });
     }
 </script>
+
 </body>
 </html>
