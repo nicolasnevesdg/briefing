@@ -310,11 +310,11 @@
 
     function updateNavButtons() {
         // Atualiza o estado dos botões
-        upButton.disabled = currentBox === 0; // Botão de cima desativado na tela de boas-vindas
-        downButton.disabled = currentBox === boxes.length - 1; // Botão de baixo desativado na tela final
+        upButton.disabled = currentBox === 0;
+        downButton.disabled = currentBox === boxes.length - 1;
 
         // Verifica se estamos em uma etapa onde podemos avançar
-        if (currentBox > 0 && currentBox < boxes.length - 1) {
+        if (currentBox < boxes.length - 1) {
             const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
             downButton.disabled = !currentForm.checkValidity(); // Desabilita se o formulário não for válido
         }
@@ -327,8 +327,20 @@
     function showNextBox(nextBoxId) {
         const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
         
+        // Para telas que não são de formulário, permite avançar
+        if (currentBox === 0 || currentBox === boxes.length - 1) {
+            // Atualiza a caixa atual
+            document.querySelectorAll('.container').forEach(box => {
+                box.classList.remove('visible');
+            });
+            document.getElementById(nextBoxId).classList.add('visible');
+            currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
+            updateNavButtons(); // Atualiza o estado dos botões de navegação
+            return;
+        }
+
         // Verifica se o formulário atual é válido antes de avançar
-        if (currentForm && currentBox > 0 && currentBox < boxes.length - 1 && !currentForm.checkValidity()) {
+        if (currentForm && !currentForm.checkValidity()) {
             currentForm.reportValidity(); // Exibe mensagens de validação se necessário
             return; // Impede a navegação
         }
@@ -370,6 +382,9 @@
                 console.log('Erro:', error);
             });
     }
+
+    // Atualiza os botões na carga inicial
+    updateNavButtons();
 </script>
 
 </body>
