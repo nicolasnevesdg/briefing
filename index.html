@@ -378,14 +378,17 @@
     const downButton = document.querySelector('.down-button');
 
     function updateNavButtons() {
+        // Atualiza o estado dos botões
         upButton.disabled = currentBox === 0;
         downButton.disabled = currentBox === boxes.length - 1;
 
+        // Verifica se estamos em uma etapa onde podemos avançar
         if (currentBox < boxes.length - 1) {
             const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
-            downButton.disabled = !currentForm.checkValidity();
+            downButton.disabled = !currentForm.checkValidity(); // Desabilita se o formulário não for válido
         }
 
+        // Atualiza a aparência dos botões
         upButton.classList.toggle('active', !upButton.disabled);
         downButton.classList.toggle('active', !downButton.disabled);
     }
@@ -395,34 +398,38 @@
         if (currentForm.checkValidity()) {
             showNextBox('box2');
         } else {
-            currentForm.reportValidity();
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
         }
     }
 
     function showNextBox(nextBoxId) {
         const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
         
+        // Para telas que não são de formulário, permite avançar
         if (currentBox === 0 || currentBox === boxes.length - 1) {
+            // Atualiza a caixa atual
             document.querySelectorAll('.container').forEach(box => {
                 box.classList.remove('visible');
             });
             document.getElementById(nextBoxId).classList.add('visible');
-            currentBox = boxes.indexOf(nextBoxId);
-            updateNavButtons();
+            currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
+            updateNavButtons(); // Atualiza o estado dos botões de navegação
             return;
         }
 
+        // Verifica se o formulário atual é válido antes de avançar
         if (currentForm && !currentForm.checkValidity()) {
-            currentForm.reportValidity();
-            return;
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+            return; // Impede a navegação
         }
 
+        // Atualiza a caixa atual
         document.querySelectorAll('.container').forEach(box => {
             box.classList.remove('visible');
         });
         document.getElementById(nextBoxId).classList.add('visible');
-        currentBox = boxes.indexOf(nextBoxId);
-        updateNavButtons();
+        currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
+        updateNavButtons(); // Atualiza o estado dos botões de navegação
     }
 
     function navigate(direction) {
@@ -433,52 +440,25 @@
     }
 
     function sendEmail() {
-        // Coleta dados de todas as etapas
-        const data = {
-            company_name: document.querySelector('[name="company_name"]').value,
-            client_name: document.querySelector('[name="client_name"]').value,
-            client_email: document.querySelector('[name="client_email"]').value,
-            company_location: document.querySelector('[name="company_location"]').value,
-            social_media_website: document.querySelector('[name="social_media_website"]').value,
-            company_mission: document.querySelector('[name="company_mission"]').value,
-            target_audience: document.querySelector('[name="target_audience"]').value,
-            product_service: document.querySelector('[name="product_service"]').value,
-            product_service_time: document.querySelector('[name="product_service_time"]').value,
-            audience_market: document.querySelector('[name="audience_market"]').value,
-            product_service_adjectives: document.querySelector('[name="product_service_adjectives"]').value,
-            negative_adjectives: document.querySelector('[name="negative_adjectives"]').value,
-            main_competitors: document.querySelector('[name="main_competitors"]').value,
-            product_service_differential: document.querySelector('[name="product_service_differential"]').value,
-            brand_message: document.querySelector('[name="brand_message"]').value,
-            old_logo_reason: document.querySelector('[name="old_logo_reason"]').value,
-            logo_text: document.querySelector('[name="logo_text"]').value,
-            slogan: document.querySelector('[name="slogan"]').value,
-            preferred_colors: document.querySelector('[name="preferred_colors"]').value,
-            design_style: document.querySelector('[name="design_style"]').value,
-            usage_location: document.querySelector('[name="usage_location"]').value,
-            brand_manual: getCheckboxValue('brand_manual'),
-            additional_services: getCheckboxValues('additional_services'),
-            paid_fonts: getCheckboxValue('paid_fonts'),
-            additional_info: document.querySelector('[name="additional_info"]').value,
-            project_restrictions: document.querySelector('[name="project_restrictions"]').value,
-            project_timeline: document.querySelector('[name="project_timeline"]').value,
-        };
-
-        // Função para coletar valores de um checkbox
-        function getCheckboxValue(name) {
-            return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(checkbox => checkbox.value).join(', ');
+        const currentForm = document.getElementById('form-stage5');
+        if (!currentForm.checkValidity()) {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+            return; // Impede o envio se o formulário não for válido
         }
+
+        // Coleta dados do formulário
+        const formData = new FormData(currentForm);
+        const data = Object.fromEntries(formData.entries());
 
         // Enviar email
         emailjs.send('service_u2ejyh4', 'template_oph1959', data)
             .then(() => {
-                showNextBox('box6');
+                showNextBox('box6'); // Avança para a tela final
             }, (error) => {
                 console.error('Erro ao enviar email:', error);
             });
     }
 </script>
-
 
 </body>
 </html>
