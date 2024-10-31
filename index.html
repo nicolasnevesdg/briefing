@@ -122,13 +122,20 @@
         .nav-button {
             width: 40px;
             height: 40px;
-            background-color: #000;
+            background-color: #d3d3d3; /* Cor cinza claro */
             color: white;
             border: none;
-            cursor: pointer;
+            cursor: not-allowed; /* Cursor indicando que está inativo */
             position: fixed;
             bottom: 20px;
             z-index: 2;
+            opacity: 0.5; /* Opacidade para indicar que está inativo */
+        }
+
+        .nav-button.active {
+            background-color: #000; /* Cor ativa */
+            cursor: pointer; /* Cursor indicando que está ativo */
+            opacity: 1; /* Opacidade normal quando ativo */
         }
 
         .up-button {
@@ -285,8 +292,8 @@
 </div>
 
 <!-- Botões de navegação -->
-<button class="nav-button up-button" onclick="navigate(-1)">↑</button>
-<button class="nav-button down-button" onclick="navigate(1)">↓</button>
+<button class="nav-button up-button" onclick="navigate(-1)" disabled>↑</button>
+<button class="nav-button down-button" onclick="navigate(1)" disabled>↓</button>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="text/javascript">
@@ -297,17 +304,34 @@
     })();
 
     let currentBox = 0; // Inicializa na tela de boas-vindas
+    const boxes = [ 'box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'welcome-screen' ];
+    const upButton = document.querySelector('.up-button');
+    const downButton = document.querySelector('.down-button');
+
+    function updateNavButtons() {
+        upButton.disabled = currentBox === 0 || currentBox === boxes.length - 1;
+        downButton.disabled = currentBox === boxes.length - 1;
+        
+        // Verifica se estamos em uma etapa onde podemos avançar
+        if (currentBox < boxes.length - 1) {
+            const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
+            downButton.disabled = !currentForm.checkValidity(); // Desabilita se o formulário não for válido
+        }
+        
+        // Atualiza a aparência dos botões
+        upButton.classList.toggle('active', !upButton.disabled);
+        downButton.classList.toggle('active', !downButton.disabled);
+    }
 
     function showNextBox(nextBoxId) {
         document.querySelectorAll('.container').forEach(box => {
             box.classList.remove('visible');
         });
         document.getElementById(nextBoxId).classList.add('visible');
+        updateNavButtons(); // Atualiza o estado dos botões de navegação
     }
 
     function navigate(direction) {
-        const boxes = [ 'box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'welcome-screen' ];
-        
         // Atualiza a caixa atual
         currentBox += direction;
 
