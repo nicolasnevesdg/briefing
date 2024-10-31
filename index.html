@@ -258,15 +258,51 @@
 
 <!-- Quarta etapa -->
 <div id="box4" class="container">
-    <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
+    <h2>Agora, apenas algumas informações para seu orçamento.</h2>
     <form id="form-stage4">
-        <label>Quais cores representam sua marca?</label>
-        <p class="subtext">Ex.: Azul, verde, vermelho.</p>
-        <textarea name="brand_colors" required></textarea>
+        <label>Precisa de um manual de uso da marca?</label>
+        <p class="subtext">Um manual é utilizado para regrar as aplicações da sua identidade visual no futuro, evitando a má utilização.</p>
+        <select name="brand_manual" required>
+            <option value="" disabled selected>Selecione</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Não</option>
+        </select>
 
-        <label>Quais estilos visuais você prefere?</label>
-        <p class="subtext">Ex.: Moderno, clássico, minimalista.</p>
-        <textarea name="visual_styles" required></textarea>
+        <label>Qual serviço adicional você gostaria que seja criado?</label>
+        <p class="subtext">Marque todos que forem desejados.</p>
+        <div>
+            <input type="checkbox" name="additional_services" value="cartao_visita" required> Cartão de visita<br>
+            <input type="checkbox" name="additional_services" value="papel_timbrado"> Papel timbrado A4<br>
+            <input type="checkbox" name="additional_services" value="pasta_a4"> Pasta A4<br>
+            <input type="checkbox" name="additional_services" value="perfil_facebook"> Perfil para Facebook<br>
+            <input type="checkbox" name="additional_services" value="perfil_twitter"> Perfil para Twitter<br>
+            <input type="checkbox" name="additional_services" value="perfil_instagram"> Perfil para Instagram<br>
+            <input type="checkbox" name="additional_services" value="envelope_a4"> Envelope A4<br>
+            <input type="checkbox" name="additional_services" value="envelope_carta"> Envelope carta<br>
+            <input type="checkbox" name="additional_services" value="modelo_apresentacao"> Modelo de apresentação A4<br>
+            <input type="checkbox" name="additional_services" value="capa_facebook"> Capa para Facebook<br>
+            <input type="checkbox" name="additional_services" value="capa_linkedin"> Capa para LinkedIn<br>
+            <input type="checkbox" name="additional_services" value="outro"> Outro<br>
+        </div>
+
+        <label>É a favor da utilização de fontes pagas?</label>
+        <p class="subtext">Utilização de tipografias pagas trazem maior originalidade para uma identidade visual, por terem melhor qualidade e maiores opções. Para utilizá-las, é necessário comprar o direito de uso comercial. O valor pode variar.</p>
+        <select name="paid_fonts" required>
+            <option value="" disabled selected>Selecione</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Não</option>
+        </select>
+
+        <label>Possui alguma informação ou observação adicional que seja importante no projeto? Requerimento específico?</label>
+        <p class="subtext">Fique à vontade para contribuir com outras informações.</p>
+        <textarea name="additional_info"></textarea>
+
+        <label>Possui alguma condição/restrição que influencie no projeto?</label>
+        <textarea name="conditions_restrictions"></textarea>
+
+        <label>Qual o prazo disponível para criação do projeto?</label>
+        <p class="subtext">Urgência pode fazer com que haja um acréscimo no valor final.</p>
+        <textarea name="project_deadline" required></textarea>
 
         <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
     </form>
@@ -274,15 +310,15 @@
 
 <!-- Quinta etapa -->
 <div id="box5" class="container">
-    <h2>Agora, apenas algumas informações para seu orçamento.</h2>
+    <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
     <form id="form-stage5">
-        <label>Qual é o orçamento disponível para este projeto?</label>
-        <p class="subtext">Digite o valor disponível.</p>
-        <textarea name="project_budget" required></textarea>
+        <label>Quais cores representam sua marca?</label>
+        <p class="subtext">Ex.: Azul, verde, vermelho.</p>
+        <textarea name="brand_colors" required></textarea>
 
-        <label>Qual o prazo para conclusão?</label>
-        <p class="subtext">Informe o prazo desejado.</p>
-        <textarea name="completion_time" required></textarea>
+        <label>Quais estilos visuais você prefere?</label>
+        <p class="subtext">Ex.: Moderno, clássico, minimalista.</p>
+        <textarea name="visual_styles" required></textarea>
 
         <button type="button" onclick="sendEmail()">Finalizar</button>
     </form>
@@ -387,23 +423,19 @@
     function sendEmail() {
         const allFormsData = new FormData();
 
-        document.querySelectorAll('form').forEach(form => {
-            new FormData(form).forEach((value, key) => allFormsData.append(key, value));
+        boxes.slice(1, -1).forEach(box => {
+            const formData = new FormData(document.getElementById(`form-${box.split('box')[1]}`));
+            formData.forEach((value, key) => allFormsData.append(key, value));
         });
 
-        emailjs.sendForm('service_u2ejyh4', 'template_oph1959', allFormsData)
-            .then(function() {
-                alert("Mensagem enviada com sucesso!");
-                showNextBox('box6');
-            }, function(error) {
-                alert("Falha ao enviar a mensagem. Tente novamente.");
-                console.log('Erro:', error);
+        // Envia o email
+        emailjs.sendForm('service_xxxxx', 'template_oph1959', allFormsData)
+            .then(() => {
+                showNextBox('box6'); // Avança para a tela final
+            }, (error) => {
+                alert('Erro ao enviar: ' + JSON.stringify(error));
             });
     }
-
-    // Atualiza os botões na carga inicial
-    updateNavButtons();
 </script>
-
 </body>
 </html>
