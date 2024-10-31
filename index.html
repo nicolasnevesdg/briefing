@@ -305,13 +305,12 @@
 
     function updateNavButtons() {
         // Atualiza o estado dos botões
-        upButton.disabled = currentBox === 0;
+        upButton.disabled = currentBox === 0; // O botão de voltar só está habilitado se não estiver na primeira caixa
 
         // Verifica se estamos em uma etapa onde podemos avançar
-        if (currentBox < boxes.length - 1) {
-            const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
-            upButton.disabled = !currentForm.checkValidity(); // Desabilita se o formulário não for válido
-        }
+        const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
+        const nextButton = currentBox < boxes.length - 1; // Verifica se não estamos na última etapa
+        upButton.disabled = !currentForm.checkValidity() && currentBox < boxes.length - 1; // Desabilita se o formulário não for válido e não estivermos na última etapa
 
         // Atualiza a aparência dos botões
         upButton.classList.toggle('active', !upButton.disabled);
