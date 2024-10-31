@@ -440,23 +440,14 @@
     }
 
 function sendEmail() {
-    const allStages = ["form-stage1", "form-stage2", "form-stage3", "form-stage4", "form-stage5"];
+    // Coleta dados de todas as etapas do formulário
     const data = {};
+    const allStages = ["form-stage1", "form-stage2", "form-stage3", "form-stage4", "form-stage5"];
 
-    // Loop para percorrer todas as etapas
-    for (let i = 0; i < allStages.length; i++) {
-        const currentForm = document.getElementById(allStages[i]);
-        
-        // Verifica a validade do formulário atual
-        if (!currentForm.checkValidity()) {
-            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
-            return; // Impede o envio se o formulário não for válido
-        }
-
-        // Coleta dados do formulário atual
-        const formData = new FormData(currentForm);
-        formData.forEach((value, key) => data[key] = value);
-    }
+    allStages.forEach(stageId => {
+        const form = document.getElementById(stageId);
+        new FormData(form).forEach((value, key) => data[key] = value);
+    });
 
     // Envio de email com todos os dados coletados
     emailjs.send("service_u2ejyh4", "template_oph1959", data)
