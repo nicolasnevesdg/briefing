@@ -30,7 +30,7 @@
             top: 50%;
             width: 300px;
             transform: translateY(-50%);
-            opacity: 0.3;
+            opacity: 1;
             z-index: -1;
         }
 
@@ -45,16 +45,16 @@
         .container {
             max-width: 600px;
             width: 100%;
-            max-height: 60vh; /* Limitar altura do container */
-            padding: 100px; /* Padding de 100px */
+            max-height: 50vh;
+            padding: 80px 100px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 0px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: left;
             background-color: white;
             display: none;
             z-index: 1;
-            overflow-y: auto; /* Adicionar rolagem vertical */
+            overflow-y: auto;
         }
 
         .container.visible {
@@ -63,7 +63,7 @@
 
         h2 {
             font-weight: 700;
-            margin: 10px 0;
+            margin: 0px 0px 40px 0px;
             text-align: center;
         }
 
@@ -75,33 +75,40 @@
         input[type="text"], input[type="email"], textarea {
             width: 100%;
             padding: 8px;
-            margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            border-radius: 0px;
             font-weight: 400;
+            margin: 8px 0 30px 0;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+            outline: none;
+            border-bottom: 1px solid black;
         }
 
         button {
-            padding: 10px;
-            width: 100%;
+            padding: 10px 30px;
+            width: auto;
             border: none;
-            background-color: #007bff;
+            background-color: #000;
             color: white;
             font-size: 16px;
             cursor: pointer;
-            border-radius: 4px;
-            margin-top: 10px;
+            border-radius: 0px;
             font-weight: 600;
+            display: block;
+            margin: 0 auto;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #333333;
         }
 
         /* Imagem fixa na parte inferior */
         .bottom-image {
             position: fixed;
-            bottom: 100px;
+            bottom: 8%;
             width: 200px;
             z-index: -1;
         }
@@ -238,7 +245,7 @@
 <script type="text/javascript">
     (function() {
         emailjs.init({
-            publicKey: "30ExYEmkHsvuz-0RK", // Substitua pela sua chave pública
+            publicKey: "30ExYEmkHsvuz-0RK",
         });
     })();
 
@@ -252,16 +259,14 @@
     function sendEmail() {
         const allFormsData = new FormData();
         
-        // Coletar dados de todas as etapas do formulário
         document.querySelectorAll('form').forEach(form => {
             new FormData(form).forEach((value, key) => allFormsData.append(key, value));
         });
 
-        // Enviar os dados usando EmailJS
         emailjs.sendForm('service_u2ejyh4', 'template_oph1959', allFormsData)
             .then(function() {
                 alert("Mensagem enviada com sucesso!");
-                showNextBox('box6'); // Mostrar tela final
+                showNextBox('box6');
             }, function(error) {
                 alert("Falha ao enviar a mensagem. Tente novamente.");
                 console.log('Erro:', error);
