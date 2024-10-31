@@ -132,11 +132,11 @@
         }
 
         .up-button {
-            left: 20px;
+            right: 70px; /* Ajustado para o canto inferior direito */
         }
 
         .down-button {
-            left: 70px;
+            right: 20px; /* Ajustado para o canto inferior direito */
         }
 
         /* Imagem fixa na parte inferior */
@@ -275,8 +275,8 @@
 </div>
 
 <!-- Botões de navegação -->
-<button class="nav-button up-button" onclick="showNextBox('box5')">↑</button>
-<button class="nav-button down-button" onclick="showNextBox('box2')">↓</button>
+<button class="nav-button up-button" onclick="navigate(-1)">↑</button>
+<button class="nav-button down-button" onclick="navigate(1)">↓</button>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="text/javascript">
@@ -286,11 +286,27 @@
         });
     })();
 
+    let currentBox = 0; // Inicializa na tela de boas-vindas
+
     function showNextBox(nextBoxId) {
         document.querySelectorAll('.container').forEach(box => {
             box.classList.remove('visible');
         });
         document.getElementById(nextBoxId).classList.add('visible');
+    }
+
+    function navigate(direction) {
+        const boxes = [ 'box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'welcome-screen' ];
+        
+        // Atualiza a caixa atual
+        currentBox += direction;
+
+        // Garante que o índice atual fique dentro do intervalo
+        if (currentBox < 0) currentBox = 0;
+        if (currentBox >= boxes.length) currentBox = boxes.length - 1;
+
+        // Exibe a caixa correspondente
+        showNextBox(boxes[currentBox]);
     }
 
     function sendEmail() {
