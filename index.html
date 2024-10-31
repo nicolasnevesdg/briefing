@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 
     <style>
-        /* Estilos CSS */
         body {
             font-family: 'Space Grotesk', sans-serif;
             display: flex;
@@ -25,12 +24,13 @@
             position: relative;
         }
 
+        /* Imagens de fundo */
         .background-image {
             position: fixed;
             top: 50%;
             width: 300px;
             transform: translateY(-50%);
-            opacity: 1;
+            opacity: 1; /* Mudado para 1 */
             z-index: -1;
         }
 
@@ -73,18 +73,20 @@
             display: block;
         }
 
-        form > div {
-            margin-bottom: 30px;
+        form#form-stage5 > div {
+        margin-bottom: 30px;
         }
         
+        /* Estilo para perguntas */
         label {
             font-weight: 500;
         }
 
+        /* Estilo para subtextos */
         .subtext {
             font-weight: 100;
             font-style: italic;
-            margin: 0 0 8px 0;
+            margin: 0 0 8px 0; /* Adicionando margens para espaçamento */
             color: #555;
         }
 
@@ -121,34 +123,36 @@
             background-color: #333333;
         }
 
+        /* Estilo para os botões de navegação */
         .nav-button {
             width: 40px;
             height: 40px;
-            background-color: #d3d3d3;
+            background-color: #d3d3d3; /* Cor cinza claro */
             color: white;
             border: none;
-            cursor: not-allowed;
+            cursor: not-allowed; /* Cursor indicando que está inativo */
             position: fixed;
             bottom: 20px;
             z-index: 2;
-            opacity: 0.5;
-            padding: unset;
+            opacity: 0.5; /* Opacidade para indicar que está inativo */
+            padding: unset; /* Removendo padding */
         }
 
         .nav-button.active {
-            background-color: #000;
-            cursor: pointer;
-            opacity: 1;
+            background-color: #000; /* Cor ativa */
+            cursor: pointer; /* Cursor indicando que está ativo */
+            opacity: 1; /* Opacidade normal quando ativo */
         }
 
         .up-button {
-            right: 70px;
+            right: 70px; /* Ajustado para o canto inferior direito */
         }
 
         .down-button {
-            right: 20px;
+            right: 20px; /* Ajustado para o canto inferior direito */
         }
 
+        /* Imagem fixa na parte inferior */
         .bottom-image {
             position: fixed;
             bottom: 8%;
@@ -157,11 +161,11 @@
         }
 
         div#welcome-screen > h2 {
-            font-size: 35px;
+        font-size: 35px;
         }
 
         div#welcome-screen > h2 > i {
-            font-weight: 200;
+        font-weight: 200;
         }
     </style>
 </head>
@@ -186,33 +190,275 @@
     <h2>Primeiro, preciso de algumas informações suas e de sua empresa.</h2>
     <form id="form-stage1">
         <label>Nome da Empresa</label>
+        <p class="subtext">Digite o nome completo da sua empresa.</p>
         <input type="text" name="company_name" required>
-        <!-- Outras perguntas... -->
+
+        <label>Nome do Cliente</label>
+        <p class="subtext">Digite seu nome completo.</p>
+        <input type="text" name="client_name" required>
+
+        <label>Email do Cliente</label>
+        <p class="subtext">Digite um email válido.</p>
+        <input type="email" name="client_email" required>
+
+        <label>Onde a sua empresa atua?</label>
+        <p class="subtext">(País, cidade, região ou apenas online)</p>
+        <input type="text" name="company_location" required>
+
+        <label>A empresa tem website ou rede social?</label>
+        <p class="subtext">Deixe o @ da rede social e/ou endereço do website.</p>
+        <input type="text" name="social_media_website" required>
+
+        <button type="button" id="next-stage1" onclick="checkStage1()">Próxima Etapa</button>
     </form>
-    <button type="button" onclick="showNextBox('box2')">Próxima Etapa</button>
 </div>
 
-<!-- Outras etapas de perguntas semelhantes -->
+<!-- Segunda etapa -->
+<div id="box2" class="container">
+    <h2>Agora eu quero saber o Propósito da sua empresa.</h2>
+    <form id="form-stage2">
+        <label>Qual é a missão da sua empresa?</label>
+        <p class="subtext">Descreva o propósito da sua empresa.</p>
+        <textarea name="company_mission" required></textarea>
 
-<!-- Script JavaScript -->
+        <label>Qual o público-alvo?</label>
+        <p class="subtext">Descreva o público que você deseja atingir.</p>
+        <textarea name="target_audience" required></textarea>
+
+        <button type="button" onclick="showNextBox('box3')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Terceira etapa -->
+<div id="box3" class="container">
+    <h2>Agora, me fale mais sobre o serviço prestado.</h2>
+    <form id="form-stage3">
+        <label>Qual é o produto ou serviço a ser desenvolvido?</label>
+        <p class="subtext">Ex.: Produtos de beleza, rede de cafeteria.</p>
+        <textarea name="product_service" required></textarea>
+
+        <label>É um produto/serviço novo? Há quanto tempo está no mercado?</label>
+        <p class="subtext">Ex.: Produtos de beleza, rede de cafeteria.</p>
+        <textarea name="product_service_time" required></textarea>
+
+        <label>Qual o público-alvo e o mercado-alvo?</label>
+        <p class="subtext">Faixa etária; sexo; classe social; ocupação profissional de seus consumidores e também do mercado.</p>
+        <textarea name="audience_market" required></textarea>
+
+        <label>Cite adjetivos para seu produto/serviço.</label>
+        <p class="subtext">Ex.: Moderno, infantil, feminino.</p>
+        <textarea name="product_service_adjectives" required></textarea>
+
+        <label>Cite adjetivos que NÃO condizem com seu produto/serviço.</label>
+        <p class="subtext">Ex.: Colorida, conservadora, etc.</p>
+        <textarea name="negative_adjectives" required></textarea>
+
+        <label>Quais seus principais concorrentes?</label>
+        <p class="subtext">Concorrente diretos e indiretos; Se possível, forneça URL's (Links) dos concorrentes.</p>
+        <textarea name="main_competitors" required></textarea>
+
+        <label>Qual o diferencial do seu produto/serviço em relação aos seus concorrentes?</label>
+        <p class="subtext">Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
+        <textarea name="product_service_differential" required></textarea>
+
+        <label>Qual mensagem sua marca deve transmitir aos seus consumidores?</label>
+        <p class="subtext">Ex.: Temos o serviço mais seguro e que, ao mesmo tempo, irá facilitar seu dia-a-dia.</p>
+        <textarea name="brand_message" required></textarea>
+
+        <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Quarta etapa -->
+<div id="box4" class="container">
+    <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
+    <form id="form-stage4">
+        <label>Existe alguma logo antiga? Se sim, quais motivos te levam a querer mudar?</label>
+        <p class="subtext">(Por favor, mande o logo antigo para o meu Whatsapp).</p>
+        <textarea name="old_logo_reason" required></textarea>
+
+        <label>Qual o texto (nome da empresa, escrito corretamente) que deverá vir no logo?</label>
+        <textarea name="logo_text" required></textarea>
+
+        <label>Possui algum slogan? Qual? Deseja que o slogan seja agregado de alguma forma na marca?</label>
+        <textarea name="slogan" required></textarea>
+
+        <label>Possui preferência de cores a serem usadas na marca?</label>
+        <textarea name="preferred_colors" required></textarea>
+
+        <label>Possui algum estilo, que tenha preferência, ou algo que deseja que faça parte da composição?</label>
+        <p class="subtext">Me ajude a entender como sua logo deve se comportar visualmente.</p>
+        <textarea name="design_style" required></textarea>
+
+        <label>Onde a marca irá ser usada?</label>
+        <p class="subtext">Produtos impressos? (Uniforme, Embalagem, Papelaria, Banner, Pôster, etc); Online? (Websites, Blogs, Aplicativo, Mobile, Tablet, Redes Sociais, etc).</p>
+        <textarea name="usage_location" required></textarea>
+
+        <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Quinta etapa -->
+<div id="box5" class="container">
+    <h2>Agora, apenas algumas informações para seu orçamento.</h2>
+    <form id="form-stage5">
+        <label>Precisa de um manual de uso da marca?</label>
+        <p class="subtext">Um manual é utilizado para regrar as aplicações da sua identidade visual no futuro, evitando a má utilização.</p>
+        <div>
+            <label><input type="checkbox" name="brand_manual" value="Sim" > Sim</label>
+            <label><input type="checkbox" name="brand_manual" value="Não" > Não</label>
+        </div>
+
+        <label>Qual serviço adicional você gostaria que seja criado?</label>
+        <p class="subtext">Marque todos que forem desejados.</p>
+        <div>
+            <label><input type="checkbox" name="additional_services" value="Cartão de visita" > Cartão de visita</label>
+            <label><input type="checkbox" name="additional_services" value="Papel timbrado A4" > Papel timbrado A4</label>
+            <label><input type="checkbox" name="additional_services" value="Pasta A4" > Pasta A4</label>
+            <label><input type="checkbox" name="additional_services" value="Perfil para facebook" > Perfil para facebook</label>
+            <label><input type="checkbox" name="additional_services" value="Perfil para twitter" > Perfil para twitter</label>
+            <label><input type="checkbox" name="additional_services" value="Perfil para instagram" > Perfil para instagram</label>
+            <label><input type="checkbox" name="additional_services" value="Envelope A4" > Envelope A4</label>
+            <label><input type="checkbox" name="additional_services" value="Envelope carta" > Envelope carta</label>
+            <label><input type="checkbox" name="additional_services" value="Modelo de apresentação A4" > Modelo de apresentação A4</label>
+            <label><input type="checkbox" name="additional_services" value="Capa para facebook" > Capa para facebook</label>
+            <label><input type="checkbox" name="additional_services" value="Capa para linkedin" > Capa para linkedin</label>
+            <label><input type="checkbox" name="additional_services" value="Outro" > Outro</label>
+        </div>
+
+        <label>É a favor da utilização de fontes pagas?</label>
+        <p class="subtext">Utilização de tipografias pagas trazem maior originalidade para uma identidade visual, por terem melhor qualidade e maiores opções. Para utilizá-las, é necessário comprar o direito de uso comercial. O valor pode variar.</p>
+        <div>
+            <label><input type="checkbox" name="paid_fonts" value="Sim" > Sim</label>
+            <label><input type="checkbox" name="paid_fonts" value="Não" > Não</label>
+        </div>
+
+        <label>Possui alguma informação ou observação adicional que seja importante no projeto? Requerimento específico?</label>
+        <p class="subtext">Fique à vontade para contribuir com outras informações.</p>
+        <textarea name="additional_info"></textarea>
+
+        <label>Possui alguma condição/restrição que influencie no projeto?</label>
+        <textarea name="project_restrictions"></textarea>
+
+        <label>Qual o prazo disponível para criação do projeto?</label>
+        <p class="subtext">Urgência pode fazer com que haja um acréscimo no valor final.</p>
+        <textarea name="project_timeline" required></textarea>
+
+        <button type="button" onclick="sendEmail()">Finalizar</button>
+    </form>
+</div>
+
+<!-- Tela final -->
+<div id="box6" class="container">
+    <h2>Uffa! Acabamos!</h2>
+    <p>Muito obrigado pelas respostas. Retornarei em breve com seu orçamento.</p>
+    <p>Nícolas Neves</p>
+    <p>Contatos:</p>
+    <p><a href="https://www.instagram.com/nicolasneves.dg/" target="_blank">Instagram</a></p>
+    <p>onicolasneves@gmail.com</p>
+    <p>21 98823-3083</p>
+    <button onclick="showNextBox('welcome-screen')">Voltar ao Início</button>
+</div>
+
+<!-- Botões de navegação -->
+<button class="nav-button up-button" onclick="navigate(-1)" disabled>↑</button>
+<button class="nav-button down-button" onclick="navigate(1)" disabled>↓</button>
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="text/javascript">
-    emailjs.init("30ExYEmkHsvuz-0RK");
+    (function() {
+        emailjs.init({
+            publicKey: "30ExYEmkHsvuz-0RK",
+        });
+    })();
+
+    let currentBox = 0; // Inicializa na tela de boas-vindas
+    const boxes = ['box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'welcome-screen'];
+    const upButton = document.querySelector('.up-button');
+    const downButton = document.querySelector('.down-button');
+
+    function updateNavButtons() {
+        // Atualiza o estado dos botões
+        upButton.disabled = currentBox === 0;
+        downButton.disabled = currentBox === boxes.length - 1;
+
+        // Verifica se estamos em uma etapa onde podemos avançar
+        if (currentBox < boxes.length - 1) {
+            const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
+            downButton.disabled = !currentForm.checkValidity(); // Desabilita se o formulário não for válido
+        }
+
+        // Atualiza a aparência dos botões
+        upButton.classList.toggle('active', !upButton.disabled);
+        downButton.classList.toggle('active', !downButton.disabled);
+    }
+
+    function checkStage1() {
+        const currentForm = document.getElementById('form-stage1');
+        if (currentForm.checkValidity()) {
+            showNextBox('box2');
+        } else {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+        }
+    }
+
+    function showNextBox(nextBoxId) {
+        const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
+        
+        // Para telas que não são de formulário, permite avançar
+        if (currentBox === 0 || currentBox === boxes.length - 1) {
+            // Atualiza a caixa atual
+            document.querySelectorAll('.container').forEach(box => {
+                box.classList.remove('visible');
+            });
+            document.getElementById(nextBoxId).classList.add('visible');
+            currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
+            updateNavButtons(); // Atualiza o estado dos botões de navegação
+            return;
+        }
+
+        // Verifica se o formulário atual é válido antes de avançar
+        if (currentForm && !currentForm.checkValidity()) {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+            return; // Impede a navegação
+        }
+
+        // Atualiza a caixa atual
+        document.querySelectorAll('.container').forEach(box => {
+            box.classList.remove('visible');
+        });
+        document.getElementById(nextBoxId).classList.add('visible');
+        currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
+        updateNavButtons(); // Atualiza o estado dos botões de navegação
+    }
+
+    function navigate(direction) {
+        const nextBoxId = boxes[currentBox + direction];
+        if (nextBoxId) {
+            showNextBox(nextBoxId);
+        }
+    }
 
     function sendEmail() {
-        // Coletando dados de todos os formulários
-        const data = {};
-        const allStages = ["form-stage1", "form-stage2", "form-stage3", "form-stage4", "form-stage5"];
+        const currentForm = document.getElementById('form-stage5');
+        if (!currentForm.checkValidity()) {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+            return; // Impede o envio se o formulário não for válido
+        }
 
-        allStages.forEach(stageId => {
-            const form = document.getElementById(stageId);
-            new FormData(form).forEach((value, key) => data[key] = value);
-        });
+        // Coleta dados do formulário
+        const formData = new FormData(currentForm);
+        const data = Object.fromEntries(formData.entries());
 
-        emailjs.send("service_u2ejyh4", "template_oph1959", data)
-            .then(() => alert("Formulário enviado com sucesso!"))
-            .catch(error => alert("Erro ao enviar: " + JSON.stringify(error)));
+        // Enviar email
+        emailjs.send('service_u2ejyh4', 'template_oph1959', data)
+            .then(() => {
+                showNextBox('box6'); // Avança para a tela final
+            }, (error) => {
+                console.error('Erro ao enviar email:', error);
+            });
     }
 </script>
+
 </body>
 </html>
