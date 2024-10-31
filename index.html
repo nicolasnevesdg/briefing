@@ -81,7 +81,7 @@
         .subtext {
             font-weight: 100;
             font-style: italic;
-            margin: 0;
+            margin: 0 0 8px 0; /* Adicionando margens para espaçamento */
             color: #555;
         }
 
@@ -169,12 +169,15 @@
     <h2>Primeiro, preciso de algumas informações suas e de sua empresa.</h2>
     <form id="form-stage1">
         <label>Nome da Empresa</label>
+        <p class="subtext">Digite o nome completo da sua empresa.</p>
         <input type="text" name="company_name" required>
 
         <label>Nome do Cliente</label>
+        <p class="subtext">Digite seu nome completo.</p>
         <input type="text" name="client_name" required>
 
         <label>Email do Cliente</label>
+        <p class="subtext">Digite um email válido.</p>
         <input type="email" name="client_email" required>
 
         <button type="button" onclick="showNextBox('box2')">Próxima Etapa</button>
@@ -186,9 +189,11 @@
     <h2>Agora eu quero saber o Propósito da sua empresa.</h2>
     <form id="form-stage2">
         <label>Qual é a missão da sua empresa?</label>
+        <p class="subtext">Descreva o propósito da sua empresa.</p>
         <textarea name="company_mission" required></textarea>
 
         <label>Qual o público-alvo?</label>
+        <p class="subtext">Descreva o público que você deseja atingir.</p>
         <textarea name="target_audience" required></textarea>
 
         <button type="button" onclick="showNextBox('box3')">Próxima Etapa</button>
@@ -200,35 +205,36 @@
     <h2>Agora, me fale mais sobre o serviço prestado.</h2>
     <form id="form-stage3">
         <label>Qual é o produto ou serviço a ser desenvolvido?</label>
-        <textarea name="product_service" required></textarea>
         <p class="subtext">ex.: Produtos de beleza, rede de cafeteria</p>
+        <textarea name="product_service" required></textarea>
 
         <label>É um produto/serviço novo? Há quanto tempo está no mercado?</label>
+        <p class="subtext">Informe se é novo e o tempo de mercado.</p>
         <textarea name="product_service_time" required></textarea>
 
         <label>Qual o público-alvo e o mercado-alvo?</label>
-        <textarea name="audience_market" required></textarea>
         <p class="subtext">Faixa etária; sexo; classe social; ocupação profissional de seus consumidores e também do mercado.</p>
+        <textarea name="audience_market" required></textarea>
 
         <label>Cite adjetivos para seu produto/serviço.</label>
-        <textarea name="product_service_adjectives" required></textarea>
         <p class="subtext">Ex.: Moderno, infantil, feminino.</p>
+        <textarea name="product_service_adjectives" required></textarea>
 
         <label>Cite adjetivos que NÃO condizem com seu produto/serviço.</label>
-        <textarea name="not_product_service_adjectives" required></textarea>
         <p class="subtext">Ex.: Colorida, conservadora, etc.</p>
+        <textarea name="not_product_service_adjectives" required></textarea>
 
         <label>Quais seus principais concorrentes?</label>
-        <textarea name="main_competitors" required></textarea>
         <p class="subtext">Concorrente diretos e indiretos; Se possível, forneça URL's (Links) dos concorrentes.</p>
+        <textarea name="main_competitors" required></textarea>
 
         <label>Qual o diferencial do seu produto/serviço em relação aos seus concorrentes?</label>
-        <textarea name="product_service_difference" required></textarea>
         <p class="subtext">Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
+        <textarea name="product_service_difference" required></textarea>
 
         <label>Qual mensagem sua marca deve transmitir aos seus consumidores?</label>
-        <textarea name="brand_message" required></textarea>
         <p class="subtext">Ex.: Temos o serviço mais seguro e que, ao mesmo tempo, irá facilitar seu dia-a-dia.</p>
+        <textarea name="brand_message" required></textarea>
 
         <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
     </form>
@@ -239,10 +245,12 @@
     <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
     <form id="form-stage4">
         <label>Quais cores representam sua marca?</label>
+        <p class="subtext">Ex.: Azul, verde, vermelho.</p>
         <textarea name="brand_colors" required></textarea>
 
-        <label>Possui algum símbolo ou logotipo em mente?</label>
-        <textarea name="brand_logo_ideas" required></textarea>
+        <label>Quais estilos visuais você prefere?</label>
+        <p class="subtext">Ex.: Moderno, clássico, minimalista.</p>
+        <textarea name="visual_styles" required></textarea>
 
         <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
     </form>
@@ -253,9 +261,11 @@
     <h2>Agora, apenas algumas informações para seu orçamento.</h2>
     <form id="form-stage5">
         <label>Qual é o orçamento disponível para este projeto?</label>
+        <p class="subtext">Digite o valor disponível.</p>
         <textarea name="project_budget" required></textarea>
 
         <label>Qual o prazo para conclusão?</label>
+        <p class="subtext">Informe o prazo desejado.</p>
         <textarea name="completion_time" required></textarea>
 
         <button type="button" onclick="sendEmail()">Finalizar</button>
