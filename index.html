@@ -76,7 +76,16 @@
         form#form-stage5 > div {
         margin-bottom: 30px;
         }
+		
+		form#form-stage2 > div {
+        margin-bottom: 40px;
+        }
         
+		form#form-stage2 > div > label {
+		padding-top: 15px;
+		font-weight: 400;
+		}
+		
         /* Estilo para perguntas */
         label {
             font-weight: 500;
@@ -164,6 +173,22 @@
         font-size: 35px;
         }
 
+		div#box6 > h2 {
+        font-size: 35px;
+        }
+
+		div#box6 > p {
+			margin: 0;
+		}
+		
+		div#box6 > p > a {
+			color: #333;
+		}		
+
+		div#box6 > button {
+			margin-top: 30px;
+		}
+
         div#welcome-screen > h2 > i {
         font-weight: 200;
         }
@@ -214,20 +239,184 @@
 </div>
 
 <!-- Segunda etapa -->
+<!-- Segunda etapa -->
 <div id="box2" class="container">
-    <h2>Agora eu quero saber o Propósito da sua empresa.</h2>
+    <h2>Agora eu quero saber mais sobre a percepção da sua Marca.</h2>
     <form id="form-stage2">
-        <label>Qual é a missão da sua empresa?</label>
-        <p class="subtext">Descreva o propósito da sua empresa.</p>
-        <textarea name="company_mission" required></textarea>
 
-        <label>Qual o público-alvo?</label>
-        <p class="subtext">Descreva o público que você deseja atingir.</p>
-        <textarea name="target_audience" required></textarea>
+        <!-- Pergunta 1 -->
+        <label>Quero que meus clientes imediatamente vejam na minha Marca...</label>
+        <div>
+            <label><input type="radio" name="brand_impression" value="Beleza e elegância" required> Beleza e elegância</label>
+            <label><input type="radio" name="brand_impression" value="Alegria, diversão e humor"> Alegria, diversão e humor</label>
+            <label><input type="radio" name="brand_impression" value="Cuidado, empatia e acolhimento"> Cuidado, empatia e acolhimento</label>
+            <label><input type="radio" name="brand_impression" value="Invenção, criatividade e curiosidade"> Invenção, criatividade e curiosidade</label>
+            <label><input type="radio" name="brand_impression" value="Sofisticação, poder e sucesso"> Sofisticação, poder e sucesso</label>
+            <label><input type="radio" name="brand_impression" value="Conexão, comunidade e amizade"> Conexão, comunidade e amizade</label>
+            <label><input type="radio" name="brand_impression" value="Transformação, consciência e propósito"> Transformação, consciência e propósito</label>
+            <label><input type="radio" name="brand_impression" value="Coragem, disciplina, foco e força"> Coragem, disciplina, foco e força</label>
+            <label><input type="radio" name="brand_impression" value="Sabedoria, conhecimento e método"> Sabedoria, conhecimento e método</label>
+            <label><input type="radio" name="brand_impression" value="Liberdade, individualidade e independência"> Liberdade, individualidade e independência</label>
+            <label><input type="radio" name="brand_impression" value="Simplicidade, pureza e esperança"> Simplicidade, pureza e esperança</label>
+        </div>
 
+        <!-- Pergunta 2 -->
+        <label>A afirmação que mais combina com a minha Marca é...</label>
+        <div>
+            <label><input type="radio" name="brand_statement" value="É possível encontrar a felicidade no simples" required> É possível encontrar a felicidade no simples</label>
+            <label><input type="radio" name="brand_statement" value="Não levante cercas a minha volta"> Não levante cercas a minha volta</label>
+            <label><input type="radio" name="brand_statement" value="O conhecimento é a chave para o sucesso"> O conhecimento é a chave para o sucesso</label>
+            <label><input type="radio" name="brand_statement" value="Não sabendo que era impossível, foi lá e fez"> Não sabendo que era impossível, foi lá e fez</label>
+            <label><input type="radio" name="brand_statement" value="As regras são feitas para serem quebradas"> As regras são feitas para serem quebradas</label>
+            <label><input type="radio" name="brand_statement" value="O que está dentro é como o que está fora"> O que está dentro é como o que está fora</label>
+            <label><input type="radio" name="brand_statement" value="Ninguém é melhor do que ninguém"> Ninguém é melhor do que ninguém</label>
+            <label><input type="radio" name="brand_statement" value="Sem amor, eu nada seria"> Sem amor, eu nada seria</label>
+            <label><input type="radio" name="brand_statement" value="Rir é o melhor remédio"> Rir é o melhor remédio</label>
+            <label><input type="radio" name="brand_statement" value="Você está seguro comigo"> Você está seguro comigo</label>
+            <label><input type="radio" name="brand_statement" value="Se pode ser imaginado, poderá ser criado"> Se pode ser imaginado, poderá ser criado</label>
+            <label><input type="radio" name="brand_statement" value="Eu tenho tudo sob controle"> Eu tenho tudo sob controle</label>
+        </div>
+
+        <!-- Pergunta 3 -->
+        <label>A estratégia da minha Marca é...</label>
+        <div>
+            <label><input type="radio" name="brand_strategy" value="Fortalecer o senso de sofisticação, poder e liderança dos clientes. Fazer com que se sintam parte de um clube VIP, através de serviços e produtos exclusivos." required> Fortalecer o senso de sofisticação, poder e liderança dos clientes. Fazer com que se sintam parte de um clube VIP, através de serviços e produtos exclusivos.</label>
+            <label><input type="radio" name="brand_strategy" value="Despertar o desejo pelo processo criativo. Inspirar os clientes a se expressarem e usarem a própria imaginação para inovarem em suas vidas."> Despertar o desejo pelo processo criativo. Inspirar os clientes a se expressarem e usarem a própria imaginação para inovarem em suas vidas.</label>
+            <label><input type="radio" name="brand_strategy" value="Valorizar e promover a inteligência dos clientes. Trabalhar com métodos e dados. Os clientes esperam informações bem pesquisadas para tomarem melhores decisões."> Valorizar e promover a inteligência dos clientes. Trabalhar com métodos e dados. Os clientes esperam informações bem pesquisadas para tomarem melhores decisões.</label>
+            <label><input type="radio" name="brand_strategy" value="Estimular a individualidade e singularidade dos clientes. Meus produtos e serviços ajudam os clientes a experimentarem novas jornadas e encontrarem liberdade.">Estimular a individualidade e singularidade dos clientes. Meus produtos e serviços ajudam os clientes a experimentarem novas jornadas e encontrarem liberdade.</label>
+            <label><input type="radio" name="brand_strategy" value="Encorajar o questionamento e a revolução. Meus clientes não estão conformados com o sistema dominante atual e, por isso, entrego serviços e produtos que se conectam aos seus próprios valores."> Encorajar o questionamento e a revolução. Meus clientes não estão conformados com o sistema dominante atual e, por isso, entrego serviços e produtos que se conectam aos seus próprios valores.</label>
+            <label><input type="radio" name="brand_strategy" value="Estimular a transformação através de produtos e serviços intangíveis. Minha Marca trabalha com a consciência e inconsciência, gerando uma transformação intuitiva, sutil e “mágica”."> Estimular a transformação através de produtos e serviços intangíveis. Minha Marca trabalha com a consciência e inconsciência, gerando uma transformação intuitiva, sutil e “mágica”.</label>
+            <label><input type="radio" name="brand_strategy" value="Fazer meus clientes se sentirem capacitados para terem sucesso e alcançarem suas metas. Estimulo a superação dos seus desafios."> Fazer meus clientes se sentirem capacitados para terem sucesso e alcançarem suas metas. Estimulo a superação dos seus desafios.</label>
+            <label><input type="radio" name="brand_strategy" value="Tornar nossos clientes mais atraentes e belos. Ofereço produtos ou serviços que estimulam um dos cinco sentidos: a visão, o olfato, o paladar, a audição ou o toque."> Tornar nossos clientes mais atraentes e belos. Ofereço produtos ou serviços que estimulam um dos cinco sentidos: a visão, o olfato, o paladar, a audição ou o toque.</label>
+            <label><input type="radio" name="brand_strategy" value="Promover o lado alegre do nosso cliente. Minha Marca possui um espírito irreverente e trabalho com serviços e produtos que ajudam as pessoas a se divertirem."> Promover o lado alegre do nosso cliente. Minha Marca possui um espírito irreverente e trabalho com serviços e produtos que ajudam as pessoas a se divertirem.</label>
+            <label><input type="radio" name="brand_strategy" value="Valorizar o básico, o dia-a-dia, a vida comum. Minha Marca não trabalha com ares de importância e exclusividade. Todos são bem-vindos."> Valorizar o básico, o dia-a-dia, a vida comum. Minha Marca não trabalha com ares de importância e exclusividade. Todos são bem-vindos.</label>
+            <label><input type="radio" name="brand_strategy" value="Ajudar clientes vulneráveis e sensíveis que precisam de acolhimento. Oferecer uma sensação de segurança que atende às suas necessidades. "> Ajudar clientes vulneráveis e sensíveis que precisam de acolhimento. Oferecer uma sensação de segurança que atende às suas necessidades. </label>
+            <label><input type="radio" name="brand_strategy" value="Promover momentos de leveza. Neste mundo agitado em que vivemos, meus clientes precisam parar por um momento e sentir paz e felicidade em momentos simples."> Promover momentos de leveza. Neste mundo agitado em que vivemos, meus clientes precisam parar por um momento e sentir paz e felicidade em momentos simples.</label>
+        </div>
+
+        <!-- Pergunta 4 -->
+        <label>Meus clientes ideais buscam e minha Marca pode oferecer...</label>
+        <div>
+            <label><input type="radio" name="brand_offer" value="Poder" required> Poder</label>
+            <label><input type="radio" name="brand_offer" value="Criatividade"> Criatividade</label>
+            <label><input type="radio" name="brand_offer" value="Acolhimento"> Acolhimento</label>
+            <label><input type="radio" name="brand_offer" value="Bom-humor"> Bom-humor</label>
+            <label><input type="radio" name="brand_offer" value="Elegância"> Elegância</label>
+            <label><input type="radio" name="brand_offer" value="Simplicidade"> Simplicidade</label>
+            <label><input type="radio" name="brand_offer" value="Mudança de consciência"> Mudança de consciência</label>
+            <label><input type="radio" name="brand_offer" value="Quebra de padrões"> Quebra de padrões</label>
+            <label><input type="radio" name="brand_offer" value="Motivação"> Motivação</label>
+            <label><input type="radio" name="brand_offer" value="Instrução"> Instrução</label>
+            <label><input type="radio" name="brand_offer" value="Liberdade de explorar algo novo"> Liberdade de explorar algo novo</label>
+            <label><input type="radio" name="brand_offer" value="Leveza"> Leveza</label>
+        </div>
+
+        <!-- Pergunta 5 -->
+        <label>Minha Marca ajuda as pessoas a...</label>
+        <div>
+            <label><input type="radio" name="brand_help" value="Olharem para dentro de si mesmas" required> Olharem para dentro de si mesmas a fim de produzir a mudança interior, e então, mudarem o mundo exterior.</label>
+            <label><input type="radio" name="brand_help" value="Destruírem o que não funciona na sociedade"> Destruírem aquilo que não funciona no sociedade e construírem algo fiel aos seus próprios valores.</label>
+            <label><input type="radio" name="brand_help" value="Superarem seus desafios e metas"> Superarem seus desafios e alcançarem suas metas.</label>
+            <label><input type="radio" name="brand_help" value="Pensarem e tomarem melhores decisões"> Pensarem e tomarem melhores decisões com base em informações mais técnicas.</label>
+            <label><input type="radio" name="brand_help" value="Serem autossuficientes"> Serem autossuficientes, escreverem suas próprias histórias e fazerem seu próprio caminho.</label>
+            <label><input type="radio" name="brand_help" value="Encontrarem felicidade no simples"> Encontrarem a felicidade por meio de prazeres simples quando os outros complicam demais.</label>
+            <label><input type="radio" name="brand_help" value="Tornarem-se líderes"> Tornarem-se líderes. Aumentarem o seu próprio poder, autoridade ou status.</label>
+            <label><input type="radio" name="brand_help" value="Desenvolverem a auto-expressão"> Desenvolverem a auto-expressão e criarem algo novo.</label>
+            <label><input type="radio" name="brand_help" value="Cuidarem de si mesmas"> Cuidarem se si mesmas ou daqueles que eles amam.</label>
+            <label><input type="radio" name="brand_help" value="Verem a vida com mais leveza"> Verem a vida com mais leveza.</label>
+            <label><input type="radio" name="brand_help" value="Se sentirem mais belas e se destacarem"> Se sentirem mais belas e se destacarem.</label>
+            <label><input type="radio" name="brand_help" value="Se sentirem parte de uma comunidade"> Se sentirem parte de uma comunidade ou grupo.</label>
+        </div>
+
+        <!-- Pergunta 6 -->
+        <label>Poderia dizer que o cliente ideal da minha Marca quer...</label>
+        <div>
+            <label><input type="radio" name="brand_client_goal" value="Se sentir mais poderoso" required> Se sentir mais poderoso.</label>
+            <label><input type="radio" name="brand_client_goal" value="Criar coisas"> Criar coisas.</label>
+            <label><input type="radio" name="brand_client_goal" value="Cuidar de si e dos outros"> Cuidar de si próprio e/ou das pessoas ao seu redor.</label>
+            <label><input type="radio" name="brand_client_goal" value="Trazer alegria aos outros"> Trazer alegria para os outros. Fazer as pessoas rirem.</label>
+            <label><input type="radio" name="brand_client_goal" value="Se sentir mais belo e elegante"> Se sentir mais belo e elegante.</label>
+            <label><input type="radio" name="brand_client_goal" value="Se conectar com um grupo"> Se conectar com um grupo.</label>
+            <label><input type="radio" name="brand_client_goal" value="Expandir sua consciência"> Expandir ou ampliar sua consciência.</label>
+            <label><input type="radio" name="brand_client_goal" value="Começar uma revolução"> Começar uma revolução e mudar o mundo.</label>
+            <label><input type="radio" name="brand_client_goal" value="Superar algo"> Superar algo e se tornar a melhor versão de si mesmo.</label>
+            <label><input type="radio" name="brand_client_goal" value="Ter conhecimento"> Ter conhecimento.</label>
+            <label><input type="radio" name="brand_client_goal" value="Explorar novos lugares"> Explorar novos lugares e buscar a própria individualidade.</label>
+            <label><input type="radio" name="brand_client_goal" value="Ter um momento de paz"> Ter um momento de paz e leveza.</label>
+        </div>
+
+        <!-- Pergunta 7 -->
+        <label>Meus clientes podem definir minha Marca como...</label>
+        <div>
+            <label><input type="radio" name="brand_definition" value="Especialista, Profissional, Intelectual, Técnica" required> Especialista, Profissional, Intelectual, Técnica.</label>
+			<label><input type="radio" name="brand_definition" value="Autônoma, Inquieta, Cosmopolita, Aventureira"> Autônoma, Inquieta, Cosmopolita, Aventureira.</label>
+			<label><input type="radio" name="brand_definition" value="Pura, Nostálgica, Bondosa, Otimista."> Pura, Nostálgica, Bondosa, Otimista.</label>
+			<label><input type="radio" name="brand_definition" value="Mágica, Intuitiva, Transcendental, Profunda"> Mágica, Intuitiva, Transcendental, Profunda.</label>
+			<label><input type="radio" name="brand_definition" value="Revolucionária, Insubmissa, Questionadora"> Revolucionária, Insubmissa, Questionadora.</label>
+			<label><input type="radio" name="brand_definition" value="Forte, Decidida, Destemida, Vigorosa"> Forte, Decidida, Destemida, Vigorosa.</label>
+			<label><input type="radio" name="brand_definition" value="Divertida, Inteligente, Irônica, Bem-humorada"> Divertida, Inteligente, Irônica, Bem-humorada.</label>
+			<label><input type="radio" name="brand_definition" value="Bela, Elegante, Luxuosa, Envolvente"> Bela, Elegante, Luxuosa, Envolvente.</label>
+			<label><input type="radio" name="brand_definition" value="Básica, Democrática, Verdadeira, Despretensiosa"> Básica, Democrática, Verdadeira, Despretensiosa.</label>
+			<label><input type="radio" name="brand_definition" value="Líder, Sofisticada, Bem-sucedida, Poderosa"> Líder, Sofisticada, Bem-sucedida, Poderosa.</label>
+			<label><input type="radio" name="brand_definition" value="Inovadora, Criadora, Autêntica, Criativa"> Inovadora, Criadora, Autêntica, Criativa.</label>
+            <label><input type="radio" name="brand_definition" value="Zelosa, Afetuosa, Dedicada, Protetora"> Zelosa, Afetuosa, Dedicada, Protetora.</label>
+        </div>
+
+        <!-- Pergunta 8 -->
+        <label>Os produtos, serviços e conteúdos da minha Marca...</label>
+        <div>
+            <label><input type="radio" name="brand_content" value="Ajudam meu cliente a criar algo" required> Ajudam meu cliente a criar algo.</label>
+			<label><input type="radio" name="brand_content" value="São engraçados e fazem as pessoas se divertirem" > São engraçados e fazem as pessoas se divertirem.</label>
+			<label><input type="radio" name="brand_content" value="Conectam as pessoas e ajudam a construir relacionamentos" > Conectam as pessoas e ajudam a construir relacionamentos.</label>
+			<label><input type="radio" name="brand_content" value="São questionadores. Não seguem os padrões do sistema" > São questionadores. Não seguem os padrões do sistema.</label>
+			<label><input type="radio" name="brand_content" value="São bem pesquisados e bem escritos." > São bem pesquisados e bem escritos.</label>
+			<label><input type="radio" name="brand_content" value="Permitem desacelerar dessa vida agitada e promovem um momento leve" > Permitem desacelerar dessa vida agitada e promovem um momento leve.</label>
+			<label><input type="radio" name="brand_content" value="Transmitem sofisticação e possuem alto ticket" > Transmitem sofisticação e possuem alto ticket.</label>
+			<label><input type="radio" name="brand_content" value="São acolhedores e promovem o bem-estar" > São acolhedores e promovem o bem-estar.</label>
+			<label><input type="radio" name="brand_content" value="Promovem a beleza e a elegância" > Promovem a beleza e a elegância.</label>
+			<label><input type="radio" name="brand_content" value="Convidam a olhar para dentro (ou para o cosmos)" > Convidam a olhar para dentro (ou para o cosmos).</label>
+			<label><input type="radio" name="brand_content" value="Motivam a superar limites" > Motivam a superar limites.</label>
+            <label><input type="radio" name="brand_content" value="Ajudam as pessoas a explorarem o mundo"> Ajudam as pessoas a buscarem a própria individualidade e explorarem o mundo.</label>
+        </div>
+
+        <!-- Pergunta 9 -->
+        <label>Minha Marca está no caminho certo quando...</label>
+        <div>
+            <label><input type="radio" name="brand_right_path" value="Questiona os padrões opressores" required> Questiona os padrões opressores e luta por uma causa que é importante.</label>
+			<label><input type="radio" name="brand_right_path" value="Usa coragem, força e metas para solucionar algo"> Usa coragem, força e metas para solucionar algo.</label>
+			<label><input type="radio" name="brand_right_path" value="As pessoas a procuram em busca de instrução e direcionamento"> As pessoas a procuram em busca de instrução e direcionamento.</label>
+			<label><input type="radio" name="brand_right_path" value="Experimenta a emoção de fazer algo novo"> Experimenta a emoção de fazer algo novo.</label>
+			<label><input type="radio" name="brand_right_path" value="Promove satisfação em um momento simples do dia-a-dia"> Promove satisfação em um momento simples do dia-a-dia.</label>
+			<label><input type="radio" name="brand_right_path" value="Assume a liderança e ajuda as pessoas a aumentarem o seu poder"> Assume a liderança e ajuda as pessoas a aumentarem o seu poder.</label>
+			<label><input type="radio" name="brand_right_path" value="Pode se expressar livremente e criar"> Pode se expressar livremente e criar.</label>
+			<label><input type="radio" name="brand_right_path" value="Ajuda alguém a se sentir melhor"> Ajuda alguém a se sentir melhor.</label>
+			<label><input type="radio" name="brand_right_path" value="Faz uma piada inteligente e deixa algumas pessoas irritadas"> Faz uma piada inteligente e deixa algumas pessoas irritadas.</label>
+			<label><input type="radio" name="brand_right_path" value="Ajudam as clientes a se sentirem especiais, exalando beleza e exuberância"> Ajudam as clientes a se sentirem especiais, exalando beleza e exuberância.</label>
+			<label><input type="radio" name="brand_right_path" value="Se conecta com os outros e percebe que possui uma comunidade"> Se conecta com os outros e percebe que possui uma comunidade.</label>
+            <label><input type="radio" name="brand_right_path" value="Conecta o mundo interior e exterior"> Conecta o mundo interior e exterior e cria algo novo e visionário.</label>
+        </div>
+
+        <!-- Pergunta 10 -->
+        <label>Como fundadora de uma Marca, desejo ser vista como uma pessoa...</label>
+        <div>
+            <label><input type="radio" name="founder_image" value="Inteligente" required> Inteligente.</label>
+			<label><input type="radio" name="founder_image" value="Intuitiva" > Intuitiva.</label>
+			<label><input type="radio" name="founder_image" value="Bem-humorada" > Bem-humorada.</label>
+			<label><input type="radio" name="founder_image" value="Poderosa" > Poderosa.</label>
+			<label><input type="radio" name="founder_image" value="Autônoma" > Autônoma.</label>
+			<label><input type="radio" name="founder_image" value="Questionadora" > Questionadora.</label>
+			<label><input type="radio" name="founder_image" value="Elegante" > Elegante.</label>
+			<label><input type="radio" name="founder_image" value="Cheia de ideias" > Cheia de ideias.</label>
+			<label><input type="radio" name="founder_image" value="Otimista" > Otimista.</label>
+			<label><input type="radio" name="founder_image" value="Forte" > Forte.</label>
+			<label><input type="radio" name="founder_image" value="Sincera" > Sincera.</label>
+            <label><input type="radio" name="founder_image" value="Acolhedora"> Acolhedora.</label>
+        </div>
+        
         <button type="button" onclick="showNextBox('box3')">Próxima Etapa</button>
     </form>
 </div>
+
 
 <!-- Terceira etapa -->
 <div id="box3" class="container">
@@ -304,10 +493,11 @@
     <form id="form-stage5">
         <label>Precisa de um manual de uso da marca?</label>
         <p class="subtext">Um manual é utilizado para regrar as aplicações da sua identidade visual no futuro, evitando a má utilização.</p>
-        <div>
-            <label><input type="checkbox" name="brand_manual" value="Sim" > Sim</label>
-            <label><input type="checkbox" name="brand_manual" value="Não" > Não</label>
-        </div>
+<div>
+    <label><input type="radio" name="brand_manual" value="Sim" required> Sim</label>
+    <label><input type="radio" name="brand_manual" value="Não"> Não</label>
+</div>
+
 
         <label>Qual serviço adicional você gostaria que seja criado?</label>
         <p class="subtext">Marque todos que forem desejados.</p>
@@ -328,10 +518,11 @@
 
         <label>É a favor da utilização de fontes pagas?</label>
         <p class="subtext">Utilização de tipografias pagas trazem maior originalidade para uma identidade visual, por terem melhor qualidade e maiores opções. Para utilizá-las, é necessário comprar o direito de uso comercial. O valor pode variar.</p>
-        <div>
-            <label><input type="checkbox" name="paid_fonts" value="Sim" > Sim</label>
-            <label><input type="checkbox" name="paid_fonts" value="Não" > Não</label>
-        </div>
+<div>
+    <label><input type="radio" name="paid_fonts" value="Sim" required> Sim</label>
+    <label><input type="radio" name="paid_fonts" value="Não"> Não</label>
+</div>
+
 
         <label>Possui alguma informação ou observação adicional que seja importante no projeto? Requerimento específico?</label>
         <p class="subtext">Fique à vontade para contribuir com outras informações.</p>
@@ -349,13 +540,13 @@
 </div>
 
 <!-- Tela final -->
-<div id="box6" class="container">
+<div id="box6" class="container" style="text-align: center;">
     <h2>Uffa! Acabamos!</h2>
-    <p>Muito obrigado pelas respostas. Retornarei em breve com seu orçamento.</p>
-    <p>Nícolas Neves</p>
-    <p>Contatos:</p>
-    <p><a href="https://www.instagram.com/nicolasneves.dg/" target="_blank">Instagram</a></p>
-    <p>onicolasneves@gmail.com</p>
+    <p>Muito obrigado pelas respostas.</p>
+	<p>Retornarei em breve com seu orçamento.</p>
+    <p style="padding: 15px 0;">Nícolas Neves</p>
+    <p><a href="https://www.instagram.com/nicolasneves.dg/" target="_blank">https://www.instagram.com/nicolasneves.dg/</a></p>
+    <p><a href="mailto:onicolasneves@gmail.com" rel="noopener noreferrer" target="_blank">onicolasneves@gmail.com</a></p>
     <p>21 98823-3083</p>
     <button onclick="showNextBox('welcome-screen')">Voltar ao Início</button>
 </div>
@@ -440,24 +631,38 @@
     }
 
 function sendEmail() {
-        const currentForm = document.getElementById('form-stage1', 'form-stage2', 'form-stage3', 'form-stage4', 'form-stage5');
-        if (!currentForm.checkValidity()) {
-            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
-            return; // Impede o envio se o formulário não for válido
-        }
+    // Inicializa um objeto para armazenar todos os dados do formulário
+    const data = {};
 
-        // Coleta dados do formulário
+    // Percorre cada formulário e adiciona as respostas ao objeto data
+    for (let i = 1; i <= 5; i++) {
+        const currentForm = document.getElementById(`form-stage${i}`);
         const formData = new FormData(currentForm);
-        const data = Object.fromEntries(formData.entries());
 
-        // Enviar email
-        emailjs.send('service_u2ejyh4', 'template_oph1959', data)
-            .then(() => {
-                showNextBox('box6'); // Avança para a tela final
-            }, (error) => {
-                console.error('Erro ao enviar email:', error);
-            });
+        // Processa cada entrada do formulário
+        for (let [key, value] of formData.entries()) {
+            if (key === 'additional_services') {
+                // Se já existir uma entrada para additional_services, adiciona mais um valor
+                if (data[key]) {
+                    data[key] += `, ${value}`;
+                } else {
+                    data[key] = value;
+                }
+            } else {
+                data[key] = value;
+            }
+        }
     }
+
+    // Enviar email com todos os dados coletados
+    emailjs.send('service_u2ejyh4', 'template_oph1959', data)
+        .then(() => {
+            showNextBox('box6'); // Avança para a tela final
+        }, (error) => {
+            console.error('Erro ao enviar email:', error);
+        });
+}
+
 </script>
 
 </body>
