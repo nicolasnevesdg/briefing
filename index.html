@@ -192,6 +192,68 @@
         div#welcome-screen > h2 > i {
         font-weight: 200;
         }
+				
+		/* Responsividade para telas menores que 768px */
+		@media (max-width: 768px) {
+			/* Ajusta a largura e o padding do container */
+			.container {
+				max-width: 70%;
+				padding: 50px 20px;
+				background-color: unset;
+				box-shadow: none;
+			}
+
+			/* Redimensiona e centraliza as imagens de fundo */
+			.background-image {
+				width: 200px;
+				opacity: 0;
+			}
+
+			.bottom-image {
+				width: 150px;
+				bottom: 5%;
+			}
+
+			/* Ajusta o tamanho da fonte no título e no parágrafo */
+			h2 {
+				font-size: 24px;
+				margin-bottom: 30px;
+			}
+
+			p, label {
+				font-size: 14px;
+			}
+
+			/* Redimensiona os campos de entrada e textos */
+			input[type="text"], input[type="email"], textarea {
+				font-size: 14px;
+				margin: 5px 0 20px 0;
+				max-width: 95%;
+				background-color: unset;
+			}
+
+			/* Ajusta os botões para telas menores */
+			button {
+				padding: 8px 20px;
+				font-size: 14px;
+				margin-top: 30px;
+			}
+
+			/* Ajuste dos botões de navegação */
+			.nav-button {
+				width: 30px;
+				height: 30px;
+				bottom: 10px;
+				opacity: 0.8;
+			}
+			.up-button {
+				right: 50px;
+			}
+			.down-button {
+				right: 10px;
+			}
+		}
+
     </style>
 </head>
 <body>
