@@ -1,735 +1,710 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Briefing - Identidade Visual</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nícolas Neves Designer</title>
     
     <!-- Link para a fonte Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f9f9f9;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Imagens de fundo */
-        .background-image {
-            position: fixed;
-            top: 50%;
-            width: 18%;
-            transform: translateY(-50%);
-            opacity: 1; /* Mudado para 1 */
-            z-index: -1;
-        }
-
-        .background-left {
-            left: 0;
-        }
-
-        .background-right {
-            right: 0;
-        }
-
-        .container {
-            max-width: 600px;
-            width: 100%;
-            max-height: 50vh;
-            padding: 80px 100px;
-            border: 0px solid #ccc;
-            border-radius: 0px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            background-color: white;
-            display: none;
-            z-index: 1;
-            overflow-y: auto;
-        }
-
-        .container.visible {
-            display: block;
-        }
-
-        h2 {
-            font-weight: 700;
-            margin: 0px 0px 40px 0px;
-            text-align: center;
-        }
-
-        p, label {
-            font-weight: 400;
-            color: #333;
-            display: block;
-        }
-
-        form#form-stage5 > div {
-        margin-bottom: 30px;
-        }
-		
-		form#form-stage2 > div {
-        margin-bottom: 40px;
-        }
-        
-		form#form-stage2 > div > label {
-		padding-top: 15px;
-		font-weight: 400;
-		}
-		
-        /* Estilo para perguntas */
-        label {
-            font-weight: 500;
-        }
-
-        /* Estilo para subtextos */
-        .subtext {
-            font-weight: 100;
-            font-style: italic;
-            margin: 0 0 8px 0; /* Adicionando margens para espaçamento */
-            color: #555;
-        }
-
-        input[type="text"], input[type="email"], textarea {
-            width: 100%;
-            padding: 8px;
-            border: none;
-            border-bottom: 1px solid #ccc;
-            border-radius: 0px;
-            font-weight: 400;
-            margin: 8px 0 30px 0;
-        }
-
-        input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
-            outline: none;
-            border-bottom: 1px solid black;
-        }
-
-        button {
-            padding: 10px 30px;
-            width: auto;
-            border: none;
-            background-color: #000;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 0px;
-            font-weight: 600;
-            display: block;
-            margin: 0 auto;
-        }
-
-        button:hover {
-            background-color: #333333;
-        }
-
-        /* Estilo para os botões de navegação */
-        .nav-button {
-            width: 40px;
-            height: 40px;
-            background-color: #d3d3d3; /* Cor cinza claro */
-            color: white;
-            border: none;
-            cursor: not-allowed; /* Cursor indicando que está inativo */
-            position: fixed;
-            bottom: 20px;
-            z-index: 2;
-            opacity: 0.5; /* Opacidade para indicar que está inativo */
-            padding: unset; /* Removendo padding */
-        }
-
-        .nav-button.active {
-            background-color: #000; /* Cor ativa */
-            cursor: pointer; /* Cursor indicando que está ativo */
-            opacity: 1; /* Opacidade normal quando ativo */
-        }
-
-        .up-button {
-            right: 70px; /* Ajustado para o canto inferior direito */
-        }
-
-        .down-button {
-            right: 20px; /* Ajustado para o canto inferior direito */
-        }
-
-        /* Imagem fixa na parte inferior */
-		.bottom-image {
-			position: fixed;
-			bottom: 4%;
-			width: 180px;
-			z-index: -1;
-		}
-
-        div#welcome-screen > h2 {
-        font-size: 35px;
-        }
-
-		div#box6 > h2 {
-        font-size: 35px;
-        }
-
-		div#box6 > p {
-			margin: 0;
-		}
-		
-		div#box6 > p > a {
-			color: #333;
-		}		
-
-		div#box6 > button {
-			margin-top: 30px;
-		}
-
-        div#welcome-screen > h2 > i {
-        font-weight: 200;
-        }
-				
-		/* Responsividade para telas menores que 768px */
-		@media (max-width: 768px) {
-			/* Ajusta a largura e o padding do container */
-			.container {
-				max-width: 70%;
-				padding: 0px 20px;
-				background-color: unset;
-				box-shadow: none;
-			}
-
-			/* Redimensiona e centraliza as imagens de fundo */
-			.background-image {
-				width: 200px;
-				opacity: 0;
-			}
-
-			.bottom-image {
-				width: 150px;
-				bottom: 5%;
-			}
-
-			/* Ajusta o tamanho da fonte no título e no parágrafo */
-			h2 {
-				font-size: 24px;
-				margin-bottom: 30px;
-			}
-			
-			div#welcome-screen > h2 {
-				font-size: 30px;
-			}
-			
-			p, label {
-				font-size: 14px;
-			}
-
-			/* Redimensiona os campos de entrada e textos */
-			input[type="text"], input[type="email"], textarea {
-				font-size: 14px;
-				margin: 5px 0 20px 0;
-				max-width: 95%;
-				background-color: unset;
-			}
-
-			/* Ajusta os botões para telas menores */
-			button {
-				padding: 8px 20px;
-				font-size: 14px;
-				margin-top: 30px;
-			}
-
-			/* Ajuste dos botões de navegação */
-			.nav-button {
-				width: 30px;
-				height: 30px;
-				bottom: 10px;
-				opacity: 0.8;
-			}
-			.up-button {
-				right: 50px;
-			}
-			.down-button {
-				right: 10px;
-			}
-		}
-
-    </style>
-</head>
-<body>
-
-<!-- Imagens de fundo -->
-<img src="https://i.imgur.com/IEMj3Hr.png" alt="Imagem lateral esquerda" class="background-image background-left">
-<img src="https://i.imgur.com/ETrGBo4.png" alt="Imagem lateral direita" class="background-image background-right">
-
-<!-- Imagem fixa na parte inferior -->
-<img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Imagem inferior" class="bottom-image">
-
-<!-- Tela inicial de boas-vindas -->
-<div id="welcome-screen" class="container visible">
-    <h2>Opa, Nícolas aqui. <i>Tudo certo?</i></h2>
-    <p>Este é um <b>Briefing para criação de Identidade Visual</b>, que será usado para estudo e conceituação do seu projeto. A partir dele, poderei fazer um orçamento com mais clareza. Por favor, preencha todas as questões e adicione informações que julgue ser essencial.</p>
-    <button onclick="showNextBox('box1')">Iniciar</button>
-</div>
-
-<!-- Primeira etapa -->
-<div id="box1" class="container">
-    <h2>Primeiro, preciso de algumas informações suas e de sua empresa.</h2>
-    <form id="form-stage1">
-        <label>Nome da Empresa</label>
-        <p class="subtext">Digite o nome completo da sua empresa.</p>
-        <input type="text" name="company_name" required>
-
-        <label>Nome do Cliente</label>
-        <p class="subtext">Digite seu nome completo.</p>
-        <input type="text" name="client_name" required>
-
-        <label>Email do Cliente</label>
-        <p class="subtext">Digite um email válido.</p>
-        <input type="email" name="client_email" required>
-
-        <label>Onde a sua empresa atua?</label>
-        <p class="subtext">(País, cidade, região ou apenas online)</p>
-        <input type="text" name="company_location" required>
-
-        <label>A empresa tem website ou rede social?</label>
-        <p class="subtext">Deixe o @ da rede social e/ou endereço do website.</p>
-        <input type="text" name="social_media_website" required>
-
-        <button type="button" id="next-stage1" onclick="checkStage1()">Próxima Etapa</button>
-    </form>
-</div>
-
-<!-- Segunda etapa -->
-<!-- Segunda etapa -->
-<div id="box2" class="container">
-    <h2>Agora eu quero saber mais sobre a percepção da sua Marca.</h2>
-    <form id="form-stage2">
-
-        <!-- Pergunta 1 -->
-        <label>Quero que meus clientes imediatamente vejam na minha Marca...</label>
-        <div>
-            <label><input type="radio" name="brand_impression" value="Beleza e elegância" required> Beleza e elegância</label>
-            <label><input type="radio" name="brand_impression" value="Alegria, diversão e humor"> Alegria, diversão e humor</label>
-            <label><input type="radio" name="brand_impression" value="Cuidado, empatia e acolhimento"> Cuidado, empatia e acolhimento</label>
-            <label><input type="radio" name="brand_impression" value="Invenção, criatividade e curiosidade"> Invenção, criatividade e curiosidade</label>
-            <label><input type="radio" name="brand_impression" value="Sofisticação, poder e sucesso"> Sofisticação, poder e sucesso</label>
-            <label><input type="radio" name="brand_impression" value="Conexão, comunidade e amizade"> Conexão, comunidade e amizade</label>
-            <label><input type="radio" name="brand_impression" value="Transformação, consciência e propósito"> Transformação, consciência e propósito</label>
-            <label><input type="radio" name="brand_impression" value="Coragem, disciplina, foco e força"> Coragem, disciplina, foco e força</label>
-            <label><input type="radio" name="brand_impression" value="Sabedoria, conhecimento e método"> Sabedoria, conhecimento e método</label>
-            <label><input type="radio" name="brand_impression" value="Liberdade, individualidade e independência"> Liberdade, individualidade e independência</label>
-            <label><input type="radio" name="brand_impression" value="Simplicidade, pureza e esperança"> Simplicidade, pureza e esperança</label>
-        </div>
-
-        <!-- Pergunta 2 -->
-        <label>A afirmação que mais combina com a minha Marca é...</label>
-        <div>
-            <label><input type="radio" name="brand_statement" value="É possível encontrar a felicidade no simples" required> É possível encontrar a felicidade no simples</label>
-            <label><input type="radio" name="brand_statement" value="Não levante cercas a minha volta"> Não levante cercas a minha volta</label>
-            <label><input type="radio" name="brand_statement" value="O conhecimento é a chave para o sucesso"> O conhecimento é a chave para o sucesso</label>
-            <label><input type="radio" name="brand_statement" value="Não sabendo que era impossível, foi lá e fez"> Não sabendo que era impossível, foi lá e fez</label>
-            <label><input type="radio" name="brand_statement" value="As regras são feitas para serem quebradas"> As regras são feitas para serem quebradas</label>
-            <label><input type="radio" name="brand_statement" value="O que está dentro é como o que está fora"> O que está dentro é como o que está fora</label>
-            <label><input type="radio" name="brand_statement" value="Ninguém é melhor do que ninguém"> Ninguém é melhor do que ninguém</label>
-            <label><input type="radio" name="brand_statement" value="Sem amor, eu nada seria"> Sem amor, eu nada seria</label>
-            <label><input type="radio" name="brand_statement" value="Rir é o melhor remédio"> Rir é o melhor remédio</label>
-            <label><input type="radio" name="brand_statement" value="Você está seguro comigo"> Você está seguro comigo</label>
-            <label><input type="radio" name="brand_statement" value="Se pode ser imaginado, poderá ser criado"> Se pode ser imaginado, poderá ser criado</label>
-            <label><input type="radio" name="brand_statement" value="Eu tenho tudo sob controle"> Eu tenho tudo sob controle</label>
-        </div>
-
-        <!-- Pergunta 3 -->
-        <label>A estratégia da minha Marca é...</label>
-        <div>
-            <label><input type="radio" name="brand_strategy" value="Fortalecer o senso de sofisticação, poder e liderança dos clientes. Fazer com que se sintam parte de um clube VIP, através de serviços e produtos exclusivos." required> Fortalecer o senso de sofisticação, poder e liderança dos clientes. Fazer com que se sintam parte de um clube VIP, através de serviços e produtos exclusivos.</label>
-            <label><input type="radio" name="brand_strategy" value="Despertar o desejo pelo processo criativo. Inspirar os clientes a se expressarem e usarem a própria imaginação para inovarem em suas vidas."> Despertar o desejo pelo processo criativo. Inspirar os clientes a se expressarem e usarem a própria imaginação para inovarem em suas vidas.</label>
-            <label><input type="radio" name="brand_strategy" value="Valorizar e promover a inteligência dos clientes. Trabalhar com métodos e dados. Os clientes esperam informações bem pesquisadas para tomarem melhores decisões."> Valorizar e promover a inteligência dos clientes. Trabalhar com métodos e dados. Os clientes esperam informações bem pesquisadas para tomarem melhores decisões.</label>
-            <label><input type="radio" name="brand_strategy" value="Estimular a individualidade e singularidade dos clientes. Meus produtos e serviços ajudam os clientes a experimentarem novas jornadas e encontrarem liberdade.">Estimular a individualidade e singularidade dos clientes. Meus produtos e serviços ajudam os clientes a experimentarem novas jornadas e encontrarem liberdade.</label>
-            <label><input type="radio" name="brand_strategy" value="Encorajar o questionamento e a revolução. Meus clientes não estão conformados com o sistema dominante atual e, por isso, entrego serviços e produtos que se conectam aos seus próprios valores."> Encorajar o questionamento e a revolução. Meus clientes não estão conformados com o sistema dominante atual e, por isso, entrego serviços e produtos que se conectam aos seus próprios valores.</label>
-            <label><input type="radio" name="brand_strategy" value="Estimular a transformação através de produtos e serviços intangíveis. Minha Marca trabalha com a consciência e inconsciência, gerando uma transformação intuitiva, sutil e “mágica”."> Estimular a transformação através de produtos e serviços intangíveis. Minha Marca trabalha com a consciência e inconsciência, gerando uma transformação intuitiva, sutil e “mágica”.</label>
-            <label><input type="radio" name="brand_strategy" value="Fazer meus clientes se sentirem capacitados para terem sucesso e alcançarem suas metas. Estimulo a superação dos seus desafios."> Fazer meus clientes se sentirem capacitados para terem sucesso e alcançarem suas metas. Estimulo a superação dos seus desafios.</label>
-            <label><input type="radio" name="brand_strategy" value="Tornar nossos clientes mais atraentes e belos. Ofereço produtos ou serviços que estimulam um dos cinco sentidos: a visão, o olfato, o paladar, a audição ou o toque."> Tornar nossos clientes mais atraentes e belos. Ofereço produtos ou serviços que estimulam um dos cinco sentidos: a visão, o olfato, o paladar, a audição ou o toque.</label>
-            <label><input type="radio" name="brand_strategy" value="Promover o lado alegre do nosso cliente. Minha Marca possui um espírito irreverente e trabalho com serviços e produtos que ajudam as pessoas a se divertirem."> Promover o lado alegre do nosso cliente. Minha Marca possui um espírito irreverente e trabalho com serviços e produtos que ajudam as pessoas a se divertirem.</label>
-            <label><input type="radio" name="brand_strategy" value="Valorizar o básico, o dia-a-dia, a vida comum. Minha Marca não trabalha com ares de importância e exclusividade. Todos são bem-vindos."> Valorizar o básico, o dia-a-dia, a vida comum. Minha Marca não trabalha com ares de importância e exclusividade. Todos são bem-vindos.</label>
-            <label><input type="radio" name="brand_strategy" value="Ajudar clientes vulneráveis e sensíveis que precisam de acolhimento. Oferecer uma sensação de segurança que atende às suas necessidades. "> Ajudar clientes vulneráveis e sensíveis que precisam de acolhimento. Oferecer uma sensação de segurança que atende às suas necessidades. </label>
-            <label><input type="radio" name="brand_strategy" value="Promover momentos de leveza. Neste mundo agitado em que vivemos, meus clientes precisam parar por um momento e sentir paz e felicidade em momentos simples."> Promover momentos de leveza. Neste mundo agitado em que vivemos, meus clientes precisam parar por um momento e sentir paz e felicidade em momentos simples.</label>
-        </div>
-
-        <!-- Pergunta 4 -->
-        <label>Meus clientes ideais buscam e minha Marca pode oferecer...</label>
-        <div>
-            <label><input type="radio" name="brand_offer" value="Poder" required> Poder</label>
-            <label><input type="radio" name="brand_offer" value="Criatividade"> Criatividade</label>
-            <label><input type="radio" name="brand_offer" value="Acolhimento"> Acolhimento</label>
-            <label><input type="radio" name="brand_offer" value="Bom-humor"> Bom-humor</label>
-            <label><input type="radio" name="brand_offer" value="Elegância"> Elegância</label>
-            <label><input type="radio" name="brand_offer" value="Simplicidade"> Simplicidade</label>
-            <label><input type="radio" name="brand_offer" value="Mudança de consciência"> Mudança de consciência</label>
-            <label><input type="radio" name="brand_offer" value="Quebra de padrões"> Quebra de padrões</label>
-            <label><input type="radio" name="brand_offer" value="Motivação"> Motivação</label>
-            <label><input type="radio" name="brand_offer" value="Instrução"> Instrução</label>
-            <label><input type="radio" name="brand_offer" value="Liberdade de explorar algo novo"> Liberdade de explorar algo novo</label>
-            <label><input type="radio" name="brand_offer" value="Leveza"> Leveza</label>
-        </div>
-
-        <!-- Pergunta 5 -->
-        <label>Minha Marca ajuda as pessoas a...</label>
-        <div>
-            <label><input type="radio" name="brand_help" value="Olharem para dentro de si mesmas" required> Olharem para dentro de si mesmas a fim de produzir a mudança interior, e então, mudarem o mundo exterior.</label>
-            <label><input type="radio" name="brand_help" value="Destruírem o que não funciona na sociedade"> Destruírem aquilo que não funciona no sociedade e construírem algo fiel aos seus próprios valores.</label>
-            <label><input type="radio" name="brand_help" value="Superarem seus desafios e metas"> Superarem seus desafios e alcançarem suas metas.</label>
-            <label><input type="radio" name="brand_help" value="Pensarem e tomarem melhores decisões"> Pensarem e tomarem melhores decisões com base em informações mais técnicas.</label>
-            <label><input type="radio" name="brand_help" value="Serem autossuficientes"> Serem autossuficientes, escreverem suas próprias histórias e fazerem seu próprio caminho.</label>
-            <label><input type="radio" name="brand_help" value="Encontrarem felicidade no simples"> Encontrarem a felicidade por meio de prazeres simples quando os outros complicam demais.</label>
-            <label><input type="radio" name="brand_help" value="Tornarem-se líderes"> Tornarem-se líderes. Aumentarem o seu próprio poder, autoridade ou status.</label>
-            <label><input type="radio" name="brand_help" value="Desenvolverem a auto-expressão"> Desenvolverem a auto-expressão e criarem algo novo.</label>
-            <label><input type="radio" name="brand_help" value="Cuidarem de si mesmas"> Cuidarem se si mesmas ou daqueles que eles amam.</label>
-            <label><input type="radio" name="brand_help" value="Verem a vida com mais leveza"> Verem a vida com mais leveza.</label>
-            <label><input type="radio" name="brand_help" value="Se sentirem mais belas e se destacarem"> Se sentirem mais belas e se destacarem.</label>
-            <label><input type="radio" name="brand_help" value="Se sentirem parte de uma comunidade"> Se sentirem parte de uma comunidade ou grupo.</label>
-        </div>
-
-        <!-- Pergunta 6 -->
-        <label>Poderia dizer que o cliente ideal da minha Marca quer...</label>
-        <div>
-            <label><input type="radio" name="brand_client_goal" value="Se sentir mais poderoso" required> Se sentir mais poderoso.</label>
-            <label><input type="radio" name="brand_client_goal" value="Criar coisas"> Criar coisas.</label>
-            <label><input type="radio" name="brand_client_goal" value="Cuidar de si e dos outros"> Cuidar de si próprio e/ou das pessoas ao seu redor.</label>
-            <label><input type="radio" name="brand_client_goal" value="Trazer alegria aos outros"> Trazer alegria para os outros. Fazer as pessoas rirem.</label>
-            <label><input type="radio" name="brand_client_goal" value="Se sentir mais belo e elegante"> Se sentir mais belo e elegante.</label>
-            <label><input type="radio" name="brand_client_goal" value="Se conectar com um grupo"> Se conectar com um grupo.</label>
-            <label><input type="radio" name="brand_client_goal" value="Expandir sua consciência"> Expandir ou ampliar sua consciência.</label>
-            <label><input type="radio" name="brand_client_goal" value="Começar uma revolução"> Começar uma revolução e mudar o mundo.</label>
-            <label><input type="radio" name="brand_client_goal" value="Superar algo"> Superar algo e se tornar a melhor versão de si mesmo.</label>
-            <label><input type="radio" name="brand_client_goal" value="Ter conhecimento"> Ter conhecimento.</label>
-            <label><input type="radio" name="brand_client_goal" value="Explorar novos lugares"> Explorar novos lugares e buscar a própria individualidade.</label>
-            <label><input type="radio" name="brand_client_goal" value="Ter um momento de paz"> Ter um momento de paz e leveza.</label>
-        </div>
-
-        <!-- Pergunta 7 -->
-        <label>Meus clientes podem definir minha Marca como...</label>
-        <div>
-            <label><input type="radio" name="brand_definition" value="Especialista, Profissional, Intelectual, Técnica" required> Especialista, Profissional, Intelectual, Técnica.</label>
-			<label><input type="radio" name="brand_definition" value="Autônoma, Inquieta, Cosmopolita, Aventureira"> Autônoma, Inquieta, Cosmopolita, Aventureira.</label>
-			<label><input type="radio" name="brand_definition" value="Pura, Nostálgica, Bondosa, Otimista."> Pura, Nostálgica, Bondosa, Otimista.</label>
-			<label><input type="radio" name="brand_definition" value="Mágica, Intuitiva, Transcendental, Profunda"> Mágica, Intuitiva, Transcendental, Profunda.</label>
-			<label><input type="radio" name="brand_definition" value="Revolucionária, Insubmissa, Questionadora"> Revolucionária, Insubmissa, Questionadora.</label>
-			<label><input type="radio" name="brand_definition" value="Forte, Decidida, Destemida, Vigorosa"> Forte, Decidida, Destemida, Vigorosa.</label>
-			<label><input type="radio" name="brand_definition" value="Divertida, Inteligente, Irônica, Bem-humorada"> Divertida, Inteligente, Irônica, Bem-humorada.</label>
-			<label><input type="radio" name="brand_definition" value="Bela, Elegante, Luxuosa, Envolvente"> Bela, Elegante, Luxuosa, Envolvente.</label>
-			<label><input type="radio" name="brand_definition" value="Básica, Democrática, Verdadeira, Despretensiosa"> Básica, Democrática, Verdadeira, Despretensiosa.</label>
-			<label><input type="radio" name="brand_definition" value="Líder, Sofisticada, Bem-sucedida, Poderosa"> Líder, Sofisticada, Bem-sucedida, Poderosa.</label>
-			<label><input type="radio" name="brand_definition" value="Inovadora, Criadora, Autêntica, Criativa"> Inovadora, Criadora, Autêntica, Criativa.</label>
-            <label><input type="radio" name="brand_definition" value="Zelosa, Afetuosa, Dedicada, Protetora"> Zelosa, Afetuosa, Dedicada, Protetora.</label>
-        </div>
-
-        <!-- Pergunta 8 -->
-        <label>Os produtos, serviços e conteúdos da minha Marca...</label>
-        <div>
-            <label><input type="radio" name="brand_content" value="Ajudam meu cliente a criar algo" required> Ajudam meu cliente a criar algo.</label>
-			<label><input type="radio" name="brand_content" value="São engraçados e fazem as pessoas se divertirem" > São engraçados e fazem as pessoas se divertirem.</label>
-			<label><input type="radio" name="brand_content" value="Conectam as pessoas e ajudam a construir relacionamentos" > Conectam as pessoas e ajudam a construir relacionamentos.</label>
-			<label><input type="radio" name="brand_content" value="São questionadores. Não seguem os padrões do sistema" > São questionadores. Não seguem os padrões do sistema.</label>
-			<label><input type="radio" name="brand_content" value="São bem pesquisados e bem escritos." > São bem pesquisados e bem escritos.</label>
-			<label><input type="radio" name="brand_content" value="Permitem desacelerar dessa vida agitada e promovem um momento leve" > Permitem desacelerar dessa vida agitada e promovem um momento leve.</label>
-			<label><input type="radio" name="brand_content" value="Transmitem sofisticação e possuem alto ticket" > Transmitem sofisticação e possuem alto ticket.</label>
-			<label><input type="radio" name="brand_content" value="São acolhedores e promovem o bem-estar" > São acolhedores e promovem o bem-estar.</label>
-			<label><input type="radio" name="brand_content" value="Promovem a beleza e a elegância" > Promovem a beleza e a elegância.</label>
-			<label><input type="radio" name="brand_content" value="Convidam a olhar para dentro (ou para o cosmos)" > Convidam a olhar para dentro (ou para o cosmos).</label>
-			<label><input type="radio" name="brand_content" value="Motivam a superar limites" > Motivam a superar limites.</label>
-            <label><input type="radio" name="brand_content" value="Ajudam as pessoas a explorarem o mundo"> Ajudam as pessoas a buscarem a própria individualidade e explorarem o mundo.</label>
-        </div>
-
-        <!-- Pergunta 9 -->
-        <label>Minha Marca está no caminho certo quando...</label>
-        <div>
-            <label><input type="radio" name="brand_right_path" value="Questiona os padrões opressores" required> Questiona os padrões opressores e luta por uma causa que é importante.</label>
-			<label><input type="radio" name="brand_right_path" value="Usa coragem, força e metas para solucionar algo"> Usa coragem, força e metas para solucionar algo.</label>
-			<label><input type="radio" name="brand_right_path" value="As pessoas a procuram em busca de instrução e direcionamento"> As pessoas a procuram em busca de instrução e direcionamento.</label>
-			<label><input type="radio" name="brand_right_path" value="Experimenta a emoção de fazer algo novo"> Experimenta a emoção de fazer algo novo.</label>
-			<label><input type="radio" name="brand_right_path" value="Promove satisfação em um momento simples do dia-a-dia"> Promove satisfação em um momento simples do dia-a-dia.</label>
-			<label><input type="radio" name="brand_right_path" value="Assume a liderança e ajuda as pessoas a aumentarem o seu poder"> Assume a liderança e ajuda as pessoas a aumentarem o seu poder.</label>
-			<label><input type="radio" name="brand_right_path" value="Pode se expressar livremente e criar"> Pode se expressar livremente e criar.</label>
-			<label><input type="radio" name="brand_right_path" value="Ajuda alguém a se sentir melhor"> Ajuda alguém a se sentir melhor.</label>
-			<label><input type="radio" name="brand_right_path" value="Faz uma piada inteligente e deixa algumas pessoas irritadas"> Faz uma piada inteligente e deixa algumas pessoas irritadas.</label>
-			<label><input type="radio" name="brand_right_path" value="Ajudam as clientes a se sentirem especiais, exalando beleza e exuberância"> Ajudam as clientes a se sentirem especiais, exalando beleza e exuberância.</label>
-			<label><input type="radio" name="brand_right_path" value="Se conecta com os outros e percebe que possui uma comunidade"> Se conecta com os outros e percebe que possui uma comunidade.</label>
-            <label><input type="radio" name="brand_right_path" value="Conecta o mundo interior e exterior"> Conecta o mundo interior e exterior e cria algo novo e visionário.</label>
-        </div>
-
-        <!-- Pergunta 10 -->
-        <label>Como fundadora de uma Marca, desejo ser vista como uma pessoa...</label>
-        <div>
-            <label><input type="radio" name="founder_image" value="Inteligente" required> Inteligente.</label>
-			<label><input type="radio" name="founder_image" value="Intuitiva" > Intuitiva.</label>
-			<label><input type="radio" name="founder_image" value="Bem-humorada" > Bem-humorada.</label>
-			<label><input type="radio" name="founder_image" value="Poderosa" > Poderosa.</label>
-			<label><input type="radio" name="founder_image" value="Autônoma" > Autônoma.</label>
-			<label><input type="radio" name="founder_image" value="Questionadora" > Questionadora.</label>
-			<label><input type="radio" name="founder_image" value="Elegante" > Elegante.</label>
-			<label><input type="radio" name="founder_image" value="Cheia de ideias" > Cheia de ideias.</label>
-			<label><input type="radio" name="founder_image" value="Otimista" > Otimista.</label>
-			<label><input type="radio" name="founder_image" value="Forte" > Forte.</label>
-			<label><input type="radio" name="founder_image" value="Sincera" > Sincera.</label>
-            <label><input type="radio" name="founder_image" value="Acolhedora"> Acolhedora.</label>
-        </div>
-        
-        <button type="button" onclick="showNextBox('box3')">Próxima Etapa</button>
-    </form>
-</div>
-
-
-<!-- Terceira etapa -->
-<div id="box3" class="container">
-    <h2>Agora, me fale mais sobre o serviço prestado.</h2>
-    <form id="form-stage3">
-        <label>Qual é o produto ou serviço a ser desenvolvido?</label>
-        <p class="subtext">Ex.: Produtos de beleza, rede de cafeteria.</p>
-        <textarea name="product_service" required></textarea>
-
-        <label>É um produto/serviço novo? Há quanto tempo está no mercado?</label>
-        <p class="subtext">Ex.: Produtos de beleza, rede de cafeteria.</p>
-        <textarea name="product_service_time" required></textarea>
-
-        <label>Qual o público-alvo e o mercado-alvo?</label>
-        <p class="subtext">Faixa etária; sexo; classe social; ocupação profissional de seus consumidores e também do mercado.</p>
-        <textarea name="audience_market" required></textarea>
-
-        <label>Cite adjetivos para seu produto/serviço.</label>
-        <p class="subtext">Ex.: Moderno, infantil, feminino.</p>
-        <textarea name="product_service_adjectives" required></textarea>
-
-        <label>Cite adjetivos que NÃO condizem com seu produto/serviço.</label>
-        <p class="subtext">Ex.: Colorida, conservadora, etc.</p>
-        <textarea name="negative_adjectives" required></textarea>
-
-        <label>Quais seus principais concorrentes?</label>
-        <p class="subtext">Concorrente diretos e indiretos; Se possível, forneça URL's (Links) dos concorrentes.</p>
-        <textarea name="main_competitors" required></textarea>
-
-        <label>Qual o diferencial do seu produto/serviço em relação aos seus concorrentes?</label>
-        <p class="subtext">Ex.: Empresa maior, mais tecnológica, mais variedade de produtos.</p>
-        <textarea name="product_service_differential" required></textarea>
-
-        <label>Qual mensagem sua marca deve transmitir aos seus consumidores?</label>
-        <p class="subtext">Ex.: Temos o serviço mais seguro e que, ao mesmo tempo, irá facilitar seu dia-a-dia.</p>
-        <textarea name="brand_message" required></textarea>
-
-        <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
-    </form>
-</div>
-
-<!-- Quarta etapa -->
-<div id="box4" class="container">
-    <h2>Obrigado pela atenção! Agora, vamos falar sobre sua Identidade Visual.</h2>
-    <form id="form-stage4">
-        <label>Existe alguma logo antiga? Se sim, quais motivos te levam a querer mudar?</label>
-        <p class="subtext">(Por favor, mande o logo antigo para o meu Whatsapp).</p>
-        <textarea name="old_logo_reason" required></textarea>
-
-        <label>Qual o texto (nome da empresa, escrito corretamente) que deverá vir no logo?</label>
-        <textarea name="logo_text" required></textarea>
-
-        <label>Possui algum slogan? Qual? Deseja que o slogan seja agregado de alguma forma na marca?</label>
-        <textarea name="slogan" required></textarea>
-
-        <label>Possui preferência de cores a serem usadas na marca?</label>
-        <textarea name="preferred_colors" required></textarea>
-
-        <label>Possui algum estilo, que tenha preferência, ou algo que deseja que faça parte da composição?</label>
-        <p class="subtext">Me ajude a entender como sua logo deve se comportar visualmente.</p>
-        <textarea name="design_style" required></textarea>
-
-        <label>Onde a marca irá ser usada?</label>
-        <p class="subtext">Produtos impressos? (Uniforme, Embalagem, Papelaria, Banner, Pôster, etc); Online? (Websites, Blogs, Aplicativo, Mobile, Tablet, Redes Sociais, etc).</p>
-        <textarea name="usage_location" required></textarea>
-
-        <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
-    </form>
-</div>
-
-<!-- Quinta etapa -->
-<div id="box5" class="container">
-    <h2>Agora, apenas algumas informações para seu orçamento.</h2>
-    <form id="form-stage5">
-        <label>Precisa de um manual de uso da marca?</label>
-        <p class="subtext">Um manual é utilizado para regrar as aplicações da sua identidade visual no futuro, evitando a má utilização.</p>
-<div>
-    <label><input type="radio" name="brand_manual" value="Sim" required> Sim</label>
-    <label><input type="radio" name="brand_manual" value="Não"> Não</label>
-</div>
-
-
-        <label>Qual serviço adicional você gostaria que seja criado?</label>
-        <p class="subtext">Marque todos que forem desejados.</p>
-        <div>
-            <label><input type="checkbox" name="additional_services" value="Cartão de visita" > Cartão de visita</label>
-            <label><input type="checkbox" name="additional_services" value="Papel timbrado A4" > Papel timbrado A4</label>
-            <label><input type="checkbox" name="additional_services" value="Pasta A4" > Pasta A4</label>
-            <label><input type="checkbox" name="additional_services" value="Perfil para facebook" > Perfil para facebook</label>
-            <label><input type="checkbox" name="additional_services" value="Perfil para twitter" > Perfil para twitter</label>
-            <label><input type="checkbox" name="additional_services" value="Perfil para instagram" > Perfil para instagram</label>
-            <label><input type="checkbox" name="additional_services" value="Envelope A4" > Envelope A4</label>
-            <label><input type="checkbox" name="additional_services" value="Envelope carta" > Envelope carta</label>
-            <label><input type="checkbox" name="additional_services" value="Modelo de apresentação A4" > Modelo de apresentação A4</label>
-            <label><input type="checkbox" name="additional_services" value="Capa para facebook" > Capa para facebook</label>
-            <label><input type="checkbox" name="additional_services" value="Capa para linkedin" > Capa para linkedin</label>
-            <label><input type="checkbox" name="additional_services" value="Outro" > Outro</label>
-        </div>
-
-        <label>É a favor da utilização de fontes pagas?</label>
-        <p class="subtext">Utilização de tipografias pagas trazem maior originalidade para uma identidade visual, por terem melhor qualidade e maiores opções. Para utilizá-las, é necessário comprar o direito de uso comercial. O valor pode variar.</p>
-<div>
-    <label><input type="radio" name="paid_fonts" value="Sim" required> Sim</label>
-    <label><input type="radio" name="paid_fonts" value="Não"> Não</label>
-</div>
-
-
-        <label>Possui alguma informação ou observação adicional que seja importante no projeto? Requerimento específico?</label>
-        <p class="subtext">Fique à vontade para contribuir com outras informações.</p>
-        <textarea name="additional_info"></textarea>
-
-        <label>Possui alguma condição/restrição que influencie no projeto?</label>
-        <textarea name="project_restrictions"></textarea>
-
-        <label>Qual o prazo disponível para criação do projeto?</label>
-        <p class="subtext">Urgência pode fazer com que haja um acréscimo no valor final.</p>
-        <textarea name="project_timeline" required></textarea>
-
-        <button type="button" onclick="sendEmail()">Finalizar</button>
-    </form>
-</div>
-
-<!-- Tela final -->
-<div id="box6" class="container" style="text-align: center;">
-    <h2>Uffa! Acabamos!</h2>
-    <p>Muito obrigado pelas respostas.</p>
-	<p>Retornarei em breve com seu orçamento.</p>
-    <p style="padding: 15px 0;">Nícolas Neves</p>
-    <p><a href="https://www.instagram.com/nicolasneves.dg/" target="_blank">https://www.instagram.com/nicolasneves.dg/</a></p>
-    <p><a href="mailto:onicolasneves@gmail.com" rel="noopener noreferrer" target="_blank">onicolasneves@gmail.com</a></p>
-    <p>21 98823-3083</p>
-    <button onclick="showNextBox('welcome-screen')">Voltar ao Início</button>
-</div>
-
-<!-- Botões de navegação -->
-<button class="nav-button up-button" onclick="navigate(-1)" disabled>↑</button>
-<button class="nav-button down-button" onclick="navigate(1)" disabled>↓</button>
-
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script type="text/javascript">
-    (function() {
-        emailjs.init({
-            publicKey: "30ExYEmkHsvuz-0RK",
-        });
-    })();
-
-    let currentBox = 0; // Inicializa na tela de boas-vindas
-    const boxes = ['box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'welcome-screen'];
-    const upButton = document.querySelector('.up-button');
-    const downButton = document.querySelector('.down-button');
-
-    function updateNavButtons() {
-        // Atualiza o estado dos botões
-        upButton.disabled = currentBox === 0;
-        downButton.disabled = currentBox === boxes.length - 1;
-
-        // Verifica se estamos em uma etapa onde podemos avançar
-        if (currentBox < boxes.length - 1) {
-            const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
-            downButton.disabled = !currentForm.checkValidity(); // Desabilita se o formulário não for válido
-        }
-
-        // Atualiza a aparência dos botões
-        upButton.classList.toggle('active', !upButton.disabled);
-        downButton.classList.toggle('active', !downButton.disabled);
+  
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+	
+	html {
+	  scroll-behavior: smooth;
+	}
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      color: #111;
+      background-color: #fff;
     }
 
-    function checkStage1() {
-        const currentForm = document.getElementById('form-stage1');
-        if (currentForm.checkValidity()) {
-            showNextBox('box2');
-        } else {
-            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
-        }
+    /* Barra lateral */
+    .sidebar {
+      width: 20%;
+      /background-color: #f9f9f9;/
+      color: #fff;
+      height: 100vh;
+      padding: 20px;
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    function showNextBox(nextBoxId) {
-        const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
-        
-        // Para telas que não são de formulário, permite avançar
-        if (currentBox === 0 || currentBox === boxes.length - 1) {
-            // Atualiza a caixa atual
-            document.querySelectorAll('.container').forEach(box => {
-                box.classList.remove('visible');
-            });
-            document.getElementById(nextBoxId).classList.add('visible');
-            currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
-            updateNavButtons(); // Atualiza o estado dos botões de navegação
-            return;
-        }
-
-        // Verifica se o formulário atual é válido antes de avançar
-        if (currentForm && !currentForm.checkValidity()) {
-            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
-            return; // Impede a navegação
-        }
-
-        // Atualiza a caixa atual
-        document.querySelectorAll('.container').forEach(box => {
-            box.classList.remove('visible');
-        });
-        document.getElementById(nextBoxId).classList.add('visible');
-        currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
-        updateNavButtons(); // Atualiza o estado dos botões de navegação
+    .sidebar h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
     }
 
-    function navigate(direction) {
-        const nextBoxId = boxes[currentBox + direction];
-        if (nextBoxId) {
-            showNextBox(nextBoxId);
-        }
+	.menu-container {
+	  flex: 1; /* Expande para ocupar o espaço restante */
+	  display: flex;
+	  align-items: center;
+	}
+
+	.menu {
+	  list-style: none;
+	  display: flex;
+	  gap: 30px; /* Espaçamento entre os itens */
+	  margin: 0;
+	}
+
+	.menu li {
+	  position: relative;
+	}
+
+    .menu a {
+      color: #000;
+      text-decoration: none;
+      font-size: 16px;
+	  position: relative;
+	  display: inline-block;
+      transition: color 0.3s ease;
     }
 
-function sendEmail() {
-    // Inicializa um objeto para armazenar todos os dados do formulário
-    const data = {};
+	.menu a::after {
+	  content: "";
+	  position: absolute;
+	  bottom: -5px; /* Coloca a linha 5px abaixo do texto */
+	  left: 0;
+	  width: 100%;
+	  height: 1px;
+	  background-color: #000; /* Cor da linha */
+	  transform: scaleX(0); /* Inicialmente invisível (linhas achatadas) */
+	  transform-origin: left; /* Começa a animação da esquerda */
+	  transition: transform 0.3s ease; /* Transição suave para a linha */
+	}
 
-    // Percorre cada formulário e adiciona as respostas ao objeto data
-    for (let i = 1; i <= 5; i++) {
-        const currentForm = document.getElementById(`form-stage${i}`);
-        const formData = new FormData(currentForm);
+	/* Efeito ao passar o mouse */
+	.menu a:hover::after {
+	  transform: scaleX(1); /* Expande a linha de 0 a 100% (esquerda para direita) */
+	}
 
-        // Processa cada entrada do formulário
-        for (let [key, value] of formData.entries()) {
-            if (key === 'additional_services') {
-                // Se já existir uma entrada para additional_services, adiciona mais um valor
-                if (data[key]) {
-                    data[key] += `, ${value}`;
-                } else {
-                    data[key] = value;
-                }
-            } else {
-                data[key] = value;
-            }
-        }
+	/* Efeito ao remover o mouse */
+	.menu a:not(:hover)::after {
+	  transform: scaleX(0); /* Retorna a linha de 100% para 0% (esquerda para direita) */
+	}
+
+    .menu a:hover {
+      color: #000;
     }
 
-    // Enviar email com todos os dados coletados
-    emailjs.send('service_u2ejyh4', 'template_oph1959', data)
-        .then(() => {
-            showNextBox('box6'); // Avança para a tela final
-        }, (error) => {
-            console.error('Erro ao enviar email:', error);
-        });
+    /* Conteúdo da galeria */
+    .gallery-container {
+      width: 100%;
+      padding: 0 10%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 50px;
+    }
+
+    .gallery-item {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+	.project-thumbnail {
+		width: 100%;
+		aspect-ratio: 1 / 1;
+		background-color: #f9f9f9;
+		position: relative;
+		cursor: pointer;
+		overflow: hidden; /* Corta a imagem que exceder o limite */
+		clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 0 100%); /* Chanfrado no canto superior direito */
+	}
+
+    .gallery-item a {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #333;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .project-thumbnail:hover {
+      background-color: #bbb;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .gallery-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .gallery-container {
+        grid-template-columns: 1fr;
+      }
+    }
+	
+	/* Estilo para o contêiner da informação do projeto */
+.project-info {
+  display: flex;
+  align-items: center;
+  margin-top: 35px;
+  margin-bottom: 30px;
 }
 
-</script>
+/* Estilo para o círculo */
+.circle {
+    width: 40px;
+    background-color: #333;
+    border-radius: 50%;
+    margin-right: 20px;
+    margin-left: 8px;
+    aspect-ratio: 1 / 1;
+}
 
+/* Estilo para o nome do projeto */
+.project-name {
+font-weight: bold;
+margin: 0;
+text-transform: uppercase;
+}
+
+/* Estilo para o subtítulo */
+.project-subtitle {
+  font-size: 0.9em;
+  color: #666;
+  margin: 0;
+}
+
+.project-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Faz a imagem cobrir o quadrado */
+  object-position: center; /* Centraliza a imagem */
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.5s ease; /* Transição suave para o efeito de zoom */
+}
+
+/* Efeito de zoom ao passar o mouse */
+.project-thumbnail:hover img {
+  transform: scale(1.05); /* Aumenta levemente o tamanho da imagem */
+}
+
+/* Barra Superior */
+.top-bar {
+  width: 100%;
+  height: 120px;
+  background-color: #fff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 80px;
+  border-bottom: 1px solid #ededed; /* Borda inferior cinza */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+/* Logo */
+.logo {
+  height: 30px;
+}
+
+/* Botão "Fale Conosco" */
+.contact-button {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ededed;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.contact-button:hover {
+    background-color: #ededed;
+    border: 1px solid #ededed;
+}
+
+/* Conteúdo Principal */
+.content {
+  text-align: center;
+  width: 100%;
+  display: block;
+  padding: 7% 50px;
+  margin-top: 120px;
+  opacity: 0; /* Inicialmente invisível */
+  animation: fadeIn 1s ease forwards; /* Animação de surgimento */
+  animation-delay: 0.5s; /* Atraso para que aconteça após o carregamento */
+}
+
+.main-title {
+    font-size: 70px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    color: #000;
+    line-height: 1.1;
+}
+
+.subtext {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 50px;
+}
+
+.parent-container {
+  display: flex;
+  flex-direction: column; /* Alinha itens verticalmente */
+}
+
+.gallery-container, .content {
+  width: 100%;
+}
+
+/* Animação de surgimento */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animação de elevação */
+@keyframes elevateIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px); /* Começa 20px abaixo */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* Termina na posição original */
+  }
+}
+
+/* Aplicação da animação */
+.parent-container {
+  opacity: 0; /* Inicialmente invisível */
+  animation: elevateIn 1s ease forwards; /* Animação de elevação */
+  animation-delay: 1.5s; /* Começa após a animação de .content */
+}
+
+/* Seção Sobre Mim */
+.about-me {
+    width: 80%;
+    margin: 5% 10%;
+    padding: 5% 5%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-top: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
+}
+
+.profile-info {
+    width: 40%;
+}
+
+.section-title {
+    font-size: 50px;
+    font-weight: 500;
+    position: relative;
+    margin-bottom: 30px;
+    line-height: 1;
+}
+
+.about-text {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.contact-bar {
+    display: flex;
+    margin-top: 60px;
+}
+
+.network-button {
+    aspect-ratio: 1 / 1;
+    width: 40px;
+    border-radius: 50%;
+    background-color: #ededed;
+    margin-right: 12px;
+	display: flex;
+}
+
+.network-button svg {
+    width: 15px;
+    margin: auto;
+}
+
+.profile-circle {
+    width: 250px;
+    border-radius: 50%;
+    background-color: #ededed;
+    aspect-ratio: 1 / 1;
+    margin: auto;
+    overflow: hidden;
+}
+
+.profile-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Seção Processo Criativo */
+.creative-process {
+  width: 70%;
+  margin: 0 auto;
+  display: flex;
+}
+
+.process-title {
+	width: 50%;
+	height: 200px;
+	position: relative;
+}
+
+.process-title h2 {
+    font-size: 30px;
+    font-weight: 500;
+    position: relative;
+    margin-bottom: 30px;
+    line-height: 1;
+}
+
+.process-title p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  padding-right: 150px;
+  margin-bottom: 40px;
+}
+
+.process-info {
+width: 40%;
+}
+
+.process-step {
+  margin-bottom: 20px;
+}
+
+.process-step h3 {
+	font-size: 19px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    display: flex;
+	line-height: 1.6;
+}
+
+.process-step p {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.process-step h3 > p {
+    font-size: 19px;
+    font-weight: 200;
+    margin-right: 20px;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #ededed;
+  margin: 20px 0;
+}
+
+/* Seção Solicitar Orçamento */
+.quote-request {
+    width: 80%;
+    margin: 5% auto;
+    padding: 4% 10%;
+    background-color: #111;
+    text-align: center;
+    clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 0 100%);
+}
+
+.quote-request p {
+  color: #fff;
+  margin-bottom: 35px;
+  font-weight: 100;
+}
+
+.quote-request h2 {
+    font-size: 40px;
+    color: #fff;
+    margin-bottom: 10px;
+    font-weight: 500;
+    line-height: 1.1;
+}
+
+.quote-request a {
+    color: #fff;
+}
+
+/* Barra Inferior */
+.footer {
+	color: #999999;
+    text-align: center;
+    padding-bottom: 50px;
+    margin: 0 50px;
+}
+
+.footer p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.fotter-contact-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.profile-circle {
+	position: relative;
+}
+
+.profile-status {
+	margin: auto;
+    display: flex;
+    align-items: flex-end;
+}
+
+.profile-circle img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+}
+
+.online-status {
+    position: relative;
+    bottom: 20px;
+    right: 50px;
+    width: 25px;
+    height: 25px;
+    background-color: rgb(47, 212, 83);
+    border: 3px solid #fff;
+    border-radius: 50%;
+}
+
+.contact-info {
+    margin-top: 10px;
+    text-align: left;
+    font-size: 14px;
+    position: relative;
+    bottom: 20px;
+    left: -10px;
+}
+
+.contact-info p {
+	margin: 0;
+	line-height: 1.5;
+}
+
+.contact-info a {
+	color: #000;
+	text-decoration: none;
+	font-weight: 400;
+}
+
+.contact-info a:hover {
+	text-decoration: underline;
+}
+
+  </style>
+</head>
+<body>
+  <!-- Barra lateral fixa -->
+<div class="top-bar">
+  <img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Logo" class="logo">
+    <ul class="menu">
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+	<li><a href="#processo">Processo</a></li>
+    <li><a href="#orçamento">Orçamento</a></li>
+  </ul>
+</div>
+
+<div class="content">
+  <h1 class="main-title">ONDE A ESSÊNCIA DA</br>SUA MARCA GANHA FORMA</h1>
+  <p class="subtext">Seu projeto começa com uma visão,</br>cresce com uma identidade.</p>
+  <a href="https://wa.me/5521988233083" target="_blank"><button class="contact-button">Transforme sua ideia</button></a>
+</div>
+
+  <!-- Galeria de Projetos -->
+  <div class="parent-container">
+  <div class="gallery-container">
+
+	<div class="gallery-item">
+	  <div class="project-thumbnail">
+	  <img src="https://i.imgur.com/0xSNQiO.jpeg" alt="Imagem do Projeto 1">
+	  </div> <!-- Placeholder para a imagem -->
+	  <div class="project-info">
+		<div class="circle"></div>
+		<div>
+		  <p class="project-name">QVR Engenharia</p>
+		  <p class="project-subtitle">Engenharia Civil</p>
+		</div>
+	  </div>
+	</div>
+
+	<div class="gallery-item">
+	  <div class="project-thumbnail">
+	  <img src="https://i.imgur.com/M7fqtHO.jpeg" alt="Imagem do Projeto 1">	  
+	  </div> <!-- Placeholder para a imagem -->
+	  <div class="project-info">
+		<div class="circle"></div>
+		<div>
+		  <p class="project-name">XIII Semau</p>
+		  <p class="project-subtitle">Semana Acadêmica</p>
+		</div>
+	  </div>
+	</div>
+
+	<div class="gallery-item">
+	  <div class="project-thumbnail">
+	  <img src="https://i.imgur.com/qlFbSiY.jpeg" alt="Imagem do Projeto 1">	  
+	  </div> <!-- Placeholder para a imagem -->
+	  <div class="project-info">
+		<div class="circle"></div>
+		<div>
+		  <p class="project-name">Solaris Tabula</p>
+		  <p class="project-subtitle">Desenvolvimento Energético</p>
+		</div>
+	  </div>
+	</div>
+	
+	<div class="gallery-item">
+	  <div class="project-thumbnail">
+	  <img src="https://i.imgur.com/dHJZna1.jpeg" alt="Imagem do Projeto 1">
+	  </div> <!-- Placeholder para a imagem -->
+	  <div class="project-info">
+		<div class="circle"></div>
+		<div>
+		  <p class="project-name">QVR Engenharia</p>
+		  <p class="project-subtitle">Engenharia Civil</p>
+		</div>
+	  </div>
+	</div>
+
+	<div class="gallery-item">
+	  <div class="project-thumbnail">
+	  <img src="https://i.imgur.com/okA3q0V.jpeg" alt="Imagem do Projeto 1">	  
+	  </div> <!-- Placeholder para a imagem -->
+	  <div class="project-info">
+		<div class="circle"></div>
+		<div>
+		  <p class="project-name">XIII Semau</p>
+		  <p class="project-subtitle">Semana Acadêmica</p>
+		</div>
+	  </div>
+	</div>
+
+	<div class="gallery-item">
+	  <div class="project-thumbnail">
+	  <img src="https://i.imgur.com/RMmWDgl.jpeg" alt="Imagem do Projeto 1">	  
+	  </div> <!-- Placeholder para a imagem -->
+	  <div class="project-info">
+		<div class="circle"></div>
+		<div>
+		  <p class="project-name">Solaris Tabula</p>
+		  <p class="project-subtitle">Desenvolvimento Energético</p>
+		</div>
+	  </div>
+	</div>
+	
+    </div>
+ </div>
+ <!-- Adicione mais itens da galeria conforme necessário -->
+  </div>
+  
+  <section class="about-me">
+	<div class="profile-info">
+	  <h2 class="section-title">Nícolas Neves</h2>
+	  <p class="about-text">Formando em arquitetura e urbanismo pela UFRRJ, atuo há mais de 5 anos em criação de identidades visuais. Sou fascinado por design gráfico desde a infância e busco sempre passar esta sensibilidade estética para meus projetos.</p>
+	  <div class="contact-bar">
+		<a class="network-button" href="https://www.instagram.com/nicolasneves.dg/" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></a>
+		<a class="network-button" href="https://www.behance.net/ncolasneves" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z"/></svg></a>
+		<a class="network-button" href="https://www.linkedin.com/in/nícolasneves/" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg></a>
+	  </div>
+	</div>
+	<div class="profile-status">
+	<div class="profile-circle">
+		<img src="https://nicolasnevesdg.github.io/briefing/20240202_220526.png" alt="Foto de perfil">
+	</div>
+	<div class="online-status"></div> <!-- Indicador de status online -->
+	<div class="contact-info">
+		<p><strong>Fale comigo</strong><br>
+		<a href="https://wa.me/5521988233083" target="_blank">Link p/ WhatsApp</a></p>
+	</div>
+	</div>
+</section>
+
+<section class="creative-process">
+<div class="process-title">
+<h2>Processo criativo</h2>
+<p>Meu processo de criação é estruturado em três etapas essenciais. Cada projeto marcante e duradouro é resultado desse método que une estratégia e criatividade.</p>
+<a href="https://wa.me/5521988233083" target="_blank"><button class="contact-button">Vamos começar</button></a>
+</div>
+<div class="process-info">
+  <div class="process-step">
+    <h3><p>01</p> Pesquisa</h3>
+    <p>Na etapa inicial, focamos em conhecer profundamente sua marca. Através de um briefing detalhado e uma reunião inicial, vamos explorar juntos o cenário e as oportunidades para construir uma identidade estratégica e diferenciada.</p>
+  </div>
+  <hr>
+  <div class="process-step">
+    <h3><p>02</p> Criação</h3>
+    <p>Com a análise concluída e as estratégias definidas, é o momento de trazer a identidade visual à vida. Nesta fase, desenvolvemos o logotipo, paleta de cores, tipografia, elementos gráficos e aplicações, garantindo que cada detalhe comunique a essência da marca.</p>
+  </div>
+  <hr>
+  <div class="process-step">
+    <h3><p>03</p> Entrega</h3>
+    <p>Na última etapa, realizamos a apresentação do projeto e, em seguida, preparamos a entrega final. Enviamos todos os arquivos e um manual completo da marca, com orientações de uso e aplicação para que sua identidade brilhe em todos os contextos.</p>
+  </div>
+</div>
+</section>
+
+<section class="quote-request">
+  <h2>Pronto para valorizar</br>ainda mais a sua marca?</h2>
+  <p>Solicite seu orçamento agora, preenchendo o formulário abaixo,</br> ou envie um e-mail para <a href="#">nicolasneves.dg@gmail.com</a></p>
+  <a href="https://wa.me/5521988233083" target="_blank"><button class="contact-button">Solicite uma proposta</button></a>
+</section>
+
+<footer class="footer">
+  	  <div class="fotter-contact-bar">
+		<a class="network-button" href="https://www.instagram.com/nicolasneves.dg/" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></a>
+		<a class="network-button" href="https://www.behance.net/ncolasneves" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z"/></svg></a>
+		<a class="network-button" href="https://www.linkedin.com/in/nícolasneves/" target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg></a>
+	  </div>
+  <p>Copyright © 2024 Todos os direitos reservados | Criado por Nícolas Neves</p>
+</footer>
+
+
+  
 </body>
 </html>
