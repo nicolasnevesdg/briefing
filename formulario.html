@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Briefing - Identidade Visual</title>
+    
+    <!-- Link para a fonte Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f9f9f9;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Imagens de fundo */
+        .background-image {
+            position: fixed;
+            top: 50%;
+            width: 18%;
+            transform: translateY(-50%);
+            opacity: 1; /* Mudado para 1 */
+            z-index: -1;
+        }
+
+        .background-left {
+            left: 0;
+        }
+
+        .background-right {
+            right: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            max-height: 50vh;
+            padding: 80px 100px;
+            border: 0px solid #ccc;
+            border-radius: 0px;
+            clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 0 100%);
+            text-align: left;
+            background-color: white;
+            display: none;
+            z-index: 1;
+            overflow-y: auto;
+        }
+
+        .container.visible {
+            display: block;
+        }
+
+        h2 {
+            font-weight: 700;
+            margin: 0px 0px 40px 0px;
+            text-align: center;
+        }
+
+        p, label {
+            font-weight: 400;
+            color: #333;
+            display: block;
+        }
+
+        form#form-stage4 > div {
+        margin: 10px 0 30px 0;
+        }
+		
+		form#form-stage4 > div > label {
+			line-height: 1.5;
+		}
+		
+		form#form-stage3 > div {
+        margin-top: 10px;
+        }
+		
+		form#form-stage5 > div {
+        margin-top: 10px;
+        }
+		
+		form#form-stage5 > div > label {
+			line-height: 1.5;
+		}
+		
+		form#form-stage3 > div > label {
+		margin-bottom: 3px;
+		}
+		
+		form#form-stage2 > div {
+        margin-bottom: 40px;
+        }
+        
+		form#form-stage2 > div > label {
+		padding-top: 15px;
+		font-weight: 400;
+		}
+		
+		form > button {
+		margin-top: 20px;
+		}
+		
+        /* Estilo para perguntas */
+        label {
+            font-weight: 500;
+        }
+
+        /* Estilo para subtextos */
+        .subtext {
+            font-weight: 100;
+            font-style: italic;
+            margin: 0 0 8px 0; /* Adicionando margens para espaçamento */
+            color: #555;
+        }
+
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            border-radius: 0px;
+            font-weight: 400;
+            margin: 10px 0 30px 0;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+            outline: none;
+            border-bottom: 1px solid black;
+        }
+
+        button {
+            padding: 10px 30px;
+            width: auto;
+            border: none;
+            background-color: #000;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 0px;
+            font-weight: 600;
+            display: block;
+            margin: 0 auto;
+        }
+
+        button:hover {
+            background-color: #333333;
+        }
+
+        /* Estilo para os botões de navegação */
+        .nav-button {
+            width: 40px;
+            height: 40px;
+            background-color: #d3d3d3; /* Cor cinza claro */
+            color: white;
+            border: none;
+            cursor: not-allowed; /* Cursor indicando que está inativo */
+            position: fixed;
+            bottom: 20px;
+            z-index: 2;
+            opacity: 0.5; /* Opacidade para indicar que está inativo */
+            padding: unset; /* Removendo padding */
+        }
+
+        .nav-button.active {
+            background-color: #000; /* Cor ativa */
+            cursor: pointer; /* Cursor indicando que está ativo */
+            opacity: 1; /* Opacidade normal quando ativo */
+        }
+
+        .up-button {
+            right: 70px; /* Ajustado para o canto inferior direito */
+        }
+
+        .down-button {
+            right: 20px; /* Ajustado para o canto inferior direito */
+        }
+
+        /* Imagem fixa na parte inferior */
+		.bottom-image {
+			position: fixed;
+			bottom: 4%;
+			width: 180px;
+			z-index: -1;
+		}
+
+        div#welcome-screen > h2 {
+        font-size: 35px;
+        }
+
+		div#box6 > h2 {
+        font-size: 35px;
+        }
+
+		div#box6 > p {
+			margin: 0;
+		}
+		
+		div#box6 > p > a {
+			color: #333;
+		}		
+
+		div#box6 > button {
+			margin-top: 30px;
+		}
+
+        #welcome-screen > h2 > i {
+        font-weight: 200;
+        }
+		
+		#welcome-screen > button {
+		margin-top: 30px;
+		}
+		
+		#welcome-screen p {
+		line-height: 1.5;
+		}
+		
+		/* Responsividade para telas menores que 768px */
+		@media (max-width: 768px) {
+			/* Ajusta a largura e o padding do container */
+			.container {
+				max-width: 70%;
+				padding: 0px 20px;
+				background-color: unset;
+				box-shadow: none;
+			}
+
+			/* Redimensiona e centraliza as imagens de fundo */
+			.background-image {
+				width: 200px;
+				opacity: 0;
+			}
+
+			.bottom-image {
+				width: 150px;
+				bottom: 5%;
+			}
+
+			/* Ajusta o tamanho da fonte no título e no parágrafo */
+			h2 {
+				font-size: 24px;
+				margin-bottom: 30px;
+			}
+			
+			div#welcome-screen > h2 {
+				font-size: 30px;
+			}
+			
+			p, label {
+				font-size: 14px;
+			}
+
+			/* Redimensiona os campos de entrada e textos */
+			input[type="text"], input[type="email"], textarea {
+				font-size: 14px;
+				margin: 5px 0 20px 0;
+				max-width: 95%;
+				background-color: unset;
+			}
+
+			/* Ajusta os botões para telas menores */
+			button {
+				padding: 8px 20px;
+				font-size: 14px;
+				margin-top: 30px;
+			}
+
+			/* Ajuste dos botões de navegação */
+			.nav-button {
+				width: 30px;
+				height: 30px;
+				bottom: 10px;
+				opacity: 0.8;
+			}
+			.up-button {
+				right: 50px;
+			}
+			.down-button {
+				right: 10px;
+			}
+		}
+
+    </style>
+</head>
+<body>
+
+<!-- Imagens de fundo -->
+<img src="https://i.imgur.com/IEMj3Hr.png" alt="Imagem lateral esquerda" class="background-image background-left">
+<img src="https://i.imgur.com/ETrGBo4.png" alt="Imagem lateral direita" class="background-image background-right">
+
+<!-- Imagem fixa na parte inferior -->
+<img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Imagem inferior" class="bottom-image">
+<!-- Tela inicial de boas-vindas -->
+<div id="welcome-screen" class="container visible">
+    <h2>Opa, Nícolas aqui. <i>Tudo certo?</i></h2>
+    <p>Seu projeto começa agora! Através deste formulário, daremos os primeiros passos na criação da <b>Identidade Visual</b> do seu negócio. Cada resposta me ajudará a construir algo único e marcante para sua marca.</p>
+    <button onclick="showNextBox('box1')">Iniciar</button>
+</div>
+
+<!-- Primeira etapa -->
+<div id="box1" class="container">
+    <h2>Primeiro, quero conhecer você melhor.</h2>
+    <form id="form-stage1">
+        <label>Como posso te chamar?</label>
+        <input type="text" placeholder="Seu nome" name="user_name" id="user_name" required>
+
+        <label>Se desejar, pode deixar seu Instagram para que eu possa te encontrar.</label>
+        <input type="text" placeholder="@user" name="user_instagram">
+
+        <button type="button" id="next-stage1" onclick="checkStage1()">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Segunda etapa -->
+<!-- Segunda etapa -->
+<div id="box2" class="container">
+    <h2>É um prazer te conhecer!</h2>
+    <form id="form-stage2">
+        <label>Qual seu número para que eu possa entrar em contato?</label>
+        <input type="text" placeholder="DDD + Número" name="user_phone" required>
+
+        <label>Se possível também pode deixar seu e-mail principal.</label>
+        <input type="email" placeholder="email@email" name="user_email">
+		
+        <button type="button" onclick="showNextBox('box3')">Próxima Etapa</button>
+    </form>
+</div>
+
+
+<!-- Terceira etapa -->
+<div id="box3" class="container">
+    <h2>Agora, me fale mais sobre a sua marca.</h2>
+    <form id="form-stage3">
+        <label>Para começarmos, qual é o nome da empresa?</label>
+        <input type="text" name="company_name" required>
+
+        <label>Em quais redes sociais ela está presente?</label>
+        <p class="subtext">(Instagram, LinkedIn, Youtube). Se possível deixar o link.</p>
+		<input type="text" name="company_social_media">
+
+        <label>Em qual segmento ela está inserida?</label>
+        <input type="text" placeholder="Área de atuação" name="company_segment">
+
+        <label>Quais produtos ou serviços sua empresa oferece?</label>
+        <p class="subtext">Se possível, explicar como funciona o modelo de negócio.</p>
+		<textarea name="company_services"></textarea>
+
+        <label>Quanto tempo de mercado sua empresa tem?</label>
+        <div required>
+		    <label><input type="radio" name="company_market_time" value="Ainda irei começar" required> Ainda irei começar</label>
+			<label><input type="radio" name="company_market_time" value="1-2 anos" > 1-2 anos</label>
+			<label><input type="radio" name="company_market_time" value="3-4 anos" > 3-4 anos</label>
+			<label><input type="radio" name="company_market_time" value="+ de 5 anos" > + de 5 anos</label>
+        </div>
+
+        <button type="button" onclick="showNextBox('box4')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Quarta etapa -->
+<div id="box4" class="container">
+    <h2>Obrigado pela atenção! Agora, apenas algumas informações para seu orçamento.</h2>
+    <form id="form-stage4">
+        <label>Você tem disponibilidade para participar de uma reunião em vídeo chamada?</label>
+        <div>
+            <label><input type="radio" name="meeting_availability" value="Sim">Sim</label>
+            <label><input type="radio" name="meeting_availability" value="Não">Não</label>
+        </div>
+
+        <label>Qual a sua urgência para esse projeto?</label>
+        <div>
+            <label><input type="radio" name="project_urgency" value="1 mês">1 mês</label>
+            <label><input type="radio" name="project_urgency" value="2 a 3 meses">2 a 3 meses</label>
+            <label><input type="radio" name="project_urgency" value="Não tenho pressa">Não tenho pressa</label>
+        </div>
+
+        <label>Qual a sua estimativa de investimento para esse projeto?</label>
+		<p class="subtext">(Independente da escolha, iremos facilitar a forma de pagamento para que se adeque ao seu momento.</p>
+        <div>
+            <label><input type="radio" name="project_investment" value="R$1 mil - R$3 mil">R$1 mil - R$3 mil</label>
+            <label><input type="radio" name="project_investment" value="R$3 mil - R$5 mil">R$3 mil - R$5 mil</label>
+            <label><input type="radio" name="project_investment" value="+ R$5 mil">+ R$5 mil</option>
+        </div>
+
+        <button type="button" onclick="showNextBox('box5')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Quinta etapa -->
+<div id="box5" class="container">
+    <h2>Já estamos no fim. Mas antes...</h2>
+    <form id="form-stage5">
+
+        <label>Fique à vontade para falar mais sobre a sua marca ou deixar alguma observação que considere importante.</label>
+        <textarea name="additional_notes"></textarea>
+
+        <label>Última pergunta: como me encontrou?</label>
+        <div>
+            <label><input type="radio" name="find_info" value="Indicação">Indicação</label>
+            <label><input type="radio" name="find_info" value="Behance">Behance</label>
+            <label><input type="radio" name="find_info" value="Instagram">Instagram</option>
+			<label><input type="radio" name="find_info" value="Site / Google">Site / Google</option>
+			<label><input type="radio" name="find_info" value="Outros">Outros</option>
+        </div>
+
+        <button type="button" onclick="sendEmail()">Finalizar</button>
+    </form>
+</div>
+
+<!-- Tela final -->
+<div id="box6" class="container" style="text-align: center;">
+    <h2>Uffa! Acabamos!</h2>
+    <p>Muito obrigado pelas respostas.</p>
+	<p>Retornarei em breve com seu orçamento.</p>
+    <p style="padding: 15px 0;">Nícolas Neves</p>
+    <p><a href="https://www.instagram.com/nicolasneves.dg/" target="_blank">https://www.instagram.com/nicolasneves.dg/</a></p>
+    <p><a href="mailto:onicolasneves@gmail.com" rel="noopener noreferrer" target="_blank">onicolasneves@gmail.com</a></p>
+    <p>21 98823-3083</p>
+    <button onclick="showNextBox('welcome-screen')">Voltar ao Início</button>
+</div>
+
+<!-- Botões de navegação -->
+<button class="nav-button up-button" onclick="navigate(-1)" disabled>↑</button>
+<button class="nav-button down-button" onclick="navigate(1)" disabled>↓</button>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
+
+    (function() {
+        emailjs.init({
+            publicKey: "30ExYEmkHsvuz-0RK",
+        });
+    })();
+
+    let currentBox = 0; // Inicializa na tela de boas-vindas
+    const boxes = ['box1', 'box2', 'box3', 'box4', 'box5', 'box6', 'welcome-screen'];
+    const upButton = document.querySelector('.up-button');
+    const downButton = document.querySelector('.down-button');
+
+    function updateNavButtons() {
+        // Atualiza o estado dos botões
+        upButton.disabled = currentBox === 0;
+        downButton.disabled = currentBox === boxes.length - 1;
+
+        // Verifica se estamos em uma etapa onde podemos avançar
+        if (currentBox < boxes.length - 1) {
+            const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
+            downButton.disabled = !currentForm.checkValidity(); // Desabilita se o formulário não for válido
+        }
+
+        // Atualiza a aparência dos botões
+        upButton.classList.toggle('active', !upButton.disabled);
+        downButton.classList.toggle('active', !downButton.disabled);
+    }
+
+    function checkStage1() {
+        const currentForm = document.getElementById('form-stage1');
+        if (currentForm.checkValidity()) {
+            showNextBox('box2');
+        } else {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+        }
+    }
+
+    function showNextBox(nextBoxId) {
+        const currentForm = document.getElementById(boxes[currentBox]).querySelector('form');
+        
+        // Para telas que não são de formulário, permite avançar
+        if (currentBox === 0 || currentBox === boxes.length - 1) {
+            // Atualiza a caixa atual
+            document.querySelectorAll('.container').forEach(box => {
+                box.classList.remove('visible');
+            });
+            document.getElementById(nextBoxId).classList.add('visible');
+            currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
+            updateNavButtons(); // Atualiza o estado dos botões de navegação
+            return;
+        }
+
+        // Verifica se o formulário atual é válido antes de avançar
+        if (currentForm && !currentForm.checkValidity()) {
+            currentForm.reportValidity(); // Exibe mensagens de validação se necessário
+            return; // Impede a navegação
+        }
+
+        // Atualiza a caixa atual
+        document.querySelectorAll('.container').forEach(box => {
+            box.classList.remove('visible');
+        });
+        document.getElementById(nextBoxId).classList.add('visible');
+        currentBox = boxes.indexOf(nextBoxId); // Atualiza o índice atual
+        updateNavButtons(); // Atualiza o estado dos botões de navegação
+		
+		
+    }
+
+    function navigate(direction) {
+        const nextBoxId = boxes[currentBox + direction];
+        if (nextBoxId) {
+            showNextBox(nextBoxId);
+        }
+    }
+
+function sendEmail() {
+    // Inicializa um objeto para armazenar todos os dados do formulário
+    const data = {};
+
+    // Percorre cada formulário e adiciona as respostas ao objeto data
+    for (let i = 1; i <= 5; i++) {
+        const currentForm = document.getElementById(`form-stage${i}`);
+        const formData = new FormData(currentForm);
+
+        // Processa cada entrada do formulário
+        for (let [key, value] of formData.entries()) {
+            if (key === 'additional_services') {
+                // Se já existir uma entrada para additional_services, adiciona mais um valor
+                if (data[key]) {
+                    data[key] += `, ${value}`;
+                } else {
+                    data[key] = value;
+                }
+            } else {
+                data[key] = value;
+            }
+        }
+    }
+
+    // Enviar email com todos os dados coletados
+    emailjs.send('service_u2ejyh4', 'template_se6dfqn', data)
+        .then(() => {
+            showNextBox('box6'); // Avança para a tela final
+        }, (error) => {
+            console.error('Erro ao enviar email:', error);
+        });
+}
+
+</script>
+
+</body>
+</html>
