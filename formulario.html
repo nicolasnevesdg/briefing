@@ -190,7 +190,6 @@
 			position: fixed;
 			bottom: 4%;
 			width: 180px;
-			z-index: -1;
 		}
 
         div#welcome-screen > h2 {
@@ -225,6 +224,11 @@
 		line-height: 1.5;
 		}
 		
+		.logo-link a {
+			display: flex;
+			justify-content: center;
+		}
+		
 		/* Responsividade para telas menores que 768px */
 		@media (max-width: 768px) {
 			/* Ajusta a largura e o padding do container */
@@ -244,6 +248,7 @@
 			.bottom-image {
 				width: 150px;
 				bottom: 5%;
+		}
 			}
 
 			/* Ajusta o tamanho da fonte no título e no parágrafo */
@@ -299,7 +304,7 @@
 <img src="https://i.imgur.com/ETrGBo4.png" alt="Imagem lateral direita" class="background-image background-right">
 
 <!-- Imagem fixa na parte inferior -->
-<img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Imagem inferior" class="bottom-image">
+<div class="logo-link"><a href="http://www.nicolasneves.com.br" target="_blank"><img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Imagem inferior" class="bottom-image"></a></div>
 <!-- Tela inicial de boas-vindas -->
 <div id="welcome-screen" class="container visible">
     <h2>Opa, Nícolas aqui. <i>Tudo certo?</i></h2>
