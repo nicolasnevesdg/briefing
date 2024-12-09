@@ -28,100 +28,6 @@
       background-color: #fff;
     }
 
-	/* Responsivo */
-	
-	@media (max-width: 768px) {
-  .top-bar {
-    flex-direction: column; /* Organiza os itens em coluna */
-    height: auto; /* Permite altura dinâmica */
-    padding: 10px; /* Reduz o espaçamento */
-  }
-
-  .menu-logo {
-    justify-content: center;
-  }
-
-  .menu {
-    flex-direction: column; /* Alinha os itens verticalmente */
-    gap: 15px; /* Reduz o espaçamento entre os links */
-    margin-top: 10px;
-  }
-
-  .menu a {
-    font-size: 14px; /* Reduz o tamanho da fonte */
-  }
-}
-
-@media (max-width: 768px) {
-  .gallery-container {
-    grid-template-columns: 1fr; /* Um item por linha */
-    gap: 20px; /* Reduz o espaçamento entre itens */
-  }
-
-  .gallery-item {
-    margin: 0 auto; /* Centraliza os itens */
-  }
-}
-
-@media (max-width: 768px) {
-  .content {
-    padding: 20px;
-  }
-
-  .main-title {
-    font-size: 40px; /* Reduz o tamanho da fonte */
-  }
-
-  .subtext {
-    font-size: 16px; /* Ajusta o tamanho do subtítulo */
-  }
-
-  .contact-button {
-    font-size: 14px;
-    padding: 8px 16px; /* Reduz o botão */
-  }
-}
-
-@media (max-width: 768px) {
-  .about-me {
-    flex-direction: column; /* Muda para uma coluna */
-    text-align: center; /* Centraliza o texto */
-    padding: 20px; /* Reduz o padding */
-  }
-
-  .profile-info {
-    width: 100%; /* Usa largura total */
-  }
-
-  .profile-circle {
-    margin: 20px auto; /* Centraliza o círculo */
-  }
-}
-
-@media (max-width: 480px) {
-  .menu {
-    gap: 10px; /* Reduz ainda mais o espaçamento */
-  }
-
-  .main-title {
-    font-size: 30px; /* Reduz ainda mais o título */
-  }
-
-  .gallery-container {
-    gap: 15px; /* Ajusta o espaçamento */
-  }
-
-  .quote-request h2 {
-    font-size: 24px; /* Reduz o tamanho do título */
-  }
-
-  .quote-request p {
-    font-size: 14px; /* Ajusta o texto */
-  }
-}
-
-
-
     /* Barra lateral */
     .sidebar {
       width: 20%;
@@ -151,6 +57,11 @@
 	  display: flex;
 	  gap: 30px; /* Espaçamento entre os itens */
 	  margin: 0;
+	}
+
+	/* Esconde o botão e ajusta o menu no desktop */
+	.menu-toggle {
+	  display: none;
 	}
 
 	.menu li {
@@ -658,6 +569,180 @@ section {
     transition: color 0.3s ease;
 }
 
+	/* Responsivo */
+	
+	@media (max-width: 768px) {
+  .top-bar {
+    flex-direction: column; /* Organiza os itens em coluna */
+    height: auto; /* Permite altura dinâmica */
+    padding: 20px 20px; /* Reduz o espaçamento */
+  }
+
+  .menu-logo {
+    justify-content: center;
+  }
+
+  .menu {
+    flex-direction: column; /* Alinha os itens verticalmente */
+  }
+
+  .menu a {
+    font-size: 14px; /* Reduz o tamanho da fonte */
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-container {
+    grid-template-columns: 1fr; /* Um item por linha */
+    gap: 20px; /* Reduz o espaçamento entre itens */
+  }
+
+  .gallery-item {
+    margin: 0 auto; /* Centraliza os itens */
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 60px 20px;
+	margin-top: 85px;
+  }
+
+  .main-title {
+    font-size: 40px; /* Reduz o tamanho da fonte */
+  }
+
+  .subtext {
+    font-size: 16px; /* Ajusta o tamanho do subtítulo */
+  }
+
+  .contact-button {
+    font-size: 14px;
+    padding: 8px 16px; /* Reduz o botão */
+  }
+}
+
+@media (max-width: 768px) {
+  .about-me {
+    flex-direction: column; /* Muda para uma coluna */
+    text-align: center; /* Centraliza o texto */
+    padding: 60px 10px; /* Reduz o padding */
+  }
+
+.section-title {
+    font-size: 35px;
+}
+
+.contact-bar {
+margin-top: 40px;
+justify-content: center;
+}
+
+  .profile-info {
+    width: 100%; /* Usa largura total */
+  }
+
+  .profile-circle {
+    margin: 20px auto; /* Centraliza o círculo */
+  }
+}
+
+@media (max-width: 480px) {
+
+  .main-title {
+    font-size: 30px; /* Reduz ainda mais o título */
+  }
+
+  .gallery-container {
+    gap: 15px; /* Ajusta o espaçamento */
+  }
+
+  .quote-request {
+    padding: 10% 10%;
+	margin: 60px auto;
+  }
+
+  .quote-request h2 {
+    font-size: 24px; /* Reduz o tamanho do título */
+  }
+
+  .quote-request p {
+    font-size: 14px; /* Ajusta o texto */
+  }
+  
+	.creative-process {
+		margin: 40px auto;
+		display: block;
+		width: 80%;
+	}
+	
+	.process-info {
+		width: auto;
+	}
+	
+	.process-title {
+		width: auto;
+		height: auto;
+		position: relative;
+		margin-bottom: 40px;
+	}
+
+	.process-title h2 {
+		font-size: 25px;
+	}
+
+	.process-title p {
+		font-size: 16px;
+		color: #666;
+		line-height: 1.6;
+		padding-right: inherit;
+		margin-bottom: 40px;
+	}
+
+}
+
+/* Modo responsivo */
+@media (max-width: 768px) {
+  .menu {
+    display: none; /* Oculta o menu por padrão */
+    flex-direction: column; /* Mostra o menu em coluna */
+    position: absolute;
+    top: 100%; /* Abaixo da barra superior */
+    right: 0;
+    background-color: #fff;
+    width: 100%; /* Ocupa toda a largura */
+    z-index: 10;
+	gap: 10px; /* Reduz ainda mais o espaçamento */
+	padding: 20px;
+  }
+
+  .menu.show {
+    display: flex; /* Mostra o menu quando a classe 'show' é adicionada */
+  }
+
+  .menu-toggle {
+    display: block; /* Mostra o botão no mobile */
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .menu-logo {
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .menu-text {
+    display: none; /* Oculta o texto ao lado da logo */
+  }
+  
+  .top-bar p {
+	display: none;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -666,7 +751,9 @@ section {
   <ul class="menu-logo">
   <a href="http://www.nicolasneves.com.br"><img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Logo" class="logo"></a>
   <p>Designer de marcas</p>
+  <button class="menu-toggle" aria-label="Abrir Menu">☰</button>
   </ul>
+	
     <ul class="menu">
     <li><a href="#portfolio">Portfolio</a></li>
     <li><a href="#sobre">Sobre</a></li>
@@ -845,6 +932,17 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// Seleciona o botão dentro do 'ul'
+const toggleButton = document.querySelector('.menu-logo .menu-toggle');
+// Seleciona o menu que será exibido/ocultado
+const menu = document.querySelector('.menu');
+
+// Adiciona o evento de clique no botão
+toggleButton.addEventListener('click', () => {
+  menu.classList.toggle('show'); // Alterna a classe 'show' para exibir ou ocultar o menu
+});
+
 
 </script>
 
