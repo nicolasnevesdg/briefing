@@ -823,6 +823,8 @@ justify-content: center;
 
   .menu.show {
     display: flex; /* Mostra o menu quando a classe 'show' é adicionada */
+	border-bottom: 1px solid #ededed;
+    border-top: 1px solid #ededed;
   }
 
   .menu-toggle {
@@ -847,6 +849,73 @@ justify-content: center;
 	display: none;
   }
 }
+
+/* Fundo preto com opacidade */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8); /* Fundo preto semi-transparente */
+  display: none; /* Oculto por padrão */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Estilo da imagem ampliada */
+.popup-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content img {
+  width: auto; /* Ajusta a largura automaticamente */
+  height: 80vh; /* 80% da altura da janela (viewport height) */
+  max-width: 100%; /* Garante que a largura não ultrapasse a tela */
+  object-fit: contain; /* Mantém as proporções da imagem */
+  border-radius: 8px; /* Opcional: arredonda as bordas */
+}
+
+/* Botão de fechar */
+.popup-close {
+  position: fixed; /* Fixa no canto superior direito da página */
+  top: 20px;
+  right: 20px;
+  background: none; /* Remove o fundo */
+  color: #fff; /* Torna o X branco */
+  font-size: 24px; /* Ajusta o tamanho do texto */
+  font-weight: bold;
+  border: none; /* Remove a borda */
+  cursor: pointer;
+  z-index: 1001; /* Garante que está acima de outros elementos */
+}
+
+.popup-close:hover {
+  color: #ccc; /* Adiciona um efeito visual ao passar o mouse */
+}
+
+@media (max-width: 768px) {
+  .popup-content {
+    max-width: 80%;
+    max-height: 80%;
+  }
+
+  .popup-close {
+    top: 5px;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+  }
+}
+
+
   </style>
 </head>
 <body>
@@ -876,21 +945,21 @@ justify-content: center;
 <p>A SEMAU é a Semana Acadêmica de Arquitetura e Urbanismo realizada pelos discentes do curso da Universidade Federal Rural do Rio de Janeiro (UFRRJ). Para  a 13° edição, foi escolhido o tema "Pensar fora da casa: habitar e sociabilizar."</p>
 
 <div style="padding:44.44% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/1037226992?badge=0&amp;autoplay=1&loop=1&title=0&byline=0&controls=0&muted=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Logo SEMAU"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
-<img src="http://www.nicolasneves.com.br/xiii-semau/3.png">
+<img src="http://www.nicolasneves.com.br/xiii-semau/3.png" class="popup-image">
 
 <h3>Contexto</h3>
 
 <p>Como proposta para esse trabalho, foi explorado um símbolo que trouxesse consigo o tema, fazendo uma reflexão sobre habitar, compartilhar, dividir e conectar com o exterior. <br/><br/>O símbolo foi formado a partir da geometria. Foram explorados os verbos habitar e dividir, com a utilização da silhueta de uma casa juntamente com um pixel que se destaca da forma. O pixel é onde entra a cor, gerando uma ideia de vida fora da casa, que se conecta com o exterior.</p>
 
-<img src="http://www.nicolasneves.com.br/xiii-semau/1.png">
-<img src="http://www.nicolasneves.com.br/xiii-semau/5.png">
-<img src="http://www.nicolasneves.com.br/xiii-semau/6.png">
-<img src="http://www.nicolasneves.com.br/xiii-semau/7.png">
-<img src="http://www.nicolasneves.com.br/xiii-semau/8.png">
-<img src="http://www.nicolasneves.com.br/xiii-semau/9.png">
-<img src="http://www.nicolasneves.com.br/xiii-semau/10.png">
-<img src="http://www.nicolasneves.com.br/xiii-semau/11.png">
-<img src="http://www.nicolasneves.com.br/xiii-semau/12.png">
+<img src="http://www.nicolasneves.com.br/xiii-semau/1.png" class="popup-image">
+<img src="http://www.nicolasneves.com.br/xiii-semau/5.png" class="popup-image">
+<img src="http://www.nicolasneves.com.br/xiii-semau/6.png" class="popup-image">
+<img src="http://www.nicolasneves.com.br/xiii-semau/7.png" class="popup-image">
+<img src="http://www.nicolasneves.com.br/xiii-semau/8.png" class="popup-image">
+<img src="http://www.nicolasneves.com.br/xiii-semau/9.png" class="popup-image">
+<img src="http://www.nicolasneves.com.br/xiii-semau/10.png" class="popup-image">
+<img src="http://www.nicolasneves.com.br/xiii-semau/11.png" class="popup-image">
+<img src="http://www.nicolasneves.com.br/xiii-semau/12.png" class="popup-image">
 
 <h3>Conclusão</h3>
 
@@ -950,6 +1019,44 @@ document.addEventListener('click', (event) => {
   if (menu.classList.contains('show') && !menu.contains(event.target)) {
     menu.classList.remove('show'); // Remove a classe 'show' para fechar o menu
   }
+});
+
+// Seleciona todas as imagens com a classe 'popup-image'
+const popupImages = document.querySelectorAll('.popup-image');
+const popupOverlay = document.createElement('div');
+const popupContent = document.createElement('div');
+const popupClose = document.createElement('button');
+
+// Configuração do overlay
+popupOverlay.className = 'popup-overlay';
+popupContent.className = 'popup-content';
+popupClose.className = 'popup-close';
+popupClose.innerText = '×';
+
+// Adiciona os elementos ao DOM
+popupOverlay.appendChild(popupContent);
+document.body.appendChild(popupOverlay);
+popupContent.appendChild(popupClose);
+
+// Função para abrir o pop-up
+popupImages.forEach((image) => {
+  image.addEventListener('click', () => {
+    const img = document.createElement('img');
+    img.src = image.src;
+    popupContent.appendChild(img);
+    popupOverlay.style.display = 'flex'; // Mostra o pop-up
+  });
+});
+
+// Função para fechar o pop-up
+const closePopup = () => {
+  popupOverlay.style.display = 'none'; // Esconde o pop-up
+  popupContent.querySelectorAll('img').forEach((img) => img.remove()); // Remove a imagem
+};
+
+popupClose.addEventListener('click', closePopup);
+popupOverlay.addEventListener('click', (e) => {
+  if (e.target === popupOverlay) closePopup(); // Fecha ao clicar no fundo preto
 });
 
 
