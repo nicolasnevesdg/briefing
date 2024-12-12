@@ -899,6 +899,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Seleciona o botão dentro do 'ul'
+const toggleButton = document.querySelector('.menu-logo .menu-toggle');
+// Seleciona o menu que será exibido/ocultado
+const menu = document.querySelector('.menu');
+
+// Adiciona o evento de clique no botão
+toggleButton.addEventListener('click', () => {
+  menu.classList.toggle('show'); // Alterna a classe 'show' para exibir ou ocultar o menu
+});
+
 </script>
 
 </body>
