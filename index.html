@@ -608,9 +608,6 @@ section {
 	margin-top: 85px;
   }
 
-  .main-title {
-    font-size: 40px; /* Reduz o tamanho da fonte */
-  }
 
   .subtext {
     font-size: 16px; /* Ajusta o tamanho do subtítulo */
@@ -645,29 +642,18 @@ justify-content: center;
   .profile-circle {
     margin: 20px auto; /* Centraliza o círculo */
   }
-}
-
-@media (max-width: 768px) {
-
-  .main-title {
-    font-size: 30px; /* Reduz ainda mais o título */
-  }
-
-  .gallery-container {
-    gap: 15px; /* Ajusta o espaçamento */
-  }
 
   .quote-request {
     padding: 10% 10%;
 	margin: 60px auto;
   }
-
+  
   .quote-request h2 {
-    font-size: 24px; /* Reduz o tamanho do título */
+    font-size: 30px; /* Reduz o tamanho do título */
   }
-
+  
   .quote-request p {
-    font-size: 14px; /* Ajusta o texto */
+    font-size: 15px; /* Ajusta o texto */
   }
   
 	.creative-process {
@@ -686,6 +672,39 @@ justify-content: center;
 		position: relative;
 		margin-bottom: 40px;
 	}
+
+  .main-title {
+    font-size: 40px; /* Reduz ainda mais o título */
+  }
+
+}
+
+@media (max-width: 640px) {
+
+  .main-title {
+    font-size: 30px; /* Reduz ainda mais o título */
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .gallery-container {
+    gap: 15px; /* Ajusta o espaçamento */
+  }
+
+  .quote-request {
+    padding: 10% 10%;
+	margin: 60px auto;
+  }
+
+  .quote-request h2 {
+    font-size: 24px; /* Reduz o tamanho do título */
+  }
+
+  .quote-request p {
+    font-size: 14px; /* Ajusta o texto */
+  }
 
 	.process-title h2 {
 		font-size: 25px;
@@ -939,8 +958,17 @@ const toggleButton = document.querySelector('.menu-logo .menu-toggle');
 const menu = document.querySelector('.menu');
 
 // Adiciona o evento de clique no botão
-toggleButton.addEventListener('click', () => {
-  menu.classList.toggle('show'); // Alterna a classe 'show' para exibir ou ocultar o menu
+toggleButton.addEventListener('click', (event) => {
+  event.stopPropagation(); // Impede o clique no botão de fechar o menu imediatamente
+  menu.classList.toggle('show'); // Alterna a classe 'show'
+});
+
+// Fecha o menu ao clicar fora dele
+document.addEventListener('click', (event) => {
+  // Verifica se o menu está aberto e se o clique foi fora dele
+  if (menu.classList.contains('show') && !menu.contains(event.target)) {
+    menu.classList.remove('show'); // Remove a classe 'show' para fechar o menu
+  }
 });
 
 
