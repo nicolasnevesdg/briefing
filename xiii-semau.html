@@ -581,6 +581,7 @@ section.project-content {
 .project-data img {
     width: 100%;
     margin-bottom: 30px;
+	cursor: pointer;
 }
 
 .content {
@@ -907,11 +908,14 @@ justify-content: center;
   }
 
   .popup-close {
-    top: 5px;
-    right: 5px;
-    width: 25px;
-    height: 25px;
-    font-size: 16px;
+    font-size: 28px; /* Tamanho maior para melhor usabilidade */
+    top: 10px;
+    right: 10px;
+    width: 40px; /* Aumenta a área de clique */
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
@@ -940,7 +944,7 @@ justify-content: center;
 <div class="project-data">
 
 <h1>XIII Semau</h1>
-<h2>Semana Acadêmica de Arquitetura e Urbanismo</h2>
+<h2>Semana Acadêmica</h2>
 
 <p>A SEMAU é a Semana Acadêmica de Arquitetura e Urbanismo realizada pelos discentes do curso da Universidade Federal Rural do Rio de Janeiro (UFRRJ). Para  a 13° edição, foi escolhido o tema "Pensar fora da casa: habitar e sociabilizar."</p>
 
@@ -972,7 +976,7 @@ justify-content: center;
 
 <section id="orçamento" class="quote-request">
   <h2>Pronto para valorizar</br>ainda mais a sua marca?</h2>
-  <p>Solicite seu orçamento agora, preenchendo o formulário abaixo,</br> ou envie um e-mail para <a href="mailto:seuemail@dominio.com?subject=Orçamento&body=Olá, gostaria de saber mais sobre seus serviços.">nicolasneves.dg@gmail.com</a></p>
+  <p>Solicite seu orçamento agora, preenchendo o formulário abaixo,</br> ou envie um e-mail para <a href="mailto:nicolasnevesdg@gmail.com?subject=Orçamento&body=Olá, gostaria de saber mais sobre seus serviços.">nicolasneves.dg@gmail.com</a></p>
   <a href="http://www.nicolasneves.com.br/formulario" target="_blank"><button class="contact-button">Solicite uma proposta</button></a>
 </section>
 
@@ -1059,6 +1063,13 @@ popupOverlay.addEventListener('click', (e) => {
   if (e.target === popupOverlay) closePopup(); // Fecha ao clicar no fundo preto
 });
 
+// Fecha o pop-up ao clicar no fundo preto
+popupOverlay.addEventListener('click', (e) => {
+  // Verifica se o clique foi no próprio overlay (não no conteúdo)
+  if (e.target === popupOverlay) {
+    closePopup();
+  }
+});
 
 </script>
 
