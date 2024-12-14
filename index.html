@@ -523,8 +523,12 @@ hr {
     position: relative;
     bottom: 20px;
     right: 50px;
-    width: 25px;
-    height: 25px;
+    width: 25px !important;
+    height: 25px !important;
+    min-width: 25px; /* Garante que não encolha */
+    min-height: 25px; /* Garante que não encolha */
+    max-width: 25px; /* Garante que não aumente */
+    max-height: 25px; /* Garante que não aumente */
     background-color: rgb(47, 212, 83);
     border: 3px solid #fff;
     border-radius: 50%;
