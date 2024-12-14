@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nícolas Neves Designer</title>
+  <title>Alcam Sigma</title>
     
     <!-- Link para a fonte Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -219,6 +219,13 @@ text-transform: uppercase;
   top: 0;
   left: 0;
   z-index: 10;
+}
+
+.top-bar p {
+    color: #777;
+    font-size: 17px;
+    margin: auto;
+    margin-left: 15px;
 }
 
 /* Logo */
@@ -531,7 +538,7 @@ hr {
 }
 
 section.project-content {
-    width: 70%;
+    width: 80%;
     margin: 0 auto;
 }
 
@@ -574,6 +581,7 @@ section.project-content {
 .project-data img {
     width: 100%;
     margin-bottom: 30px;
+	cursor: pointer;
 }
 
 .content {
@@ -581,12 +589,348 @@ section.project-content {
     padding: 5% 0 0 0;
 }
 
+.network-button {
+    aspect-ratio: 1 / 1;
+    width: 40px;
+    border-radius: 50%;
+    background-color: #ededed;
+    margin-right: 12px;
+	display: flex;
+}
+
+.network-button svg {
+    width: 15px;
+    margin: auto;
+}
+
+.menu-logo {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+}
+
+.menu-logo a {
+    color: #000;
+    text-decoration: none;
+    font-size: 16px;
+    position: relative;
+    display: inline-block;
+    transition: color 0.3s ease;
+}
+
+section {
+    padding: 0; /* Ajuste conforme necessário */
+    box-sizing: border-box;
+}
+
+.menu-logo {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+}
+
+.menu-logo a {
+    color: #000;
+    text-decoration: none;
+    font-size: 16px;
+    position: relative;
+    display: inline-block;
+    transition: color 0.3s ease;
+}
+
+	/* Responsivo */
+	
+	@media (max-width: 768px) {
+  .top-bar {
+    flex-direction: column; /* Organiza os itens em coluna */
+    height: auto; /* Permite altura dinâmica */
+    padding: 20px 20px; /* Reduz o espaçamento */
+  }
+
+  .menu-logo {
+    justify-content: center;
+  }
+
+  .menu {
+    flex-direction: column; /* Alinha os itens verticalmente */
+  }
+
+  .menu a {
+    font-size: 14px; /* Reduz o tamanho da fonte */
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-container {
+    grid-template-columns: 1fr; /* Um item por linha */
+    gap: 20px; /* Reduz o espaçamento entre itens */
+  }
+
+  .gallery-item {
+    margin: 0 auto; /* Centraliza os itens */
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 60px 20px;
+	padding-bottom: 0;
+	margin-top: 85px;
+  }
+
+  .main-title {
+    font-size: 40px; /* Reduz o tamanho da fonte */
+  }
+
+  .subtext {
+    font-size: 16px; /* Ajusta o tamanho do subtítulo */
+  }
+
+  .contact-button {
+    font-size: 14px;
+    padding: 8px 16px; /* Reduz o botão */
+  }
+  
+  .quote-request {
+    padding: 10% 10%;
+	margin: 60px auto;
+  }
+
+}
+
+@media (max-width: 768px) {
+  .about-me {
+    flex-direction: column; /* Muda para uma coluna */
+    text-align: center; /* Centraliza o texto */
+    padding: 60px 10px; /* Reduz o padding */
+  }
+
+.section-title {
+    font-size: 35px;
+}
+
+.contact-bar {
+margin-top: 40px;
+justify-content: center;
+}
+
+  .profile-info {
+    width: 100%; /* Usa largura total */
+  }
+
+  .profile-circle {
+    margin: 20px auto; /* Centraliza o círculo */
+  }
+}
+
+@media (max-width: 768px) {
+
+  .main-title {
+    font-size: 30px; /* Reduz ainda mais o título */
+  }
+
+  .gallery-container {
+    gap: 15px; /* Ajusta o espaçamento */
+  }
+
+  .quote-request {
+    padding: 7% 10%;
+	margin: 60px auto;
+  }
+
+  .quote-request h2 {
+    font-size: 24px; /* Reduz o tamanho do título */
+  }
+
+  .quote-request p {
+    font-size: 14px; /* Ajusta o texto */
+  }
+  
+	.creative-process {
+		margin: 40px auto;
+		display: block;
+		width: 80%;
+	}
+	
+	.process-info {
+		width: auto;
+	}
+	
+	.process-title {
+		width: auto;
+		height: auto;
+		position: relative;
+		margin-bottom: 40px;
+	}
+
+	.process-title h2 {
+		font-size: 25px;
+	}
+
+	.process-title p {
+		font-size: 16px;
+		color: #666;
+		line-height: 1.6;
+		padding-right: inherit;
+		margin-bottom: 40px;
+	}
+	
+	  .project-data p {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.6;
+    padding-right: inherit;
+    margin-bottom: 40px;
+    text-align: justify;
+}
+  
+.project-data h1 {
+    font-size: 35px;
+}
+  
+.project-data h2 {
+    font-size: 20px;
+}
+
+}
+
+/* Estilo padrão do menu no desktop */
+.menu {
+  display: flex;
+  gap: 30px;
+}
+
+/* Esconde o botão e ajusta o menu no desktop */
+.menu-toggle {
+  display: none;
+}
+
+/* Modo responsivo */
+@media (max-width: 768px) {
+  .menu {
+    display: none; /* Oculta o menu por padrão */
+    flex-direction: column; /* Mostra o menu em coluna */
+    position: absolute;
+    top: 100%; /* Abaixo da barra superior */
+    right: 0;
+    background-color: #fff;
+    width: 100%; /* Ocupa toda a largura */
+    z-index: 10;
+	gap: 10px; /* Reduz ainda mais o espaçamento */
+	padding: 20px;
+  }
+
+  .menu.show {
+    display: flex; /* Mostra o menu quando a classe 'show' é adicionada */
+	border-bottom: 1px solid #ededed;
+    border-top: 1px solid #ededed;
+  }
+
+  .menu-toggle {
+    display: block; /* Mostra o botão no mobile */
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .menu-logo {
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .menu-text {
+    display: none; /* Oculta o texto ao lado da logo */
+  }
+  
+  .top-bar p {
+	display: none;
+  }
+}
+
+/* Fundo preto com opacidade */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8); /* Fundo preto semi-transparente */
+  display: none; /* Oculto por padrão */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Estilo da imagem ampliada */
+.popup-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content img {
+  width: auto; /* Ajusta a largura automaticamente */
+  height: 80vh; /* 80% da altura da janela (viewport height) */
+  max-width: 100%; /* Garante que a largura não ultrapasse a tela */
+  object-fit: contain; /* Mantém as proporções da imagem */
+  border-radius: 8px; /* Opcional: arredonda as bordas */
+}
+
+/* Botão de fechar */
+.popup-close {
+  position: fixed; /* Fixa no canto superior direito da página */
+  top: 20px;
+  right: 20px;
+  background: none; /* Remove o fundo */
+  color: #fff; /* Torna o X branco */
+  font-size: 24px; /* Ajusta o tamanho do texto */
+  font-weight: bold;
+  border: none; /* Remove a borda */
+  cursor: pointer;
+  z-index: 1001; /* Garante que está acima de outros elementos */
+}
+
+.popup-close:hover {
+  color: #ccc; /* Adiciona um efeito visual ao passar o mouse */
+}
+
+@media (max-width: 768px) {
+  .popup-content {
+    max-width: 80%;
+    max-height: 80%;
+  }
+
+  .popup-close {
+    font-size: 28px; /* Tamanho maior para melhor usabilidade */
+    top: 10px;
+    right: 10px;
+    width: 40px; /* Aumenta a área de clique */
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+
   </style>
 </head>
 <body>
   <!-- Barra lateral fixa -->
 <div class="top-bar">
-  <img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Logo" class="logo">
+  <ul class="menu-logo">
+  <a href="https://nicolasneves.com.br"><img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Logo" class="logo"></a>
+  <p>Designer de marcas</p>
+  <button class="menu-toggle" aria-label="Abrir Menu">☰</button>
+  </ul>
+	
     <ul class="menu">
     <li><a href="#portfolio">Portfolio</a></li>
     <li><a href="#sobre">Sobre</a></li>
@@ -600,53 +944,161 @@ section.project-content {
 <div class="project-data">
 
 <h1>Alcam Sigma</h1>
-<h2>Soluções de Engenharia</h2>
+<h2>Soluções de engenharia</h2>
 
-<p> A Alcam Sigma, com seis meses de existência, traz consigo 
-uma década de experiência em Engenharia Civil. Apesar 
-de sua recente fundação, a empresa se destaca pelo 
-profissionalismo, excelência e variedade. Sua equipe 
-diversificada e altamente qualificada garante resultados de 
-qualidade, adaptando-se às necessidades de cada projeto. 
-A Alcam Sigma já construiu uma base sólida, pronta para 
-enfrentar os desafios futuros com confiança e determinação. </p>
+<p> A Alcam Sigma, com seis meses de existência, traz consigo uma década de experiência em Engenharia Civil. Apesar de sua recente fundação, a empresa se destaca pelo profissionalismo, excelência e variedade. Sua equipe diversificada e altamente qualificada garante resultados de qualidade, adaptando-se às necessidades de cada projeto. A Alcam Sigma já construiu uma base sólida, pronta para enfrentar os desafios futuros com confiança e determinação.</p>
 
-<img src="https://i.imgur.com/CZ5xSor.jpeg">
-<img src="https://i.imgur.com/CZ5xSor.jpeg">
+<img src="https://nicolasneves.com.br/alcam-sigma/1_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/4_1.jpg" class="popup-image">
 
 <h3>Contexto</h3>
 
-<p>Como resultado, obtivemos um site aprovado e totalmente dentro de seus conceitos de marca e público alvo. Ficamos felizes em notar a satisfação dos sócios proprietários ao entender o valor do nosso trabalho. </p>
+<p>Para fortalecer essa reputação e comunicar suas qualidades de maneira clara, a marca busca investir em uma identidade visual distinta, que não apenas reafirmará ao público os elevados padrões e serviços excepcionais da Alcam Sigma, mas também destacará seu compromisso contínuo com a inovação e a excelência no setor de Engenharia Civil.<br/><br/>
 
-<img src="https://i.imgur.com/CZ5xSor.jpeg">
-<img src="https://i.imgur.com/CZ5xSor.jpeg">
+ O logo foi trabalhado utlizando apenas 
+o seu nome, conhecido como Word Mark. 
+Esta escolha permitiu a adoção de algumas 
+características para expressar os adjetivos da 
+marca: <br/><br/>
+1 - Personalização de sua fonte inspirarada em 
+instalações hidráulicas ou elétricas, presente 
+em projetos. Também adota um aspecto 
+tecnológico e moderno.<br/><br/>
+ 2 - Substituição do ‘M’ pelo símbolo do Sigma 
+(Σ), na segunda parte do nome.<br/><br/>
+ 3 - O logo foi criado totalmente a partir de grid, 
+o que permite alinhamento e uma linguagem 
+única entre todos os elementos.</p>
+
+<img src="https://nicolasneves.com.br/alcam-sigma/5_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/2_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/3_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/6_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/7_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/8_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/9_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/10_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/11_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/12_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/13_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/14_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/15_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/16_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/17_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/18_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/19_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/20_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/21_1.jpg" class="popup-image">
+<img src="https://nicolasneves.com.br/alcam-sigma/22_1.jpg" class="popup-image">
+
 
 <h3>Conclusão</h3>
 
-<p>Como resultado, obtivemos um site aprovado e totalmente dentro de seus conceitos de marca e público alvo. Ficamos felizes em notar a satisfação dos sócios proprietários ao entender o valor do nosso trabalho. </p>
+<p>O projeto trouxe resultados notáveis, destacando a marca de forma impactante e alinhando sua identidade visual aos elevados padrões de qualidade e inovação de suas soluções. A nova comunicação visual reforçou a confiança no mercado, consolidando a Alcam Sigma como uma referência em seu setor para mais clientes.</p>
 
 </div>
-
 
 </section>
 </div>
 
-<section class="quote-request">
+<section id="orçamento" class="quote-request">
   <h2>Pronto para valorizar</br>ainda mais a sua marca?</h2>
-  <p>Solicite seu orçamento agora, preenchendo o formulário abaixo,</br> ou envie um e-mail para <a href="#">nicolasneves.dg@gmail.com</a></p>
-  <button class="contact-button">Solicite uma proposta</button>
+  <p>Solicite seu orçamento agora, preenchendo o formulário abaixo,</br> ou envie um e-mail para <a href="mailto:nicolasnevesdg@gmail.com?subject=Orçamento&body=Olá, gostaria de saber mais sobre seus serviços.">nicolasneves.dg@gmail.com</a></p>
+  <a href="https://nicolasneves.com.br/formulario" target="_blank"><button class="contact-button">Solicite uma proposta</button></a>
 </section>
 
 <footer class="footer">
   	  <div class="fotter-contact-bar">
-		<div class="network-button"></div>
-		<div class="network-button"></div>
-		<div class="network-button"></div>
+		<a class="network-button" href="https://www.instagram.com/nicolasneves.dg/" target="_blank"><svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></a>
+		<a class="network-button" href="https://www.behance.net/ncolasneves" target="_blank"><svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z"/></svg></a>
+		<a class="network-button" href="https://www.linkedin.com/in/nícolasneves/" target="_blank"><svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg></a>
 	  </div>
   <p>Copyright © 2024 Todos os direitos reservados | Criado por Nícolas Neves</p>
 </footer>
 
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault(); // Impede o comportamento padrão
 
-  
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+
+        if (targetElement) {
+            targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center' // Centraliza verticalmente
+            });
+        }
+    });
+});
+
+// Seleciona o botão dentro do 'ul'
+const toggleButton = document.querySelector('.menu-logo .menu-toggle');
+// Seleciona o menu que será exibido/ocultado
+const menu = document.querySelector('.menu');
+
+// Adiciona o evento de clique no botão
+toggleButton.addEventListener('click', (event) => {
+  event.stopPropagation(); // Impede o clique no botão de fechar o menu imediatamente
+  menu.classList.toggle('show'); // Alterna a classe 'show'
+});
+
+// Fecha o menu ao clicar fora dele
+document.addEventListener('click', (event) => {
+  // Verifica se o menu está aberto e se o clique foi fora dele
+  if (menu.classList.contains('show') && !menu.contains(event.target)) {
+    menu.classList.remove('show'); // Remove a classe 'show' para fechar o menu
+  }
+});
+
+// Seleciona todas as imagens com a classe 'popup-image'
+const popupImages = document.querySelectorAll('.popup-image');
+const popupOverlay = document.createElement('div');
+const popupContent = document.createElement('div');
+const popupClose = document.createElement('button');
+
+// Configuração do overlay
+popupOverlay.className = 'popup-overlay';
+popupContent.className = 'popup-content';
+popupClose.className = 'popup-close';
+popupClose.innerText = '×';
+
+// Adiciona os elementos ao DOM
+popupOverlay.appendChild(popupContent);
+document.body.appendChild(popupOverlay);
+popupContent.appendChild(popupClose);
+
+// Função para abrir o pop-up
+popupImages.forEach((image) => {
+  image.addEventListener('click', () => {
+    const img = document.createElement('img');
+    img.src = image.src;
+    popupContent.appendChild(img);
+    popupOverlay.style.display = 'flex'; // Mostra o pop-up
+  });
+});
+
+// Função para fechar o pop-up
+const closePopup = () => {
+  popupOverlay.style.display = 'none'; // Esconde o pop-up
+  popupContent.querySelectorAll('img').forEach((img) => img.remove()); // Remove a imagem
+};
+
+popupClose.addEventListener('click', closePopup);
+popupOverlay.addEventListener('click', (e) => {
+  if (e.target === popupOverlay) closePopup(); // Fecha ao clicar no fundo preto
+});
+
+// Fecha o pop-up ao clicar no fundo preto
+popupOverlay.addEventListener('click', (e) => {
+  // Verifica se o clique foi no próprio overlay (não no conteúdo)
+  if (e.target === popupOverlay) {
+    closePopup();
+  }
+});
+
+</script>
+
 </body>
 </html>
