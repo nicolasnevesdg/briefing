@@ -280,7 +280,12 @@ text-transform: uppercase;
   flex-direction: column; /* Alinha itens verticalmente */
 }
 
-.parent-container a {
+.more-project {
+    display: grid;
+    padding: 40px 0px 0px 0px;
+}
+
+.more-project a {
     text-align: center;
 }
 
@@ -590,9 +595,7 @@ section {
   .menu a {
     font-size: 14px; /* Reduz o tamanho da fonte */
   }
-}
 
-@media (max-width: 768px) {
   .gallery-container {
     grid-template-columns: 1fr; /* Um item por linha */
     gap: 20px; /* Reduz o espaçamento entre itens */
@@ -601,9 +604,7 @@ section {
   .gallery-item {
     margin: 0 auto; /* Centraliza os itens */
   }
-}
 
-@media (max-width: 768px) {
   .content {
     padding: 60px 20px;
 	margin-top: 85px;
@@ -618,9 +619,7 @@ section {
     font-size: 14px;
     padding: 8px 16px; /* Reduz o botão */
   }
-}
 
-@media (max-width: 768px) {
   .about-me {
     flex-direction: column; /* Muda para uma coluna */
     text-align: center; /* Centraliza o texto */
@@ -677,6 +676,11 @@ justify-content: center;
   .main-title {
     font-size: 40px; /* Reduz ainda mais o título */
   }
+
+.more-project {
+    display: grid;
+    padding: 20px 0px;
+}
 
 }
 
