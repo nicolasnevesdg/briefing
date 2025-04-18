@@ -147,7 +147,7 @@
 .project-info {
   display: flex;
   align-items: center;
-  margin-top: 35px;
+  margin-top: 33px;
   margin-bottom: 30px;
 }
 
@@ -168,6 +168,7 @@
 
 /* Estilo para o nome do projeto */
 .project-name {
+font-size:15px;
 font-weight: bold;
 margin: 0;
 text-transform: uppercase;
@@ -175,7 +176,7 @@ text-transform: uppercase;
 
 /* Estilo para o subtítulo */
 .project-subtitle {
-  font-size: 0.9em;
+  font-size: 13px;
   color: #666;
   margin: 0;
 }
