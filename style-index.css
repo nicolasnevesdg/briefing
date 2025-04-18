@@ -1,4 +1,4 @@
-/* Reset */
+    /* Reset */
     * {
       margin: 0;
       padding: 0;
@@ -278,6 +278,11 @@ text-transform: uppercase;
 .parent-container {
   display: flex;
   flex-direction: column; /* Alinha itens verticalmente */
+}
+
+.parent-container a {
+    text-align: center;
+    padding-top: 30px;
 }
 
 .gallery-container, .content {
