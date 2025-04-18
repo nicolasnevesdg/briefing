@@ -281,9 +281,7 @@ text-transform: uppercase;
 }
 
 .parent-container a {
-	display: flex;
     text-align: center;
-    padding-top: 30px;
 }
 
 .gallery-container, .content {
