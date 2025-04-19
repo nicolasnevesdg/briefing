@@ -571,6 +571,7 @@ section.project-content {
     width: 100%;
     margin-bottom: 30px;
 	cursor: pointer;
+	border: 1px solid #eeeeee;
 }
 
 .project-about {
@@ -794,7 +795,7 @@ justify-content: center;
 	
 	.project-about {
     width: 75%;
-    margin: 40px auto;
+    margin: 30px auto;
 	}
   
     .project-data h1 {
