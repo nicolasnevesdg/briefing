@@ -107,3 +107,30 @@ popupNext.addEventListener('click', (e) => {
   e.stopPropagation();
   if (currentIndex < imgList.length - 1) openPopup(currentIndex + 1);
 });
+
+// Link para top-bar
+  function carregar(arquivo) {
+    fetch(arquivo)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('top-bar').innerHTML = html;
+      });
+  }
+
+// Link para orçamento
+  function carregar(arquivo) {
+    fetch(arquivo)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('orçamento').innerHTML = html;
+      });
+  }
+
+// Link para footer
+  function carregar(arquivo) {
+    fetch(arquivo)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('footer').innerHTML = html;
+      });
+  }
