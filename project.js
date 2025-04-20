@@ -109,28 +109,22 @@ popupNext.addEventListener('click', (e) => {
 });
 
 // Link para top-bar
-  function carregar(arquivo) {
-    fetch(arquivo)
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById('top-bar').innerHTML = html;
-      });
-  }
+  fetch('top-bar.html')
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('top-bar').innerHTML = html;
+    });
 
 // Link para orçamento
-  function carregar(arquivo) {
-    fetch(arquivo)
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById('orçamento').innerHTML = html;
-      });
-  }
+  fetch('orçamento.html')
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('orçamento').innerHTML = html;
+    });
 
 // Link para footer
-  function carregar(arquivo) {
-    fetch(arquivo)
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById('footer').innerHTML = html;
-      });
-  }
+  fetch('footer.html')
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('footer').innerHTML = html;
+    });
