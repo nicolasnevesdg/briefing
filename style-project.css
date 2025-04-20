@@ -944,6 +944,7 @@ justify-content: center;
   }
 
   .popup-close {
+    display: none;
     font-size: 28px; /* Tamanho maior para melhor usabilidade */
     top: 10px;
     right: 10px;
