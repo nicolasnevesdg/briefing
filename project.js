@@ -116,10 +116,10 @@ popupNext.addEventListener('click', (e) => {
     });
 
 // Link para orçamento
-  fetch('orçamento.html')
+  fetch('orcamento.html')
     .then(res => res.text())
     .then(html => {
-      document.getElementById('orçamento').innerHTML = html;
+      document.getElementById('orcamento').innerHTML = html;
     });
 
 // Link para footer
