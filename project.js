@@ -135,25 +135,23 @@ window.addEventListener('DOMContentLoaded', () => {
   button.href = '/portfolio.html'; // Altere o caminho se necessário
   button.className = 'floating-back-button';
 
-  const icon = document.createElement('i');
-  icon.className = 'fa-sharp fa-light fa-arrow-left';
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+         viewBox="0 0 24 24" stroke-width="1.2"
+         stroke="currentColor" width="24" height="24">
+      <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 19.5L8.25 12l7.5-7.5" />
+    </svg>
+  `;
 
   const isMobile = window.innerWidth <= 768;
-  if (isMobile) {
-    button.textContent = 'Ver mais projetos';
-  } else {
-    button.appendChild(icon);
-  }
+  button.innerHTML = isMobile ? 'Ver mais projetos' : svg;
 
   document.body.appendChild(button);
 
-  // Atualiza o botão se a tela for redimensionada
+  // Atualiza se redimensionar a tela
   window.addEventListener('resize', () => {
-    button.innerHTML = '';
-    if (window.innerWidth <= 768) {
-      button.textContent = 'Ver mais projetos';
-    } else {
-      button.appendChild(icon);
-    }
+    button.innerHTML = window.innerWidth <= 768 ? 'Ver mais projetos' : svg;
   });
 });
+

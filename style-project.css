@@ -1004,7 +1004,7 @@ justify-content: center;
   background-color: #f0f0f0;
 }
 
-/* Posição para desktop */
+/* Desktop: ícone à direita */
 @media (min-width: 769px) {
   .floating-back-button {
     bottom: 30px;
@@ -1012,13 +1012,14 @@ justify-content: center;
     width: 48px;
     height: 48px;
     padding: 0;
-    font-size: 24px;
     text-align: center;
-    line-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
-/* Posição para mobile */
+/* Mobile: botão com texto centralizado */
 @media (max-width: 768px) {
   .floating-back-button {
     bottom: 20px;
