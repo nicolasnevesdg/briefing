@@ -1004,6 +1004,16 @@ justify-content: center;
   background-color: #f0f0f0;
 }
 
+.floating-back-button svg {
+  fill: none;
+  stroke-width: 1;
+  stroke: #111;
+  width: 20px;
+  height: 20px;
+}
+
+
+
 /* Desktop: ícone à direita */
 @media (min-width: 769px) {
   .floating-back-button {
