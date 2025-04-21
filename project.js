@@ -132,16 +132,28 @@ popupNext.addEventListener('click', (e) => {
 // Botão "Ver mais projetos" / seta fixa
 window.addEventListener('DOMContentLoaded', () => {
   const button = document.createElement('a');
-  button.href = '/portfolio.html'; // Altere o caminho caso seja diferente
+  button.href = '/portfolio.html'; // Altere o caminho se necessário
   button.className = 'floating-back-button';
 
-  const isMobile = window.innerWidth <= 768;
+  const icon = document.createElement('i');
+  icon.className = 'fa-sharp fa-light fa-arrow-left';
 
-  button.innerHTML = isMobile ? 'Ver mais projetos' : '←';
+  const isMobile = window.innerWidth <= 768;
+  if (isMobile) {
+    button.textContent = 'Ver mais projetos';
+  } else {
+    button.appendChild(icon);
+  }
+
   document.body.appendChild(button);
 
-  // Atualiza se o usuário redimensionar a tela
+  // Atualiza o botão se a tela for redimensionada
   window.addEventListener('resize', () => {
-    button.innerHTML = window.innerWidth <= 768 ? 'Ver mais projetos' : '←';
+    button.innerHTML = '';
+    if (window.innerWidth <= 768) {
+      button.textContent = 'Ver mais projetos';
+    } else {
+      button.appendChild(icon);
+    }
   });
 });
