@@ -985,7 +985,7 @@ justify-content: center;
 	
 .floating-back-button {
   position: fixed;
-  z-index: 1000;
+  z-index: 900;
   background-color: #fff;
   color: #000;
   font-family: 'Space Grotesk', sans-serif;
