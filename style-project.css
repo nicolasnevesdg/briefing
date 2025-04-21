@@ -983,3 +983,46 @@ justify-content: center;
 	.popup-nav:hover {
 	  color: #ccc;
 	}
+	
+.floating-back-button {
+  position: fixed;
+  z-index: 1000;
+  background-color: #fff;
+  color: #000;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #E0E0E0;
+  border-radius: 32px;
+  padding: 12px 20px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.floating-back-button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Posição para desktop */
+@media (min-width: 769px) {
+  .floating-back-button {
+    bottom: 30px;
+    right: 30px;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    font-size: 24px;
+    text-align: center;
+    line-height: 48px;
+  }
+}
+
+/* Posição para mobile */
+@media (max-width: 768px) {
+  .floating-back-button {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

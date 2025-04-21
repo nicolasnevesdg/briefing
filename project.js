@@ -128,3 +128,20 @@ popupNext.addEventListener('click', (e) => {
     .then(html => {
       document.getElementById('footer').innerHTML = html;
     });
+	
+// Botão "Ver mais projetos" / seta fixa
+window.addEventListener('DOMContentLoaded', () => {
+  const button = document.createElement('a');
+  button.href = '/portfolio.html'; // Altere o caminho caso seja diferente
+  button.className = 'floating-back-button';
+
+  const isMobile = window.innerWidth <= 768;
+
+  button.innerHTML = isMobile ? 'Ver mais projetos' : '←';
+  document.body.appendChild(button);
+
+  // Atualiza se o usuário redimensionar a tela
+  window.addEventListener('resize', () => {
+    button.innerHTML = window.innerWidth <= 768 ? 'Ver mais projetos' : '←';
+  });
+});
