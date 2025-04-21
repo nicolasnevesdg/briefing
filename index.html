@@ -21,7 +21,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="style-index.css">
-	
+
+<style>
+
+
+</style>
+
 </head>
 <body>
   <!-- Barra lateral fixa -->
@@ -29,7 +34,7 @@
   <ul class="menu-logo">
   <a href="https://nicolasneves.com.br"><img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Logo" class="logo"></a>
   <p>Designer de marcas</p>
-  <button class="menu-toggle" aria-label="Abrir Menu">☰</button>
+  <button id="menuToggle" class="menu-toggle" aria-label="Abrir Menu">☰</button>
   </ul>
 	
     <ul class="menu">
@@ -39,6 +44,22 @@
     <li><a href="#orçamento">Orçamento</a></li>
   </ul>
 </div>
+
+<nav id="mobileMenu" class="mobile-popup hidden">
+<button id="closeMenu" class="close-button" aria-label="Fechar Menu">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+       stroke-width="1.5" stroke="currentColor" width="24" height="24">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+  </svg>
+</button>
+
+  <ul>
+    <li><a href="#portfolio" class="popup-link">Portfolio</a></li>
+    <li><a href="#sobre" class="popup-link">Sobre</a></li>
+    <li><a href="#processo" class="popup-link">Processo</a></li>
+    <li><a href="#orçamento" class="popup-link">Orçamento</a></li>
+  </ul>
+</nav>
 
 <div class="content">
   <h1 class="main-title">ONDE A ESSÊNCIA DA</br>SUA MARCA GANHA FORMA</h1>
@@ -235,6 +256,38 @@ document.addEventListener('click', (event) => {
 
 
 </script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menu = document.getElementById('mobileMenu');
+    const toggle = document.getElementById('menuToggle');
+    const close = document.getElementById('closeMenu');
+    const links = document.querySelectorAll('.popup-link');
+
+    toggle.addEventListener('click', () => {
+      menu.classList.remove('hidden');
+    });
+
+    close.addEventListener('click', () => {
+      menu.classList.add('hidden');
+    });
+
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        menu.classList.add('hidden');
+      });
+    });
+
+    // Marcar página atual
+    const currentHash = window.location.hash;
+    links.forEach(link => {
+      if (link.getAttribute('href') === currentHash) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>
+
 
 </body>
 </html>

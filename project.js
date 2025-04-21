@@ -153,3 +153,31 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+  document.addEventListener('DOMContentLoaded', () => {
+    const menu = document.getElementById('mobileMenu');
+    const toggle = document.getElementById('menuToggle');
+    const close = document.getElementById('closeMenu');
+    const links = document.querySelectorAll('.popup-link');
+
+    toggle.addEventListener('click', () => {
+      menu.classList.remove('hidden');
+    });
+
+    close.addEventListener('click', () => {
+      menu.classList.add('hidden');
+    });
+
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        menu.classList.add('hidden');
+      });
+    });
+
+    // Marcar página atual
+    const currentHash = window.location.hash;
+    links.forEach(link => {
+      if (link.getAttribute('href') === currentHash) {
+        link.classList.add('active');
+      }
+    });
+  });
