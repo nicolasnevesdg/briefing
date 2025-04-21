@@ -32,18 +32,34 @@
   <!-- Barra lateral fixa -->
 <div class="top-bar">
   <ul class="menu-logo">
-  <a href="https://nicolasneves.com.br"><img src="https://nicolasnevesdg.github.io/briefing/Logo.svg" alt="Logo" class="logo"></a>
+  <a href="https://nicolasneves.com.br"><img src="https://nicolasneves.com.br/Logo.svg" alt="Logo" class="logo"></a>
   <p>Designer de marcas</p>
-  <button class="menu-toggle" aria-label="Abrir Menu">☰</button>
+  <button id="menuToggle" class="menu-toggle" aria-label="Abrir Menu">☰</button>
   </ul>
 	
     <ul class="menu">
-    <li><a href="https://nicolasneves.com.br/portfolio">Portfolio</a></li>
-    <li><a href="https://nicolasneves.com.br/#sobre">Sobre</a></li>
-	<li><a href="https://nicolasneves.com.br/#processo">Processo</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+	<li><a href="#processo">Processo</a></li>
     <li><a href="#orçamento">Orçamento</a></li>
   </ul>
 </div>
+
+<nav id="mobileMenu" class="mobile-popup hidden">
+<button id="closeMenu" class="close-button" aria-label="Fechar Menu">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+       stroke-width="1.5" stroke="currentColor" width="24" height="24">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+  </svg>
+</button>
+
+  <ul>
+    <li><a href="#portfolio" class="popup-link">Portfolio</a></li>
+    <li><a href="#sobre" class="popup-link">Sobre</a></li>
+    <li><a href="#processo" class="popup-link">Processo</a></li>
+    <li><a href="#orçamento" class="popup-link">Orçamento</a></li>
+  </ul>
+</nav>
 
 <div class="content">
 <section class="project-content">
