@@ -227,10 +227,6 @@
 			display: flex;
 			justify-content: center;
 		}
-
-		.checkbox-group {
-		    margin-bottom: 20px;
-		}
 		
 			/* Redimensiona os campos de entrada e textos */
 			input[type="text"], input[type="email"], textarea {
@@ -246,8 +242,26 @@
 				border-bottom: 1px solid #e0e0e0; /* Destaque ao focar */
 			}
 		
+			/* Corrige altura real em mobile */
+			:root {
+			--vh: 100%;
+			}
+
+			body {
+			height: calc(var(--vh, 1vh) * 100);
+			}
+			
 		/* Responsividade para telas menores que 768px */
 		@media (max-width: 768px) {
+			
+			/* Ajustes para mobile */
+			body {
+				padding: 0 16px;
+			}
+			.container {
+				padding: 16px;
+			}
+
 			/* Ajusta a largura e o padding do container */
 			.container {
 				max-width: 70%;
@@ -309,5 +323,4 @@
 			.down-button {
 				right: 10px;
 			}
-
 		}
