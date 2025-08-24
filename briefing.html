@@ -131,8 +131,8 @@
   <button onclick="showNextBox('welcome-screen')">Voltar ao início</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
 (function() {
   emailjs.init({ publicKey: "30ExYEmkHsvuz-0RK" });
 })();
@@ -171,12 +171,16 @@ function sendEmail() {
     }
   }
 
-  emailjs.send("service_u2ejyh4", "template_se6dfqn", data)
-    .then(() => {
-      showNextBox('box3');
-    }, (error) => {
-      console.error("Erro ao enviar:", error);
-    });
+  emailjs.send("service_u2ejyh4", "template_oph1959", data)
+	.then(() => {
+	  document.querySelectorAll('.container').forEach(box => {
+		box.classList.remove('visible');
+	  });
+	  document.getElementById('box3').classList.add('visible');
+	})
+	.catch((error) => {
+	  console.error("Erro ao enviar:", error);
+	});
 }
 </script>
 
