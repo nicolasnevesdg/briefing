@@ -227,6 +227,10 @@
 			display: flex;
 			justify-content: center;
 		}
+
+		.checkbox-group {
+		    margin-bottom: 20px;
+		}
 		
 			/* Redimensiona os campos de entrada e textos */
 			input[type="text"], input[type="email"], textarea {
@@ -305,4 +309,5 @@
 			.down-button {
 				right: 10px;
 			}
+
 		}
