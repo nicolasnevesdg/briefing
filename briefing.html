@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Briefing de Identidade Visual | Nícolas Neves</title>
+
+<meta name="description" content="Preencha o formulário e inicie a criação da identidade visual da sua marca. Um processo guiado, pessoal e estratégico com Nícolas Neves.">
+
+<meta name="keywords" content="formulário de identidade visual, briefing design, nícolas neves, criação de marca, design estratégico, iniciar projeto, identidade visual profissional">
+
+<meta property="og:title" content="Briefing de Identidade Visual | Nícolas Neves" />
+<meta property="og:description" content="Comece seu projeto de identidade visual com Nícolas Neves. Um formulário leve, estratégico e personalizado para entender sua marca desde o início." />
+<meta property="og:image" content="https://nicolasneves.com.br/capas/nicolas-neves.png" />
+<meta property="og:url" content="https://nicolasneves.com.br/formulario.html" />
+<meta property="og:type" content="website" />
+
+    
+  	<link rel="icon" type="image/png" sizes="16x16"  href="https://nicolasneves.com.br/favicons/favicon-16x16.png">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="theme-color" content="#ffffff">
+    <!-- Link para a fonte Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+	<link href="https://nicolasneves.com.br/style-formulario.css" rel="stylesheet" />
+</head>
+<body>
+
+<!-- Imagens de fundo -->
+<img src="https://i.imgur.com/IEMj3Hr.png" alt="Imagem lateral esquerda" class="background-image background-left">
+<img src="https://i.imgur.com/ETrGBo4.png" alt="Imagem lateral direita" class="background-image background-right">
+
+<!-- Imagem fixa na parte inferior -->
+<div class="logo-link"><a href="https://www.nicolasneves.com.br" target="_blank"><img src="https://nicolasneves.com.br/Logo.svg" alt="Imagem inferior" class="bottom-image"></a></div>
+<!-- Tela inicial de boas-vindas -->
+<div id="welcome-screen" class="container visible">
+    <h2>Opa, Nícolas aqui. <i>Tudo certo?</i></h2>
+    <p>Esse formulário é rapidinho e vai me ajudar a entender melhor a <b>personalidade da sua marca</b>. Pense como se a sua empresa fosse uma pessoa: quais características ela teria?</p>
+    <button onclick="showNextBox('box1')">Começar</button>
+</div>
+
+<!-- Primeira etapa -->
+<div id="box1" class="container">
+    <h2>Primeiro, quem está falando comigo?</h2>
+    <form id="form-stage1">
+        <label>Qual o seu nome?</label>
+        <input type="text" placeholder="Seu nome" name="user_name" id="user_name" required>
+
+        <label>Qual é o nome do seu projeto?</label>
+       <input type="text" name="project_name" required placeholder="Nome do projeto">
+
+        <button type="button" onclick="showNextBox('box2')">Próxima Etapa</button>
+    </form>
+</div>
+
+<!-- Segunda etapa -->
+<!-- Segunda etapa -->
+<div id="box2" class="container">
+    <h2>Agora, defina a personalidade da sua marca.</h2>
+    <form id="form-stage3">
+        <label>Qual personalidade você gostaria que sua empresa tivesse caso fosse uma pessoa?</label>
+		<p class="subtext">Selecione quantas opções achar necessário.</p>
+		    <div class="checkbox-group">
+      <label><input type="checkbox" name="personality_traits" value="Inovadora"> Inovadora</label>
+      <label><input type="checkbox" name="personality_traits" value="Determinada"> Determinada</label>
+      <label><input type="checkbox" name="personality_traits" value="Forte"> Forte</label>
+      <label><input type="checkbox" name="personality_traits" value="Agressiva"> Agressiva</label>
+      <label><input type="checkbox" name="personality_traits" value="Discreta"> Discreta</label>
+      <label><input type="checkbox" name="personality_traits" value="Delicada"> Delicada</label>
+      <label><input type="checkbox" name="personality_traits" value="Elegante"> Elegante</label>
+      <label><input type="checkbox" name="personality_traits" value="Moderna"> Moderna</label>
+      <label><input type="checkbox" name="personality_traits" value="Feliz"> Feliz</label>
+      <label><input type="checkbox" name="personality_traits" value="Alegre"> Alegre</label>
+      <label><input type="checkbox" name="personality_traits" value="Divertida"> Divertida</label>
+      <label><input type="checkbox" name="personality_traits" value="Simples"> Simples</label>
+      <label><input type="checkbox" name="personality_traits" value="Tradicional"> Tradicional</label>
+      <label><input type="checkbox" name="personality_traits" value="Rústica"> Rústica</label>
+      <label><input type="checkbox" name="personality_traits" value="Popular"> Popular</label>
+      <label><input type="checkbox" name="personality_traits" value="Ousada"> Ousada</label>
+      <label><input type="checkbox" name="personality_traits" value="Imponente"> Imponente</label>
+      <label><input type="checkbox" name="personality_traits" value="Chamativa"> Chamativa</label>
+      <label><input type="checkbox" name="personality_traits" value="Profissional"> Profissional</label>
+      <label><input type="checkbox" name="personality_traits" value="Séria"> Séria</label>
+      <label><input type="checkbox" name="personality_traits" value="Calma"> Calma</label>
+      <label><input type="checkbox" name="personality_traits" value="Sutil"> Sutil</label>
+      <label><input type="checkbox" name="personality_traits" value="Diferente"> Diferente</label>
+      <label><input type="checkbox" name="personality_traits" value="Corajosa"> Corajosa</label>
+      <label><input type="checkbox" name="personality_traits" value="Amorosa"> Amorosa</label>
+      <label><input type="checkbox" name="personality_traits" value="Romântica"> Romântica</label>
+      <label><input type="checkbox" name="personality_traits" value="Amigável"> Amigável</label>
+      <label><input type="checkbox" name="personality_traits" value="Convidativa"> Convidativa</label>
+      <label><input type="checkbox" name="personality_traits" value="Radical"> Radical</label>
+      <label><input type="checkbox" name="personality_traits" value="Digital"> Digital</label>
+      <label><input type="checkbox" name="personality_traits" value="Antiga"> Antiga</label>
+      <label><input type="checkbox" name="personality_traits" value="Nostálgica"> Nostálgica</label>
+      <label><input type="checkbox" name="personality_traits" value="Persistente"> Persistente</label>
+      <label><input type="checkbox" name="personality_traits" value="Arrojada"> Arrojada</label>
+      <label><input type="checkbox" name="personality_traits" value="Sonhadora"> Sonhadora</label>
+      <label><input type="checkbox" name="personality_traits" value="Convencional"> Convencional</label>
+      <label><input type="checkbox" name="personality_traits" value="Complexa"> Complexa</label>
+      <label><input type="checkbox" name="personality_traits" value="Criativa"> Criativa</label>
+      <label><input type="checkbox" name="personality_traits" value="Industrial"> Industrial</label>
+      <label><input type="checkbox" name="personality_traits" value="Promissora"> Promissora</label>
+      <label><input type="checkbox" name="personality_traits" value="Deslumbrante"> Deslumbrante</label>
+      <label><input type="checkbox" name="personality_traits" value="Inteligente"> Inteligente</label>
+      <label><input type="checkbox" name="personality_traits" value="Nobre"> Nobre</label>
+      <label><input type="checkbox" name="personality_traits" value="Comum"> Comum</label>
+      <label><input type="checkbox" name="personality_traits" value="Poderosa"> Poderosa</label>
+      <label><input type="checkbox" name="personality_traits" value="Casual"> Casual</label>
+      <label><input type="checkbox" name="personality_traits" value="Famosa"> Famosa</label>
+      <label><input type="checkbox" name="personality_traits" value="Descolada"> Descolada</label>
+      <label><input type="checkbox" name="personality_traits" value="Clássica"> Clássica</label>
+      <label><input type="checkbox" name="personality_traits" value="Destemida"> Destemida</label>
+    </div>
+
+    <label>De todas essas que você escolheu, cite as três que você considera as principais.</label>
+    <textarea name="main_traits" required></textarea>
+
+        <button type="button" onclick="sendEmail()">Finalizar</button>
+    </form>
+</div>
+
+<!-- Tela final -->
+<div id="box3" class="container" style="text-align: center;">
+  <h2>Obrigado ✨</h2>
+  <p>Suas respostas foram registradas.  
+  Isso vai me ajudar muito a entender o tom e a essência da sua marca.</p>
+  <p>Nos vemos em breve!</p>
+  <button onclick="showNextBox('welcome-screen')">Voltar ao início</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+(function() {
+  emailjs.init({ publicKey: "30ExYEmkHsvuz-0RK" });
+})();
+
+let currentBox = 0;
+const boxes = ['welcome-screen', 'box1', 'box2', 'box3'];
+
+function showNextBox(nextBoxId) {
+  document.querySelectorAll('.container').forEach(box => {
+    box.classList.remove('visible');
+  });
+  document.getElementById(nextBoxId).classList.add('visible');
+  currentBox = boxes.indexOf(nextBoxId);
+}
+
+function sendEmail() {
+  const data = {};
+  
+  // Coleta dados das etapas
+  const form1 = new FormData(document.getElementById("form-stage1"));
+  const form2 = new FormData(document.getElementById("form-stage2"));
+
+  for (let [key, value] of form1.entries()) {
+    data[key] = value;
+  }
+
+  for (let [key, value] of form2.entries()) {
+    if (key === "personality_traits") {
+      if (data[key]) {
+        data[key] += `, ${value}`;
+      } else {
+        data[key] = value;
+      }
+    } else {
+      data[key] = value;
+    }
+  }
+
+  emailjs.send("service_u2ejyh4", "template_se6dfqn", data)
+    .then(() => {
+      showNextBox('box3');
+    }, (error) => {
+      console.error("Erro ao enviar:", error);
+    });
+}
+</script>
+
+</body>
+</html>
