@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Full Image Slider</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #fff;
+      overflow-x: hidden;
+      font-family: sans-serif;
+    }
+
+    /* Container */
+    .slider {
+      width: 100vw;
+    }
+
+    /* Slides */
+    .slide {
+      display: none;
+      width: 100vw;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    /* Imagem ocupa tudo na largura */
+    .slide img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Navegação fixa */
+    .nav {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 999;
+    }
+
+    .nav button {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav button:hover {
+      background: rgba(0, 0, 0, 0.85);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="slider">
+    <section class="slide active">
+      <img src="/pagina1.png" alt="Página 1">
+    </section>
+
+    <section class="slide">
+      <img src="/pagina2.png" alt="Página 2">
+    </section>
+
+    <section class="slide">
+      <img src="/pagina3.png" alt="Página 3">
+    </section>
+  </div>
+
+  <div class="nav">
+    <button id="prev">←</button>
+    <button id="next">→</button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const prev = document.getElementById('prev');
+    const next = document.getElementById('next');
+
+    let current = 0;
+
+    function showSlide(index) {
+      slides.forEach(slide => slide.classList.remove('active'));
+      slides[index].classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    next.addEventListener('click', () => {
+      current = (current + 1) % slides.length;
+      showSlide(current);
+    });
+
+    prev.addEventListener('click', () => {
+      current = (current - 1 + slides.length) % slides.length;
+      showSlide(current);
+    });
+
+    /* Navegação por teclado (opcional, mas fica lindo) */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') next.click();
+      if (e.key === 'ArrowLeft') prev.click();
+    });
+  </script>
+
+</body>
+</html>
