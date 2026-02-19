@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Guget Fin | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="dados.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand"><h2>Guget Fin</h2></div>
+		<div class="mascot-container">
+        <div id="mascote-status" class="mascot-emoji">🐕</div>
+        <p id="mascote-frase" class="mascot-text">"Tô de olho nesses gastos!"</p>
+		</div>
+        <button class="btn-novo-gasto" onclick="abrirModalGasto()">+ Novo Lançamento</button>
+
+        <div class="sidebar-middle">
+			<div class="sidebar-section">
+				<div class="section-header">
+					<h3>Entradas</h3>
+					<button onclick="abrirModalEntrada()" class="add-mini">+</button>
+				</div>
+				<div id="lista-entradas"></div>
+				
+				<div id="total-entradas-sidebar" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+					<small style="font-size: 9px; font-weight: 800; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em;">Total Mensal</small>
+					<strong id="sidebar-total-valor" style="font-size: 13px; color: var(--dark-green); font-weight: 800;">R$ 0,00</strong>
+				</div>
+			</div>
+			
+			
+        </div>
+
+		<div class="sidebar-footer">
+			<div class="system-section">
+				<h3 class="system-header">SISTEMA</h3>
+				
+				<div class="options-container" id="container-opcoes">
+					<button class="options-trigger" onclick="toggleMenuOpcoes(event)">
+						<span class="system-icon">⚙️</span> Opções
+					</button>
+
+					<div class="options-dropdown" id="menu-dropdown">
+						<button class="dropdown-item" onclick="document.getElementById('input-import-js').click()">
+							<span>📂</span> Importar Backup
+						</button>
+						
+						<input type="file" id="input-import-js" accept=".js" style="display:none" onchange="importarDadosJS(event)">
+
+						<button class="dropdown-item" onclick="abrirModalCartoes()">
+							<span>💳</span> Gerenciar Cartões
+						</button>
+
+						<button class="dropdown-item" onclick="abrirModalCategorias()">
+							<span>🏷️</span> Gerenciar Categorias
+						</button>
+
+						<button class="dropdown-item" onclick="limparMesAtual()">
+							<span>🧹</span> Limpar Mês Atual
+						</button>
+
+						<button class="dropdown-item btn-save-inside" onclick="salvarAlteracoes()">
+							<span>💾</span> Criar Backup
+						</button>
+
+						<hr class="dropdown-divider">
+
+						<button class="dropdown-item btn-danger-text" onclick="limparTudo()">
+							<span>⚠️</span> Resetar App
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+    </aside>
+
+    <main>
+        <header class="month-nav">
+            <button onclick="mudarMes(-1)">❮</button>
+            <button onclick="mudarMes(1)">❯</button> 
+			<h1 id="display-mes-ano">...</h1>
+			<div id="container-lembretes-fatura" style="display: flex; gap: 10px; flex-grow: 1; justify-content: flex-end; overflow-x: auto; padding-bottom: 5px;">
+        </div>
+        </header>
+
+<div class="card chart-card" id="card-grafico">
+    <div class="card-header" onclick="toggleGrafico()">
+        <div class="header-title-group">
+            <span id="chart-toggle-icon" class="chevron"></span>
+            <h3>Fluxo Anual de Gastos</h3>
+        </div>
+    </div>
+    
+    <div class="chart-content-wrapper" id="chart-body">
+        <div class="chart-main">
+            <div class="chart-year-control">
+				<button onclick="mudarAnoGrafico(-1)">❮</button>
+				<span id="ano-badge-dinamico">2026</span>
+				<button onclick="mudarAnoGrafico(1)">❯</button>
+			</div>
+            <div class="chart-container">
+                <canvas id="graficoSalsi"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-annual-summary">
+            <div class="ann-item">
+                <small>ENTRADAS (ANO)</small>
+                <h4 id="ann-entradas" class="txt-green">R$ 0,00</h4>
+            </div>
+            <div class="ann-item">
+                <small>SAÍDAS (ANO)</small>
+                <h4 id="ann-saidas" class="txt-red">R$ 0,00</h4>
+            </div>
+            <div class="ann-item">
+                <small>TOTAL CRÉDITO</small>
+                <h4 id="ann-credito">R$ 0,00</h4>
+            </div>
+            <div class="ann-item">
+                <small>TOTAL DÉBITO/PIX</small>
+                <h4 id="ann-debito">R$ 0,00</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card chart-card" id="card-metas-acordeon">
+    <div class="card-header" onclick="toggleMetas()">
+        <div class="header-title-group">
+            <span id="meta-toggle-icon" class="chevron"></span>
+            <h3>Metas e Objetivos</h3>
+        </div>
+    </div>
+    
+    <div class="chart-content-wrapper" id="meta-body">
+        <div id="conteudo-meta" style="width: 100%;"></div>
+    </div>
+</div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
+            <div class="stat-card"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
+            <div class="stat-card"><small>% da Renda</small><h2 id="resumo-porcentagem">0%</h2></div>
+        </div>
+
+		<div class="tables-row">
+				<div class="card-stack">
+					<div class="card">
+						<h3>Gastos Fixos</h3>
+						<table id="tabela-fixos"><thead><tr><th>Nome</th><th>Valor</th><th>Pago</th><th></th></tr></thead><tbody></tbody></table>
+					</div>
+					<div class="card">
+						<h3>Débito / PIX</h3>
+						<table id="tabela-debito"><thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+					</div>
+				</div>
+
+				<div class="card-stack">
+				<div class="card">
+					<h3>Resumo Mensal</h3>
+					<div class="resumo-central-item">
+						<small>POR CARTÃO / BANCO</small>
+						<div id="resumo-bancos-lista"></div>
+					</div>
+					<div class="resumo-central-item" style="margin-top: 24px;">
+						<small>POR CATEGORIA (TAGS)</small>
+						<div id="resumo-tags-lista"></div>
+					</div>
+				</div>
+
+					<div id="card-terceiros" class="card" style="display: none;">
+						<div>
+							<h3 style="margin-bottom: 20px; color: var(--dark-green); font-size: 15px; font-weight: 700;">
+								Gastos de Terceiros
+							</h3>
+							
+							<table id="tabela-terceiros" style="width: 100%; border-collapse: collapse;">
+								<thead>
+									<tr style="text-align: left; color: var(--text-sec); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #f0f0f0;">
+										<th style="padding: 10px 5px;">ITEM</th>
+										<th style="padding: 10px 5px;">PESSOA</th>
+										<th style="padding: 10px 5px; text-align: center;">BANCO/TIPO</th>
+										<th style="padding: 10px 5px; text-align: center;">PARC.</th>
+										<th style="padding: 10px 5px; text-align: right;">VALOR</th>
+										<th style="padding: 10px 5px;"></th>
+									</tr>
+								</thead>
+								<tbody id="lista-terceiros"></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<h3>Cartão de Crédito</h3>
+					<table id="tabela-cartao"><thead><tr><th>Item</th><th>Parc.</th><th>Banco</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+				</div>
+			</div>
+    </main>
+
+    <dialog id="modal-gasto">
+        <div class="modal-content">
+            <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+            <h3>Novo Gasto 💸</h3>
+            <form method="dialog">
+                <input type="text" id="g-nome" placeholder="Descrição" required>
+                <input type="text" id="g-valor" placeholder="Valor Total R$" onblur="formatarMoeda(this)">
+                <input type="date" id="g-data">
+                
+				<div class="input-group">
+					<label>Início do Pagamento</label>
+					<select id="g-inicio-pagamento">
+						<option value="0">Mesmo mês da compra</option>
+						<option value="1">Mês seguinte (+1)</option>
+						<option value="2">Daqui a 2 meses (+2)</option>
+					</select>
+				</div>
+				
+                <select id="g-tipo" onchange="ajustarCamposModal()">
+                    <option value="cartao">Cartão de Crédito</option>
+                    <option value="fixo">Gasto Fixo</option>
+                    <option value="debito">Débito / PIX</option>
+                </select>
+
+                <div id="div-cartao-campos">
+                    <input type="number" id="g-parcelas" value="1" min="1" placeholder="Número de parcelas">
+                    <select id="g-banco"></select>
+                </div>
+
+                <select id="g-categoria"></select>
+				
+				<div class="input-group-checkbox">
+					<label for="g-terceiro" class="checkbox-container">
+						<input type="checkbox" id="g-terceiro" onchange="toggleCampoNomeTerceiro()">
+						<span class="checkbox-text">Esse gasto não é meu</span>
+					</label>
+				</div>
+
+				<div id="div-nome-terceiro" class="input-group" style="display: none; margin-top: 10px;">
+					<input type="text" id="g-nome-terceiro" placeholder="Nome da pessoa (ex: Patrícia)">
+				</div>
+                
+                <button type="button" onclick="confirmarGasto()" style="width:100%; background:#10b981; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Adicionar</button>
+            </form>
+        </div>
+    </dialog>
+
+    <dialog id="modal-entrada">
+        <div class="modal-content">
+            <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+            <h3>Nova Entrada 💰</h3>
+            <form method="dialog">
+                <input type="text" id="e-nome" placeholder="Descrição">
+                <input type="number" id="e-valor" placeholder="Valor R$">
+                <button type="button" onclick="confirmarEntrada()" style="width:100%; background:#10b981; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Salvar</button>
+            </form>
+        </div>
+    </dialog>
+
+	<dialog id="modal-config">
+		<div class="modal-content">
+			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+			<h3>Configurações ⚙️</h3>
+			<p style="font-size: 11px; color: #64748b; margin-bottom: 12px;">
+				Bancos no formato <strong>Nome:DiaFechamento</strong> (Ex: Nubank:25, Inter:5)
+			</p>
+			<label>Bancos e Fechamento:</label>
+			<textarea id="conf-bancos" rows="3" placeholder="Nubank:25, Inter:5"></textarea>
+			
+			<label>Categorias:</label>
+			<textarea id="conf-categorias" rows="3"></textarea>
+			
+			<button type="button" onclick="salvarConfig()" style="width:100%; background:#1e293b; color:white; border:none; padding:14px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Atualizar</button>
+		</div>
+	</dialog>
+
+    <script src="app.js"></script>
+	
+<dialog id="modal-cartoes" class="modal-largo">
+    <div class="modal-content" style="width: 720px; max-width: 95vw;">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+        <h3 style="margin-bottom: 24px;">Gerenciar Cartões 💳</h3>
+        
+        <div class="modal-split-container">
+            
+            <div class="modal-side">
+                <h4 class="column-mini-title">Cartões Cadastrados</h4>
+                <div id="lista-cartoes-config" class="config-list-scroll">
+                    </div>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <div class="modal-side">
+                <h4 class="column-mini-title">+ Adicionar Novo</h4>
+                <div class="novo-cartao-form-clean">
+                    <div class="input-group">
+                        <label>Nome do Cartão</label>
+                        <input type="text" id="nc-nome" placeholder="Ex: Nubank, Inter...">
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <div class="input-group" style="flex: 1;">
+                            <label>Fechamento</label>
+                            <input type="number" id="nc-fechamento" placeholder="Dia" min="1" max="31">
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label>Vencimento</label>
+                            <input type="number" id="nc-vencimento" placeholder="Dia" min="1" max="31">
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn-novo-gasto" onclick="adicionarNovoCartao()" style="margin-top: 20px; width: 100%;">
+                        Confirmar Cadastro
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
+
+<dialog id="modal-categorias" class="modal-largo">
+    <div class="modal-content" style="width: 700px; max-width: 95vw;">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+        <h3 style="margin-bottom: 24px;">Minhas Categorias 🏷️</h3>
+        
+        <div class="modal-split-container">
+            <div class="modal-side">
+                <h4 class="column-mini-title">Tags Ativas</h4>
+                <div id="lista-tags-config" class="config-list-scroll"></div>
+            </div>
+
+            <div class="modal-divider"></div>
+
+            <div class="modal-side">
+                <h4 class="column-mini-title">+ Nova Tag</h4>
+                <div class="novo-cartao-form-clean">
+                    <div class="input-group">
+                        <label>Nome da Categoria</label>
+                        <input type="text" id="nt-nome" placeholder="Ex: Lazer, Estudos...">
+                    </div>
+                    <button type="button" class="btn-novo-gasto" onclick="adicionarNovaTag()" style="margin-top: 10px; width: 100%;">
+                        Salvar Categoria
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
+
+<dialog id="modal-detalhes" class="modal-estilizado">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
+        <h2 id="det-nome" style="margin: 0;">Detalhes</h2>
+		<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+    </div>
+    
+    <div class="modal-body-detalhes">
+        <div class="det-linha"><strong>Data de Compra</strong> <span id="det-data"></span></div>
+        <div class="det-linha"><strong>Valor Total</strong> <span id="det-valor-total"></span></div>
+        
+        <div id="det-bloco-parcelas" style="background: #f9f9f9; border-radius: 8px; margin: 5px 0;">
+            <div class="det-linha"><strong>Valor Parcela</strong> <span id="det-valor-parcela"></span></div>
+            <div class="det-linha"><strong>Qtd. Parcelas</strong> <span id="det-qtd-parcelas"></span></div>
+        </div>
+
+        <div class="det-linha"><strong>Cartão/Banco</strong> <span id="det-banco"></span></div>
+        <div class="det-linha"><strong>Categoria</strong> <span id="det-categoria"></span></div>
+    </div>
+</dialog>
+
+<dialog id="modal-meta" class="modal-estilizado">
+    <div style="padding: 20px;">
+        <h2 style="color: var(--dark-green); margin-bottom: 15px;">Definir Meta</h2>
+        <input type="text" id="meta-nome" placeholder="Ex: Viagem para Milão" style="width: 100%; margin-bottom: 10px;">
+        <input type="text" id="meta-valor-total" placeholder="Valor Total R$" oninput="formatarMoeda(this)" style="width: 100%; margin-bottom: 10px;">
+        <input type="text" id="meta-valor-atual" placeholder="Já guardado R$" oninput="formatarMoeda(this)" style="width: 100%; margin-bottom: 20px;">
+        
+        <div style="display: flex; gap: 10px;">
+            <button onclick="salvarMeta()" style="flex: 1; background: var(--dark-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">Salvar</button>
+            <button onclick="this.closest('dialog').close()" style="flex: 1; background: #f0f2f1; border: none; border-radius: 8px; cursor: pointer;">Cancelar</button>
+        </div>
+    </div>
+</dialog>
+
+</body>
+</html>
