@@ -1,0 +1,15 @@
+{
+  "name": "Guget Fin",
+  "short_name": "GugetFin",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f4f7f6",
+  "theme_color": "#1b3a32",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/10149/10149458.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

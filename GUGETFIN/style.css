@@ -831,17 +831,23 @@ tr[style*="opacity: 0.7"] td {
     .sidebar {
         width: 100%;
         height: auto;
-        border-right: none;
+        padding: 10px 20px; /* Reduzi drasticamente a altura */
+        flex-direction: row; /* Alinha logo e botão lado a lado */
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
         border-bottom: 1px solid var(--border);
-        padding: 20px;
     }
-
     .sidebar-middle {
         display: none; /* Esconde detalhes da sidebar no mobile para poupar espaço */
     }
 
     main {
-        padding: 20px;
+        padding: 15px; /* Reduzi de 56px para 15px */
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .stats-grid {
@@ -849,7 +855,19 @@ tr[style*="opacity: 0.7"] td {
     }
 
     .tables-row {
-        flex-direction: column; /* Tabelas uma abaixo da outra */
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .card-stack {
+        width: 100%; /* Garante que a pilha de cards também se estique */
+    }
+	
+    /* Força os cards a ocuparem a tela toda */
+    .tables-row .card, .card-stack {
+        width: 100% !important;
+        max-width: 100%;
+        margin: 0;
     }
 
     /* Transformando Tabelas em Cards Mobile */
@@ -864,19 +882,21 @@ tr[style*="opacity: 0.7"] td {
     }
 
     tr {
+        display: block;
         border: 1px solid var(--border);
         border-radius: 12px;
-        margin-bottom: 10px;
-        padding: 10px;
-        background: white;
+        margin-bottom: 12px;
+        padding: 15px;
+        background: #fff;
     }
 
     td {
-        border: none;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 8px 0;
+        border: none;
+        width: 100%;
     }
 
     /* Adiciona o rótulo antes do valor no mobile */
@@ -887,67 +907,44 @@ tr[style*="opacity: 0.7"] td {
         color: var(--text-sec);
         text-transform: uppercase;
     }
+	
+	td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border: none;
+        width: 100%;
+    }
 }
 
 @media (max-width: 1024px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        padding: 15px; /* Reduzi o padding para não ser tão alto */
-        border-bottom: 1px solid var(--border);
-    }
-
     .brand h2 { 
         margin-bottom: 10px; /* Reduzi a margem do título */
         text-align: center;
     }
+	
+	.brand h2 { margin: 0; font-size: 18px; }
 
+	/* Esconde o mascote e as listas de entrada no mobile para salvar espaço */
+    .mascot-container, 
+    .sidebar-middle, 
+    .sidebar-footer { 
+        display: none; 
+    }
+	
     .mascot-container {
         display: none; /* Opcional: Esconder o mascote no mobile para ganhar muito espaço */
     }
 
     .btn-novo-gasto {
-        margin-bottom: 10px; /* Compactar o botão principal */
+        width: auto;
+        margin: 0;
+        padding: 8px 15px;
+        font-size: 11px;
     }
 
     .sidebar-footer {
         display: none; /* Esconder o menu de opções no mobile ou transformá-lo em algo menor */
-    }
-}
-
-@media (max-width: 1024px) {
-    main {
-        padding: 15px; /* Reduz o respiro lateral do site todo */
-    }
-
-    .tables-row {
-        flex-direction: column; 
-        gap: 15px;
-    }
-
-    .tables-row .card {
-        width: 100%; /* Garante que o card ocupe a largura total disponível */
-        box-sizing: border-box; /* Evita que o padding "estoure" a largura */
-        margin-bottom: 10px;
-    }
-
-    .card-stack {
-        width: 100%; /* Garante que a pilha de cards também se estique */
-    }
-}
-
-@media (max-width: 1024px) {
-    tr {
-        display: block;
-        width: 100%;
-        margin-bottom: 15px;
-        padding: 12px; /* Mais espaço interno para o toque */
-    }
-
-    td {
-        display: flex;
-        justify-content: space-between;
-        width: 100%; /* Cada linha do card ocupa tudo */
-        padding: 10px 0;
     }
 }
