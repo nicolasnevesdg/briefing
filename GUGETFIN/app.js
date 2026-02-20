@@ -898,5 +898,24 @@ function fecharBannerBackup() {
     if (banner) banner.remove();
 }
 
+function navegar(idAba) {
+    // 1. Esconde todas as abas
+    document.querySelectorAll('.tab-content').forEach(aba => {
+        aba.classList.remove('active');
+    });
+
+    // 2. Remove o destaque de todos os botões
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // 3. Mostra a aba clicada e destaca o botão
+    document.getElementById(`aba-${idAba}`).classList.add('active');
+    event.currentTarget.classList.add('active');
+
+    // 4. Feedback tátil/Scroll
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 window.addEventListener('load', injetarAssinatura);
 window.onload = iniciar;

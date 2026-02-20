@@ -37,11 +37,13 @@
 
 		<div class="sidebar-footer">
 			<div class="system-section">
-				<h3 class="system-header">SISTEMA</h3>
 				
 				<div class="options-container" id="container-opcoes">
 					<button class="options-trigger" onclick="toggleMenuOpcoes(event)">
-						<span class="system-icon">⚙️</span> Opções
+						<span class="system-icon">⚙️</span>
+						<svg class="user-profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+						</svg>
+						<span class="btn-text-mobile">Opções</span> </button>
 					</button>
 
 					<div class="options-dropdown" id="menu-dropdown">
@@ -79,6 +81,7 @@
     </aside>
 
     <main>
+	
         <header class="month-nav">
             <button onclick="mudarMes(-1)">❮</button>
             <button onclick="mudarMes(1)">❯</button> 
@@ -87,120 +90,150 @@
         </div>
         </header>
 
-<div class="card chart-card" id="card-grafico">
-    <div class="card-header" onclick="toggleGrafico()">
-        <div class="header-title-group">
-            <span id="chart-toggle-icon" class="chevron"></span>
-            <h3>Fluxo Anual de Gastos</h3>
-        </div>
-    </div>
-    
-    <div class="chart-content-wrapper" id="chart-body">
-        <div class="chart-main">
-            <div class="chart-year-control">
-				<button onclick="mudarAnoGrafico(-1)">❮</button>
-				<span id="ano-badge-dinamico">2026</span>
-				<button onclick="mudarAnoGrafico(1)">❯</button>
-			</div>
-            <div class="chart-container">
-                <canvas id="graficoSalsi"></canvas>
-            </div>
-        </div>
-        
-        <div class="chart-annual-summary">
-            <div class="ann-item">
-                <small>ENTRADAS (ANO)</small>
-                <h4 id="ann-entradas" class="txt-green">R$ 0,00</h4>
-            </div>
-            <div class="ann-item">
-                <small>SAÍDAS (ANO)</small>
-                <h4 id="ann-saidas" class="txt-red">R$ 0,00</h4>
-            </div>
-            <div class="ann-item">
-                <small>TOTAL CRÉDITO</small>
-                <h4 id="ann-credito">R$ 0,00</h4>
-            </div>
-            <div class="ann-item">
-                <small>TOTAL DÉBITO/PIX</small>
-                <h4 id="ann-debito">R$ 0,00</h4>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="card chart-card" id="card-metas-acordeon">
-    <div class="card-header" onclick="toggleMetas()">
-        <div class="header-title-group">
-            <span id="meta-toggle-icon" class="chevron"></span>
-            <h3>Metas e Objetivos</h3>
-        </div>
-    </div>
-    
-    <div class="chart-content-wrapper" id="meta-body">
-        <div id="conteudo-meta" style="width: 100%;"></div>
-    </div>
-</div>
-
-        <div class="stats-grid">
-            <div class="stat-card"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
-            <div class="stat-card"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
-            <div class="stat-card"><small>% da Renda</small><h2 id="resumo-porcentagem">0%</h2></div>
-        </div>
-
-		<div class="tables-row">
-				<div class="card-stack">
-					<div class="card">
-						<h3>Gastos Fixos</h3>
-						<table id="tabela-fixos"><thead><tr><th>Nome</th><th>Valor</th><th>Pago</th><th></th></tr></thead><tbody></tbody></table>
-					</div>
-					<div class="card">
-						<h3>Débito / PIX</h3>
-						<table id="tabela-debito"><thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+		<section id="aba-home" class="tab-content active">
+		
+			<div class="card chart-card" id="card-grafico">
+				<div class="card-header" onclick="toggleGrafico()">
+					<div class="header-title-group">
+						<span id="chart-toggle-icon" class="chevron"></span>
+						<h3>Fluxo Anual de Gastos</h3>
 					</div>
 				</div>
-
-				<div class="card-stack">
-				<div class="card">
-					<h3>Resumo Mensal</h3>
-					<div class="resumo-central-item">
-						<small>POR CARTÃO / BANCO</small>
-						<div id="resumo-bancos-lista"></div>
+		
+				<div class="chart-content-wrapper" id="chart-body">
+					<div class="chart-main">
+						<div class="chart-year-control">
+							<button onclick="mudarAnoGrafico(-1)">❮</button>
+							<span id="ano-badge-dinamico">2026</span>
+							<button onclick="mudarAnoGrafico(1)">❯</button>
+						</div>
+						<div class="chart-container">
+							<canvas id="graficoSalsi"></canvas>
+						</div>
 					</div>
-					<div class="resumo-central-item" style="margin-top: 24px;">
-						<small>POR CATEGORIA (TAGS)</small>
-						<div id="resumo-tags-lista"></div>
-					</div>
-				</div>
-
-					<div id="card-terceiros" class="card" style="display: none;">
-						<div>
-							<h3 style="margin-bottom: 20px; color: var(--dark-green); font-size: 15px; font-weight: 700;">
-								Gastos de Terceiros
-							</h3>
-							
-							<table id="tabela-terceiros" style="width: 100%; border-collapse: collapse;">
-								<thead>
-									<tr style="text-align: left; color: var(--text-sec); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #f0f0f0;">
-										<th style="padding: 10px 5px;">ITEM</th>
-										<th style="padding: 10px 5px;">PESSOA</th>
-										<th style="padding: 10px 5px; text-align: center;">BANCO/TIPO</th>
-										<th style="padding: 10px 5px; text-align: center;">PARC.</th>
-										<th style="padding: 10px 5px; text-align: right;">VALOR</th>
-										<th style="padding: 10px 5px;"></th>
-									</tr>
-								</thead>
-								<tbody id="lista-terceiros"></tbody>
-							</table>
+					
+					<div class="chart-annual-summary">
+						<div class="ann-item">
+							<small>ENTRADAS (ANO)</small>
+							<h4 id="ann-entradas" class="txt-green">R$ 0,00</h4>
+						</div>
+						<div class="ann-item">
+							<small>SAÍDAS (ANO)</small>
+							<h4 id="ann-saidas" class="txt-red">R$ 0,00</h4>
+						</div>
+						<div class="ann-item">
+							<small>TOTAL CRÉDITO</small>
+							<h4 id="ann-credito">R$ 0,00</h4>
+						</div>
+						<div class="ann-item">
+							<small>TOTAL DÉBITO/PIX</small>
+							<h4 id="ann-debito">R$ 0,00</h4>
 						</div>
 					</div>
 				</div>
+			</div>
 
-				<div class="card">
-					<h3>Cartão de Crédito</h3>
-					<table id="tabela-cartao"><thead><tr><th>Item</th><th>Parc.</th><th>Banco</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+			<div class="card chart-card" id="card-metas-acordeon">
+				<div class="card-header" onclick="toggleMetas()">
+					<div class="header-title-group">
+						<span id="meta-toggle-icon" class="chevron"></span>
+						<h3>Metas e Objetivos</h3>
+					</div>
+				</div>
+				
+				<div class="chart-content-wrapper" id="meta-body">
+					<div id="conteudo-meta" style="width: 100%;"></div>
 				</div>
 			</div>
+
+			<div class="stats-grid">
+				<div class="stat-card"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
+				<div class="stat-card"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
+				<div class="stat-card"><small>% da Renda</small><h2 id="resumo-porcentagem">0%</h2></div>
+			</div>
+
+		</section>
+
+			<div class="tables-row">
+					<div class="card-stack">
+						<section id="aba-fixos" class="tab-content">
+						<div class="card">
+							<h3>Gastos Fixos</h3>
+							<table id="tabela-fixos"><thead><tr><th>Nome</th><th>Valor</th><th>Pago</th><th></th></tr></thead><tbody></tbody></table>
+						</div>
+						</section>
+						<section id="aba-debito" class="tab-content">
+						<div class="card">
+							<h3>Débito / PIX</h3>
+							<table id="tabela-debito"><thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+						</div>
+						</section>
+					</div>
+					
+					<section id="aba-home" class="tab-content active">
+					<div class="card-stack">
+					<div class="card">
+						<h3>Resumo Mensal</h3>
+						<div class="resumo-central-item">
+							<small>POR CARTÃO / BANCO</small>
+							<div id="resumo-bancos-lista"></div>
+						</div>
+						<div class="resumo-central-item" style="margin-top: 24px;">
+							<small>POR CATEGORIA (TAGS)</small>
+							<div id="resumo-tags-lista"></div>
+						</div>
+					</div>
+
+					<div id="card-terceiros" class="card" style="display: none;">
+							<div>
+								<h3 style="margin-bottom: 20px; color: var(--dark-green); font-size: 15px; font-weight: 700;">
+									Gastos de Terceiros
+								</h3>
+								
+								<table id="tabela-terceiros" style="width: 100%; border-collapse: collapse;">
+									<thead>
+										<tr style="text-align: left; color: var(--text-sec); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #f0f0f0;">
+											<th style="padding: 10px 5px;">ITEM</th>
+											<th style="padding: 10px 5px;">PESSOA</th>
+											<th style="padding: 10px 5px; text-align: center;">BANCO/TIPO</th>
+											<th style="padding: 10px 5px; text-align: center;">PARC.</th>
+											<th style="padding: 10px 5px; text-align: right;">VALOR</th>
+											<th style="padding: 10px 5px;"></th>
+										</tr>
+									</thead>
+									<tbody id="lista-terceiros"></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					</section>
+					
+					<section id="aba-cartao" class="tab-content">
+					<div class="card">
+						<h3>Cartão de Crédito</h3>
+						<table id="tabela-cartao"><thead><tr><th>Item</th><th>Parc.</th><th>Banco</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+					</div>
+					</section>
+			</div>
+
+		<section id="aba-entradas" class="tab-content">
+			<div class="card">
+				<h3>Minhas Entradas</h3>
+				<div id="lista-entradas-mobile"></div>
+			</div>
+		</section>
+		
     </main>
+
+<nav class="mobile-tab-bar">
+    <button class="tab-btn active" onclick="navegar('home')">🏠</button>
+    <button class="tab-btn" onclick="navegar('entradas')">💰</button>
+    <button class="tab-btn" onclick="navegar('cartao')">💳</button>
+    <button class="tab-btn" onclick="navegar('fixos')">📌</button>
+    <button class="tab-btn" onclick="navegar('pagamentos')">✅</button>
+    
+    <button class="fab-btn" onclick="abrirModalGasto()">+</button>
+</nav>
 
     <dialog id="modal-gasto">
         <div class="modal-content">
@@ -277,122 +310,122 @@
 			<button type="button" onclick="salvarConfig()" style="width:100%; background:#1e293b; color:white; border:none; padding:14px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Atualizar</button>
 		</div>
 	</dialog>
+	
+	<dialog id="modal-cartoes" class="modal-largo">
+		<div class="modal-content" style="width: 720px; max-width: 95vw;">
+			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+			<h3 style="margin-bottom: 24px;">Gerenciar Cartões 💳</h3>
+			
+			<div class="modal-split-container">
+				
+				<div class="modal-side">
+					<h4 class="column-mini-title">Cartões Cadastrados</h4>
+					<div id="lista-cartoes-config" class="config-list-scroll">
+						</div>
+				</div>
+
+				<div class="modal-divider"></div>
+
+				<div class="modal-side">
+					<h4 class="column-mini-title">+ Adicionar Novo</h4>
+					<div class="novo-cartao-form-clean">
+						<div class="input-group">
+							<label>Nome do Cartão</label>
+							<input type="text" id="nc-nome" placeholder="Ex: Nubank, Inter...">
+						</div>
+						
+						<div style="display: flex; gap: 15px;">
+							<div class="input-group" style="flex: 1;">
+								<label>Fechamento</label>
+								<input type="number" id="nc-fechamento" placeholder="Dia" min="1" max="31">
+							</div>
+							<div class="input-group" style="flex: 1;">
+								<label>Vencimento</label>
+								<input type="number" id="nc-vencimento" placeholder="Dia" min="1" max="31">
+							</div>
+						</div>
+						
+						<button type="button" class="btn-novo-gasto" onclick="adicionarNovoCartao()" style="margin-top: 20px; width: 100%;">
+							Confirmar Cadastro
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</dialog>
+
+	<dialog id="modal-categorias" class="modal-largo">
+		<div class="modal-content" style="width: 700px; max-width: 95vw;">
+			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+			<h3 style="margin-bottom: 24px;">Minhas Categorias 🏷️</h3>
+			
+			<div class="modal-split-container">
+				<div class="modal-side">
+					<h4 class="column-mini-title">Tags Ativas</h4>
+					<div id="lista-tags-config" class="config-list-scroll"></div>
+				</div>
+
+				<div class="modal-divider"></div>
+
+				<div class="modal-side">
+					<h4 class="column-mini-title">+ Nova Tag</h4>
+					<div class="novo-cartao-form-clean">
+						<div class="input-group">
+							<label>Nome da Categoria</label>
+							<input type="text" id="nt-nome" placeholder="Ex: Lazer, Estudos...">
+						</div>
+						<button type="button" class="btn-novo-gasto" onclick="adicionarNovaTag()" style="margin-top: 10px; width: 100%;">
+							Salvar Categoria
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</dialog>
+
+	<dialog id="modal-detalhes" class="modal-estilizado">
+		<div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
+			<h2 id="det-nome" style="margin: 0;">Detalhes</h2>
+			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+		</div>
+		
+		<div class="modal-body-detalhes">
+			<div class="det-linha"><strong>Data de Compra</strong> <span id="det-data"></span></div>
+			<div class="det-linha"><strong>Valor Total</strong> <span id="det-valor-total"></span></div>
+			
+			<div id="det-bloco-parcelas" style="background: #f9f9f9; border-radius: 8px; margin: 5px 0;">
+				<div class="det-linha"><strong>Valor Parcela</strong> <span id="det-valor-parcela"></span></div>
+				<div class="det-linha"><strong>Qtd. Parcelas</strong> <span id="det-qtd-parcelas"></span></div>
+			</div>
+
+			<div class="det-linha"><strong>Cartão/Banco</strong> <span id="det-banco"></span></div>
+			<div class="det-linha"><strong>Categoria</strong> <span id="det-categoria"></span></div>
+		</div>
+	</dialog>
+
+	<dialog id="modal-meta" class="modal-estilizado">
+		<div style="padding: 20px;">
+			<h2 style="color: var(--dark-green); margin-bottom: 15px;">Definir Meta</h2>
+			<input type="text" id="meta-nome" placeholder="Ex: Viagem para Milão" style="width: 100%; margin-bottom: 10px;">
+			<input type="text" id="meta-valor-total" placeholder="Valor Total R$" oninput="formatarMoeda(this)" style="width: 100%; margin-bottom: 10px;">
+			<input type="text" id="meta-valor-atual" placeholder="Já guardado R$" oninput="formatarMoeda(this)" style="width: 100%; margin-bottom: 20px;">
+			
+			<div style="display: flex; gap: 10px;">
+				<button onclick="salvarMeta()" style="flex: 1; background: var(--dark-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">Salvar</button>
+				<button onclick="this.closest('dialog').close()" style="flex: 1; background: #f0f2f1; border: none; border-radius: 8px; cursor: pointer;">Cancelar</button>
+			</div>
+		</div>
+	</dialog>
 
     <script src="app.js"></script>
-	
-<dialog id="modal-cartoes" class="modal-largo">
-    <div class="modal-content" style="width: 720px; max-width: 95vw;">
-        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
-        <h3 style="margin-bottom: 24px;">Gerenciar Cartões 💳</h3>
-        
-        <div class="modal-split-container">
-            
-            <div class="modal-side">
-                <h4 class="column-mini-title">Cartões Cadastrados</h4>
-                <div id="lista-cartoes-config" class="config-list-scroll">
-                    </div>
-            </div>
 
-            <div class="modal-divider"></div>
-
-            <div class="modal-side">
-                <h4 class="column-mini-title">+ Adicionar Novo</h4>
-                <div class="novo-cartao-form-clean">
-                    <div class="input-group">
-                        <label>Nome do Cartão</label>
-                        <input type="text" id="nc-nome" placeholder="Ex: Nubank, Inter...">
-                    </div>
-                    
-                    <div style="display: flex; gap: 15px;">
-                        <div class="input-group" style="flex: 1;">
-                            <label>Fechamento</label>
-                            <input type="number" id="nc-fechamento" placeholder="Dia" min="1" max="31">
-                        </div>
-                        <div class="input-group" style="flex: 1;">
-                            <label>Vencimento</label>
-                            <input type="number" id="nc-vencimento" placeholder="Dia" min="1" max="31">
-                        </div>
-                    </div>
-                    
-                    <button type="button" class="btn-novo-gasto" onclick="adicionarNovoCartao()" style="margin-top: 20px; width: 100%;">
-                        Confirmar Cadastro
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</dialog>
-
-<dialog id="modal-categorias" class="modal-largo">
-    <div class="modal-content" style="width: 700px; max-width: 95vw;">
-        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
-        <h3 style="margin-bottom: 24px;">Minhas Categorias 🏷️</h3>
-        
-        <div class="modal-split-container">
-            <div class="modal-side">
-                <h4 class="column-mini-title">Tags Ativas</h4>
-                <div id="lista-tags-config" class="config-list-scroll"></div>
-            </div>
-
-            <div class="modal-divider"></div>
-
-            <div class="modal-side">
-                <h4 class="column-mini-title">+ Nova Tag</h4>
-                <div class="novo-cartao-form-clean">
-                    <div class="input-group">
-                        <label>Nome da Categoria</label>
-                        <input type="text" id="nt-nome" placeholder="Ex: Lazer, Estudos...">
-                    </div>
-                    <button type="button" class="btn-novo-gasto" onclick="adicionarNovaTag()" style="margin-top: 10px; width: 100%;">
-                        Salvar Categoria
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</dialog>
-
-<dialog id="modal-detalhes" class="modal-estilizado">
-    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
-        <h2 id="det-nome" style="margin: 0;">Detalhes</h2>
-		<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
-    </div>
-    
-    <div class="modal-body-detalhes">
-        <div class="det-linha"><strong>Data de Compra</strong> <span id="det-data"></span></div>
-        <div class="det-linha"><strong>Valor Total</strong> <span id="det-valor-total"></span></div>
-        
-        <div id="det-bloco-parcelas" style="background: #f9f9f9; border-radius: 8px; margin: 5px 0;">
-            <div class="det-linha"><strong>Valor Parcela</strong> <span id="det-valor-parcela"></span></div>
-            <div class="det-linha"><strong>Qtd. Parcelas</strong> <span id="det-qtd-parcelas"></span></div>
-        </div>
-
-        <div class="det-linha"><strong>Cartão/Banco</strong> <span id="det-banco"></span></div>
-        <div class="det-linha"><strong>Categoria</strong> <span id="det-categoria"></span></div>
-    </div>
-</dialog>
-
-<dialog id="modal-meta" class="modal-estilizado">
-    <div style="padding: 20px;">
-        <h2 style="color: var(--dark-green); margin-bottom: 15px;">Definir Meta</h2>
-        <input type="text" id="meta-nome" placeholder="Ex: Viagem para Milão" style="width: 100%; margin-bottom: 10px;">
-        <input type="text" id="meta-valor-total" placeholder="Valor Total R$" oninput="formatarMoeda(this)" style="width: 100%; margin-bottom: 10px;">
-        <input type="text" id="meta-valor-atual" placeholder="Já guardado R$" oninput="formatarMoeda(this)" style="width: 100%; margin-bottom: 20px;">
-        
-        <div style="display: flex; gap: 10px;">
-            <button onclick="salvarMeta()" style="flex: 1; background: var(--dark-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">Salvar</button>
-            <button onclick="this.closest('dialog').close()" style="flex: 1; background: #f0f2f1; border: none; border-radius: 8px; cursor: pointer;">Cancelar</button>
-        </div>
-    </div>
-</dialog>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log("PWA Ativo!"))
-      .catch((err) => console.log("Erro no PWA:", err));
-  }
-</script>
+	<script>
+	  if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('sw.js')
+		  .then(() => console.log("PWA Ativo!"))
+		  .catch((err) => console.log("Erro no PWA:", err));
+	  }
+	</script>
 
 </body>
 

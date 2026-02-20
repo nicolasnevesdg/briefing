@@ -178,7 +178,6 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 .sidebar-footer {
     margin-top: auto;
     padding-top: 24px;
-    border-top: 1px solid var(--border);
 }
 
 .system-header {
@@ -820,131 +819,170 @@ tr[style*="opacity: 0.7"] td {
     opacity: 1;
 }
 
-/* --- MEDIA QUERIES PARA CELULAR E TABLET --- */
+/* 1. ESCONDER POR PADRÃO (DESKTOP) */
+.mobile-tab-bar, #aba-entradas {
+    display: none; /* Garante que não apareça no PC */
+}
 
+.sidebar-footer { border-top: none !important; padding: 0 !important; margin: 0 !important; }
+
+.options-trigger svg {
+    display: none !important;
+}
+
+/* --- RESPONSIVIDADE TOTAL --- */
 @media (max-width: 1024px) {
-    body {
-        flex-direction: column; /* Sidebar vai para cima ou vira menu */
-        overflow-y: auto;
-    }
-
+    body { flex-direction: column; overflow-y: auto; height: auto; }
+    
+    /* Sidebar vira um cabeçalho fixo compacto */
     .sidebar {
         width: 100%;
-        height: auto;
-        padding: 10px 20px; /* Reduzi drasticamente a altura */
-        flex-direction: row; /* Alinha logo e botão lado a lado */
-        justify-content: space-between;
-        align-items: center;
+		height: 60px !important; /* Altura fixa para o header */
+		padding: 10px 20px;
+        flex-direction: row !important;
+		justify-content: space-between;
+		align-items: center;
         position: sticky;
-        top: 0;
-        z-index: 1000;
-        border-bottom: 1px solid var(--border);
-    }
-    .sidebar-middle {
-        display: none; /* Esconde detalhes da sidebar no mobile para poupar espaço */
+		top: 0;
+		z-index: 1000;
+        border-right: none;
+		border-bottom: 1px solid var(--border);
     }
 
-    main {
-        padding: 15px; /* Reduzi de 56px para 15px */
-        width: 100%;
-        box-sizing: border-box;
-    }
+    /* Esconde elementos secundários no mobile para ganhar tela */
+    .mascot-container, .sidebar-middle, .btn-novo-gasto { display: none !important; }
+    .brand h2 { margin: 0; font-size: 18px; }
+    .options-container { width: auto; margin: 0; padding: 10px 15px; font-size: 11px; }
 
-    .stats-grid {
-        grid-template-columns: 1fr; /* Cards de saldo empilhados */
-    }
-
-    .tables-row {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .card-stack {
-        width: 100%; /* Garante que a pilha de cards também se estique */
+	/* Transforma o container de opções em um botão circular minimalista */
+    .options-trigger {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 38px !important;
+        height: 38px !important;
+        padding: 0 !important;
+        border-radius: 50% !important; /* Círculo perfeito */
+        background: #f0f2f1 !important; /* Cor de fundo discreta */
+		color: var(--dark-green) !important; /* Cor do ícone */
+        border: 1px solid var(--border) !important;
+        font-size: 16px !important;
+		cursor: pointer;
+		box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 	
-    /* Força os cards a ocuparem a tela toda */
-    .tables-row .card, .card-stack {
-        width: 100% !important;
-        max-width: 100%;
-        margin: 0;
-    }
-
-    /* Transformando Tabelas em Cards Mobile */
-    table, thead, tbody, th, td, tr {
-        display: block;
-    }
-
-    thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
-
-    tr {
-        display: block;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        margin-bottom: 12px;
-        padding: 15px;
-        background: #fff;
-    }
-
-    td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        border: none;
-        width: 100%;
-    }
-
-    /* Adiciona o rótulo antes do valor no mobile */
-    td::before {
-        content: attr(data-label);
-        font-size: 10px;
-        font-weight: 800;
-        color: var(--text-sec);
-        text-transform: uppercase;
+	/* O ícone SVG propriamente dito */
+    .user-profile-icon {
+        width: 20px;
+        height: 20px;
     }
 	
-	td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 0;
-        border: none;
-        width: 100%;
+	/* Garante que o texto "Opções" não aparece de forma alguma */
+    .options-trigger span, #container-lembretes-fatura {
+        display: none !important;
     }
+	
+	.options-trigger svg {
+    display: block !important;
 }
-
-@media (max-width: 1024px) {
-    .brand h2 { 
-        margin-bottom: 10px; /* Reduzi a margem do título */
-        text-align: center;
+	
+	/* Esconde o texto "Opções" se ele ainda estiver no HTML, mantendo só o ícone */
+    .options-trigger span:not(.system-icon), 
+    .options-trigger {
+        font-size: 0; /* Remove texto residual */
     }
 	
-	.brand h2 { margin: 0; font-size: 18px; }
-
-	/* Esconde o mascote e as listas de entrada no mobile para salvar espaço */
-    .mascot-container, 
-    .sidebar-middle, 
-    .sidebar-footer { 
-        display: none; 
+	.options-trigger span:not(.system-icon) {
+        display: none !important;
     }
 	
-    .mascot-container {
-        display: none; /* Opcional: Esconder o mascote no mobile para ganhar muito espaço */
+	.system-icon {
+        font-size: 18px !important;
+        margin: 0 !important; /* Remove margens que desalinhariam o ícone no círculo */
     }
-
-    .btn-novo-gasto {
-        width: auto;
-        margin: 0;
-        padding: 8px 15px;
-        font-size: 11px;
-    }
-
+	
+	/* Remove qualquer margem ou padding da div pai (sidebar-footer) */
     .sidebar-footer {
-        display: none; /* Esconder o menu de opções no mobile ou transformá-lo em algo menor */
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
     }
+
+    /* Garante que o dropdown de opções abra no lugar certo no mobile */
+    .options-dropdown {
+        right: 0;
+        left: auto;
+        bottom: auto;
+        top: 50px; /* Abre abaixo do ícone circular */
+    }
+
+    /* Main ocupa a largura total */
+    main { padding: 15px; width: 100%; box-sizing: border-box; }
+    .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+    .tables-row { flex-direction: column; gap: 15px; }
+    .card-stack, .tables-row .card { width: 100% !important; max-width: 100%; }
+
+    /* Tabelas viram blocos de leitura vertical (Cards) */
+    table, thead, tbody, th, td, tr { display: block; }
+    thead tr { position: absolute; top: -9999px; left: -9999px; }
+    tr { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; padding: 12px; background: white; }
+    td { border: none; display: flex; justify-content: space-between; align-items: center; padding: 8px 0; width: 100%; }
+    td::before { content: attr(data-label); font-weight: 800; font-size: 10px; color: var(--text-sec); text-transform: uppercase; }
+	
+	.chart-card {
+		margin-bottom: 15px;
+	}
+	
+    /* Container da Barra Inferior */
+    .mobile-tab-bar {
+        display: flex;
+        position: fixed;
+        bottom: 20px; /* Distância da borda inferior */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70%; /* Um pouco mais estreita nas laterais */
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.85); /* Mais transparência */
+        backdrop-filter: blur(12px);
+        padding: 8px 12px; /* Reduzi o padding vertical */
+        border-radius: 30px; /* Curvatura mais suave */
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        justify-content: space-around;
+        align-items: center;
+        z-index: 9999;
+        border: 1px solid rgba(255, 255, 255, 0.3); /* Bordas de "vidro" */
+    }
+
+    .tab-btn {
+        background: none; 
+        border: none; 
+        font-size: 18px; /* Ícones menores */
+        padding: 8px;
+        opacity: 0.6; /* Deixa os inativos mais discretos */
+        transition: all 0.2s ease;
+    }
+    
+    .tab-btn.active { 
+        opacity: 1; 
+        transform: translateY(-2px); /* Leve levante no ativo */
+    }
+
+    /* Botão de Adicionar (O + da imagem) */
+    .fab-btn {
+        background: var(--dark-green);
+        color: var(--acc-green);
+        width: 48px; /* Era 55px, reduzi para 48px */
+        height: 48px;
+        border-radius: 50%;
+        border: none;
+        font-size: 24px;
+        margin-top: -25px; /* Menos agressivo pra fora da barra */
+        box-shadow: 0 4px 12px rgba(27, 58, 50, 0.2);
+    }
+
+    /* Controle de Visibilidade das Seções */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
 }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
