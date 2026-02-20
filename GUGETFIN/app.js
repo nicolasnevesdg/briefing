@@ -780,7 +780,7 @@ function atualizarGraficoMeta() {
 
     // COM DADOS: Botão "+ Nova Meta" no topo do conteúdo e Grid de metas
     container.innerHTML = `
-        <div style="display: flex; justify-content: flex-end; padding: 10px 25px 0 0;">
+        <div style="display: flex; justify-content: flex-end;">
             <button onclick="document.getElementById('modal-meta').showModal()" class="btn-novo-gasto" style="width: auto; padding: 6px 15px; font-size: 11px; margin: 0;">+ Nova Meta</button>
         </div>
         <div id="grid-metas" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; padding: 20px 0 30px 0;"></div>`;
@@ -791,25 +791,24 @@ salsiData.metas.forEach(meta => {
     const fmt = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
     document.getElementById('grid-metas').innerHTML += `
-        <div class="meta-item-card">
-            <button class="btn-del-meta" onclick="excluirMeta(${meta.id})">×</button>
-            
-            <h4 class="meta-titulo">${meta.nome}</h4>
-                
-            <div class="meta-chart-wrapper">
-                <canvas id="${canvasId}"></canvas>
-                <div class="meta-percentage">${perc.toFixed(0)}%</div>
-            </div>
-                
-            <div class="meta-info-valores">
-                <span class="v-atual">R$ ${fmt(meta.atual)}</span> 
-                <span class="v-total">R$ ${fmt(meta.total)}</span>
-            </div>
-                
-            <button class="btn-editar-meta-simples" onclick="abrirEdicaoMeta(${meta.id})">
-                Editar Meta
-            </button>
-        </div>`;
+    <div class="meta-item-card">
+        <button class="btn-del-meta" onclick="excluirMeta(${meta.id})">×</button>
+        <h4 class="meta-titulo">${meta.nome}</h4>
+        
+        <div class="meta-chart-wrapper">
+            <canvas id="${canvasId}"></canvas>
+            <div class="meta-percentage">${perc.toFixed(0)}%</div>
+        </div>
+        
+        <div class="meta-info-valores">
+            <span class="v-atual">R$ ${fmt(meta.atual)}</span> 
+            <span class="v-total">R$ ${fmt(meta.total)}</span>
+        </div>
+        
+        <button class="btn-editar-meta-simples" onclick="abrirEdicaoMeta(${meta.id})">
+            Editar Meta
+        </button>
+    </div>`;
 
         setTimeout(() => {
             const ctx = document.getElementById(`chart-${meta.id}`).getContext('2d');
@@ -895,23 +894,41 @@ function fecharBannerBackup() {
     if (banner) banner.remove();
 }
 
-function navegar(idAba) {
-    // 1. Esconde todas as abas
-    document.querySelectorAll('.tab-content').forEach(aba => {
-        aba.classList.remove('active');
+function navegar(abaId) {
+    // 1. Esconde tudo com força total (Limpa a tela)
+    document.querySelectorAll('.tab-content').forEach(secao => {
+        secao.classList.remove('active');
+        secao.style.setProperty('display', 'none', 'important');
     });
 
-    // 2. Remove o destaque de todos os botões
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
+    // 2. LÓGICA ESPECIAL PARA A HOME (CHAMA OS DOIS BLOCOS)
+    if (abaId === 'home') {
+        const homePrincipal = document.getElementById('aba-home');
+        const homeResumo = document.getElementById('aba-resumo-home');
 
-    // 3. Mostra a aba clicada e destaca o botão
-    document.getElementById(`aba-${idAba}`).classList.add('active');
-    event.currentTarget.classList.add('active');
+        if (homePrincipal) {
+            homePrincipal.classList.add('active');
+            homePrincipal.style.setProperty('display', 'block', 'important');
+        }
+        if (homeResumo) {
+            homeResumo.classList.add('active');
+            homeResumo.style.setProperty('display', 'block', 'important');
+        }
+    } 
+    // 3. LÓGICA PARA AS OUTRAS ABAS (FIXOS, CARTÃO, ENTRADAS, ETC)
+    else {
+        // Tenta encontrar o ID exato (aba-fixos, aba-cartao, aba-entradas)
+        const abaAtiva = document.getElementById(`aba-${abaId}`);
+        
+        if (abaAtiva) {
+            abaAtiva.classList.add('active');
+            abaAtiva.style.setProperty('display', 'block', 'important');
+        } else {
+            console.error("Erro: Secção não encontrada ->", `aba-${abaId}`);
+        }
+    }
 
-    // 4. Feedback tátil/Scroll
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
 }
 
 window.addEventListener('load', injetarAssinatura);

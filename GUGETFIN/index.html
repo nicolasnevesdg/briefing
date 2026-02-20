@@ -9,8 +9,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="manifest" href="manifest.json">.
 </head>
+
+
 <body>
-    <aside class="sidebar">
+		<aside class="sidebar">
         <div class="brand"><h2>Guget Fin</h2></div>
 		<div class="mascot-container">
         <div id="mascote-status" class="mascot-emoji">🐕</div>
@@ -78,10 +80,9 @@
 				</div>
 			</div>
 		</div>
-    </aside>
+		</aside>
 
     <main>
-	
         <header class="month-nav">
             <button onclick="mudarMes(-1)">❮</button>
             <button onclick="mudarMes(1)">❯</button> 
@@ -155,22 +156,20 @@
 		</section>
 
 			<div class="tables-row">
+					<section id="aba-fixos" class="tab-content">
 					<div class="card-stack">
-						<section id="aba-fixos" class="tab-content">
 						<div class="card">
 							<h3>Gastos Fixos</h3>
 							<table id="tabela-fixos"><thead><tr><th>Nome</th><th>Valor</th><th>Pago</th><th></th></tr></thead><tbody></tbody></table>
 						</div>
-						</section>
-						<section id="aba-debito" class="tab-content">
 						<div class="card">
 							<h3>Débito / PIX</h3>
 							<table id="tabela-debito"><thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
 						</div>
-						</section>
 					</div>
+					</section>
 					
-					<section id="aba-home" class="tab-content active">
+					<section id="aba-resumo-home" class="tab-content active">
 					<div class="card-stack">
 					<div class="card">
 						<h3>Resumo Mensal</h3>
@@ -185,6 +184,7 @@
 					</div>
 
 					<div id="card-terceiros" class="card" style="display: none;">
+
 							<div>
 								<h3 style="margin-bottom: 20px; color: var(--dark-green); font-size: 15px; font-weight: 700;">
 									Gastos de Terceiros

@@ -1299,4 +1299,56 @@ tr[style*="opacity: 0.7"] td {
 	
 }
 
+/* --- BLINDAGEM DESKTOP (PC) --- */
+@media (min-width: 1025px) {
+    /* Força a Home a estar sempre visível */
+    #aba-home.tab-content {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Esconde as seções que são duplicadas apenas para o menu mobile */
+    .mobile-only-section, #aba-entradas, #aba-pagamentos {
+        display: none !important;
+    }
+
+    /* Restaura o layout de colunas das tabelas */
+    .tables-row {
+        display: flex !important;
+        gap: 24px !important;
+        width: 100% !important; /* Garante que a linha use o total da tela */
+        justify-content: space-between; /* Distribui o espaço entre as colunas */
+    }
+	
+	/* Força as colunas (card-stack e seções) a crescerem igualmente */
+    .tables-row > .card-stack, 
+    .tables-row > .tab-content {
+        flex: 1 !important; 
+        min-width: 0; /* Evita que tabelas largas quebrem o flex */
+    }
+}
+
+/* --- REGRAS MOBILE --- */
+@media (max-width: 1024px) {
+    .tab-content { display: none; }
+    .tab-content.active { display: block !important; }
+    
+    /* No mobile, não precisamos das tabelas dentro da Home se elas tiverem abas próprias */
+    .desktop-only-card { display: none !important; }
+	
+	/* Se a section não tiver a classe active, ela NÃO PODE aparecer, não importa o quê */
+    section.tab-content:not(.active) {
+        display: none !important;
+    }
+    
+    /* Força o main a aceitar que os filhos sumam */
+    main {
+        display: block !important; 
+        overflow-y: auto !important;
+    }
+}
+
+
+
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
