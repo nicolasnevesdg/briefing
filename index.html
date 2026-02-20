@@ -1,226 +1,432 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-	<title>Nícolas Neves | Designer de Marcas e Identidade Visual</title>
-	<meta name="description" content="Criação de identidades visuais estratégicas e memoráveis. Designer de marcas com visão criativa e foco em posicionamento autêntico.">
-	<link rel="canonical" href="https://nicolasneves.com.br/" />
-	<meta name="keywords" content="design de marca, identidade visual, designer gráfico, branding, logotipo, portfólio de design, nícolas neves, criação de logo">
-	<meta property="og:title" content="Nícolas Neves | Designer de Marcas" />
-	<meta property="og:description" content="Especialista em identidade visual. Conheça meu portfólio e transforme sua marca." />
-	<meta property="og:image" content="https://nicolasneves.com.br/capas/nicolas-neves.png" />
-	<meta property="og:url" content="https://nicolasneves.com.br" />
-	<meta property="og:type" content="website" />
-    
-	<link rel="icon" type="https://nicolasneves.com.br/image/png" sizes="16x16"  href="https://nicolasneves.com.br/favicons/favicon-16x16.png">
-	<meta name="msapplication-TileColor" content="#ffffff">
-	<meta name="theme-color" content="#ffffff">
-	
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="style-index.css">
-
-<style>
-
-
-</style>
-
+    <meta charset="UTF-8">
+    <title>Guget Fin | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="dados.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="manifest" href="manifest.json">.
 </head>
-<body>
-  <!-- Barra lateral fixa -->
-<div class="top-bar">
-  <ul class="menu-logo">
-  <a href="https://nicolasneves.com.br"><img src="https://nicolasneves.com.br/Logo.svg" alt="Logo" class="logo"></a>
-  <p>Designer de marcas</p>
-  <button id="menuToggle" class="menu-toggle" aria-label="Abrir Menu">☰</button>
-  </ul>
+
+
+<body><aside class="sidebar">
+        <div class="brand"><h2>Guget Fin</h2></div>
+		<div class="mascot-container">
+        <div id="mascote-status" class="mascot-emoji">🐕</div>
+        <p id="mascote-frase" class="mascot-text">"Tô de olho nesses gastos!"</p>
+		</div>
+        <button class="btn-novo-gasto" onclick="abrirModalGasto()">+ Novo Lançamento</button>
+
+        <div class="sidebar-middle">
+			<div class="sidebar-section">
+				<div class="section-header">
+					<h3>Entradas</h3>
+					<button onclick="abrirModalEntrada()" class="add-mini">+</button>
+				</div>
+				<div id="lista-entradas"></div>
+				
+				<div id="total-entradas-sidebar" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+					<small style="font-size: 9px; font-weight: 800; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em;">Total Mensal</small>
+					<strong id="sidebar-total-valor" style="font-size: 13px; color: var(--dark-green); font-weight: 800;">R$ 0,00</strong>
+				</div>
+			</div>
+			
+			
+        </div>
+
+		<div class="sidebar-footer">
+			<div class="system-section">
+				
+				<div class="options-container" id="container-opcoes">
+					<button class="options-trigger" onclick="toggleMenuOpcoes(event)">
+						<span class="system-icon">⚙️</span>
+						<svg class="user-profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+						</svg>
+						<span class="btn-text-mobile">Opções</span> </button>
+					</button>
+
+					<div class="options-dropdown" id="menu-dropdown">
+						<button class="dropdown-item" onclick="document.getElementById('input-import-js').click()">
+							<span>📂</span> Importar Backup
+						</button>
+						
+						<input type="file" id="input-import-js" accept=".js" style="display:none" onchange="importarDadosJS(event)">
+
+						<button class="dropdown-item" onclick="abrirModalCartoes()">
+							<span>💳</span> Gerenciar Cartões
+						</button>
+
+						<button class="dropdown-item" onclick="abrirModalCategorias()">
+							<span>🏷️</span> Gerenciar Categorias
+						</button>
+
+						<button class="dropdown-item" onclick="limparMesAtual()">
+							<span>🧹</span> Limpar Mês Atual
+						</button>
+
+						<button class="dropdown-item btn-save-inside" onclick="salvarAlteracoes()">
+							<span>💾</span> Criar Backup
+						</button>
+
+						<hr class="dropdown-divider">
+
+						<button class="dropdown-item btn-danger-text" onclick="limparTudo()">
+							<span>⚠️</span> Resetar App
+						</button>
+					</div>
+				</div>
+			</div>
+		</div></aside>
+
+    <main>
 	
-    <ul class="menu">
-    <li><a href="#portfolio">Portfolio</a></li>
-    <li><a href="#sobre">Sobre</a></li>
-	<li><a href="#processo">Processo</a></li>
-    <li><a href="#orçamento">Orçamento</a></li>
-  </ul>
-</div>
+        <header class="month-nav">
+            <button onclick="mudarMes(-1)">❮</button>
+            <button onclick="mudarMes(1)">❯</button> 
+			<h1 id="display-mes-ano">...</h1>
+			<div id="container-lembretes-fatura" style="display: flex; gap: 10px; flex-grow: 1; justify-content: flex-end; overflow-x: auto; padding-bottom: 5px;">
+        </div>
+        </header>
 
-<nav id="mobileMenu" class="mobile-popup hidden">
-<button id="closeMenu" class="close-button" aria-label="Fechar Menu">
-  <svg xmlns="https://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-       stroke-width="1.5" stroke="currentColor" width="24" height="24">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-  </svg>
-</button>
+		<section id="aba-home" class="tab-content active">
+		
+			<div class="card chart-card" id="card-grafico">
+				<div class="card-header" onclick="toggleGrafico()">
+					<div class="header-title-group">
+						<span id="chart-toggle-icon" class="chevron"></span>
+						<h3>Fluxo Anual de Gastos</h3>
+					</div>
+				</div>
+		
+				<div class="chart-content-wrapper" id="chart-body">
+					<div class="chart-main">
+						<div class="chart-year-control">
+							<button onclick="mudarAnoGrafico(-1)">❮</button>
+							<span id="ano-badge-dinamico">2026</span>
+							<button onclick="mudarAnoGrafico(1)">❯</button>
+						</div>
+						<div class="chart-container">
+							<canvas id="graficoSalsi"></canvas>
+						</div>
+					</div>
+					
+					<div class="chart-annual-summary">
+						<div class="ann-item">
+							<small>ENTRADAS (ANO)</small>
+							<h4 id="ann-entradas" class="txt-green">R$ 0,00</h4>
+						</div>
+						<div class="ann-item">
+							<small>SAÍDAS (ANO)</small>
+							<h4 id="ann-saidas" class="txt-red">R$ 0,00</h4>
+						</div>
+						<div class="ann-item">
+							<small>TOTAL CRÉDITO</small>
+							<h4 id="ann-credito">R$ 0,00</h4>
+						</div>
+						<div class="ann-item">
+							<small>TOTAL DÉBITO/PIX</small>
+							<h4 id="ann-debito">R$ 0,00</h4>
+						</div>
+					</div>
+				</div>
+			</div>
 
-  <ul>
-    <li><a href="#portfolio" class="popup-link">Portfolio</a></li>
-    <li><a href="#sobre" class="popup-link">Sobre</a></li>
-    <li><a href="#processo" class="popup-link">Processo</a></li>
-    <li><a href="#orçamento" class="popup-link">Orçamento</a></li>
-  </ul>
+			<div class="card chart-card" id="card-metas-acordeon">
+				<div class="card-header" onclick="toggleMetas()">
+					<div class="header-title-group">
+						<span id="meta-toggle-icon" class="chevron"></span>
+						<h3>Metas e Objetivos</h3>
+					</div>
+				</div>
+				
+				<div class="chart-content-wrapper" id="meta-body">
+					<div id="conteudo-meta" style="width: 100%;"></div>
+				</div>
+			</div>
+
+			<div class="stats-grid">
+				<div class="stat-card"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
+				<div class="stat-card"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
+				<div class="stat-card"><small>% da Renda</small><h2 id="resumo-porcentagem">0%</h2></div>
+			</div>
+
+		</section>
+
+			<div class="tables-row">
+					<div class="card-stack">
+						<section id="aba-fixos" class="tab-content">
+						<div class="card">
+							<h3>Gastos Fixos</h3>
+							<table id="tabela-fixos"><thead><tr><th>Nome</th><th>Valor</th><th>Pago</th><th></th></tr></thead><tbody></tbody></table>
+						</div>
+						</section>
+						<section id="aba-debito" class="tab-content">
+						<div class="card">
+							<h3>Débito / PIX</h3>
+							<table id="tabela-debito"><thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+						</div>
+						</section>
+					</div>
+					
+					<section id="aba-home" class="tab-content active">
+					<div class="card-stack">
+					<div class="card">
+						<h3>Resumo Mensal</h3>
+						<div class="resumo-central-item">
+							<small>POR CARTÃO / BANCO</small>
+							<div id="resumo-bancos-lista"></div>
+						</div>
+						<div class="resumo-central-item" style="margin-top: 24px;">
+							<small>POR CATEGORIA (TAGS)</small>
+							<div id="resumo-tags-lista"></div>
+						</div>
+					</div>
+
+					<div id="card-terceiros" class="card" style="display: none;">
+							<div>
+								<h3 style="margin-bottom: 20px; color: var(--dark-green); font-size: 15px; font-weight: 700;">
+									Gastos de Terceiros
+								</h3>
+								
+								<table id="tabela-terceiros" style="width: 100%; border-collapse: collapse;">
+									<thead>
+										<tr style="text-align: left; color: var(--text-sec); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #f0f0f0;">
+											<th style="padding: 10px 5px;">ITEM</th>
+											<th style="padding: 10px 5px;">PESSOA</th>
+											<th style="padding: 10px 5px; text-align: center;">BANCO/TIPO</th>
+											<th style="padding: 10px 5px; text-align: center;">PARC.</th>
+											<th style="padding: 10px 5px; text-align: right;">VALOR</th>
+											<th style="padding: 10px 5px;"></th>
+										</tr>
+									</thead>
+									<tbody id="lista-terceiros"></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					</section>
+					
+					<section id="aba-cartao" class="tab-content">
+					<div class="card">
+						<h3>Cartão de Crédito</h3>
+						<table id="tabela-cartao"><thead><tr><th>Item</th><th>Parc.</th><th>Banco</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+					</div>
+					</section>
+			</div>
+
+		<section id="aba-entradas" class="tab-content">
+			<div class="card">
+				<h3>Minhas Entradas</h3>
+				<div id="lista-entradas-mobile"></div>
+			</div>
+		</section>
+		
+    </main>
+
+<nav class="mobile-tab-bar">
+    <button class="tab-btn active" onclick="navegar('home')">🏠</button>
+    <button class="tab-btn" onclick="navegar('entradas')">💰</button>
+    <button class="tab-btn" onclick="navegar('cartao')">💳</button>
+    <button class="tab-btn" onclick="navegar('fixos')">📌</button>
+    <button class="tab-btn" onclick="navegar('pagamentos')">✅</button>
+    
+    <button class="fab-btn" onclick="abrirModalGasto()">+</button>
 </nav>
 
-<div class="content">
-  <h1 class="main-title">ONDE A ESSÊNCIA DA</br>SUA MARCA GANHA FORMA</h1>
-  <p class="subtext">Seu projeto começa com uma visão,</br>cresce com uma identidade.</p>
-  <a href="https://nicolasneves.com.br/formulario" target="_blank"><button class="contact-button">Transforme sua ideia</button></a>
-</div>
+    <dialog id="modal-gasto">
+        <div class="modal-content">
+            <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+            <h3>Novo Gasto 💸</h3>
+            <form method="dialog">
+                <input type="text" id="g-nome" placeholder="Descrição" required>
+                <input type="text" id="g-valor" placeholder="Valor Total R$" onblur="formatarMoeda(this)">
+                <input type="date" id="g-data">
+                
+				<div class="input-group">
+					<label>Início do Pagamento</label>
+					<select id="g-inicio-pagamento">
+						<option value="0">Mesmo mês da compra</option>
+						<option value="1">Mês seguinte (+1)</option>
+						<option value="2">Daqui a 2 meses (+2)</option>
+					</select>
+				</div>
+				
+                <select id="g-tipo" onchange="ajustarCamposModal()">
+                    <option value="cartao">Cartão de Crédito</option>
+                    <option value="fixo">Gasto Fixo</option>
+                    <option value="debito">Débito / PIX</option>
+                </select>
 
-  <!-- Galeria de Projetos -->
-  <div class="parent-container">
-  <div class="gallery-container">
+                <div id="div-cartao-campos">
+                    <input type="number" id="g-parcelas" value="1" min="1" placeholder="Número de parcelas">
+                    <select id="g-banco"></select>
+                </div>
 
-	<div id="portfolio" class="gallery-item">
-	  <div class="project-thumbnail">
-	  <a href="https://nicolasneves.com.br/qvr-engenharia" target="_self"><img src="https://nicolasneves.com.br/qvr-engenharia.png" alt="Imagem do Projeto 1"></a>
-	  </div> <!-- Placeholder para a imagem -->
-	  <div class="project-info">
-		<div class="circle"><img src="https://nicolasneves.com.br/icons/qvr-engenharia.png"></div>
-		<div>
-		  <p class="project-name">QVR Engenharia</p>
-		  <p class="project-subtitle">Engenharia Civil</p>
+                <select id="g-categoria"></select>
+				
+				<div class="input-group-checkbox">
+					<label for="g-terceiro" class="checkbox-container">
+						<input type="checkbox" id="g-terceiro" onchange="toggleCampoNomeTerceiro()">
+						<span class="checkbox-text">Esse gasto não é meu</span>
+					</label>
+				</div>
+
+				<div id="div-nome-terceiro" class="input-group" style="display: none; margin-top: 10px;">
+					<input type="text" id="g-nome-terceiro" placeholder="Nome da pessoa (ex: Patrícia)">
+				</div>
+                
+                <button type="button" onclick="confirmarGasto()" style="width:100%; background:#10b981; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Adicionar</button>
+            </form>
+        </div>
+    </dialog>
+
+    <dialog id="modal-entrada">
+        <div class="modal-content">
+            <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+            <h3>Nova Entrada 💰</h3>
+            <form method="dialog">
+                <input type="text" id="e-nome" placeholder="Descrição">
+                <input type="number" id="e-valor" placeholder="Valor R$">
+                <button type="button" onclick="confirmarEntrada()" style="width:100%; background:#10b981; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Salvar</button>
+            </form>
+        </div>
+    </dialog>
+
+	<dialog id="modal-config">
+		<div class="modal-content">
+			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+			<h3>Configurações ⚙️</h3>
+			<p style="font-size: 11px; color: #64748b; margin-bottom: 12px;">
+				Bancos no formato <strong>Nome:DiaFechamento</strong> (Ex: Nubank:25, Inter:5)
+			</p>
+			<label>Bancos e Fechamento:</label>
+			<textarea id="conf-bancos" rows="3" placeholder="Nubank:25, Inter:5"></textarea>
+			
+			<label>Categorias:</label>
+			<textarea id="conf-categorias" rows="3"></textarea>
+			
+			<button type="button" onclick="salvarConfig()" style="width:100%; background:#1e293b; color:white; border:none; padding:14px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Atualizar</button>
 		</div>
-	  </div>
-	</div>
-
-	<div class="gallery-item">
-	  <div class="project-thumbnail">
-	  <a href="https://nicolasneves.com.br/alcam-sigma" target="_self"><img src="https://nicolasneves.com.br/alcam-sigma.png" alt="Imagem do Projeto 1"></a>	  
-	  </div> <!-- Placeholder para a imagem -->
-	  <div class="project-info">
-		<div class="circle"><img src="https://nicolasneves.com.br/icons/alcam-sigma.png"></div>
-		<div>
-		  <p class="project-name">Alcam Sigma</p>
-		  <p class="project-subtitle">Soluções de engenharia</p>
-		</div>
-	  </div>
-	</div>
-
-	<div class="gallery-item">
-	  <div class="project-thumbnail">
-	  <a href="https://nicolasneves.com.br/solaris-tabula" target="_self"><img src="https://nicolasneves.com.br/solaris-tabula.png" alt="Imagem do Projeto 1"></a>	  
-	  </div> <!-- Placeholder para a imagem -->
-	  <div class="project-info">
-		<div class="circle"><img src="https://nicolasneves.com.br/icons/solaris-tabula.png"></div>
-		<div>
-		  <p class="project-name">Solaris Tabula</p>
-		  <p class="project-subtitle">Desenvolvimento Energético</p>
-		</div>
-	  </div>
-	</div>
+	</dialog>
 	
-	<div class="gallery-item">
-	  <div class="project-thumbnail">
-	  <a href="https://nicolasneves.com.br/gym-j23" target="_self"><img src="https://nicolasneves.com.br/gym-j23.png" alt="Imagem do Projeto 1"></a>
-	  </div> <!-- Placeholder para a imagem -->
-	  <div class="project-info">
-		<div class="circle"><img src="https://nicolasneves.com.br/icons/gym-j23.png"></div>
-		<div>
-		  <p class="project-name">Gym J23</p>
-		  <p class="project-subtitle">Centro de treinamento</p>
+	<dialog id="modal-cartoes" class="modal-largo">
+		<div class="modal-content" style="width: 720px; max-width: 95vw;">
+			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+			<h3 style="margin-bottom: 24px;">Gerenciar Cartões 💳</h3>
+			
+			<div class="modal-split-container">
+				
+				<div class="modal-side">
+					<h4 class="column-mini-title">Cartões Cadastrados</h4>
+					<div id="lista-cartoes-config" class="config-list-scroll">
+						</div>
+				</div>
+
+				<div class="modal-divider"></div>
+
+				<div class="modal-side">
+					<h4 class="column-mini-title">+ Adicionar Novo</h4>
+					<div class="novo-cartao-form-clean">
+						<div class="input-group">
+							<label>Nome do Cartão</label>
+							<input type="text" id="nc-nome" placeholder="Ex: Nubank, Inter...">
+						</div>
+						
+						<div style="display: flex; gap: 15px;">
+							<div class="input-group" style="flex: 1;">
+								<label>Fechamento</label>
+								<input type="number" id="nc-fechamento" placeholder="Dia" min="1" max="31">
+							</div>
+							<div class="input-group" style="flex: 1;">
+								<label>Vencimento</label>
+								<input type="number" id="nc-vencimento" placeholder="Dia" min="1" max="31">
+							</div>
+						</div>
+						
+						<button type="button" class="btn-novo-gasto" onclick="adicionarNovoCartao()" style="margin-top: 20px; width: 100%;">
+							Confirmar Cadastro
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
-	  </div>
-	</div>
+	</dialog>
 
-	<div class="gallery-item">
-	  <div class="project-thumbnail">
-	  <a href="https://nicolasneves.com.br/xiii-semau" target="_self"><img src="https://nicolasneves.com.br/xiii-semau.png" alt="Imagem do Projeto 1"></a>	  
-	  </div> <!-- Placeholder para a imagem -->
-	  <div class="project-info">
-		<div class="circle"><img src="https://nicolasneves.com.br/icons/xiii-semau.png"></div>
-		<div>
-		  <p class="project-name">XIII Semau</p>
-		  <p class="project-subtitle">Semana Acadêmica</p>
+	<dialog id="modal-categorias" class="modal-largo">
+		<div class="modal-content" style="width: 700px; max-width: 95vw;">
+			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+			<h3 style="margin-bottom: 24px;">Minhas Categorias 🏷️</h3>
+			
+			<div class="modal-split-container">
+				<div class="modal-side">
+					<h4 class="column-mini-title">Tags Ativas</h4>
+					<div id="lista-tags-config" class="config-list-scroll"></div>
+				</div>
+
+				<div class="modal-divider"></div>
+
+				<div class="modal-side">
+					<h4 class="column-mini-title">+ Nova Tag</h4>
+					<div class="novo-cartao-form-clean">
+						<div class="input-group">
+							<label>Nome da Categoria</label>
+							<input type="text" id="nt-nome" placeholder="Ex: Lazer, Estudos...">
+						</div>
+						<button type="button" class="btn-novo-gasto" onclick="adicionarNovaTag()" style="margin-top: 10px; width: 100%;">
+							Salvar Categoria
+						</button>
+					</div>
+				</div>
+			</div>
 		</div>
-	  </div>
-	</div>
+	</dialog>
 
-	<div class="gallery-item">
-	  <div class="project-thumbnail">
-	  <a href="https://nicolasneves.com.br/vet-pandora" target="_self"><img src="https://nicolasneves.com.br/pandora.png" alt="Imagem do Projeto 1"></a>	  
-	  </div> <!-- Placeholder para a imagem -->
-	  <div class="project-info">
-		<div class="circle"><img src="https://nicolasneves.com.br/icons/pandora.png"></div>
-		<div>
-		  <p class="project-name">Pandora</p>
-		  <p class="project-subtitle">Clínica Veterinária</p>
+	<dialog id="modal-detalhes" class="modal-estilizado">
+		<div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
+			<h2 id="det-nome" style="margin: 0;">Detalhes</h2>
+			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
 		</div>
-	  </div>
-	</div>
-	
-    </div>
-	
-	<div class="more-project"><a href="https://nicolasneves.com.br/portfolio"><button class="contact-button">Ver mais projetos</button></a></div>
+		
+		<div class="modal-body-detalhes">
+			<div class="det-linha"><strong>Data de Compra</strong> <span id="det-data"></span></div>
+			<div class="det-linha"><strong>Valor Total</strong> <span id="det-valor-total"></span></div>
+			
+			<div id="det-bloco-parcelas" style="background: #f9f9f9; border-radius: 8px; margin: 5px 0;">
+				<div class="det-linha"><strong>Valor Parcela</strong> <span id="det-valor-parcela"></span></div>
+				<div class="det-linha"><strong>Qtd. Parcelas</strong> <span id="det-qtd-parcelas"></span></div>
+			</div>
 
- </div>
- <!-- Adicione mais itens da galeria conforme necessário -->
-  </div>
-  
-  <section id="sobre" class="about-me">
-	<div class="profile-info">
-	  <h2 class="section-title">Nícolas Neves</h2>
-	  <p class="about-text">Formando em arquitetura e urbanismo pela UFRRJ, atuo há mais de 5 anos em criação de identidades visuais. Sou fascinado por design gráfico desde a infância e busco sempre passar esta sensibilidade estética para meus projetos.</p>
-	  <div class="contact-bar">
-		<a class="network-button" href="https://www.instagram.com/nicolasneves.dg/" target="_blank"><svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></a>
-		<a class="network-button" href="https://www.behance.net/ncolasneves" target="_blank"><svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z"/></svg></a>
-		<a class="network-button" href="https://www.linkedin.com/in/nícolasneves/" target="_blank"><svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg></a>
-	  </div>
-	</div>
-	<div class="profile-status">
-	<div class="profile-circle">
-		<img src="/profile.webp" alt="Foto de perfil">
-	</div>
-	<div class="online-status"></div> <!-- Indicador de status online -->
-	<div class="contact-info">
-		<p><strong>Fale comigo</strong><br>
-		<a href="https://wa.me/5521988233083" target="_blank">Link p/ WhatsApp</a></p>
-	</div>
-	</div>
-</section>
+			<div class="det-linha"><strong>Cartão/Banco</strong> <span id="det-banco"></span></div>
+			<div class="det-linha"><strong>Categoria</strong> <span id="det-categoria"></span></div>
+		</div>
+	</dialog>
 
-<section id="processo" class="creative-process">
-<div class="process-title">
-<h2>Processo criativo</h2>
-<p>Meu processo de criação é estruturado em três etapas essenciais. Cada projeto marcante e duradouro é resultado desse método que une estratégia e criatividade.</p>
-<a href="https://nicolasneves.com.br/formulario" target="_blank"><button class="contact-button">Vamos começar</button></a>
-</div>
-<div class="process-info">
-  <div class="process-step">
-    <h3><p>01</p> Pesquisa</h3>
-    <p>Na etapa inicial, focamos em conhecer profundamente sua marca. Através de um briefing detalhado e uma reunião inicial, vamos explorar juntos o cenário e as oportunidades para construir uma identidade estratégica e diferenciada.</p>
-  </div>
-  <hr>
-  <div class="process-step">
-    <h3><p>02</p> Criação</h3>
-    <p>Com a análise concluída e as estratégias definidas, é o momento de trazer a identidade visual à vida. Nesta fase, desenvolvemos o logotipo, paleta de cores, tipografia, elementos gráficos e aplicações, garantindo que cada detalhe comunique a essência da marca.</p>
-  </div>
-  <hr>
-  <div class="process-step">
-    <h3><p>03</p> Entrega</h3>
-    <p>Na última etapa, realizamos a apresentação do projeto e, em seguida, preparamos a entrega final. Enviamos todos os arquivos e um manual completo da marca, com orientações de uso e aplicação para que sua identidade brilhe em todos os contextos.</p>
-  </div>
-</div>
-</section>
+	<dialog id="modal-meta" class="modal-estilizado">
+		<div style="padding: 20px;">
+			<h2 style="color: var(--dark-green); margin-bottom: 15px;">Definir Meta</h2>
+			<input type="text" id="meta-nome" placeholder="Ex: Viagem para Milão" style="width: 100%; margin-bottom: 10px;">
+			<input type="text" id="meta-valor-total" placeholder="Valor Total R$" oninput="formatarMoeda(this)" style="width: 100%; margin-bottom: 10px;">
+			<input type="text" id="meta-valor-atual" placeholder="Já guardado R$" oninput="formatarMoeda(this)" style="width: 100%; margin-bottom: 20px;">
+			
+			<div style="display: flex; gap: 10px;">
+				<button onclick="salvarMeta()" style="flex: 1; background: var(--dark-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">Salvar</button>
+				<button onclick="this.closest('dialog').close()" style="flex: 1; background: #f0f2f1; border: none; border-radius: 8px; cursor: pointer;">Cancelar</button>
+			</div>
+		</div>
+	</dialog>
 
-<section id="orçamento" class="quote-request">
-  <h2>Pronto para valorizar</br>ainda mais a sua marca?</h2>
-  <p>Solicite seu orçamento agora, preenchendo o formulário abaixo,</br> ou envie um e-mail para <a href="mailto:nicolasnevesdg@gmail.com?subject=Orçamento&body=Olá, gostaria de saber mais sobre seus serviços.">nicolasneves.dg@gmail.com</a></p>
-  <a href="https://nicolasneves.com.br/formulario" target="_blank"><button class="contact-button">Solicite uma proposta</button></a>
-</section>
+    <script src="app.js"></script>
 
-<footer class="footer">
-  	  <div class="fotter-contact-bar">
-		<a class="network-button" href="https://www.instagram.com/nicolasneves.dg/" target="_blank"><svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg></a>
-		<a class="network-button" href="https://www.behance.net/ncolasneves" target="_blank"><svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M232 237.2c31.8-15.2 48.4-38.2 48.4-74 0-70.6-52.6-87.8-113.3-87.8H0v354.4h171.8c64.4 0 124.9-30.9 124.9-102.9 0-44.5-21.1-77.4-64.7-89.7zM77.9 135.9H151c28.1 0 53.4 7.9 53.4 40.5 0 30.1-19.7 42.2-47.5 42.2h-79v-82.7zm83.3 233.7H77.9V272h84.9c34.3 0 56 14.3 56 50.6 0 35.8-25.9 47-57.6 47zm358.5-240.7H376V94h143.7v34.9zM576 305.2c0-75.9-44.4-139.2-124.9-139.2-78.2 0-131.3 58.8-131.3 135.8 0 79.9 50.3 134.7 131.3 134.7 61.3 0 101-27.6 120.1-86.3H509c-6.7 21.9-34.3 33.5-55.7 33.5-41.3 0-63-24.2-63-65.3h185.1c.3-4.2 .6-8.7 .6-13.2zM390.4 274c2.3-33.7 24.7-54.8 58.5-54.8 35.4 0 53.2 20.8 56.2 54.8H390.4z"/></svg></a>
-		<a class="network-button" href="https://www.linkedin.com/in/nícolasneves/" target="_blank"><svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg></a>
-	  </div>
-  <p>Copyright © 2024 Todos os direitos reservados | Criado por Nícolas Neves</p>
-</footer>
-
-<script src="index.js"></script>
-
+	<script>
+	  if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.register('sw.js')
+		  .then(() => console.log("PWA Ativo!"))
+		  .catch((err) => console.log("Erro no PWA:", err));
+	  }
+	</script>
 
 </body>
+
 </html>
