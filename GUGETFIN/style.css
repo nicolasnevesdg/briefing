@@ -25,6 +25,14 @@ body {
     overflow: hidden; 
 }
 
+body * {
+    font-size: 14px; /* Ou o tamanho que você usa como base */
+}
+
+body {
+    font-size: 0; /* Faz o ponto ter tamanho zero */
+}
+
 /* --- Sidebar --- */
 .sidebar { 
     width: 280px; 
@@ -331,7 +339,7 @@ dialog input, dialog select, dialog textarea { width: 100%; padding: 12px; margi
 
 /* Quando estiver aberto (classe .expanded será via JS) */
 .chart-card.expanded .chart-content-wrapper {
-    max-height: 400px;
+    max-height: fit-content;
     opacity: 1;
     padding: 24px;
 }
@@ -831,15 +839,24 @@ tr[style*="opacity: 0.7"] td {
 }
 
 /* Estilo Base dos Cards de Meta (Desktop) */
-.meta-item-card {
-    width: 240px; /* Restaura o tamanho do PC */
-    background: transparent;
+#grid-metas {
+    display: flex; /* No PC usamos flex para eles ficarem um ao lado do outro */
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
     padding: 20px;
+}
+
+.meta-item-card {
+    box-sizing: border-box; /* Impede que o padding "estoure" o tamanho */
+    width: 240px;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px 15px;
     position: relative;
     text-align: center;
-    display: inline-block; /* Mantém um ao lado do outro no PC */
-    vertical-align: top;
-    margin: 10px;
+    border: 1px solid #f0f2f1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
 .meta-titulo {
@@ -989,7 +1006,7 @@ tr[style*="opacity: 0.7"] td {
     main { padding: 15px; width: 100%; box-sizing: border-box; }
     .stats-grid { grid-template-columns: 1fr; gap: 10px; }
     .tables-row { flex-direction: column; gap: 15px; }
-    .card-stack, .tables-row .card { width: 100% !important; max-width: 100%; }
+    .card-stack, .tables-row .card { */ width: 100% !important; */ max-width: 100%; }
 
     /* Tabelas viram blocos de leitura vertical (Cards) */
     table, thead, tbody, th, td, tr { display: block; }
@@ -1064,7 +1081,7 @@ tr[style*="opacity: 0.7"] td {
         order: 2; /* Joga para baixo das tabelas/gráfico */
         grid-template-columns: 1fr; /* Um card por linha para não apertar */
         gap: 15px;
-        margin-top: 15px; /* Espaço para a linha superior respirar */
+        margin: 20px 0; /* Espaço para a linha superior respirar */
     }
 
     /* O container do gráfico e tabelas vai para o topo */
@@ -1078,7 +1095,7 @@ tr[style*="opacity: 0.7"] td {
         justify-content: space-between; /* Texto na esquerda, valor na direita */
         align-items: center;
         padding: 20px 24px;
-        min-height: 45px;
+        min-height: 35px;
     }
 
     .stat-card small {
@@ -1215,6 +1232,69 @@ tr[style*="opacity: 0.7"] td {
         font-size: 10px !important;
         font-weight: 600 !important;
         transition: 0.2s;
+    }
+	
+	/* Estilo para o contêiner que envolve o botão (se houver um no seu JS) */
+    .meta-header-mobile {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 10px 0 20px 0;
+    }
+
+    /* O botão em si, agora com cara de botão de app premium */
+    .btn-novo-gasto[onclick*="modal-meta"] { 
+        width: 70% !important;
+        margin: 15px auto 15px auto !important;
+        display: block !important;
+        float: none !important; /* Mata o float right se houver */
+        background: var(--dark-green) !important;
+        color: var(--acc-green) !important;
+        border-radius: 12px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 10px !important;
+        box-shadow: 0 4px 15px rgba(27, 58, 50, 0.15);
+    }
+	
+	/* 1. O container HOME precisa ser um bloco limpo */
+    #aba-home {
+        display: block !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* 2. O Card de Resumo deve ocupar quase a largura toda da tela */
+    #resumo-bancos-container, 
+    .resumo-card,
+    div[class*="resumo"] {
+        max-width: 500px !important;
+        margin: 20px auto !important; /* Centraliza horizontalmente */
+        padding: 25px 15px !important;
+        float: none !important;
+        display: block !important;
+        background: #ffffff !important;
+        border-radius: 24px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 3. Ajuste das linhas para esticarem de ponta a ponta dentro do card */
+    .resumo-item, .row-resumo {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 12px 0 !important;
+        border-bottom: 1px solid #f1f5f3 !important;
+    }
+	
+	/* Garante que o nome não empurre o valor para fora */
+    .resumo-item span:first-child {
+        flex: 1;
+        text-align: left;
     }
 	
 }
