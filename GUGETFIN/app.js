@@ -43,13 +43,42 @@ function renderizar() {
     document.getElementById('display-mes-ano').innerText = `${mesesNomes[m]} ${a}`;
     document.getElementById('ano-badge-dinamico').innerText = a;
 
-    // 1. Entradas (Sidebar)
-    const entMes = salsiData.entradas.filter(e => e.mes === m && e.ano === a);
-    const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
-    document.getElementById('lista-entradas').innerHTML = entMes.map(e => `
-        <div class="sidebar-list-item"><span>${e.nome}</span><div class="sidebar-value">R$ ${e.valor.toFixed(2)}<button class="btn-del" onclick="excluirEntrada(${salsiData.entradas.indexOf(e)})">×</button></div></div>`).join('');
-	document.getElementById('sidebar-total-valor').innerText = `R$ ${totalEnt.toFixed(2)}`;
+// 1. Entradas (Sidebar + Aba Mobile)
+const entMes = salsiData.entradas.filter(e => e.mes === m && e.ano === a);
+const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
 
+// RENDER PC (Sidebar)
+document.getElementById('lista-entradas').innerHTML = entMes.map(e => `
+    <div class="sidebar-list-item">
+        <span>${e.nome}</span>
+        <div class="sidebar-value">
+            R$ ${e.valor.toFixed(2)}
+            <button class="btn-del" onclick="excluirEntrada(${salsiData.entradas.indexOf(e)})">×</button>
+        </div>
+    </div>`).join('');
+
+// RENDER MOBILE (Aba dedicada) - Adicione isso abaixo:
+const listaMob = document.getElementById('lista-entradas-mobile');
+if (listaMob) {
+    listaMob.innerHTML = entMes.map(e => `
+        <div class="entrada-item-mobile">
+            <div class="ent-info">
+                <strong>${e.nome}</strong>
+                <span>Recebido</span>
+            </div>
+            <div class="ent-valor-box">
+                <span class="ent-valor">+ R$ ${e.valor.toFixed(2)}</span>
+                <button class="btn-del" onclick="excluirEntrada(${salsiData.entradas.indexOf(e)})" style="margin-left:10px">×</button>
+            </div>
+        </div>
+    `).join('') || '<p style="text-align:center; padding:20px; color:var(--text-sec)">Nenhuma entrada.</p>';
+}
+
+// Atualiza os totais (PC e Mobile se existir o ID)
+document.getElementById('sidebar-total-valor').innerText = `R$ ${totalEnt.toFixed(2)}`;
+const totalMob = document.getElementById('total-entradas-mobile');
+if (totalMob) totalMob.innerText = `R$ ${totalEnt.toFixed(2)}`;
+	
     // 2. Limpeza de Tabelas
     const fTable = document.querySelector('#tabela-fixos tbody'), 
           cTable = document.querySelector('#tabela-cartao tbody'), 

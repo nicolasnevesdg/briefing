@@ -1107,6 +1107,15 @@ tr[style*="opacity: 0.7"] td {
         font-size: 20px;
     }
 
+/* 2. Força todos os cards a esticarem até o limite do main */
+    .tab-content, .card, .meta-item-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
     /* 3. Ajuste específico para a aba HOME respirar no final */
     main {
         padding-bottom: 120px !important; /* Garante que a Tab Bar não cubra o último número */
@@ -1347,6 +1356,84 @@ tr[style*="opacity: 0.7"] td {
         display: block !important; 
         overflow-y: auto !important;
     }
+	
+	/* Container do Card de Entradas */
+    #aba-entradas .card {
+        background: #ffffff;
+        border-radius: var(--radius);
+        padding: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 10px;
+    }
+
+    /* Estilo de cada linha de entrada */
+    .entrada-item-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .entrada-item-mobile:last-child {
+        border-bottom: none;
+    }
+
+    .ent-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .ent-info strong {
+        font-size: 14px;
+        color: var(--text-main);
+    }
+
+    .ent-info span {
+        font-size: 11px;
+        color: var(--text-sec);
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .ent-valor-box {
+        text-align: right;
+    }
+
+    .ent-valor {
+        font-size: 15px;
+        font-weight: 700;
+        color: #10b981; /* Verde Sucesso */
+        display: block;
+    }
+	
+	/* Garante que o botão de ADD dentro da aba entradas siga o padrão das metas */
+    #aba-entradas .btn-novo-gasto {
+        width: 50% !important;
+        margin: 0 !important; /* Remove margens automáticas que centralizam */
+        display: block !important;
+        background: var(--dark-green) !important;
+        color: var(--acc-green) !important;
+        border-radius: 12px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 10px !important;
+        box-shadow: 0 4px 15px rgba(27, 58, 50, 0.15);
+    }
+	
+	/* Container para alinhar o botão à direita */
+.header-alinhado-direita {
+    display: flex;
+    justify-content: flex-end; /* Empurra o conteúdo para a direita */
+    padding: 10px 0;
+    width: 100%;
+}
+
+
+	
 }
 
 

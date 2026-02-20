@@ -217,9 +217,29 @@
 			</div>
 
 		<section id="aba-entradas" class="tab-content">
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0;">Entradas</h3>
+            <button onclick="abrirModalEntrada()" class="btn-novo-gasto" style="padding:5px 12px; font-size:12px;">+ Add</button>
+        </div>
+        
+        <div id="lista-entradas-mobile"></div>
+    </div>
+</section>
+
+		<section id="aba-entradas" class="tab-content">
 			<div class="card">
-				<h3>Minhas Entradas</h3>
-				<div id="lista-entradas-mobile"></div>
+				<div class="meta-header-mobile">
+					<h3 style="margin:0;">Entradas</h3>
+					<div class="header-alinhado-direita">
+						<button onclick="abrirModalEntrada()" class="btn-novo-gasto">
+							+ ADD
+						</button>
+					</div>
+				</div>
+				
+				<div id="lista-entradas-mobile">
+					</div>
 			</div>
 		</section>
 		
