@@ -788,28 +788,25 @@ function atualizarGraficoMeta() {
 salsiData.metas.forEach(meta => {
     const canvasId = `chart-${meta.id}`;
     const perc = Math.min(100, (meta.atual / meta.total) * 100);
-    
-    // Formatação de moeda simplificada para o card
     const fmt = (v) => v.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
     document.getElementById('grid-metas').innerHTML += `
-<div style="width: 240px; background: transparent; padding: 20px; position: relative; text-align: center;">
-        <button class="btn-del-meta" onclick="excluirMeta(${meta.id})">×</button>
-        
-        <h4 style="margin: 0 0 15px 0; font-size: 14px; color: var(--dark-green); font-weight: 600;">${meta.nome}</h4>
+        <div class="meta-item-card">
+            <button class="btn-del-meta" onclick="excluirMeta(${meta.id})">×</button>
             
-            <div style="position: relative; width: 140px; height: 140px; margin: 0 auto;">
+            <h4 class="meta-titulo">${meta.nome}</h4>
+                
+            <div class="meta-chart-wrapper">
                 <canvas id="${canvasId}"></canvas>
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 800; font-size: 1.4rem; color: var(--dark-green);">${perc.toFixed(0)}%</div>
+                <div class="meta-percentage">${perc.toFixed(0)}%</div>
             </div>
-            
-            <div style="margin-top: 20px; font-size: 0.95rem;">
-                <span style="font-weight: 800; color: #1b3a32;">R$ ${fmt(meta.atual)}</span> 
-                <span style="color: #cbd5e0; font-weight: 400; margin: 0 4px;">de</span> 
-                <span style="color: #718096; font-weight: 600;">R$ ${fmt(meta.total)}</span>
+                
+            <div class="meta-info-valores">
+                <span class="v-atual">R$ ${fmt(meta.atual)}</span> 
+                <span class="v-total">R$ ${fmt(meta.total)}</span>
             </div>
-            
-            <button onclick="abrirEdicaoMeta(${meta.id})" style="margin-top: 15px; background: #f8faf9; border: 1px solid #e2e8f0; padding: 5px 15px; border-radius: 20px; font-size: 0.75rem; color: #718096; cursor: pointer; transition: 0.2s;">
+                
+            <button class="btn-editar-meta-simples" onclick="abrirEdicaoMeta(${meta.id})">
                 Editar Meta
             </button>
         </div>`;
