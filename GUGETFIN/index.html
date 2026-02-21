@@ -167,7 +167,7 @@
 						<section id="menu-cartoes" class="tab-content">
 						<div class="mobile-tabs-toggle cartoes-toggle">
 							<button id="btn-sub-credito" class="active" onclick="toggleSubCartao('credito')">Crédito</button>
-							<button id="btn-sub-debito" onclick="toggleSubCartao('debito')">Débito</button>
+							<button id="btn-sub-debito" onclick="toggleSubCartao('debito')">Débito / Pix / Dinheiro</button>
 						</div>
 						</section>
 						
@@ -205,13 +205,11 @@
 					</div>
 
 					<div id="card-terceiros" class="card card-terceiros" style="display: none;">
-
-							<div>
-								<h3 style="margin-bottom: 20px; color: var(--dark-green); font-size: 15px; font-weight: 700;">
+								<h3 class="desktop-only" style="margin-bottom: 20px; color: var(--dark-green); font-size: 15px; font-weight: 700;">
 									Gastos de Terceiros
 								</h3>
 								
-								<table id="tabela-terceiros" style="width: 100%; border-collapse: collapse;">
+								<table id="tabela-terceiros" class="desktop-only" style="width: 100%; border-collapse: collapse;">
 									<thead>
 										<tr style="text-align: left; color: var(--text-sec); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #f0f0f0;">
 											<th style="padding: 10px 5px;">ITEM</th>
@@ -224,7 +222,8 @@
 									</thead>
 									<tbody id="lista-terceiros"></tbody>
 								</table>
-							</div>
+								
+								<div id="lista-terceiros-mobile" class="mobile-only"></div>
 						</div>
 					</div>
 					</section>

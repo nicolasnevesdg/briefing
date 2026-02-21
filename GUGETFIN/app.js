@@ -138,25 +138,51 @@ if(dMobile) dMobile.innerHTML = ''; // <--- Limpa os cards de débito antes de r
 
 			// --- DENTRO DO LOOP if (t.eDeTerceiro) ---
 			if (t.eDeTerceiro) {
-				temGastoTerceiro = true;
-				
-				// Define o que mostrar na coluna de "Tipo/Banco"
-				const tagTipo = t.tipo === 'cartao' 
-					? `<span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>`
-					: `<span class="badge-tag" style="background: #e2e5e4; color: #1b3a32;">DÉBITO</span>`;
+    temGastoTerceiro = true;
+    const idx = salsiData.transacoes.indexOf(t);
 
-				if(tTable) {
-					tTable.innerHTML += `
-						<tr>
-							<td data-label="Item" style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
-							<td data-label="Dono"><span class="badge-tag" style="background: #f0f2f1; color: #7a8b87;">${t.nomeTerceiro}</span></td>
-							<td data-label="Banco/Tipo" style="text-align: center;">${tagTipo}</td>
-							<td data-label="Parcela" style="text-align: center; font-size: 11px; color: #777;">${diff + 1}/${t.parcelas}</td>
-							<td data-label="Valor" style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
-							<td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
-						</tr>`;
-				}
-			}
+    // 1. RENDER PC (Continua como tabela para não quebrar o layout desktop)
+    const tagTipoPC = t.tipo === 'cartao' 
+        ? `<span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>`
+        : `<span class="badge-tag">DÉBITO</span>`;
+
+    if(tTable) {
+        tTable.innerHTML += `
+            <tr class="desktop-only-row">
+                <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                <td><span class="badge-tag">${t.nomeTerceiro}</span></td>
+                <td style="text-align: center;">${tagTipoPC}</td>
+                <td style="text-align: center;">${diff + 1}/${t.parcelas}</td>
+                <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
+                <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
+            </tr>`;
+    }
+
+    // 2. RENDER MOBILE (Nova estética de card com labels)
+    // Precisamos de um container no HTML chamado 'lista-terceiros-mobile'
+    const mTerceiros = document.getElementById('lista-terceiros-mobile');
+    if (mTerceiros) {
+        mTerceiros.innerHTML += `
+            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
+                <div class="cartao-info-principal">
+                    <div class="cartao-nome-grupo">
+                        <strong>${t.nome}</strong>
+                        <span class="cartao-parcela-tag">${diff + 1}/${t.parcelas}</span>
+                    </div>
+                    <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
+                        <span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>
+                        <span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 11px; padding: 2px 6px;">
+                            ${t.nomeTerceiro}
+                        </span>
+                    </div>
+                </div>
+                <div class="cartao-valor-grupo">
+                    <span class="cartao-valor" style="color: #ef4444;">R$ ${val.toFixed(2)}</span>
+                    <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
+                </div>
+            </div>`;
+    }
+}
             // --- GASTOS PESSOAIS (SOMA NORMAL) ---
             else {
                 if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
