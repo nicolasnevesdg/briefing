@@ -11,7 +11,8 @@
 </head>
 
 
-<body><aside class="sidebar">
+<body>
+		<aside class="sidebar">
         <div class="brand"><h2>Guget Fin</h2></div>
 		<div class="mascot-container">
         <div id="mascote-status" class="mascot-emoji">🐕</div>
@@ -78,10 +79,10 @@
 					</div>
 				</div>
 			</div>
-		</div></aside>
+		</div>
+		</aside>
 
     <main>
-	
         <header class="month-nav">
             <button onclick="mudarMes(-1)">❮</button>
             <button onclick="mudarMes(1)">❯</button> 
@@ -156,23 +157,42 @@
 
 			<div class="tables-row">
 					<div class="card-stack">
-						<section id="aba-fixos" class="tab-content">
+					<section id="aba-fixos" class="tab-content">
 						<div class="card">
 							<h3>Gastos Fixos</h3>
 							<table id="tabela-fixos"><thead><tr><th>Nome</th><th>Valor</th><th>Pago</th><th></th></tr></thead><tbody></tbody></table>
 						</div>
 						</section>
-						<section id="aba-debito" class="tab-content">
-						<div class="card">
-							<h3>Débito / PIX</h3>
-							<table id="tabela-debito"><thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+						
+						<section id="menu-cartoes" class="tab-content">
+						<div class="mobile-tabs-toggle cartoes-toggle">
+							<button id="btn-sub-credito" class="active" onclick="toggleSubCartao('credito')">Crédito</button>
+							<button id="btn-sub-debito" onclick="toggleSubCartao('debito')">Débito</button>
 						</div>
 						</section>
+						
+						<section id="aba-debito" class="tab-content">
+						
+						<div id="sub-card-debito" class="card">
+							<h3>Débito / PIX</h3>
+							<table id="tabela-debito" class="desktop-only">
+								<thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead>
+								<tbody></tbody>
+							</table>
+							<div id="lista-debito-mobile" class="mobile-only"></div>
+						</div>				
+					</section>
 					</div>
 					
-					<section id="aba-home" class="tab-content active">
+					<section id="aba-resumo-home" class="tab-content active">
+					
+					<div class="mobile-tabs-toggle home-toggle">
+						<button id="btn-show-resumo" class="active" onclick="toggleSubAba('resumo')">Resumo Mensal</button>
+						<button id="btn-show-terceiros" onclick="toggleSubAba('terceiros')">Gastos de Terceiros</button>
+					</div>
+					
 					<div class="card-stack">
-					<div class="card">
+					<div id="card-resumo-conteudo" class="card resumo-mensal">
 						<h3>Resumo Mensal</h3>
 						<div class="resumo-central-item">
 							<small>POR CARTÃO / BANCO</small>
@@ -184,7 +204,8 @@
 						</div>
 					</div>
 
-					<div id="card-terceiros" class="card" style="display: none;">
+					<div id="card-terceiros" class="card card-terceiros" style="display: none;">
+
 							<div>
 								<h3 style="margin-bottom: 20px; color: var(--dark-green); font-size: 15px; font-weight: 700;">
 									Gastos de Terceiros
@@ -209,17 +230,42 @@
 					</section>
 					
 					<section id="aba-cartao" class="tab-content">
-					<div class="card">
-						<h3>Cartão de Crédito</h3>
-						<table id="tabela-cartao"><thead><tr><th>Item</th><th>Parc.</th><th>Banco</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
-					</div>
+						<div id="sub-card-credito" class="card">
+							<h3>Cartão de Crédito</h3>
+							
+							<table id="tabela-cartao" class="desktop-only">
+								<thead>
+									<tr>
+										<th>ITEM</th>
+										<th>PARC.</th>
+										<th>BANCO</th>
+										<th style="text-align: right;">VALOR</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+
+							<div id="lista-cartao-mobile" class="mobile-only"></div>
+						</div>
 					</section>
 			</div>
 
+
+
 		<section id="aba-entradas" class="tab-content">
 			<div class="card">
-				<h3>Minhas Entradas</h3>
-				<div id="lista-entradas-mobile"></div>
+				<div class="meta-header-mobile">
+					<h3 style="margin:0;">Entradas</h3>
+					<div class="header-alinhado-direita">
+						<button onclick="abrirModalEntrada()" class="btn-novo-gasto">
+							+ ADD
+						</button>
+					</div>
+				</div>
+				
+				<div id="lista-entradas-mobile">
+					</div>
 			</div>
 		</section>
 		
