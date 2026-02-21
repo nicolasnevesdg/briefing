@@ -170,8 +170,14 @@
 					</section>
 					
 					<section id="aba-resumo-home" class="tab-content active">
+					
+					<div class="mobile-tabs-toggle">
+						<button id="btn-show-resumo" class="active" onclick="toggleSubAba('resumo')">Resumo Mensal</button>
+						<button id="btn-show-terceiros" onclick="toggleSubAba('terceiros')">Gastos de Terceiros</button>
+					</div>
+					
 					<div class="card-stack">
-					<div class="card">
+					<div id="card-resumo-conteudo" class="card resumo-mensal">
 						<h3>Resumo Mensal</h3>
 						<div class="resumo-central-item">
 							<small>POR CARTÃO / BANCO</small>
@@ -183,7 +189,7 @@
 						</div>
 					</div>
 
-					<div id="card-terceiros" class="card" style="display: none;">
+					<div id="card-terceiros" class="card card-terceiros" style="display: none;">
 
 							<div>
 								<h3 style="margin-bottom: 20px; color: var(--dark-green); font-size: 15px; font-weight: 700;">

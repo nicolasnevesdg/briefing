@@ -1286,7 +1286,7 @@ tr[style*="opacity: 0.7"] td {
         float: none !important;
         display: block !important;
         background: #ffffff !important;
-        border-radius: 24px !important;
+        border-radius: var(--radius)!important;
         box-sizing: border-box !important;
     }
 
@@ -1538,5 +1538,113 @@ tr[style*="opacity: 0.7"] td {
     }
 }
 
+
+/* PADRÃO PC: Esconde os botões de troca */
+.mobile-tabs-toggle {
+    display: none;
+}
+
+/* --- VERSÃO MOBILE --- */
+@media (max-width: 1024px) {
+    .mobile-tabs-toggle {
+        display: flex;
+        padding: 0;
+        gap: 4px;
+        margin: 0;
+		margin-bottom: -2px;
+        z-index: 1;
+        position: relative;
+    }
+
+    .mobile-tabs-toggle button {
+        flex: 1;
+        padding: 15px 10px;
+        border: none;
+        border-radius: var(--radius) var(--radius) 0 0;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #7a8b87;
+        background: transparent;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .mobile-tabs-toggle button.active {
+        background: #e8f5e9 !important;
+        color: var(--dark-green) !important;
+        border: 1px solid var(--border) !important;
+        border-bottom: 2px solid #e8f5e9 !important;
+        position: relative;
+        z-index: 10;
+        margin-bottom: -1px;
+    }
+
+    /* Ajuste da tabela de terceiros para não quebrar a largura */
+    #tabela-terceiros {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    /* Forçar o card de resumo a respeitar o estado inicial no mobile */
+    #card-resumo-conteudo {
+        display: block;
+    }
+	.card.resumo-mensal {
+        margin: 0 !important;
+        border-top-left-radius: 0 !important;
+		max-width: none !important;
+		padding-top: 0 !important;
+		background: #e8f5e9 !important;
+    }
+	
+	.card.resumo-mensal h3, .card.card-terceiros h3 {
+		display: none;
+    }
+	
+	.container-abas-pasta {
+        display: flex;
+        gap: 0;
+        padding-left: 10px;
+        margin-bottom: -1px; /* Encosta no card */
+        position: relative;
+        z-index: 10;
+    }
+
+    .tab-pasta.active {
+        background: #ffffff;
+        color: var(--dark-green);
+        border: 1px solid #f0f2f1;
+        border-bottom: none; /* Remove a borda de baixo */
+        position: relative;
+    }
+
+    /* O elemento que vai 'apagar' a linha do card */
+    .tab-pasta.active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px; /* Desce para cobrir a linha do card abaixo */
+        left: 0;
+        right: 0;
+        height: 3px; /* Altura suficiente para garantir a cobertura */
+        background: #ffffff; /* Cor branca idêntica ao fundo do card */
+        z-index: 11;
+    }
+}
+
+@media (max-width: 1024px) {
+    /* Garante que o card de resumo respeite o JS e não o 'display: block' do PC */
+    #card-resumo-conteudo {
+        display: block; 
+    }
+
+    #card-terceiros {
+		border-top-right-radius: 0;
+	}
+    
+
+	
+}
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

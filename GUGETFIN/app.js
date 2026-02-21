@@ -986,5 +986,36 @@ function navegar(abaId) {
     window.scrollTo(0, 0);
 }
 
+function toggleSubAba(alvo) {
+    // IDs exatos conforme o seu código HTML
+    const cardRes = document.getElementById('card-resumo-conteudo');
+    const cardTer = document.getElementById('card-terceiros');
+    const btnRes = document.getElementById('btn-show-resumo');
+    const btnTer = document.getElementById('btn-show-terceiros');
+
+    if (!cardRes || !cardTer || !btnRes || !btnTer) {
+        console.error("Erro: Verifique se os IDs card-resumo-conteudo, card-terceiros, btn-show-resumo e btn-show-terceiros existem!");
+        return;
+    }
+
+    if (alvo === 'resumo') {
+        // Ativa botão Resumo
+        btnRes.classList.add('active');
+        btnTer.classList.remove('active');
+
+        // Alterna Cards
+        cardRes.style.setProperty('display', 'block', 'important');
+        cardTer.style.setProperty('display', 'none', 'important');
+    } else {
+        // Ativa botão Terceiros
+        btnRes.classList.remove('active');
+        btnTer.classList.add('active');
+
+        // Alterna Cards
+        cardRes.style.setProperty('display', 'none', 'important');
+        cardTer.style.setProperty('display', 'block', 'important');
+    }
+}
+
 window.addEventListener('load', injetarAssinatura);
 window.onload = iniciar;
