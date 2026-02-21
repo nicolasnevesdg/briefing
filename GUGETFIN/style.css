@@ -153,9 +153,9 @@ main { flex: 1; padding: 40px 56px; overflow-y: auto; }
 .tables-row .card { 
     flex: 1; 
     background: #fff; 
-    padding: 20px; 
-    border-radius: var(--radius); 
-    border: 1px solid var(--border);
+    padding: 20px!important; 
+    border-radius: var(--radius)!important; 
+    border: 1px solid var(--border)!important;
 }
 .card h3 { font-size: 15px; font-weight: 700; color: var(--dark-green); margin-bottom: 20px; }
 
@@ -1005,8 +1005,8 @@ tr[style*="opacity: 0.7"] td {
     /* Main ocupa a largura total */
     main { padding: 15px; width: 100%; box-sizing: border-box; }
     .stats-grid { grid-template-columns: 1fr; gap: 10px; }
-    .tables-row { flex-direction: column; gap: 15px; }
-    .card-stack, .tables-row .card { */ width: 100% !important; */ max-width: 100%; }
+    .tables-row { flex-direction: column; gap: 0px; }
+    .card-stack, .tables-row .card { width: 100% !important; max-width: 100%; gap: 0;}
 
     /* Tabelas viram blocos de leitura vertical (Cards) */
     table, thead, tbody, th, td, tr { display: block; }
@@ -1280,14 +1280,15 @@ tr[style*="opacity: 0.7"] td {
     #resumo-bancos-container, 
     .resumo-card,
     div[class*="resumo"] {
-        max-width: 500px !important;
+        max-width: none;
         margin: 20px auto !important; /* Centraliza horizontalmente */
-        padding: 25px 15px !important;
+        padding: 25px 20px !important;
         float: none !important;
         display: block !important;
         background: #ffffff !important;
         border-radius: var(--radius)!important;
         box-sizing: border-box !important;
+		border: 1px solid #c8e6c9;
     }
 
     /* 3. Ajuste das linhas para esticarem de ponta a ponta dentro do card */
@@ -1325,7 +1326,6 @@ tr[style*="opacity: 0.7"] td {
     /* Restaura o layout de colunas das tabelas */
     .tables-row {
         display: flex !important;
-        gap: 24px !important;
         width: 100% !important; /* Garante que a linha use o total da tela */
         justify-content: space-between; /* Distribui o espaço entre as colunas */
     }
@@ -1440,17 +1440,6 @@ tr[style*="opacity: 0.7"] td {
         padding: 10px 0;
     }
 
-    .cartao-item-mobile {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: #fdfdfd;
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid #f0f2f1;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-    }
-
     .cartao-info-principal {
         display: flex;
         flex-direction: column;
@@ -1507,17 +1496,31 @@ tr[style*="opacity: 0.7"] td {
 
 /* --- DENTRO DA MEDIA QUERY (max-width: 1024px) --- */
 @media (max-width: 1024px) {
-    .desktop-only, .desktop-only-row { display: none !important; }
+    .desktop-only, .desktop-only-row, #tabela-cartao, #tabela-debito { display: none !important; }
     .mobile-only { display: flex; flex-direction: column; gap: 10px; }
-
+	
+	/* Força o container dos cards mobile a aparecer */
+    .mobile-only, #lista-cartao-mobile, #lista-debito-mobile {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+		padding: 10px 0;
+    }
+	
+	/* Estilo do Card (Aquele visual de extrato que você curtiu) */
     .cartao-item-mobile {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        background: #ffffff;
+        padding: 16px;
+        border-radius: 16px;
+        border: 1px solid #f0f2f1;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         padding: 14px 0;
 		padding-left: 15px;
 		padding-right: 10px;
-        border-bottom: 1px solid var(--border);
     }
 	
 	.cartao-item-mobile:active {
@@ -1551,7 +1554,7 @@ tr[style*="opacity: 0.7"] td {
         padding: 0;
         gap: 4px;
         margin: 0;
-		margin-bottom: -2px;
+		margin-bottom: -1px;
         z-index: 1;
         position: relative;
     }
@@ -1578,6 +1581,18 @@ tr[style*="opacity: 0.7"] td {
         position: relative;
         z-index: 10;
         margin-bottom: -1px;
+		
+		/* 1. Remove o flash colorido ao tocar (comum no Android/iOS) */
+        -webkit-tap-highlight-color: transparent !important;
+        -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+
+        /* 2. Remove a borda de foco do sistema */
+        outline: none !important;
+        box-shadow: none !important;
+
+        /* 3. Impede que o navegador mostre o menu de "selecionar texto" ao segurar o botão */
+        -webkit-touch-callout: none !important;
+        user-select: none !important;
     }
 
     /* Ajuste da tabela de terceiros para não quebrar a largura */
@@ -1636,14 +1651,105 @@ tr[style*="opacity: 0.7"] td {
 @media (max-width: 1024px) {
     /* Garante que o card de resumo respeite o JS e não o 'display: block' do PC */
     #card-resumo-conteudo {
-        display: block; 
+        display: block!important;
+		border: 1px solid #c8e6c9;
     }
 
     #card-terceiros {
 		border-top-right-radius: 0;
+		padding: 20px;
 	}
-    
+	
+}
 
+@media (max-width: 1024px) {
+    /* Faz as duas sections parecerem uma só no mobile */
+    #aba-debito, #aba-cartao {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+	
+	/* Só mostra o botão se uma das abas de cartões estiver ativa no sistema de navegação */
+    #aba-debito.active .cartoes-toggle, 
+    #aba-cartao.active .cartoes-toggle {
+        display: flex !important;
+    }
+	
+    /* Os botões de sub-aba */
+    .mobile-tabs-toggle {
+        display: flex;
+        margin-bottom: -1px;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Conexão branca para os cartões */
+    #aba-debito > .mobile-tabs-toggle button.active {
+        background: #ffffff !important;
+        border-bottom: 2px solid #ffffff !important;
+        position: relative;
+    }
+	
+	/* --- ESPECIFICAÇÕES ÚNICAS: ABA CARTÕES --- */
+    .cartoes-toggle {
+        /* Aqui você faz as alterações que não afetam o resumo */
+        margin-top: 20px; /* Exemplo: os botões de cartão precisam de mais espaço no topo */
+        gap: 0px; /* Exemplo: botões de cartão mais afastados um do outro */
+		display: flex !important;
+        width: 100% !important;
+        margin-bottom: -1px !important;
+    }
+
+    .cartoes-toggle button {
+        /* Exemplo: borda mais arredondada ou fonte menor */
+		flex: 1 !important; /* Faz cada botão ocupar metade da tela */
+        border-bottom: none !important;
+        border-radius: 12px 12px 0 0 !important;
+    }
+
+    .cartoes-toggle button.active {
+        background: #ffffff !important;
+        border-bottom: 2px solid #ffffff !important;
+    }
+	
+	/* O SEGREDO PARA NÃO SUMIR: Quando estivermos na aba de crédito, 
+       forçamos a section de débito (que contém os botões) a ficar visível também, 
+       mas escondemos apenas o card de débito lá dentro. */
+    #aba-debito.mostrar-botoes-apenas {
+        display: block !important;
+    }
+    
+    #aba-debito.mostrar-botoes-apenas #sub-card-debito {
+        display: none !important;
+    }
+	
+	/* 2. Só aparece quando a aba de cartões ou débito estiver ativa */
+    #aba-cartao.active .cartoes-toggle, 
+    #aba-debito.active .cartoes-toggle {
+        display: flex !important;
+    }
+	
+	.mobile-tabs-toggle button:focus,
+    .mobile-tabs-toggle button:active {
+        outline: none !important;
+        box-shadow: none !important; /* Caso tenha algum shadow sobrando */
+    }
+	
+	.cartoes-toggle button:active,
+    .cartoes-toggle button:focus,
+    .cartoes-toggle button:hover {
+        outline: none !important;
+        box-shadow: none !important;
+        background-color: inherit; /* Mantém a cor que você definiu no active */
+    }
+	
+	#sub-card-credito {
+    border-top-left-radius: 0 !important;
+}
+	
+	#sub-card-debito {
+    border-top-right-radius: 0 !important;
+}
 	
 }
 

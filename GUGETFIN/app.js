@@ -1,6 +1,27 @@
 let salsiData = JSON.parse(localStorage.getItem('salsifin_cache')) || (typeof bancoInicial !== 'undefined' ? bancoInicial : { config: { categorias: [], bancos: [] }, entradas: [], transacoes: [] });
+let subAbaCartaoAtiva = 'credito';
 let dataFiltro = new Date();
 dataFiltro.setDate(1);
+
+// Forçar estado inicial ao carregar a página APENAS NO MOBILE
+window.addEventListener('DOMContentLoaded', () => {
+    // Adicionamos a checagem de largura aqui também!
+    if (window.innerWidth <= 1024) {
+        const cardRes = document.getElementById('card-resumo-conteudo');
+        const cardTer = document.getElementById('card-terceiros');
+        
+        if (cardRes && cardTer) {
+            cardRes.style.setProperty('display', 'block', 'important');
+            cardTer.style.setProperty('display', 'none', 'important');
+        }
+    } else {
+        // NO PC: Garante que os estilos voltem ao padrão original caso o JS tenha mexido
+        const cardTer = document.getElementById('card-terceiros');
+        if (cardTer) {
+            cardTer.style.display = ''; // Remove o 'none' forçado pelo JS
+        }
+    }
+});
 
 function iniciar() { popularSelects(); renderizar(); verificarLembreteBackup(); }
 
@@ -80,19 +101,23 @@ const totalMob = document.getElementById('total-entradas-mobile');
 if (totalMob) totalMob.innerText = `R$ ${totalEnt.toFixed(2)}`;
 	
 // 2. Limpeza de Tabelas (PC e Mobile)
-    const fTable = document.querySelector('#tabela-fixos tbody'), 
-          cTable = document.querySelector('#tabela-cartao tbody'), 
-          dTable = document.querySelector('#tabela-debito tbody'),
-          tTable = document.querySelector('#lista-terceiros'),
-          cMobile = document.getElementById('lista-cartao-mobile'); // <--- Pega a lista mobile
-    
-    fTable.innerHTML = ''; 
-    cTable.innerHTML = ''; 
-    dTable.innerHTML = '';
-    
-    if(tTable) tTable.innerHTML = '';
-    if(cMobile) cMobile.innerHTML = ''; // <--- Limpa os cards mobile antes de renderizar o novo mês
-    
+const fTable = document.querySelector('#tabela-fixos tbody'), 
+      cTable = document.querySelector('#tabela-cartao tbody'), 
+      dTable = document.querySelector('#tabela-debito tbody'),
+      tTable = document.querySelector('#lista-terceiros'),
+      cMobile = document.getElementById('lista-cartao-mobile'),
+      dMobile = document.getElementById('lista-debito-mobile'); // <--- Pega a lista mobile do Débito
+
+// Limpa tabelas do PC
+if(fTable) fTable.innerHTML = ''; 
+if(cTable) cTable.innerHTML = ''; 
+if(dTable) dTable.innerHTML = '';
+
+// Limpa listas do Mobile e Terceiros
+if(tTable) tTable.innerHTML = '';
+if(cMobile) cMobile.innerHTML = ''; 
+if(dMobile) dMobile.innerHTML = ''; // <--- Limpa os cards de débito antes de renderizar
+
     // 3. Acumuladores do Mês
     let totalGastoMes = 0, totalCartMes = 0, totalFixoMes = 0, totalDebitoMes = 0;
     let tagSum = {}, bankSum = {};
@@ -150,15 +175,29 @@ if (totalMob) totalMob.innerText = `R$ ${totalEnt.toFixed(2)}`;
 							<td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
 						</tr>`;
                 } else if (t.tipo === 'debito') {
-                    totalDebitoMes += val;
-					dTable.innerHTML += `
-						<tr>
-							<td data-label="Item" style="cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome}</td>
-							<td data-label="Tag"><span class="badge-tag">${t.categoria}</span></td>
-							<td data-label="Valor">R$ ${val.toFixed(2)}</td>
-							<td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
-						</tr>`;
-                } else if (t.tipo === 'cartao') {
+    totalDebitoMes += val;
+    
+    // Alimenta a tabela do PC (que o CSS vai esconder no mobile)
+    if(dTable) {
+        dTable.innerHTML += `<tr><td>${t.nome}</td><td>${t.categoria}</td><td>R$ ${val.toFixed(2)}</td></tr>`;
+    }
+
+    // ALIMENTA OS CARDS MOBILE DO DÉBITO
+    const dMobile = document.getElementById('lista-debito-mobile');
+    if (dMobile) {
+        dMobile.innerHTML += `
+            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})">
+                <div class="cartao-info-principal">
+                    <strong>${t.nome}</strong>
+                    <span class="badge-tag">${t.categoria}</span>
+                </div>
+                <div class="cartao-valor-grupo">
+                    <span class="cartao-valor" style="color: #ef4444;">R$ ${val.toFixed(2)}</span>
+                    <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
+                </div>
+            </div>`;
+    }
+} else if (t.tipo === 'cartao') {
 					totalCartMes += val;
 					bankSum[t.banco] = (bankSum[t.banco] || 0) + val;
 
@@ -198,10 +237,7 @@ if (totalMob) totalMob.innerText = `R$ ${totalEnt.toFixed(2)}`;
     // Controla visibilidade do card de terceiros
 // No final da função renderizar(), logo após o fechamento do salsiData.transacoes.forEach
 const cardTerceiros = document.getElementById('card-terceiros');
-if (cardTerceiros) {
-    // Se temGastoTerceiro for true, mostra 'block'. Se for false, 'none' esconde TUDO.
-    cardTerceiros.style.display = temGastoTerceiro ? 'block' : 'none';
-}
+
 
 // 4. Injetar Totais nas Tabelas
     fTable.innerHTML += `<tr class="row-total"><td>TOTAL GASTOS FIXOS</td><td colspan="3">R$ ${totalFixoMes.toFixed(2)}</td></tr>`;
@@ -282,6 +318,28 @@ if (containerLembretes) {
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
     atualizarHumorSalsicha(saldoFinal);
     setTimeout(atualizarGraficoAnual, 100);
+	
+	// No final da função renderizar(), após o loop das transações:
+function renderizar() {
+    // ... (todo o seu código de loop e soma)
+
+    // AJUSTE PARA MANTER A ABA ATIVA AO MUDAR O MÊS:
+    if (window.innerWidth <= 1024) { // Só faz isso no mobile
+        const btnTerceiros = document.getElementById('btn-show-terceiros');
+        const cardRes = document.getElementById('card-resumo-conteudo');
+        const cardTer = document.getElementById('card-terceiros');
+
+        if (btnTerceiros && btnTerceiros.classList.contains('active')) {
+            // Se o botão de terceiros estava ativo, mantém ele aparecendo
+            cardRes.style.setProperty('display', 'none', 'important');
+            cardTer.style.setProperty('display', 'block', 'important');
+        } else {
+            // Caso contrário, garante que o resumo apareça
+            cardRes.style.setProperty('display', 'block', 'important');
+            cardTer.style.setProperty('display', 'none', 'important');
+        }
+    }
+}
 	
 	atualizarGraficoMeta();
 }
@@ -950,13 +1008,13 @@ function fecharBannerBackup() {
 }
 
 function navegar(abaId) {
-    // 1. Esconde tudo com força total (Limpa a tela)
+    // 1. Esconde tudo com força total (Limpa a tela e remove o menu de cartões se estiver aberto)
     document.querySelectorAll('.tab-content').forEach(secao => {
         secao.classList.remove('active');
         secao.style.setProperty('display', 'none', 'important');
     });
 
-    // 2. LÓGICA ESPECIAL PARA A HOME (CHAMA OS DOIS BLOCOS)
+    // 2. LÓGICA ESPECIAL PARA A HOME
     if (abaId === 'home') {
         const homePrincipal = document.getElementById('aba-home');
         const homeResumo = document.getElementById('aba-resumo-home');
@@ -970,11 +1028,25 @@ function navegar(abaId) {
             homeResumo.style.setProperty('display', 'block', 'important');
         }
     } 
-    // 3. LÓGICA PARA AS OUTRAS ABAS (FIXOS, CARTÃO, ENTRADAS, ETC)
+    // 3. LÓGICA ESPECIAL PARA CARTÕES (Exibe Menu + Conteúdo)
+    else if (abaId === 'cartao' || abaId === 'debito') {
+        const menuCartoes = document.getElementById('menu-cartoes');
+        const abaConteudo = document.getElementById('aba-debito'); // Sua base de cartões
+
+        if (menuCartoes) {
+            menuCartoes.classList.add('active');
+            menuCartoes.style.setProperty('display', 'block', 'important');
+        }
+        if (abaConteudo) {
+            abaConteudo.classList.add('active');
+            abaConteudo.style.setProperty('display', 'block', 'important');
+            // Chama a função que gerencia qual card (crédito ou débito) aparece
+            toggleSubCartao(subAbaCartaoAtiva);
+        }
+    }
+    // 4. LÓGICA PARA AS OUTRAS ABAS (FIXOS, ENTRADAS, ETC)
     else {
-        // Tenta encontrar o ID exato (aba-fixos, aba-cartao, aba-entradas)
         const abaAtiva = document.getElementById(`aba-${abaId}`);
-        
         if (abaAtiva) {
             abaAtiva.classList.add('active');
             abaAtiva.style.setProperty('display', 'block', 'important');
@@ -1014,6 +1086,40 @@ function toggleSubAba(alvo) {
         // Alterna Cards
         cardRes.style.setProperty('display', 'none', 'important');
         cardTer.style.setProperty('display', 'block', 'important');
+    }
+}
+
+function toggleSubCartao(alvo) {
+    subAbaCartaoAtiva = alvo;
+    
+    // Pegamos os elementos
+    const cardDeb = document.getElementById('sub-card-debito');
+    const cardCred = document.getElementById('sub-card-credito');
+    const btnCred = document.getElementById('btn-sub-credito');
+    const btnDeb = document.getElementById('btn-sub-debito');
+    
+    // Pegamos as sections (Abas pai)
+    const secDebito = document.getElementById('aba-debito');
+    const secCredito = document.getElementById('aba-cartao');
+
+    if (window.innerWidth <= 1024) {
+        // AMBAS as sections pai ficam visíveis (para os botões não sumirem)
+        if(secDebito) secDebito.style.setProperty('display', 'block', 'important');
+        if(secCredito) secCredito.style.setProperty('display', 'block', 'important');
+
+        if (alvo === 'credito') {
+            // Mostra conteúdo de Crédito, esconde o de Débito
+            if(cardCred) cardCred.style.setProperty('display', 'block', 'important');
+            if(cardDeb) cardDeb.style.setProperty('display', 'none', 'important');
+            btnCred.classList.add('active');
+            btnDeb.classList.remove('active');
+        } else {
+            // Mostra conteúdo de Débito, esconde o de Crédito
+            if(cardCred) cardCred.style.setProperty('display', 'none', 'important');
+            if(cardDeb) cardDeb.style.setProperty('display', 'block', 'important');
+            btnCred.classList.remove('active');
+            btnDeb.classList.add('active');
+        }
     }
 }
 

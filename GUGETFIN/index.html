@@ -156,22 +156,37 @@
 		</section>
 
 			<div class="tables-row">
-					<section id="aba-fixos" class="tab-content">
 					<div class="card-stack">
+					<section id="aba-fixos" class="tab-content">
 						<div class="card">
 							<h3>Gastos Fixos</h3>
 							<table id="tabela-fixos"><thead><tr><th>Nome</th><th>Valor</th><th>Pago</th><th></th></tr></thead><tbody></tbody></table>
 						</div>
-						<div class="card">
-							<h3>Débito / PIX</h3>
-							<table id="tabela-debito"><thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>
+						</section>
+						
+						<section id="menu-cartoes" class="tab-content">
+						<div class="mobile-tabs-toggle cartoes-toggle">
+							<button id="btn-sub-credito" class="active" onclick="toggleSubCartao('credito')">Crédito</button>
+							<button id="btn-sub-debito" onclick="toggleSubCartao('debito')">Débito</button>
 						</div>
-					</div>
+						</section>
+						
+						<section id="aba-debito" class="tab-content">
+						
+						<div id="sub-card-debito" class="card">
+							<h3>Débito / PIX</h3>
+							<table id="tabela-debito" class="desktop-only">
+								<thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead>
+								<tbody></tbody>
+							</table>
+							<div id="lista-debito-mobile" class="mobile-only"></div>
+						</div>				
 					</section>
+					</div>
 					
 					<section id="aba-resumo-home" class="tab-content active">
 					
-					<div class="mobile-tabs-toggle">
+					<div class="mobile-tabs-toggle home-toggle">
 						<button id="btn-show-resumo" class="active" onclick="toggleSubAba('resumo')">Resumo Mensal</button>
 						<button id="btn-show-terceiros" onclick="toggleSubAba('terceiros')">Gastos de Terceiros</button>
 					</div>
@@ -215,7 +230,7 @@
 					</section>
 					
 					<section id="aba-cartao" class="tab-content">
-						<div class="card">
+						<div id="sub-card-credito" class="card">
 							<h3>Cartão de Crédito</h3>
 							
 							<table id="tabela-cartao" class="desktop-only">
@@ -236,16 +251,7 @@
 					</section>
 			</div>
 
-		<section id="aba-entradas" class="tab-content">
-    <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0;">Entradas</h3>
-            <button onclick="abrirModalEntrada()" class="btn-novo-gasto" style="padding:5px 12px; font-size:12px;">+ Add</button>
-        </div>
-        
-        <div id="lista-entradas-mobile"></div>
-    </div>
-</section>
+
 
 		<section id="aba-entradas" class="tab-content">
 			<div class="card">
