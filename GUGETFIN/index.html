@@ -638,23 +638,36 @@
   window.registrar = registrar; 
   window.login = login;
   
-// Garante que o Vigia limpe a tela assim que detectar o usuário
-  onAuthStateChanged(auth, async (user) => {
-      const authScreen = document.getElementById('auth-screen');
-      if (user) {
-          console.log("Usuário detectado:", user.email);
-          if (authScreen) authScreen.style.display = 'none'; // ISSO DESTRAVA A TELA
-          
-          // Se tiver uma função de carregar dados no app.js, chame aqui
-          if (window.carregarDadosDoFirebase) {
-              await window.carregarDadosDoFirebase(user.uid);
-          }
-          
-          if (window.iniciar) window.iniciar();
-      } else {
-          if (authScreen) authScreen.style.display = 'flex';
-      }
-  });
+// --- O NOVO VIGIA COM SINCRONIZAÇÃO EM TEMPO REAL ---
+onAuthStateChanged(auth, async (user) => {
+    const authScreen = document.getElementById('auth-screen');
+    if (user) {
+        if (authScreen) authScreen.style.display = 'none';
+
+        const uid = user.uid;
+        const userDoc = doc(db, "usuarios", uid);
+
+        // A MÁGICA: onSnapshot fica "ouvindo" qualquer mudança no banco
+        import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        onSnapshot(userDoc, (docSnap) => {
+            if (docSnap.exists()) {
+                // Se alguém mudou algo no PC, o celular recebe aqui na hora!
+                salsiData = docSnap.data().dados;
+                console.log("Dados atualizados em tempo real!");
+                
+                // Re-renderiza a tela com os novos dados
+                if (window.iniciar) window.iniciar();
+            } else {
+                // Se for usuário novo, mantém a estrutura inicial
+                if (window.iniciar) window.iniciar();
+            }
+        });
+
+    } else {
+        if (authScreen) authScreen.style.display = 'flex';
+    }
+});
 
 </script>
 
