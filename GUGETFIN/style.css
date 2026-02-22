@@ -1730,13 +1730,38 @@ tr[style*="opacity: 0.7"] td {
     }
 
     #card-terceiros {
-		border-top-right-radius: 0;
 		padding: 20px;
+        border-top-right-radius: 0 !important;
 	}
 	
 }
 
 @media (max-width: 1024px) {
+	
+	/* --- CORREÇÃO DA ANIMAÇÃO DA ABA DE CRÉDITO --- */
+
+/* Aplica a animação na aba inteira quando ela for exibida */
+#aba-cartao {
+    animation: subirSuave 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Garante que os cartõezinhos dentro dela também acompanhem o movimento de forma fluida */
+#lista-cartao-mobile .cartao-item-mobile, #lista-debito-mobile .cartao-item-mobile, #card-resumo-conteudo .resumo-central-item, #lista-terceiros-mobile  .cartao-item-mobile {
+    animation: subirSuave 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* O "motor" da animação (caso o seu CSS original use outro nome, este aqui é à prova de falhas) */
+@keyframes subirSuave {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+	
     /* Faz as duas sections parecerem uma só no mobile */
     #aba-debito, #aba-cartao {
         padding-top: 0 !important;
@@ -1971,6 +1996,27 @@ tr[style*="opacity: 0.7"] td {
     font-size: 18px;
     font-weight: 800;
     color: var(--text-main);
+}
+
+/* --- CORREÇÃO DEFINITIVA DAS BORDAS DAS ABAS --- */
+
+/* 1. Abas Principais (Resumo e Terceiros) -> Borda Verde Clarinho */
+.mobile-tabs-toggle button.active {
+    border: 1px solid #c8e6c9 !important; /* Combina perfeitamente com o card verde */
+    border-bottom: 2px solid #e8f5e9 !important; /* Esconde a linha que divide a aba do card */
+}
+
+/* 2. Abas de Cartões (Crédito e Débito) -> Borda super suave quase invisível */
+.cartoes-toggle button.active,
+#aba-debito > .mobile-tabs-toggle button.active,
+#aba-cartao > .mobile-tabs-toggle button.active {
+    border: 1px solid var(--border)!important; /* Cinza clarinho padrão App */
+    border-bottom: 2px solid #ffffff !important; /* Combina com o card branco */
+}
+
+/* 3. Evita que o botão inativo "pule" ao ser clicado */
+.mobile-tabs-toggle button {
+    border: 1px solid transparent !important;
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
