@@ -157,26 +157,42 @@ function renderizar() {
             const val = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
             const idx = salsiData.transacoes.indexOf(t);
 
-            // --- LÓGICA DE FILTRAGEM ---
-            const fDeb = document.getElementById('filtro-debito') ? document.getElementById('filtro-debito').value : 'Todos';
-            const fCred = document.getElementById('filtro-credito') ? document.getElementById('filtro-credito').value : 'Todos';
-            const fFix = document.getElementById('filtro-fixos') ? document.getElementById('filtro-fixos').value : 'Todos';
+            // --- NOVA LÓGICA DE FILTRAGEM PREMIUM (MOTOR V8) ---
+            const pegarFiltro = (id) => document.getElementById(id) ? document.getElementById(id).getAttribute('data-value') : 'Todos';
+
+            const fCredBanco = pegarFiltro('filtro-cred-banco');
+            const fCredCat = pegarFiltro('filtro-cred-cat');
             
+            const fDebForma = pegarFiltro('filtro-deb-forma');
+            const fDebCat = pegarFiltro('filtro-deb-cat');
+            
+            const fTercNome = pegarFiltro('filtro-terc-nome');
+            const fTercBanco = pegarFiltro('filtro-terc-banco');
+            
+            const fFix = pegarFiltro('filtro-fixos');
+            
+            // 1. Aplica filtros nas Suas Contas (Ignora Terceiros)
             if (!t.eDeTerceiro) {
                 if (t.tipo === 'debito') {
                     const forma = t.formaPagamento || 'Débito';
-                    if (fDeb !== 'Todos' && forma !== fDeb) return; 
+                    if (fDebForma !== 'Todos' && forma !== fDebForma) return; 
+                    if (fDebCat !== 'Todos' && t.categoria !== fDebCat) return;
                 } else if (t.tipo === 'cartao') {
-                    if (fCred !== 'Todos' && t.banco !== fCred) return; 
+                    if (fCredBanco !== 'Todos' && t.banco !== fCredBanco) return; 
+                    if (fCredCat !== 'Todos' && t.categoria !== fCredCat) return;
                 } else if (t.tipo === 'fixo') {
                     if (fFix === 'Pagos' && !t.pago) return; 
                     if (fFix === 'Pendentes' && t.pago) return; 
                 }
             }
-            // ---------------------------
+            // ----------------------------------------
 
             // --- GASTOS DE TERCEIROS ---
             if (t.eDeTerceiro) {
+                // 2. A barreira de Filtro de Terceiros!
+                if (fTercNome !== 'Todos' && t.nomeTerceiro !== fTercNome) return;
+                if (fTercBanco !== 'Todos' && t.banco !== fTercBanco) return;
+
                 totalTerceirosMes += val; // SOMA CORRETA AQUI
                 temGastoTerceiro = true;
 
@@ -1331,3 +1347,77 @@ window.addEventListener('DOMContentLoaded', () => {
         }, {passive: true});
     }
 });
+
+// --- CRIA OS DROPDOWNS CUSTOMIZADOS ---
+function preencherFiltrosDropdown() {
+    const preencherCustom = (id, lista, textoPadrao) => {
+        const container = document.getElementById(id);
+        if (!container) return;
+        
+        const menu = container.querySelector('.dropdown-menu');
+        const triggerText = container.querySelector('.dropdown-trigger span');
+        let valorSalvo = container.getAttribute('data-value') || 'Todos';
+
+        if (valorSalvo !== 'Todos' && !lista.includes(valorSalvo)) valorSalvo = 'Todos';
+        container.setAttribute('data-value', valorSalvo);
+        triggerText.innerText = valorSalvo === 'Todos' ? textoPadrao : valorSalvo;
+
+        let html = `<div class="dropdown-item ${valorSalvo === 'Todos' ? 'selected' : ''}" data-val="Todos">${textoPadrao} (Todos)</div>`;
+        lista.forEach(item => {
+            html += `<div class="dropdown-item ${valorSalvo === item ? 'selected' : ''}" data-val="${item}">${item}</div>`;
+        });
+        menu.innerHTML = html;
+
+        // Ao clicar num item da lista
+        const items = menu.querySelectorAll('.dropdown-item');
+        items.forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const val = el.getAttribute('data-val');
+                container.setAttribute('data-value', val);
+                triggerText.innerText = val === 'Todos' ? textoPadrao : val;
+                container.classList.remove('active');
+                
+                items.forEach(i => i.classList.remove('selected'));
+                el.classList.add('selected');
+                
+                renderizar(); 
+            });
+        });
+        
+        // Ao clicar no botão pílula para abrir
+        const trigger = container.querySelector('.dropdown-trigger');
+        const novoTrigger = trigger.cloneNode(true);
+        trigger.parentNode.replaceChild(novoTrigger, trigger);
+        
+        novoTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.custom-dropdown').forEach(d => {
+                if(d !== container) d.classList.remove('active');
+            });
+            container.classList.toggle('active');
+        });
+    };
+
+    const bancos = salsiData.config.bancos || [];
+    const categorias = salsiData.config.categorias || [];
+    const nomesTerc = [...new Set(salsiData.transacoes.filter(t => t.eDeTerceiro).map(t => t.nomeTerceiro))].filter(Boolean);
+
+    preencherCustom('filtro-cred-banco', bancos, 'Cartões');
+    preencherCustom('filtro-cred-cat', categorias, 'Categorias');
+    preencherCustom('filtro-deb-cat', categorias, 'Categorias');
+    preencherCustom('filtro-terc-banco', bancos, 'Cartões');
+    preencherCustom('filtro-terc-nome', nomesTerc, 'Nomes');
+    preencherCustom('filtro-deb-forma', ['Débito', 'PIX', 'Dinheiro'], 'Formas');
+    preencherCustom('filtro-fixos', ['Pagos', 'Pendentes'], 'Fixos');
+}
+
+// Fechar ao clicar fora de qualquer dropdown
+window.addEventListener('click', () => {
+    document.querySelectorAll('.custom-dropdown').forEach(d => d.classList.remove('active'));
+});
+
+window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
+
+// Roda a função assim que o app abrir:
+window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);

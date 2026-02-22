@@ -26,7 +26,7 @@ body {
 }
 
 body * {
-    font-size: 14px; /* Ou o tamanho que você usa como base */
+    font-size: 13px; /* Ou o tamanho que você usa como base */
 }
 
 body {
@@ -235,7 +235,7 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 .options-dropdown.active { display: flex; }
 
 .dropdown-item {
-    width: 100%;
+    width: auto;
     background: transparent;
     border: none;
     padding: 10px 12px;
@@ -814,7 +814,7 @@ tr[style*="opacity: 0.7"] td {
 
 /* Ajuste do título para combinar */
 #card-terceiros h3 {
-    color: #2e7d32; /* Um verde mais sóbrio para o título */
+    color: var(--dark-green); /* Um verde mais sóbrio para o título */
 }
 
 .input-group-checkbox {
@@ -976,7 +976,7 @@ tr[style*="opacity: 0.7"] td {
     /* Esconde elementos secundários no mobile para ganhar tela */
     .mascot-container, .sidebar-middle, .sidebar > .btn-novo-gasto { display: none !important; }
     .brand h2 { margin: 0; font-size: 18px; }
-    .options-container { width: auto; margin: 0; padding: 10px 15px; font-size: 11px; }
+    .options-container { width: auto; margin: 0; padding: 0; font-size: 11px; }
 
 	/* Transforma o container de opções em um botão circular minimalista */
     .options-trigger {
@@ -2017,6 +2017,80 @@ tr[style*="opacity: 0.7"] td {
 /* 3. Evita que o botão inativo "pule" ao ser clicado */
 .mobile-tabs-toggle button {
     border: 1px solid transparent !important;
+}
+
+/* --- FILTROS DUPLOS PREMIUM --- */
+.header-com-filtro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filtros-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+/* --- DROPDOWNS CUSTOMIZADOS PREMIUM --- */
+.header-com-filtro {
+    display: flex; justify-content: space-between; align-items: center; 
+    margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+}
+.filtros-wrapper { display: flex; gap: 10px; }
+
+.custom-dropdown { position: relative; display: inline-block; }
+
+/* O Botão Pílula */
+.dropdown-trigger {
+    background: #none; border: 1px solid var(--border); border-radius: 20px;
+    padding: 8px 16px; font-size: 11px; font-weight: 700; color: var(--dark-green);
+    cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    transition: 0.2s; user-select: none;
+}
+.dropdown-trigger:hover { border-color: var(--acc-green); }
+
+/* A Caixinha que abre com os itens */
+.dropdown-menu {
+    position: absolute; top: calc(100% + 5px); right: 0; background: #fff;
+    border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(27,58,50,0.15);
+    padding: 8px; min-width: 150px; z-index: 1000;
+    display: flex; flex-direction: column; opacity: 0; visibility: hidden;
+    transform: translateY(-10px); transition: all 0.2s ease;
+}
+.custom-dropdown.active .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* Os Itens da Lista */
+.dropdown-item {
+    padding: 10px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    color: var(--text-main); cursor: pointer; transition: 0.2s; text-align: left;
+}
+.dropdown-item:hover { background: var(--bg-app); color: var(--dark-green); }
+.dropdown-item.selected { background: #e8f5e9; color: var(--dark-green); }
+
+/* A Setinha animada */
+.dropdown-trigger .chevron {
+    border: solid var(--text-sec); border-width: 0 2px 2px 0; display: inline-block;
+    padding: 3px; transform: rotate(45deg); margin-bottom: 2px; transition: 0.2s;
+}
+.custom-dropdown.active .dropdown-trigger .chevron { 
+    transform: rotate(-135deg); margin-bottom: -2px; border-color: var(--dark-green);
+}
+
+.dropdown-trigger > .chevron {
+    width: 2px; height: 2px;
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+    .header-com-filtro { justify-content: center; padding-top: 5px; margin-bottom: 15px; }
+    .filtros-wrapper { width: 100%; justify-content: center; }
+    .custom-dropdown { flex: 1; max-width: 160px; }
+    .dropdown-trigger { width: 100%; box-sizing: border-box; background: none; border: none;}
+    .dropdown-menu { left: 0; right: auto; width: 100%; } 
+	.dropdown-trigger > .chevron { border-width: 0 1px 1px 0; }
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
