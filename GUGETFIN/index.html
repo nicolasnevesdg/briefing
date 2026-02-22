@@ -49,33 +49,39 @@
 						<span class="btn-text-mobile">Opções</span> </button>
 					</button>
 
-					<div class="options-dropdown" id="menu-dropdown">
-						<button class="dropdown-item" onclick="document.getElementById('input-import-js').click()">
-							<span>📂</span> Importar Backup
+<div class="options-dropdown" id="menu-dropdown">
+						<button class="dropdown-item option-btn" onclick="document.getElementById('input-import-js').click()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+							Importar Backup
 						</button>
 						
 						<input type="file" id="input-import-js" accept=".js" style="display:none" onchange="importarDadosJS(event)">
 
-						<button class="dropdown-item" onclick="abrirModalCartoes()">
-							<span>💳</span> Gerenciar Cartões
+						<button class="dropdown-item option-btn" onclick="abrirModalCartoes()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+							Gerenciar Cartões
 						</button>
 
-						<button class="dropdown-item" onclick="abrirModalCategorias()">
-							<span>🏷️</span> Gerenciar Categorias
+						<button class="dropdown-item option-btn" onclick="abrirModalCategorias()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+							Gerenciar Categorias
 						</button>
 
-						<button class="dropdown-item" onclick="limparMesAtual()">
-							<span>🧹</span> Limpar Mês Atual
+						<button class="dropdown-item option-btn" onclick="limparMesAtual()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+							Limpar Mês Atual
 						</button>
 
-						<button class="dropdown-item btn-save-inside" onclick="salvarAlteracoes()">
-							<span>💾</span> Criar Backup
+						<button class="dropdown-item option-btn btn-save-inside" onclick="salvarAlteracoes()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+							Criar Backup
 						</button>
 
 						<hr class="dropdown-divider">
 
-						<button class="dropdown-item btn-danger-text" onclick="limparTudo()">
-							<span>⚠️</span> Resetar App
+						<button class="dropdown-item option-btn btn-danger-text" onclick="limparTudo()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+							Resetar App
 						</button>
 					</div>
 				</div>
