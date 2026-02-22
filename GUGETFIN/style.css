@@ -256,9 +256,47 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 .btn-save-inside:hover { background: var(--acc-green) !important; }
 .btn-danger-text { color: #ef4444; }
 
-/* --- Assinatura Blindada --- */
-.dev-signature { position: fixed; bottom: 12px; right: 24px; font-size: 10px; color: var(--text-sec); font-weight: 600; opacity: 0.6; pointer-events: auto; }
-.dev-signature a { color: var(--dark-green); text-decoration: none; }
+/* --- ASSINATURAS (PC e Mobile) --- */
+
+/* Estilo Geral */
+.dev-signature {
+    font-size: 10px;
+    color: #a0aec0;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+	gap: 5px !important;
+}
+
+.dev-signature a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.dev-signature:hover {
+    opacity: 1;
+}
+
+/* Versão Sidebar (PC) */
+.pc-sig {
+    margin: auto;
+    padding-top: 20px;
+    text-align: left;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Versão Mobile (Final do Scroll) */
+.mobile-sig {
+    text-align: center;
+    padding: 40px 0 120px 0; /* Espaço para não bater na barra flutuante */
+}
+
+/* Esconder a assinatura da sidebar quando for mobile */
+@media (max-width: 1024px) {
+    .pc-sig {
+        display: none !important;
+    }
+}
 
 /* --- Modais --- */
 dialog { border: none; border-radius: 20px; padding: 0; width: 400px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2); }
@@ -1539,7 +1577,7 @@ tr[style*="opacity: 0.7"] td {
     .mobile-only, #lista-cartao-mobile, #lista-debito-mobile {
         display: flex !important;
         flex-direction: column !important;
-        gap: 12px !important;
+        gap: 12px;
         width: 100% !important;
 		padding: 10px 0;
     }

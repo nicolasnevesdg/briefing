@@ -63,6 +63,24 @@ function renderizar() {
     document.getElementById('display-mes-ano').innerText = `${mesesNomes[m]} ${a}`;
     document.getElementById('ano-badge-dinamico').innerText = a;
 
+// --- ATUALIZA OS NOMES DOS MESES NO MOBILE ---
+    const mobPrev = document.getElementById('mob-prev-month');
+    const mobCurr = document.getElementById('mob-curr-month');
+    const mobNext = document.getElementById('mob-next-month');
+
+    if (mobCurr) {
+        let prevM = m - 1;
+        if (prevM < 0) prevM = 11;
+        
+        let nextM = m + 1;
+        if (nextM > 11) nextM = 0;
+
+        mobPrev.innerText = mesesNomes[prevM].substring(0, 3);
+        mobCurr.innerText = `${mesesNomes[m]} ${a}`; 
+        mobNext.innerText = mesesNomes[nextM].substring(0, 3);
+    }
+    // ---------------------------------------------
+
     // 1. Entradas (Sidebar + Aba Mobile)
     const entMes = salsiData.entradas.filter(e => e.mes === m && e.ano === a);
     const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
@@ -321,6 +339,15 @@ function renderizar() {
         }
     });
 
+// --- ESTADOS VAZIOS (EMPTY STATES) NAS LISTAS MOBILE ---
+    const msgVazio = (txt) => `<p style="text-align:center; padding:30px 20px; color:#a0aec0; font-size:13px; font-weight:500;">${txt}</p>`;
+    
+    if (mTerceiros && mTerceiros.innerHTML.trim() === '') mTerceiros.innerHTML = msgVazio("Nenhum gasto de terceiro.");
+    if (fMobile && fMobile.innerHTML.trim() === '') fMobile.innerHTML = msgVazio("Nenhum gasto fixo.");
+    if (dMobile && dMobile.innerHTML.trim() === '') dMobile.innerHTML = msgVazio("Nenhum gasto.");
+    if (cMobile && cMobile.innerHTML.trim() === '') cMobile.innerHTML = msgVazio("Nenhum gasto.");
+    // -------------------------------------------------------
+
     // --- A MÁGICA: ATUALIZA OS TOTAIS NO MOBILE ---
     const tDebMob = document.getElementById('total-debito-mobile-val');
     if (tDebMob) tDebMob.innerText = `R$ ${totalDebitoMes.toFixed(2)}`;
@@ -336,7 +363,9 @@ function renderizar() {
     // ----------------------------------------------
 
     // 5. Resumo Mensal Central (Bancos e Tags)
-    document.getElementById('resumo-bancos-lista').innerHTML = Object.entries(bankSum).map(([b,v]) => `<div class="bank-row"><span>${b}</span><span>R$ ${v.toFixed(2)}</span></div>`).join('') || "Sem gastos.";
+    const htmlBancos = Object.entries(bankSum).map(([b,v]) => `<div class="bank-row"><span>${b}</span><span>R$ ${v.toFixed(2)}</span></div>`).join('');
+    const temBancos = salsiData.config.bancos && salsiData.config.bancos.length > 0;
+    document.getElementById('resumo-bancos-lista').innerHTML = htmlBancos || (temBancos ? '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Nenhum gasto.</p>' : '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Você ainda não cadastrou cartões.</p>');
     
     const containerLembretes = document.getElementById('container-lembretes-fatura');
     if (containerLembretes) {
@@ -370,7 +399,12 @@ function renderizar() {
             }
         });
     }
-    document.getElementById('resumo-tags-lista').innerHTML = Object.entries(tagSum).map(([k,v]) => `<div class="bank-row"><span>${k}</span><span>R$ ${v.toFixed(2)}</span></div>`).join('');
+    const htmlTags = Object.entries(tagSum).map(([k,v]) => `<div class="bank-row"><span>${k}</span><span>R$ ${v.toFixed(2)}</span></div>`).join('');
+    const temTags = salsiData.config.categorias && salsiData.config.categorias.length > 0;
+    const tagListaEl = document.getElementById('resumo-tags-lista');
+    if (tagListaEl) {
+        tagListaEl.innerHTML = htmlTags || (temTags ? '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Nenhum gasto.</p>' : '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Você ainda não cadastrou categorias.</p>');
+    }
     
     // 6. CÁLCULO ANUAL
     let anEnt = 0, anCred = 0, anDeb = 0, anFixo = 0;
@@ -609,10 +643,36 @@ function importarDadosJS(event) { const leitor = new FileReader(); leitor.onload
 
 function injetarAssinatura() {
     const segredo = "YXBwIHdlYiBjcmlhZG8gcG9yIDxhIGhyZWY9Imh0dHA6Ly93d3cubmljb2xhc25ldmVzLmNvbS5iciIgdGFyZ2V0PSJfYmxhbmsiPk7DrWNvbGFzIE5ldmVzPC9hPg==";
-    const el = document.createElement('div');
-    el.className = 'dev-signature';
-    try { el.innerHTML = decodeURIComponent(escape(atob(segredo))); document.body.appendChild(el); } catch (e) { console.error(e); }
+    
+    const realizarInjecao = () => {
+        const conteudo = decodeURIComponent(escape(atob(segredo)));
+
+        // 1. Versão PC: Sidebar (Abaixo das opções)
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar && !document.querySelector('.pc-sig')) {
+            const elPC = document.createElement('div');
+            elPC.className = 'dev-signature pc-sig';
+            elPC.innerHTML = conteudo;
+            sidebar.appendChild(elPC);
+        }
+
+        // 2. Versão Mobile: Apenas na Aba de Planejamento
+        const abaPlan = document.getElementById('aba-planejamento');
+        if (abaPlan && !document.querySelector('.mobile-sig')) {
+            const elMob = document.createElement('div');
+            elMob.className = 'dev-signature mobile-sig mobile-only';
+            elMob.innerHTML = conteudo;
+            abaPlan.appendChild(elMob);
+        }
+    };
+
+    realizarInjecao();
+    // Reforço caso o carregamento demore
+    setTimeout(realizarInjecao, 500);
 }
+
+// Chame a função no final do seu app.js
+injetarAssinatura();
 
 function atualizarGraficoAnual() {
     const canvas = document.getElementById('graficoSalsi');
