@@ -7,7 +7,8 @@
     <script src="dados.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="manifest" href="manifest.json">.
+	<link rel="manifest" href="manifest.json">
+	<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
 </head>
 
 
@@ -83,16 +84,24 @@
 		</aside>
 
     <main>
-        <header class="month-nav">
-            <button onclick="mudarMes(-1)">❮</button>
-            <button onclick="mudarMes(1)">❯</button> 
-			<h1 id="display-mes-ano">...</h1>
-			<div id="container-lembretes-fatura" style="display: flex; gap: 10px; flex-grow: 1; justify-content: flex-end; overflow-x: auto; padding-bottom: 5px;">
-        </div>
-        </header>
+		<header class="month-nav" style="flex-wrap: wrap;">
+			<div class="nav-pc desktop-only" style="display: flex; align-items: center; gap: 10px;">
+				<button onclick="mudarMes(-1)">❮</button>
+				<button onclick="mudarMes(1)">❯</button> 
+				<h1 id="display-mes-ano">...</h1>
+			</div>
 
-		<section id="aba-home" class="tab-content active">
+			<div id="mobile-month-nav" class="mobile-only">
+				<div class="month-item prev-month" onclick="mudarMes(-1)" id="mob-prev-month">Jan</div>
+				<div class="month-item current-month" id="mob-curr-month">Fevereiro 2026</div>
+				<div class="month-item next-month" onclick="mudarMes(1)" id="mob-next-month">Mar</div>
+			</div>
+
+			<div id="container-lembretes-fatura" style="display: flex; gap: 10px; flex-grow: 1; justify-content: flex-end; overflow-x: auto; padding-bottom: 5px;">
+			</div>
+		</header>
 		
+		<section id="aba-planejamento" class="tab-content" style="display: none;">	
 			<div class="card chart-card" id="card-grafico">
 				<div class="card-header" onclick="toggleGrafico()">
 					<div class="header-title-group">
@@ -146,7 +155,9 @@
 					<div id="conteudo-meta" style="width: 100%;"></div>
 				</div>
 			</div>
-
+		</section>	
+		
+		<section id="aba-home" class="tab-content active">
 			<div class="stats-grid">
 				<div class="stat-card"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
 				<div class="stat-card"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
@@ -256,8 +267,6 @@
 					</section>
 			</div>
 
-
-
 		<section id="aba-entradas" class="tab-content">
 			<div class="card">
 				<div class="meta-header-mobile">
@@ -277,13 +286,25 @@
     </main>
 
 <nav class="mobile-tab-bar">
-    <button class="tab-btn active" onclick="navegar('home')">🏠</button>
-    <button class="tab-btn" onclick="navegar('entradas')">💰</button>
-    <button class="tab-btn" onclick="navegar('cartao')">💳</button>
-    <button class="tab-btn" onclick="navegar('fixos')">📌</button>
-    <button class="tab-btn" onclick="navegar('pagamentos')">✅</button>
+    <button class="tab-btn active" onclick="navegar('home')">
+        <i class="fi fi-rr-house-blank"></i>
+    </button>
+    <button class="tab-btn" onclick="navegar('entradas')">
+        <i class="fi fi-rr-usd-circle"></i>
+    </button>
+    <button class="tab-btn" onclick="navegar('cartao')">
+        <i class="fi fi-rr-credit-card"></i>
+    </button>
+    <button class="tab-btn" onclick="navegar('fixos')">
+        <i class="fi fi-rr-thumbtack"></i>
+    </button>
+    <button class="tab-btn" onclick="navegar('planejamento')">
+        <i class="fi fi-rr-chart-simple"></i>
+    </button>
     
-    <button class="fab-btn" onclick="abrirModalGasto()">+</button>
+    <button class="fab-btn" onclick="abrirModalGasto()">
+        <i class="fi fi-rr-plus"></i>
+    </button>
 </nav>
 
     <dialog id="modal-gasto">

@@ -128,7 +128,7 @@ main { flex: 1; padding: 40px 56px; overflow-y: auto; }
 }
 
 /* --- Cards de Resumo --- */
-.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
 .stat-card { 
     background: #fff; 
     padding: 24px; 
@@ -1019,52 +1019,88 @@ tr[style*="opacity: 0.7"] td {
 		margin-bottom: 15px;
 	}
 	
-    /* Container da Barra Inferior */
-    .mobile-tab-bar {
-        display: flex;
-        position: fixed;
-        bottom: 20px; /* Distância da borda inferior */
-        left: 50%;
-        transform: translateX(-50%);
-        width: 70%; /* Um pouco mais estreita nas laterais */
-        max-width: 400px;
-        background: rgba(255, 255, 255, 0.85); /* Mais transparência */
-        backdrop-filter: blur(12px);
-        padding: 8px 12px; /* Reduzi o padding vertical */
-        border-radius: 30px; /* Curvatura mais suave */
-        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        justify-content: space-around;
-        align-items: center;
-        z-index: 9999;
-        border: 1px solid rgba(255, 255, 255, 0.3); /* Bordas de "vidro" */
-    }
+	/* A barra em si */
+.mobile-tab-bar {
+    position: fixed;
+    bottom: 20px; /* Descola do fundo da tela */
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza perfeitamente */
+    width: calc(100% - 30px); /* Dá uma margem de respiro nas laterais */
+    max-width: 80%; /* Fica bonito até em celulares gigantões */
+    background-color: #ffffff;
+    border-radius: 50px; /* Arredonda como uma pílula */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Sombra suave para "flutuar" */
+    z-index: 1000;
+    border-top: none; /* Tira aquela linha dura velha */
+}
 
-    .tab-btn {
-        background: none; 
-        border: none; 
-        font-size: 18px; /* Ícones menores */
-        padding: 8px;
-        opacity: 0.6; /* Deixa os inativos mais discretos */
-        transition: all 0.2s ease;
-    }
-    
-    .tab-btn.active { 
-        opacity: 1; 
-        transform: translateY(-2px); /* Leve levante no ativo */
-    }
+/* O formato padrão de TODOS os botões (círculos) */
+.tab-btn, .fab-btn {
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
 
-    /* Botão de Adicionar (O + da imagem) */
-    .fab-btn {
-        background: var(--dark-green);
-        color: var(--acc-green);
-        width: 48px; /* Era 55px, reduzi para 48px */
-        height: 48px;
-        border-radius: 50%;
-        border: none;
-        font-size: 24px;
-        margin-top: -25px; /* Menos agressivo pra fora da barra */
-        box-shadow: 0 4px 12px rgba(27, 58, 50, 0.2);
-    }
+/* O fundo cinza claro para as abas normais */
+.tab-btn {
+    width: 46px;  
+    height: 46px; 
+    background-color: #f4f6f5; /* O cinza super clarinho da sua foto */
+    color: #1a362d; /* Cor do ícone desativado */
+}
+
+/* Quando a aba estiver ativa, o ícone ganha destaque */
+.tab-btn.active {
+    color: #1a362d; /* Ícone fica verde bem escuro */
+    /* O fundo cinza se mantém para não quebrar a estética das bolinhas */
+}
+
+/* O botão principal (+) em destaque dentro da barra */
+.fab-btn {
+    width: 56px;  /* O botão + é visivelmente maior */
+    height: 56px;
+    background-color: #1a362d; /* O verde "quase preto" da sua referência */
+    color: #96e6a1; /* O verdinho claro do ícone de + */
+    box-shadow: 0 4px 15px rgba(26, 54, 45, 0.25);
+    margin-left: 5px; /* Um espacinho extra antes dele */
+}
+
+.mobile-tab-bar .fi {
+    font-size: 18px !important;  /* Tamanho dos ícones normais */
+    line-height: 1 !important;   /* Remove espaços extras verticais */
+    display: flex !important;    /* Garante centralização */
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;      /* Ocupa o botão todo */
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.fab-btn:active {
+    transform: scale(0.92);
+}
+
+/* Mira no botão de + para ele ser maior ainda */
+.fab-btn .fi {
+    font-size: 18px !important; /* Tamanho do ícone de + */
+}
+
+/* Ajuste fino para os ícones do Flaticon */
+.fi {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
 
     /* Controle de Visibilidade das Seções */
     .tab-content { display: none; }
@@ -1693,7 +1729,7 @@ tr[style*="opacity: 0.7"] td {
 	/* --- ESPECIFICAÇÕES ÚNICAS: ABA CARTÕES --- */
     .cartoes-toggle {
         /* Aqui você faz as alterações que não afetam o resumo */
-        margin-top: 20px; /* Exemplo: os botões de cartão precisam de mais espaço no topo */
+        margin-top: 0; !important /* Exemplo: os botões de cartão precisam de mais espaço no topo */
         gap: 0px; /* Exemplo: botões de cartão mais afastados um do outro */
 		display: flex !important;
         width: 100% !important;
@@ -1805,6 +1841,73 @@ tr[style*="opacity: 0.7"] td {
 
 #g-forma-pagamento, #g-inicio-pagamento {
 	margin-bottom: 0;
+}
+
+/* Esconde a navegação mobile no PC */
+.mobile-only {
+    display: none !important;
+}
+
+@media (max-width: 1024px) {
+    /* Esconde as setas velhas no Mobile */
+    .desktop-only { display: none !important; }
+
+    /* Força o header a colocar os lembretes embaixo da navegação se faltar espaço */
+    .month-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+		margin-bottom: 20px;
+    }
+    
+    /* A nova barra Mobile */
+    #mobile-month-nav {
+        display: flex !important;
+        flex-direction: row !important; /* Força ficar um do lado do outro */
+        flex-wrap: nowrap !important; /* Impede que eles caiam para a linha de baixo */
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 5px 0;
+    }
+
+    /* Estilo dos meses nas laterais */
+    .month-item {
+        font-size: 14px;
+        font-weight: 400;
+        color: #a0aec0;
+        cursor: pointer;
+        user-select: none;
+        flex: 1; /* Faz eles dividirem o espaço igualmente */
+        white-space: nowrap; /* Impede que o texto amasse e quebre linha */
+        transition: 0.2s;
+    }
+
+    .prev-month { text-align: center; }
+    .next-month { text-align: center; }
+
+    /* Mês Atual (Centro em Destaque) */
+    .current-month {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--dark-green);
+        text-align: center;
+        flex: 2; /* Ganha o dobro de espaço no centro para caber "Fevereiro 2026" */
+        position: relative;
+    }
+
+    /* Tracinho de ênfase embaixo do mês atual */
+    .current-month::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 2px;
+        background-color: var(--dark-green);
+        border-radius: 2px;
+    }
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

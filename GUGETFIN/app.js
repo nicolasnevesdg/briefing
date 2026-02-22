@@ -64,6 +64,25 @@ function renderizar() {
     document.getElementById('display-mes-ano').innerText = `${mesesNomes[m]} ${a}`;
     document.getElementById('ano-badge-dinamico').innerText = a;
 
+// --- NOVO: LÓGICA DO NOME DOS MESES NO MOBILE ---
+    const mobPrev = document.getElementById('mob-prev-month');
+    const mobCurr = document.getElementById('mob-curr-month');
+    const mobNext = document.getElementById('mob-next-month');
+
+    if (mobCurr) {
+        // Pega os meses já definidos e abrevia para 3 letras
+        let prevM = m - 1;
+        if (prevM < 0) prevM = 11;
+        
+        let nextM = m + 1;
+        if (nextM > 11) nextM = 0;
+
+        mobPrev.innerText = mesesNomes[prevM].substring(0, 3);
+        mobCurr.innerText = `${mesesNomes[m]} ${a}`; 
+        mobNext.innerText = mesesNomes[nextM].substring(0, 3);
+    }
+    // ------------------------------------------------
+
 // 1. Entradas (Sidebar + Aba Mobile)
 const entMes = salsiData.entradas.filter(e => e.mes === m && e.ano === a);
 const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
@@ -1243,3 +1262,25 @@ function toggleSubCartao(alvo) {
 
 window.addEventListener('load', injetarAssinatura);
 window.onload = iniciar;
+
+// --- LÓGICA DE SWIPE (ARRASTAR) PARA TROCAR DE MÊS NO MOBILE ---
+let touchstartX = 0;
+let touchendX = 0;
+
+window.addEventListener('DOMContentLoaded', () => {
+    const navMovel = document.getElementById('mobile-month-nav');
+    
+    if (navMovel) {
+        navMovel.addEventListener('touchstart', e => {
+            touchstartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        navMovel.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            // Se arrastou pra esquerda (dedo pra trás), avança o mês
+            if (touchendX < touchstartX - 40) mudarMes(1); 
+            // Se arrastou pra direita (dedo pra frente), volta o mês
+            if (touchendX > touchstartX + 40) mudarMes(-1); 
+        }, {passive: true});
+    }
+});
