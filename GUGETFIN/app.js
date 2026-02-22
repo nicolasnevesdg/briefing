@@ -461,6 +461,7 @@ function renderizar() {
     document.getElementById('resumo-porcentagem').innerText = `${totalEnt > 0 ? ((totalGastoMes/totalEnt)*100).toFixed(1) : 0}%`;
 
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+	salvarNoFirebase();
     atualizarHumorSalsicha(saldoFinal);
     setTimeout(atualizarGraficoAnual, 100);
     
@@ -1421,3 +1422,98 @@ window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
 
 // Roda a função assim que o app abrir:
 window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
+
+async function login() {
+    const email = document.getElementById('login-email').value;
+    const senha = document.getElementById('login-senha').value;
+    const loader = document.getElementById('auth-loader');
+    const form = document.getElementById('login-form');
+
+    if (!email || !senha) return alert("Preencha todos os campos!");
+
+    form.style.display = 'none';
+    loader.style.display = 'block';
+
+    try {
+        await window.signInWithEmailAndPassword(window.auth, email, senha);
+        // O onAuthStateChanged vai detectar o login e esconder a tela sozinho
+    } catch (error) {
+        alert("Erro ao entrar: " + error.message);
+        form.style.display = 'block';
+        loader.style.display = 'none';
+    }
+}
+
+// --- FUNÇÃO DE CADASTRO REAL ---
+async function registrar() {
+    const email = document.getElementById('register-email').value;
+    const senha = document.getElementById('register-senha').value;
+    const loader = document.getElementById('auth-loader');
+    const form = document.getElementById('register-form');
+
+    if (!email || !senha) return alert("Preencha todos os campos!");
+    if (senha.length < 6) return alert("A senha deve ter pelo menos 6 caracteres.");
+
+    form.style.display = 'none';
+    loader.style.display = 'block';
+
+    try {
+        await window.createUserWithEmailAndPassword(window.auth, email, senha);
+        alert("Conta criada com sucesso!");
+        // O onAuthStateChanged vai cuidar de entrar no app
+    } catch (error) {
+        alert("Erro ao cadastrar: " + error.message);
+        form.style.display = 'block';
+        loader.style.display = 'none';
+    }
+}
+
+// --- O VIGIA (Monitora se o usuário está logado) ---
+window.onAuthStateChanged(window.auth, async (user) => {
+    const authScreen = document.getElementById('auth-screen');
+    
+    if (user) {
+        authScreen.style.display = 'none';
+        
+        const uid = user.uid;
+        const userDoc = window.doc(window.db, "usuarios", uid);
+        const docSnap = await window.getDoc(userDoc);
+
+        if (docSnap.exists()) {
+            // Se já tem dados na nuvem, usa eles
+            salsiData = docSnap.data().dados;
+            console.log("Dados carregados da nuvem!");
+        } else {
+            // SE É UM USUÁRIO NOVO: Criamos a estrutura inicial para não bugar o app
+            console.log("Usuário novo! Criando estrutura inicial...");
+            salsiData = {
+                config: { 
+                    categorias: ["Alimentação", "Transporte", "Lazer", "Saúde"], 
+                    bancos: ["Nubank", "Inter", "C6 Bank"] 
+                },
+                entradas: [],
+                transacoes: []
+            };
+            // Já salva essa estrutura inicial na nuvem pra ele
+            await salvarNoFirebase();
+        }
+        
+        iniciar(); 
+    } else {
+        authScreen.style.display = 'flex';
+    }
+});
+
+async function salvarNoFirebase() {
+    if (!window.auth.currentUser) return; // Só salva se estiver logado
+
+    const uid = window.auth.currentUser.uid;
+    const userDoc = window.doc(window.db, "usuarios", uid);
+
+    try {
+        await window.setDoc(userDoc, { dados: salsiData });
+        console.log("Dados sincronizados na nuvem!");
+    } catch (e) {
+        console.error("Erro ao salvar na nuvem: ", e);
+    }
+}

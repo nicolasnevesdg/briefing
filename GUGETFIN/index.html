@@ -13,6 +13,33 @@
 
 
 <body>
+
+<div id="auth-screen" class="auth-overlay">
+    <div class="auth-box">
+        <div class="brand"><h2>Guget Fin</h2></div>
+        <p class="auth-subtitle">Sua gestão financeira, agora na nuvem.</p>
+        
+        <div id="login-form">
+            <input type="email" id="login-email" placeholder="E-mail" class="auth-input">
+            <input type="password" id="login-senha" placeholder="Senha" class="auth-input">
+            <button class="btn-auth-primary" onclick="login()">Entrar</button>
+            <p class="auth-switch">Não tem conta? <a href="#" onclick="toggleAuth(true)">Criar agora</a></p>
+        </div>
+
+        <div id="register-form" style="display: none;">
+            <input type="email" id="register-email" placeholder="Seu melhor e-mail" class="auth-input">
+            <input type="password" id="register-senha" placeholder="Crie uma senha forte" class="auth-input">
+            <button class="btn-auth-primary" onclick="registrar()">Cadastrar</button>
+            <p class="auth-switch">Já tem conta? <a href="#" onclick="toggleAuth(false)">Fazer login</a></p>
+        </div>
+        
+        <div id="auth-loader" style="display: none;">
+            <div class="spinner"></div>
+            <p>Conectando ao cofre...</p>
+        </div>
+    </div>
+</div>
+
 		<aside class="sidebar">
         <div class="brand"><h2>Guget Fin</h2></div>
 		<div class="mascot-container">
@@ -75,6 +102,11 @@
 						<button class="dropdown-item option-btn btn-save-inside" onclick="salvarAlteracoes()">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
 							Criar Backup
+						</button>
+						
+						<button class="dropdown-item option-btn" onclick="window.signOut(window.auth)">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+							Sair da Conta
 						</button>
 
 						<hr class="dropdown-divider">
@@ -575,6 +607,39 @@
 		  .catch((err) => console.log("Erro no PWA:", err));
 	  }
 	</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD1HyxzZ-YFMMbMSIwBDDKfNWdCWHb07AY",
+    authDomain: "guget-fin.firebaseapp.com",
+    projectId: "guget-fin",
+    storageBucket: "guget-fin.firebasestorage.app",
+    messagingSenderId: "626285959649",
+    appId: "1:626285959649:web:9b1006694a4d05fa899aa0"
+  };
+
+  // Inicializa o motor
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Deixa as ferramentas prontas para o seu app.js usar
+  window.auth = auth;
+  window.db = db;
+  window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+  window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+  window.onAuthStateChanged = onAuthStateChanged;
+  window.signOut = signOut;
+  window.doc = doc;
+  window.setDoc = setDoc;
+  window.getDoc = getDoc;
+</script>
+
+<script src="app.js"></script>
 
 </body>
 

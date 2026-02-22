@@ -2259,4 +2259,72 @@ tr[style*="opacity: 0.7"] td {
     }
 }
 
+/* --- TELA DE LOGIN PREMIUM (COM AJUSTE MOBILE) --- */
+.auth-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(244, 247, 246, 0.98); /* Fundo quase sólido para esconder o app atrás */
+    backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 99999; 
+    padding: 20px; /* Garante que a caixa não cole no vidro do telemóvel */
+    box-sizing: border-box;
+}
+
+.auth-box {
+    background: #ffffff; 
+    padding: 40px 30px; 
+    border-radius: 28px;
+    box-shadow: 0 20px 50px rgba(27, 58, 50, 0.15);
+    width: 100%; 
+    max-width: 400px; /* Largura máxima para tablets/PC */
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Ajustes específicos para ecrãs pequenos */
+@media (max-width: 480px) {
+    .auth-box {
+        padding: 30px 20px; /* Menos padding interno no telemóvel */
+        border-radius: 24px;
+    }
+    
+    .auth-box h2 {
+        font-size: 22px !important;
+    }
+    
+    .auth-input {
+        padding: 16px !important; /* Inputs maiores para facilitar o toque */
+        font-size: 16px !important; /* Evita que o iOS dê zoom automático ao focar */
+    }
+    
+    .btn-auth-primary {
+        padding: 16px !important;
+        font-size: 16px !important;
+    }
+}
+
+.auth-input {
+    width: 100%; padding: 14px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--bg-app);
+    margin-bottom: 12px; font-family: 'Inter', sans-serif;
+    box-sizing: border-box; outline: none; transition: 0.2s;
+    -webkit-appearance: none; /* Remove sombras estranhas no iOS */
+}
+
+.auth-input:focus { 
+    border-color: var(--acc-green); 
+    box-shadow: 0 0 0 4px rgba(150, 230, 161, 0.2); 
+}
+
+.btn-auth-primary {
+    width: 100%; padding: 14px; border-radius: 12px; border: none;
+    background: var(--dark-green); color: white; font-weight: 700;
+    cursor: pointer; transition: 0.2s; margin-top: 10px;
+}
+
+.auth-switch { margin-top: 25px; font-size: 14px; color: var(--text-sec); }
+.auth-switch a { color: var(--dark-green); font-weight: 700; text-decoration: none; padding: 5px; }
+
+/* Spinner
+
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
