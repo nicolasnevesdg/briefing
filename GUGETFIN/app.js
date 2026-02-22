@@ -1429,17 +1429,20 @@ async function login() {
     const loader = document.getElementById('auth-loader');
     const form = document.getElementById('login-form');
 
-    if (!email || !senha) return alert("Preencha todos os campos!");
+    if (!email || !senha) return alert("Preencha e-mail e senha!");
 
+    // Mostra o "Conectando ao cofre..."
     form.style.display = 'none';
     loader.style.display = 'block';
 
     try {
         await window.signInWithEmailAndPassword(window.auth, email, senha);
+        // O onAuthStateChanged no index.html vai esconder o loader automaticamente
     } catch (error) {
-        console.error("Erro no login:", error);
+        console.error("Erro no login:", error.code);
         alert("Erro ao entrar: " + error.message);
-        // ISSO AQUI DESTRAVA A TELA:
+        
+        // DESTRAVA A TELA: Se der erro, volta para o formulário
         form.style.display = 'block';
         loader.style.display = 'none';
     }
