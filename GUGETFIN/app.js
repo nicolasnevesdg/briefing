@@ -1423,6 +1423,7 @@ window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
 // Roda a função assim que o app abrir:
 window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
 
+// Função de Login Real
 async function login() {
     const email = document.getElementById('login-email').value;
     const senha = document.getElementById('login-senha').value;
@@ -1431,24 +1432,20 @@ async function login() {
 
     if (!email || !senha) return alert("Preencha e-mail e senha!");
 
-    // Mostra o "Conectando ao cofre..."
     form.style.display = 'none';
     loader.style.display = 'block';
 
     try {
+        // Usa a função que foi exposta no index.html
         await window.signInWithEmailAndPassword(window.auth, email, senha);
-        // O onAuthStateChanged no index.html vai esconder o loader automaticamente
     } catch (error) {
-        console.error("Erro no login:", error.code);
         alert("Erro ao entrar: " + error.message);
-        
-        // DESTRAVA A TELA: Se der erro, volta para o formulário
         form.style.display = 'block';
         loader.style.display = 'none';
     }
 }
 
-// --- FUNÇÃO DE CADASTRO REAL ---
+// Função de Registro Real (Mantenha apenas ESTA versão)
 async function registrar() {
     const email = document.getElementById('register-email').value;
     const senha = document.getElementById('register-senha').value;
@@ -1463,8 +1460,6 @@ async function registrar() {
 
     try {
         await window.createUserWithEmailAndPassword(window.auth, email, senha);
-        alert("Conta criada com sucesso!");
-        // O onAuthStateChanged vai cuidar de entrar no app
     } catch (error) {
         alert("Erro ao cadastrar: " + error.message);
         form.style.display = 'block';
