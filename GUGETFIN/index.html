@@ -607,7 +607,6 @@
 	</script>
 
 <script type="module">
-import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -639,35 +638,23 @@ import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstat
   window.registrar = registrar; 
   window.login = login;
   
-// Garante que o Vigia limpe a tela e sincronize os dados
-onAuthStateChanged(auth, (user) => {
-    const authScreen = document.getElementById('auth-screen');
-    
-    if (user) {
-        console.log("Usuário detectado:", user.email);
-        if (authScreen) authScreen.style.display = 'none';
-
-        const uid = user.uid;
-        const userDoc = doc(db, "usuarios", uid);
-
-        // ESCUTA EM TEMPO REAL: Toda vez que o banco mudar, o app atualiza sozinho
-        onSnapshot(userDoc, (docSnap) => {
-            if (docSnap.exists()) {
-                salsiData = docSnap.data().dados;
-                console.log("Nuvem atualizada! Sincronizando dispositivos...");
-                
-                // Reinicia a interface com os novos dados vindos da nuvem
-                if (window.iniciar) window.iniciar();
-            } else {
-                console.log("Nenhum dado na nuvem ainda.");
-                if (window.iniciar) window.iniciar();
-            }
-        });
-
-    } else {
-        if (authScreen) authScreen.style.display = 'flex';
-    }
-});
+// Garante que o Vigia limpe a tela assim que detectar o usuário
+  onAuthStateChanged(auth, async (user) => {
+      const authScreen = document.getElementById('auth-screen');
+      if (user) {
+          console.log("Usuário detectado:", user.email);
+          if (authScreen) authScreen.style.display = 'none'; // ISSO DESTRAVA A TELA
+          
+          // Se tiver uma função de carregar dados no app.js, chame aqui
+          if (window.carregarDadosDoFirebase) {
+              await window.carregarDadosDoFirebase(user.uid);
+          }
+          
+          if (window.iniciar) window.iniciar();
+      } else {
+          if (authScreen) authScreen.style.display = 'flex';
+      }
+  });
 
 </script>
 
