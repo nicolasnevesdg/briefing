@@ -637,9 +637,26 @@
   window.doc = doc;
   window.setDoc = setDoc;
   window.getDoc = getDoc;
-window.registrar = registrar; 
+  window.registrar = registrar; 
   window.login = login;
-</script>
+  
+// Garante que o Vigia limpe a tela assim que detectar o usuário
+  onAuthStateChanged(auth, async (user) => {
+      const authScreen = document.getElementById('auth-screen');
+      if (user) {
+          console.log("Usuário detectado:", user.email);
+          if (authScreen) authScreen.style.display = 'none'; // ISSO DESTRAVA A TELA
+          
+          // Se tiver uma função de carregar dados no app.js, chame aqui
+          if (window.carregarDadosDoFirebase) {
+              await window.carregarDadosDoFirebase(user.uid);
+          }
+          
+          if (window.iniciar) window.iniciar();
+      } else {
+          if (authScreen) authScreen.style.display = 'flex';
+      }
+  });
 
 <script src="app.js"></script>
 
