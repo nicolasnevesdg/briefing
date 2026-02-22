@@ -1436,9 +1436,10 @@ async function login() {
 
     try {
         await window.signInWithEmailAndPassword(window.auth, email, senha);
-        // O onAuthStateChanged vai detectar o login e esconder a tela sozinho
     } catch (error) {
+        console.error("Erro no login:", error);
         alert("Erro ao entrar: " + error.message);
+        // ISSO AQUI DESTRAVA A TELA:
         form.style.display = 'block';
         loader.style.display = 'none';
     }
@@ -1515,5 +1516,37 @@ async function salvarNoFirebase() {
         console.log("Dados sincronizados na nuvem!");
     } catch (e) {
         console.error("Erro ao salvar na nuvem: ", e);
+    }
+}
+
+// Função para trocar entre Login e Cadastro
+function toggleAuth(isRegister) {
+    console.log("Trocando tela para registro:", isRegister);
+    document.getElementById('login-form').style.display = isRegister ? 'none' : 'block';
+    document.getElementById('register-form').style.display = isRegister ? 'block' : 'none';
+}
+
+// Função de Registro Real
+async function registrar() {
+    const email = document.getElementById('register-email').value;
+    const senha = document.getElementById('register-senha').value;
+    const loader = document.getElementById('auth-loader');
+    const form = document.getElementById('register-form');
+
+    if (!email || !senha) return alert("Preencha todos os campos!");
+    if (senha.length < 6) return alert("A senha deve ter pelo menos 6 caracteres.");
+
+    form.style.display = 'none';
+    loader.style.display = 'block';
+
+    try {
+        await window.createUserWithEmailAndPassword(window.auth, email, senha);
+        // O onAuthStateChanged vai detectar e esconder a tela sozinho
+    } catch (error) {
+        console.error("Erro no registro:", error);
+        alert("Erro ao cadastrar: " + error.message);
+        // ISSO AQUI DESTRAVA A TELA:
+        form.style.display = 'block';
+        loader.style.display = 'none';
     }
 }
