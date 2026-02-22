@@ -57,90 +57,72 @@ function renderizar() {
     const m = dataFiltro.getMonth();
     const a = dataFiltro.getFullYear();
     const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-	
-	salsiData.transacoes.sort((a, b) => new Date(a.dataCompra) - new Date(b.dataCompra));
-    // ----------------------------------
+
+    salsiData.transacoes.sort((a, b) => new Date(a.dataCompra) - new Date(b.dataCompra));
 
     document.getElementById('display-mes-ano').innerText = `${mesesNomes[m]} ${a}`;
     document.getElementById('ano-badge-dinamico').innerText = a;
 
-// --- NOVO: LÓGICA DO NOME DOS MESES NO MOBILE ---
-    const mobPrev = document.getElementById('mob-prev-month');
-    const mobCurr = document.getElementById('mob-curr-month');
-    const mobNext = document.getElementById('mob-next-month');
+    // 1. Entradas (Sidebar + Aba Mobile)
+    const entMes = salsiData.entradas.filter(e => e.mes === m && e.ano === a);
+    const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
 
-    if (mobCurr) {
-        // Pega os meses já definidos e abrevia para 3 letras
-        let prevM = m - 1;
-        if (prevM < 0) prevM = 11;
-        
-        let nextM = m + 1;
-        if (nextM > 11) nextM = 0;
+    // RENDER PC (Sidebar)
+    document.getElementById('lista-entradas').innerHTML = entMes.map(e => `
+        <div class="sidebar-list-item">
+            <span>${e.nome}</span>
+            <div class="sidebar-value">
+                R$ ${e.valor.toFixed(2)}
+                <button class="btn-del" onclick="excluirEntrada(${salsiData.entradas.indexOf(e)})">×</button>
+            </div>
+        </div>`).join('');
 
-        mobPrev.innerText = mesesNomes[prevM].substring(0, 3);
-        mobCurr.innerText = `${mesesNomes[m]} ${a}`; 
-        mobNext.innerText = mesesNomes[nextM].substring(0, 3);
+    // RENDER MOBILE (Aba dedicada)
+    const listaMob = document.getElementById('lista-entradas-mobile');
+    if (listaMob) {
+        listaMob.innerHTML = entMes.map(e => `
+            <div class="entrada-item-mobile">
+                <div class="ent-info">
+                    <strong>${e.nome}</strong>
+                    <span>Recebido</span>
+                </div>
+                <div class="ent-valor-box">
+                    <span class="ent-valor">+ R$ ${e.valor.toFixed(2)}</span>
+                    <button class="btn-del" onclick="excluirEntrada(${salsiData.entradas.indexOf(e)})" style="margin-left:10px">×</button>
+                </div>
+            </div>
+        `).join('') || '<p style="text-align:center; padding:20px; color:var(--text-sec)">Nenhuma entrada.</p>';
     }
-    // ------------------------------------------------
 
-// 1. Entradas (Sidebar + Aba Mobile)
-const entMes = salsiData.entradas.filter(e => e.mes === m && e.ano === a);
-const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
+// Atualiza os totais (PC e Mobile)
+    const sideTotal = document.getElementById('sidebar-total-valor');
+    if (sideTotal) sideTotal.innerText = `R$ ${totalEnt.toFixed(2)}`;
+    
+    // A MÁGICA DA ENTRADA NO MOBILE:
+    const totalEntMob = document.getElementById('total-entradas-mobile-val');
+    if (totalEntMob) totalEntMob.innerText = `R$ ${totalEnt.toFixed(2)}`;
 
-// RENDER PC (Sidebar)
-document.getElementById('lista-entradas').innerHTML = entMes.map(e => `
-    <div class="sidebar-list-item">
-        <span>${e.nome}</span>
-        <div class="sidebar-value">
-            R$ ${e.valor.toFixed(2)}
-            <button class="btn-del" onclick="excluirEntrada(${salsiData.entradas.indexOf(e)})">×</button>
-        </div>
-    </div>`).join('');
+    // 2. Limpeza de Tabelas (PC e Mobile)
+    const fTable = document.querySelector('#tabela-fixos tbody'), 
+          cTable = document.querySelector('#tabela-cartao tbody'), 
+          dTable = document.querySelector('#tabela-debito tbody'),
+          tTable = document.querySelector('#lista-terceiros'),
+          cMobile = document.getElementById('lista-cartao-mobile'),
+          dMobile = document.getElementById('lista-debito-mobile'),
+          fMobile = document.getElementById('lista-fixos-mobile'),
+          mTerceiros = document.getElementById('lista-terceiros-mobile');
 
-// RENDER MOBILE (Aba dedicada) - Adicione isso abaixo:
-const listaMob = document.getElementById('lista-entradas-mobile');
-if (listaMob) {
-    listaMob.innerHTML = entMes.map(e => `
-        <div class="entrada-item-mobile">
-            <div class="ent-info">
-                <strong>${e.nome}</strong>
-                <span>Recebido</span>
-            </div>
-            <div class="ent-valor-box">
-                <span class="ent-valor">+ R$ ${e.valor.toFixed(2)}</span>
-                <button class="btn-del" onclick="excluirEntrada(${salsiData.entradas.indexOf(e)})" style="margin-left:10px">×</button>
-            </div>
-        </div>
-    `).join('') || '<p style="text-align:center; padding:20px; color:var(--text-sec)">Nenhuma entrada.</p>';
-}
+    if(fTable) fTable.innerHTML = ''; 
+    if(cTable) cTable.innerHTML = ''; 
+    if(dTable) dTable.innerHTML = '';
+    if(tTable) tTable.innerHTML = '';
+    if(cMobile) cMobile.innerHTML = ''; 
+    if(dMobile) dMobile.innerHTML = '';
+    if(fMobile) fMobile.innerHTML = ''; 
+    if(mTerceiros) mTerceiros.innerHTML = '';
 
-// Atualiza os totais (PC e Mobile se existir o ID)
-document.getElementById('sidebar-total-valor').innerText = `R$ ${totalEnt.toFixed(2)}`;
-const totalMob = document.getElementById('total-entradas-mobile');
-if (totalMob) totalMob.innerText = `R$ ${totalEnt.toFixed(2)}`;
-	
-// 2. Limpeza de Tabelas (PC e Mobile)
-const fTable = document.querySelector('#tabela-fixos tbody'), 
-      cTable = document.querySelector('#tabela-cartao tbody'), 
-      dTable = document.querySelector('#tabela-debito tbody'),
-      tTable = document.querySelector('#lista-terceiros'),
-      cMobile = document.getElementById('lista-cartao-mobile'),
-      dMobile = document.getElementById('lista-debito-mobile');
-	  fMobile = document.getElementById('lista-fixos-mobile'); // <--- Pega a lista mobile do Débito
-
-// Limpa tabelas do PC
-if(fTable) fTable.innerHTML = ''; 
-if(cTable) cTable.innerHTML = ''; 
-if(dTable) dTable.innerHTML = '';
-
-// Limpa listas do Mobile e Terceiros
-if(tTable) tTable.innerHTML = '';
-if(cMobile) cMobile.innerHTML = ''; 
-if(dMobile) dMobile.innerHTML = '';
-if(fMobile) fMobile.innerHTML = ''; // <--- Limpa os cards de débito antes de renderizar
-
-    // 3. Acumuladores do Mês
-    let totalGastoMes = 0, totalCartMes = 0, totalFixoMes = 0, totalDebitoMes = 0;
+    // 3. Acumuladores do Mês (AGORA COM O TERCEIROS)
+    let totalGastoMes = 0, totalCartMes = 0, totalFixoMes = 0, totalDebitoMes = 0, totalTerceirosMes = 0;
     let tagSum = {}, bankSum = {};
     let temGastoTerceiro = false;
 
@@ -157,54 +139,68 @@ if(fMobile) fMobile.innerHTML = ''; // <--- Limpa os cards de débito antes de r
             const val = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
             const idx = salsiData.transacoes.indexOf(t);
 
-			// --- DENTRO DO LOOP if (t.eDeTerceiro) ---
-			if (t.eDeTerceiro) {
-    temGastoTerceiro = true;
-    const idx = salsiData.transacoes.indexOf(t);
+            // --- LÓGICA DE FILTRAGEM ---
+            const fDeb = document.getElementById('filtro-debito') ? document.getElementById('filtro-debito').value : 'Todos';
+            const fCred = document.getElementById('filtro-credito') ? document.getElementById('filtro-credito').value : 'Todos';
+            const fFix = document.getElementById('filtro-fixos') ? document.getElementById('filtro-fixos').value : 'Todos';
+            
+            if (!t.eDeTerceiro) {
+                if (t.tipo === 'debito') {
+                    const forma = t.formaPagamento || 'Débito';
+                    if (fDeb !== 'Todos' && forma !== fDeb) return; 
+                } else if (t.tipo === 'cartao') {
+                    if (fCred !== 'Todos' && t.banco !== fCred) return; 
+                } else if (t.tipo === 'fixo') {
+                    if (fFix === 'Pagos' && !t.pago) return; 
+                    if (fFix === 'Pendentes' && t.pago) return; 
+                }
+            }
+            // ---------------------------
 
-    // 1. RENDER PC (Continua como tabela para não quebrar o layout desktop)
-    const tagTipoPC = t.tipo === 'cartao' 
-        ? `<span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>`
-        : `<span class="badge-tag">DÉBITO</span>`;
+            // --- GASTOS DE TERCEIROS ---
+            if (t.eDeTerceiro) {
+                totalTerceirosMes += val; // SOMA CORRETA AQUI
+                temGastoTerceiro = true;
 
-    if(tTable) {
-        tTable.innerHTML += `
-            <tr class="desktop-only-row">
-                <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
-                <td><span class="badge-tag">${t.nomeTerceiro}</span></td>
-                <td style="text-align: center;">${tagTipoPC}</td>
-                <td style="text-align: center;">${diff + 1}/${t.parcelas}</td>
-                <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
-                <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
-            </tr>`;
-    }
+                const tagTipoPC = t.tipo === 'cartao' 
+                    ? `<span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>`
+                    : `<span class="badge-tag">DÉBITO</span>`;
 
-    // 2. RENDER MOBILE (Nova estética de card com labels)
-    // Precisamos de um container no HTML chamado 'lista-terceiros-mobile'
-    const mTerceiros = document.getElementById('lista-terceiros-mobile');
-    if (mTerceiros) {
-        mTerceiros.innerHTML += `
-            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
-                <div class="cartao-info-principal">
-                    <div class="cartao-nome-grupo">
-                        <strong>${t.nome}</strong>
-                        <span class="cartao-parcela-tag">${diff + 1}/${t.parcelas}</span>
-                    </div>
-                    <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
-                        <span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>
-                        <span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 11px; padding: 2px 6px;">
-                            ${t.nomeTerceiro}
-                        </span>
-                    </div>
-                </div>
-                <div class="cartao-valor-grupo">
-                    <span class="cartao-valor" style="color: #ef4444;">R$ ${val.toFixed(2)}</span>
-                    <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
-                </div>
-            </div>`;
-    }
-}
-            // --- GASTOS PESSOAIS (SOMA NORMAL) ---
+                if(tTable) {
+                    tTable.innerHTML += `
+                        <tr class="desktop-only-row">
+                            <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                            <td><span class="badge-tag">${t.nomeTerceiro}</span></td>
+                            <td style="text-align: center;">${tagTipoPC}</td>
+                            <td style="text-align: center;">${diff + 1}/${t.parcelas}</td>
+                            <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
+                            <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
+                        </tr>`;
+                }
+
+                if (mTerceiros) {
+                    mTerceiros.innerHTML += `
+                        <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
+                            <div class="cartao-info-principal">
+                                <div class="cartao-nome-grupo">
+                                    <strong>${t.nome}</strong>
+                                    <span class="cartao-parcela-tag">${diff + 1}/${t.parcelas}</span>
+                                </div>
+                                <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
+                                    <span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>
+                                    <span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 11px; padding: 2px 6px;">
+                                        ${t.nomeTerceiro}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="cartao-valor-grupo">
+                                <span class="cartao-valor" style="color: #ef4444;">R$ ${val.toFixed(2)}</span>
+                                <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
+                            </div>
+                        </div>`;
+                }
+            }
+            // --- GASTOS PESSOAIS ---
             else {
                 if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
                     totalGastoMes += val;
@@ -212,176 +208,171 @@ if(fMobile) fMobile.innerHTML = ''; // <--- Limpa os cards de débito antes de r
                 }
 
                 if (t.tipo === 'fixo') {
-    if (t.pago === true) totalFixoMes += val;
-    
-    // 1. RENDER PC (Mantém a sua tabela original)
-    const estiloPC = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
-    if(fTable) {
-        fTable.innerHTML += `
-            <tr ${estiloPC} class="desktop-only-row">
-                <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
-                <td>R$ ${val.toFixed(2)}</td>
-                <td style="text-align: center;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
-                <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
-            </tr>`;
-    }
+                    if (t.pago === true) totalFixoMes += val;
+                    
+                    const estiloPC = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
+                    if(fTable) {
+                        fTable.innerHTML += `
+                            <tr ${estiloPC} class="desktop-only-row">
+                                <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                                <td>R$ ${val.toFixed(2)}</td>
+                                <td style="text-align: center;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
+                                <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
+                            </tr>`;
+                    }
 
-    // 2. RENDER MOBILE (Com a estética de cartão de crédito)
-    if(fMobile) {
-        const opacidadeMob = t.pago ? '1' : '0.6'; // Se não pagou, fica um pouco transparente
-        const tagStatus = t.pago 
-            ? `<span class="badge" style="background: #21c25e; font-size: 9px;">PAGO</span>`
-            : `<span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 9px;">PENDENTE</span>`;
+                    if(fMobile) {
+                        const opacidadeMob = t.pago ? '1' : '0.6'; 
+                        const tagStatus = t.pago 
+                            ? `<span class="badge" style="background: #21c25e; font-size: 9px;">PAGO</span>`
+                            : `<span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 9px;">PENDENTE</span>`;
 
-        fMobile.innerHTML += `
-            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
-                <div class="cartao-info-principal">
-                    <div class="cartao-nome-grupo">
-                        <strong>${t.nome}</strong>
-                    </div>
-                    <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-                        <input type="checkbox" ${t.pago ? 'checked' : ''} 
-                            onclick="event.stopPropagation()" 
-                            onchange="alternarStatusPago(${idx})" 
-                            style="transform: scale(1.3); cursor: pointer; accent-color: #21c25e;">
-                        ${tagStatus}
-                    </div>
-                </div>
-                <div class="cartao-valor-grupo">
-                    <span class="cartao-valor">R$ ${val.toFixed(2)}</span>
-                    <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
-                </div>
-            </div>`;
-    }
-} else if (t.tipo === 'debito') {
-    totalDebitoMes += val;
-    
-    // Define a tag e a cor
-    const formaPagTag = t.formaPagamento || 'Débito'; // Fallback para gastos antigos
-    let corTag = '#4299e1'; // Azul padrão para Débito
-    if (formaPagTag === 'PIX') corTag = '#32bcad'; // Verde-água para PIX
-    if (formaPagTag === 'Dinheiro') corTag = '#48bb78'; // Verde para Dinheiro
-    
-    // 1. Alimenta a tabela do PC
-    if(dTable) {
-        dTable.innerHTML += `
-            <tr class="desktop-only-row">
-                <td style="cursor:pointer; line-height: 1.4;" onclick="verDetalhes(${idx})">
-                    <div style="font-weight: 600; color: var(--text-main);">${t.nome}</div>
-                    <div style="font-size: 11px; color: #7a8b87; margin-top: 2px;">${t.categoria}</div>
-                </td>
-                <td style="text-align: center; vertical-align: middle;">
-                    <span class="badge" style="background:${corTag}; font-size: 10px; padding: 4px 8px; letter-spacing: 0.5px;">${formaPagTag}</span>
-                </td>
-                <td style="font-weight: 700; text-align: right; vertical-align: middle;">R$ ${val.toFixed(2)}</td>
-                <td style="text-align: center; vertical-align: middle;"><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
-            </tr>`;
-    }
+                        fMobile.innerHTML += `
+                            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
+                                <div class="cartao-info-principal">
+                                    <div class="cartao-nome-grupo">
+                                        <strong>${t.nome}</strong>
+                                    </div>
+                                    <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+                                        <input type="checkbox" ${t.pago ? 'checked' : ''} onclick="event.stopPropagation()" onchange="alternarStatusPago(${idx})" style="transform: scale(1.3); cursor: pointer; accent-color: #21c25e;">
+                                        ${tagStatus}
+                                    </div>
+                                </div>
+                                <div class="cartao-valor-grupo">
+                                    <span class="cartao-valor">R$ ${val.toFixed(2)}</span>
+                                    <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
+                                </div>
+                            </div>`;
+                    }
+                } else if (t.tipo === 'debito') {
+                    totalDebitoMes += val;
+                    
+                    const formaPagTag = t.formaPagamento || 'Débito'; 
+                    let corTag = '#4299e1'; 
+                    if (formaPagTag === 'PIX') corTag = '#32bcad'; 
+                    if (formaPagTag === 'Dinheiro') corTag = '#48bb78'; 
+                    
+                    if(dTable) {
+                        dTable.innerHTML += `
+                            <tr class="desktop-only-row">
+                                <td style="cursor:pointer; line-height: 1.4;" onclick="verDetalhes(${idx})">
+                                    <div style="font-weight: 600; color: var(--text-main);">${t.nome}</div>
+                                    <div style="font-size: 11px; color: #7a8b87; margin-top: 2px;">${t.categoria}</div>
+                                </td>
+                                <td style="text-align: center; vertical-align: middle;">
+                                    <span class="badge" style="background:${corTag}; font-size: 10px; padding: 4px 8px; letter-spacing: 0.5px;">${formaPagTag}</span>
+                                </td>
+                                <td style="font-weight: 700; text-align: right; vertical-align: middle;">R$ ${val.toFixed(2)}</td>
+                                <td style="text-align: center; vertical-align: middle;"><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
+                            </tr>`;
+                    }
 
-    // 2. ALIMENTA OS CARDS MOBILE
-    const dMobile = document.getElementById('lista-debito-mobile');
-    if (dMobile) {
-        dMobile.innerHTML += `
-            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
-                <div class="cartao-info-principal">
-                    <div class="cartao-nome-grupo">
-                        <strong>${t.nome}</strong>
-                    </div>
-                    <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
-                        <span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 10px;">${t.categoria}</span>
-                        <span class="badge" style="background:${corTag}; font-size: 9px; padding: 3px 6px;">${formaPagTag}</span>
-                    </div>
-                </div>
-                <div class="cartao-valor-grupo">
-                    <span class="cartao-valor" style="color: #ef4444;">R$ ${val.toFixed(2)}</span>
-                    <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
-                </div>
-            </div>`;
-    }
-} else if (t.tipo === 'cartao') {
-					totalCartMes += val;
-					bankSum[t.banco] = (bankSum[t.banco] || 0) + val;
+                    if (dMobile) {
+                        dMobile.innerHTML += `
+                            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
+                                <div class="cartao-info-principal">
+                                    <div class="cartao-nome-grupo">
+                                        <strong>${t.nome}</strong>
+                                    </div>
+                                    <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
+                                        <span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 10px;">${t.categoria}</span>
+                                        <span class="badge" style="background:${corTag}; font-size: 9px; padding: 3px 6px;">${formaPagTag}</span>
+                                    </div>
+                                </div>
+                                <div class="cartao-valor-grupo">
+                                    <span class="cartao-valor" style="color: #ef4444;">R$ ${val.toFixed(2)}</span>
+                                    <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
+                                </div>
+                            </div>`;
+                    }
+                } else if (t.tipo === 'cartao') {
+                    totalCartMes += val;
+                    bankSum[t.banco] = (bankSum[t.banco] || 0) + val;
 
-					// RENDER PC (Tabela original)
-					cTable.innerHTML += `
-						<tr class="desktop-only-row">
-							<td style="font-weight: 500; cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome}</td>
-							<td style="color: var(--text-sec); font-size: 11px; text-align: center;">${diff + 1}/${t.parcelas}</td>
-							<td style="text-align: center;"><span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span></td>
-							<td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
-							<td style="text-align: center;"><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
-						</tr>`;
+                    if(cTable) {
+                        cTable.innerHTML += `
+                            <tr class="desktop-only-row">
+                                <td style="font-weight: 500; cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                                <td style="color: var(--text-sec); font-size: 11px; text-align: center;">${diff + 1}/${t.parcelas}</td>
+                                <td style="text-align: center;"><span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span></td>
+                                <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
+                                <td style="text-align: center;"><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
+                            </tr>`;
+                    }
 
-					// RENDER MOBILE (Cards modernos)
-					const listaMob = document.getElementById('lista-cartao-mobile');
-					if (listaMob) {
-						listaMob.innerHTML += `
-							<div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
-								<div class="cartao-info-principal">
-									<div class="cartao-nome-grupo">
-										<strong>${t.nome}</strong>
-										<span class="cartao-parcela-tag">${diff + 1}/${t.parcelas}</span>
-									</div>
-									<span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>
-								</div>
-								<div class="cartao-valor-grupo">
-									<span class="cartao-valor">R$ ${val.toFixed(2)}</span>
-									<button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
-								</div>
-							</div>`;
-					}
-				}
+                    if (cMobile) {
+                        cMobile.innerHTML += `
+                            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
+                                <div class="cartao-info-principal">
+                                    <div class="cartao-nome-grupo">
+                                        <strong>${t.nome}</strong>
+                                        <span class="cartao-parcela-tag">${diff + 1}/${t.parcelas}</span>
+                                    </div>
+                                    <span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>
+                                </div>
+                                <div class="cartao-valor-grupo">
+                                    <span class="cartao-valor">R$ ${val.toFixed(2)}</span>
+                                    <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
+                                </div>
+                            </div>`;
+                    }
+                }
             }
         }
     });
 
-    // Controla visibilidade do card de terceiros
-// No final da função renderizar(), logo após o fechamento do salsiData.transacoes.forEach
-const cardTerceiros = document.getElementById('card-terceiros');
+    // --- A MÁGICA: ATUALIZA OS TOTAIS NO MOBILE ---
+    const tDebMob = document.getElementById('total-debito-mobile-val');
+    if (tDebMob) tDebMob.innerText = `R$ ${totalDebitoMes.toFixed(2)}`;
 
+    const tCredMob = document.getElementById('total-credito-mobile-val');
+    if (tCredMob) tCredMob.innerText = `R$ ${totalCartMes.toFixed(2)}`;
 
-// 4. Injetar Totais nas Tabelas
-    fTable.innerHTML += `<tr class="row-total"><td>TOTAL GASTOS FIXOS</td><td colspan="3">R$ ${totalFixoMes.toFixed(2)}</td></tr>`;
-    dTable.innerHTML += `<tr class="row-total"><td>TOTAL DÉBITO / PIX</td><td></td><td colspan="2">R$ ${totalDebitoMes.toFixed(2)}</td></tr>`;
-    cTable.innerHTML += `<tr class="row-total"><td colspan="3">TOTAL FATURA</td><td colspan="2">R$ ${totalCartMes.toFixed(2)}</td></tr>`;
+    const tFixMob = document.getElementById('total-fixos-mobile-val');
+    if (tFixMob) tFixMob.innerText = `R$ ${totalFixoMes.toFixed(2)}`;
+
+    const tTercMob = document.getElementById('total-terceiros-mobile-val');
+    if (tTercMob) tTercMob.innerText = `R$ ${totalTerceirosMes.toFixed(2)}`;
+    // ----------------------------------------------
 
     // 5. Resumo Mensal Central (Bancos e Tags)
     document.getElementById('resumo-bancos-lista').innerHTML = Object.entries(bankSum).map(([b,v]) => `<div class="bank-row"><span>${b}</span><span>R$ ${v.toFixed(2)}</span></div>`).join('') || "Sem gastos.";
-	const containerLembretes = document.getElementById('container-lembretes-fatura');
-if (containerLembretes) {
-    containerLembretes.innerHTML = ''; 
-    salsiData.config.detalhesBancos.forEach(ban => {
-        const valorFatura = bankSum[ban.nome] || 0;
-        if (valorFatura > 0) {
-            const hoje = new Date().getDate();
-            const vencimento = parseInt(ban.vencimento);
-            const diasFaltando = vencimento - hoje;
-            
-            let bgCor = '#f8faf9'; 
-            let borderCor = '#e2e8f0';
-            let statusTexto = `Vence dia ${vencimento}`;
-            
-            if (diasFaltando <= 3 && diasFaltando >= 0) {
-                bgCor = '#fff5f5'; 
-                borderCor = '#feb2b2';
-                statusTexto = `⚠️ Vence dia ${vencimento}!`;
-            }
+    
+    const containerLembretes = document.getElementById('container-lembretes-fatura');
+    if (containerLembretes) {
+        containerLembretes.innerHTML = ''; 
+        salsiData.config.detalhesBancos.forEach(ban => {
+            const valorFatura = bankSum[ban.nome] || 0;
+            if (valorFatura > 0) {
+                const hoje = new Date().getDate();
+                const vencimento = parseInt(ban.vencimento);
+                const diasFaltando = vencimento - hoje;
+                
+                let bgCor = '#f8faf9'; 
+                let borderCor = '#e2e8f0';
+                let statusTexto = `Vence dia ${vencimento}`;
+                
+                if (diasFaltando <= 3 && diasFaltando >= 0) {
+                    bgCor = '#fff5f5'; 
+                    borderCor = '#feb2b2';
+                    statusTexto = `⚠️ Vence dia ${vencimento}!`;
+                }
 
-            containerLembretes.innerHTML += `
-                <div style="background: ${bgCor}; border: 1px solid ${borderCor}; padding: 10px 15px; border-radius: 12px; min-width: 140px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <div style="width: 8px; height: 8px; border-radius: 50%; background: ${getCor(ban.nome)}"></div>
-                        <span style="font-size: 11px; font-weight: 700; color: #4a5568; text-transform: uppercase;">${ban.nome}</span>
-                    </div>
-                    <div style="font-size: 14px; font-weight: 800; color: #1a202c;">R$ ${valorFatura.toFixed(2)}</div>
-                    <div style="font-size: 10px; color: #718096; font-weight: 500;">${statusTexto}</div>
-                </div>`;
-        }
-    });
-}
+                containerLembretes.innerHTML += `
+                    <div style="background: ${bgCor}; border: 1px solid ${borderCor}; padding: 10px 15px; border-radius: 12px; min-width: 140px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${getCor(ban.nome)}"></div>
+                            <span style="font-size: 11px; font-weight: 700; color: #4a5568; text-transform: uppercase;">${ban.nome}</span>
+                        </div>
+                        <div style="font-size: 14px; font-weight: 800; color: #1a202c;">R$ ${valorFatura.toFixed(2)}</div>
+                        <div style="font-size: 10px; color: #718096; font-weight: 500;">${statusTexto}</div>
+                    </div>`;
+            }
+        });
+    }
     document.getElementById('resumo-tags-lista').innerHTML = Object.entries(tagSum).map(([k,v]) => `<div class="bank-row"><span>${k}</span><span>R$ ${v.toFixed(2)}</span></div>`).join('');
     
-    // 6. CÁLCULO ANUAL (Varre os 12 meses do ano selecionado)
+    // 6. CÁLCULO ANUAL
     let anEnt = 0, anCred = 0, anDeb = 0, anFixo = 0;
     salsiData.entradas.forEach(e => { if(e.ano === a) anEnt += e.valor; });
     
@@ -394,7 +385,7 @@ if (containerLembretes) {
             if (d.getDate() >= f) mr += 1;
             const df = (a - d.getFullYear()) * 12 + (mesIdx - mr);
 
-            if (df >= 0 && df < t.parcelas && !t.eDeTerceiro) { // !t.eDeTerceiro ignora no gráfico
+            if (df >= 0 && df < t.parcelas && !t.eDeTerceiro) {
                 const v = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
                 if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
                     if (t.tipo === 'cartao') anCred += v; 
@@ -405,10 +396,13 @@ if (containerLembretes) {
         });
     }
 
-    document.getElementById('ann-entradas').innerText = `R$ ${anEnt.toFixed(2)}`;
-    document.getElementById('ann-saidas').innerText = `R$ ${(anCred + anDeb + anFixo).toFixed(2)}`;
-    document.getElementById('ann-credito').innerText = `R$ ${anCred.toFixed(2)}`;
-    document.getElementById('ann-debito').innerText = `R$ ${anDeb.toFixed(2)}`;
+    const eAnnEntradas = document.getElementById('ann-entradas');
+    if(eAnnEntradas) {
+        eAnnEntradas.innerText = `R$ ${anEnt.toFixed(2)}`;
+        document.getElementById('ann-saidas').innerText = `R$ ${(anCred + anDeb + anFixo).toFixed(2)}`;
+        document.getElementById('ann-credito').innerText = `R$ ${anCred.toFixed(2)}`;
+        document.getElementById('ann-debito').innerText = `R$ ${anDeb.toFixed(2)}`;
+    }
 
     // 7. Finalização e Cache
     const saldoFinal = totalEnt - totalGastoMes;
@@ -419,30 +413,23 @@ if (containerLembretes) {
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
     atualizarHumorSalsicha(saldoFinal);
     setTimeout(atualizarGraficoAnual, 100);
-	
-	// No final da função renderizar(), após o loop das transações:
-function renderizar() {
-    // ... (todo o seu código de loop e soma)
-
-    // AJUSTE PARA MANTER A ABA ATIVA AO MUDAR O MÊS:
-    if (window.innerWidth <= 1024) { // Só faz isso no mobile
+    
+    // Controle da Aba Ativa ao mudar de mês (Mobile)
+    if (window.innerWidth <= 1024) {
         const btnTerceiros = document.getElementById('btn-show-terceiros');
         const cardRes = document.getElementById('card-resumo-conteudo');
         const cardTer = document.getElementById('card-terceiros');
 
         if (btnTerceiros && btnTerceiros.classList.contains('active')) {
-            // Se o botão de terceiros estava ativo, mantém ele aparecendo
-            cardRes.style.setProperty('display', 'none', 'important');
-            cardTer.style.setProperty('display', 'block', 'important');
+            if(cardRes) cardRes.style.setProperty('display', 'none', 'important');
+            if(cardTer) cardTer.style.setProperty('display', 'block', 'important');
         } else {
-            // Caso contrário, garante que o resumo apareça
-            cardRes.style.setProperty('display', 'block', 'important');
-            cardTer.style.setProperty('display', 'none', 'important');
+            if(cardRes) cardRes.style.setProperty('display', 'block', 'important');
+            if(cardTer) cardTer.style.setProperty('display', 'none', 'important');
         }
     }
-}
-	
-	atualizarGraficoMeta();
+    
+    atualizarGraficoMeta();
 }
 
 function ajustarCamposModal() {
