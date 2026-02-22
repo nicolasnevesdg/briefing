@@ -160,9 +160,15 @@
 					<section id="aba-fixos" class="tab-content">
 						<div class="card">
 							<h3>Gastos Fixos</h3>
-							<table id="tabela-fixos"><thead><tr><th>Nome</th><th>Valor</th><th>Pago</th><th></th></tr></thead><tbody></tbody></table>
+							
+							<table id="tabela-fixos" class="desktop-only">
+								<thead><tr><th>Nome</th><th>Valor</th><th>Pago</th><th></th></tr></thead>
+								<tbody></tbody>
+							</table>
+
+							<div id="lista-fixos-mobile" class="mobile-only"></div>
 						</div>
-						</section>
+					</section>
 						
 						<section id="menu-cartoes" class="tab-content">
 						<div class="mobile-tabs-toggle cartoes-toggle">
@@ -176,7 +182,7 @@
 						<div id="sub-card-debito" class="card">
 							<h3>Débito / PIX</h3>
 							<table id="tabela-debito" class="desktop-only">
-								<thead><tr><th>Item</th><th>Tag</th><th>Valor</th><th></th></tr></thead>
+								<thead><tr><th>Item / Categoria</th><th>Tag</th><th>Valor</th><th></th></tr></thead>
 								<tbody></tbody>
 							</table>
 							<div id="lista-debito-mobile" class="mobile-only"></div>
@@ -303,6 +309,15 @@
                     <option value="fixo">Gasto Fixo</option>
                     <option value="debito">Débito / PIX</option>
                 </select>
+				
+				<div id="div-forma-pagamento" class="input-group" style="display: none; margin-top: 10px;">
+					<label>Forma de Pagamento</label>
+					<select id="g-forma-pagamento" class="input-padrao" onchange="ajustarCamposModal()">
+						<option value="PIX">PIX</option>
+						<option value="Débito">Cartão de Débito</option>
+						<option value="Dinheiro">Dinheiro</option>
+					</select>
+				</div>
 
                 <div id="div-cartao-campos">
                     <input type="number" id="g-parcelas" value="1" min="1" placeholder="Número de parcelas">

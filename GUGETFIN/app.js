@@ -106,7 +106,8 @@ const fTable = document.querySelector('#tabela-fixos tbody'),
       dTable = document.querySelector('#tabela-debito tbody'),
       tTable = document.querySelector('#lista-terceiros'),
       cMobile = document.getElementById('lista-cartao-mobile'),
-      dMobile = document.getElementById('lista-debito-mobile'); // <--- Pega a lista mobile do Débito
+      dMobile = document.getElementById('lista-debito-mobile');
+	  fMobile = document.getElementById('lista-fixos-mobile'); // <--- Pega a lista mobile do Débito
 
 // Limpa tabelas do PC
 if(fTable) fTable.innerHTML = ''; 
@@ -116,7 +117,8 @@ if(dTable) dTable.innerHTML = '';
 // Limpa listas do Mobile e Terceiros
 if(tTable) tTable.innerHTML = '';
 if(cMobile) cMobile.innerHTML = ''; 
-if(dMobile) dMobile.innerHTML = ''; // <--- Limpa os cards de débito antes de renderizar
+if(dMobile) dMobile.innerHTML = '';
+if(fMobile) fMobile.innerHTML = ''; // <--- Limpa os cards de débito antes de renderizar
 
     // 3. Acumuladores do Mês
     let totalGastoMes = 0, totalCartMes = 0, totalFixoMes = 0, totalDebitoMes = 0;
@@ -191,31 +193,85 @@ if(dMobile) dMobile.innerHTML = ''; // <--- Limpa os cards de débito antes de r
                 }
 
                 if (t.tipo === 'fixo') {
-                    if (t.pago === true) totalFixoMes += val;
-                    const estilo = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
-                    fTable.innerHTML += `
-						<tr ${estilo}>
-							<td data-label="Item" style="cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome}</td>
-							<td data-label="Valor">R$ ${val.toFixed(2)}</td>
-							<td data-label="Pago?"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
-							<td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
-						</tr>`;
-                } else if (t.tipo === 'debito') {
-    totalDebitoMes += val;
+    if (t.pago === true) totalFixoMes += val;
     
-    // Alimenta a tabela do PC (que o CSS vai esconder no mobile)
-    if(dTable) {
-        dTable.innerHTML += `<tr><td>${t.nome}</td><td>${t.categoria}</td><td>R$ ${val.toFixed(2)}</td></tr>`;
+    // 1. RENDER PC (Mantém a sua tabela original)
+    const estiloPC = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
+    if(fTable) {
+        fTable.innerHTML += `
+            <tr ${estiloPC} class="desktop-only-row">
+                <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                <td>R$ ${val.toFixed(2)}</td>
+                <td style="text-align: center;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
+                <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
+            </tr>`;
     }
 
-    // ALIMENTA OS CARDS MOBILE DO DÉBITO
+    // 2. RENDER MOBILE (Com a estética de cartão de crédito)
+    if(fMobile) {
+        const opacidadeMob = t.pago ? '1' : '0.6'; // Se não pagou, fica um pouco transparente
+        const tagStatus = t.pago 
+            ? `<span class="badge" style="background: #21c25e; font-size: 9px;">PAGO</span>`
+            : `<span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 9px;">PENDENTE</span>`;
+
+        fMobile.innerHTML += `
+            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
+                <div class="cartao-info-principal">
+                    <div class="cartao-nome-grupo">
+                        <strong>${t.nome}</strong>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+                        <input type="checkbox" ${t.pago ? 'checked' : ''} 
+                            onclick="event.stopPropagation()" 
+                            onchange="alternarStatusPago(${idx})" 
+                            style="transform: scale(1.3); cursor: pointer; accent-color: #21c25e;">
+                        ${tagStatus}
+                    </div>
+                </div>
+                <div class="cartao-valor-grupo">
+                    <span class="cartao-valor">R$ ${val.toFixed(2)}</span>
+                    <button class="btn-del" onclick="event.stopPropagation(); excluirGasto(${idx})">×</button>
+                </div>
+            </div>`;
+    }
+} else if (t.tipo === 'debito') {
+    totalDebitoMes += val;
+    
+    // Define a tag e a cor
+    const formaPagTag = t.formaPagamento || 'Débito'; // Fallback para gastos antigos
+    let corTag = '#4299e1'; // Azul padrão para Débito
+    if (formaPagTag === 'PIX') corTag = '#32bcad'; // Verde-água para PIX
+    if (formaPagTag === 'Dinheiro') corTag = '#48bb78'; // Verde para Dinheiro
+    
+    // 1. Alimenta a tabela do PC
+    if(dTable) {
+        dTable.innerHTML += `
+            <tr class="desktop-only-row">
+                <td style="cursor:pointer; line-height: 1.4;" onclick="verDetalhes(${idx})">
+                    <div style="font-weight: 600; color: var(--text-main);">${t.nome}</div>
+                    <div style="font-size: 11px; color: #7a8b87; margin-top: 2px;">${t.categoria}</div>
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    <span class="badge" style="background:${corTag}; font-size: 10px; padding: 4px 8px; letter-spacing: 0.5px;">${formaPagTag}</span>
+                </td>
+                <td style="font-weight: 700; text-align: right; vertical-align: middle;">R$ ${val.toFixed(2)}</td>
+                <td style="text-align: center; vertical-align: middle;"><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
+            </tr>`;
+    }
+
+    // 2. ALIMENTA OS CARDS MOBILE
     const dMobile = document.getElementById('lista-debito-mobile');
     if (dMobile) {
         dMobile.innerHTML += `
-            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})">
+            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
                 <div class="cartao-info-principal">
-                    <strong>${t.nome}</strong>
-                    <span class="badge-tag">${t.categoria}</span>
+                    <div class="cartao-nome-grupo">
+                        <strong>${t.nome}</strong>
+                    </div>
+                    <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
+                        <span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 10px;">${t.categoria}</span>
+                        <span class="badge" style="background:${corTag}; font-size: 9px; padding: 3px 6px;">${formaPagTag}</span>
+                    </div>
                 </div>
                 <div class="cartao-valor-grupo">
                     <span class="cartao-valor" style="color: #ef4444;">R$ ${val.toFixed(2)}</span>
@@ -372,14 +428,57 @@ function renderizar() {
 
 function ajustarCamposModal() {
     const tipo = document.getElementById('g-tipo').value;
-    document.getElementById('div-cartao-campos').style.display = (tipo === 'cartao') ? 'block' : 'none';
+    
+    // 1. Mostrar/Esconder o campo Forma de Pagamento (PIX, Débito, Dinheiro)
+    const divForma = document.getElementById('div-forma-pagamento');
+    if (divForma) {
+        divForma.style.display = (tipo === 'debito') ? 'block' : 'none';
+    }
+
+    // Captura qual forma de pagamento está selecionada no momento
+    const campoForma = document.getElementById('g-forma-pagamento');
+    const formaPag = campoForma ? campoForma.value : 'Débito';
+
+    // 2. A mágica para controlar a div do Banco e das Parcelas
+    const divCartaoCampos = document.getElementById('div-cartao-campos');
+    const inputParcelas = document.getElementById('g-parcelas');
+    const selectBanco = document.getElementById('g-banco');
+
+    if (divCartaoCampos) {
+        // Se for "Dinheiro", não precisa de banco nem de parcela. Esconde a div inteira.
+        if (tipo === 'debito' && formaPag === 'Dinheiro') {
+            divCartaoCampos.style.display = 'none';
+        } 
+        // Se for PIX, Débito em Conta ou Crédito, a div aparece:
+        else {
+            divCartaoCampos.style.display = 'block';
+            
+            // Mas a parcela SÓ deve aparecer se for Crédito
+            if (inputParcelas) {
+                inputParcelas.style.display = (tipo === 'cartao') ? '' : 'none';
+            }
+            
+            // O banco sempre aparece nesses casos
+            if (selectBanco) {
+                selectBanco.style.display = '';
+            }
+        }
+    }
 }
 
 function confirmarGasto() {
-    const vTotal = parseFloat(document.getElementById('g-valor').value);
-    const tipo = document.getElementById('g-tipo').value;
-    const nParc = (tipo === 'cartao') ? (parseInt(document.getElementById('g-parcelas').value) || 1) : 1;
+    let rawValue = document.getElementById('g-valor').value;
+    // Remove o "R$", pontos de milhar e troca a vírgula por ponto
+    const vTotal = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
     
+    // Captura o tipo (cartao, debito, fixo)
+    const tipo = document.getElementById('g-tipo').value; 
+    const nParc = Math.max(1, parseInt(document.getElementById('g-parcelas').value) || 1);
+    
+    // NOVO: Captura o que o usuário escolheu no select de forma de pagamento
+    const campoForma = document.getElementById('g-forma-pagamento');
+    const formaPag = campoForma ? campoForma.value : 'Débito';
+
     salsiData.transacoes.push({
         nome: document.getElementById('g-nome').value,
         tipo: tipo,
@@ -390,9 +489,11 @@ function confirmarGasto() {
         banco: document.getElementById('g-banco').value,
         categoria: document.getElementById('g-categoria').value,
         pago: false,
-        delayPagamento: parseInt(document.getElementById('g-inicio-pagamento').value) || 0, // <--- ADICIONEI A VÍRGULA AQUI
+        delayPagamento: parseInt(document.getElementById('g-inicio-pagamento').value) || 0,
         eDeTerceiro: document.getElementById('g-terceiro').checked,
-        nomeTerceiro: document.getElementById('g-nome-terceiro').value || ""
+        nomeTerceiro: document.getElementById('g-nome-terceiro').value || "",
+        // NOVO: Salva a forma de pagamento (se for débito) lá no banco de dados
+        formaPagamento: (tipo === 'debito') ? formaPag : null
     });
     
     renderizar(); 
@@ -776,14 +877,30 @@ function excluirTagConfig(index) {
 
 function verDetalhes(index) {
     const t = salsiData.transacoes[index];
-    if (!t) return; // Segurança caso o index falhe
+    if (!t) return; 
 
     document.getElementById('det-nome').innerText = t.nome;
     document.getElementById('det-data').innerText = new Date(t.dataCompra + "T00:00:00").toLocaleDateString('pt-BR');
     document.getElementById('det-valor-total').innerText = `R$ ${t.valorTotal.toFixed(2)}`;
-    document.getElementById('det-banco').innerText = t.banco;
     document.getElementById('det-categoria').innerText = t.categoria;
 
+    // --- NOVA LÓGICA: IDENTIDADE DE PAGAMENTO ---
+    let textoPagamento = t.banco; // Fallback padrão
+    
+    if (t.tipo === 'debito') {
+        const forma = t.formaPagamento || 'Débito'; // Puxa se foi PIX, Dinheiro ou Débito
+        // Se for dinheiro, não precisa mostrar banco. Se for PIX/Débito, mostra o banco entre parênteses.
+        textoPagamento = (forma === 'Dinheiro') ? 'Dinheiro Físico' : `${forma} (${t.banco})`;
+    } else if (t.tipo === 'cartao') {
+        textoPagamento = `Crédito (${t.banco})`;
+    } else if (t.tipo === 'fixo') {
+        textoPagamento = `Gasto Fixo`; // Fixos geralmente debitam em conta
+    }
+
+    // Aplica no modal
+    document.getElementById('det-banco').innerText = textoPagamento;
+
+    // Lógica de Parcelas
     const blocoParc = document.getElementById('det-bloco-parcelas');
     if (t.parcelas > 1) {
         blocoParc.style.display = 'block';
@@ -834,31 +951,6 @@ function formatarMoeda(input) {
     input.value = valor;
 }
 
-// 3. AJUSTE NO SALVAMENTO (Para o JS entender o valor formatado)
-function confirmarGasto() {
-    let rawValue = document.getElementById('g-valor').value;
-    // Remove o "R$", pontos de milhar e troca a vírgula por ponto
-    const vTotal = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-    const nParc = Math.max(1, parseInt(document.getElementById('g-parcelas').value) || 1);
-    
-    salsiData.transacoes.push({
-        nome: document.getElementById('g-nome').value,
-        tipo: document.getElementById('g-tipo').value,
-        valorTotal: vTotal,
-        valorParcela: vTotal / nParc,
-        parcelas: nParc,
-        dataCompra: document.getElementById('g-data').value,
-        banco: document.getElementById('g-banco').value,
-        categoria: document.getElementById('g-categoria').value,
-        pago: false,
-        delayPagamento: parseInt(document.getElementById('g-inicio-pagamento').value) || 0,
-        eDeTerceiro: document.getElementById('g-terceiro').checked,
-        nomeTerceiro: document.getElementById('g-nome-terceiro').value || ""
-    });
-    
-    renderizar(); 
-    document.getElementById('modal-gasto').close();
-}
 
 // Garante que o banco use a lista (plural)
 if (!salsiData.metas) salsiData.metas = [];

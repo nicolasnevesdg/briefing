@@ -1428,7 +1428,7 @@ tr[style*="opacity: 0.7"] td {
 .header-alinhado-direita {
     display: flex;
     justify-content: flex-end; /* Empurra o conteúdo para a direita */
-    padding: 10px 0;
+    padding: 0px 0;
     width: 100%;
 }
 
@@ -1750,6 +1750,10 @@ tr[style*="opacity: 0.7"] td {
 	#sub-card-debito {
     border-top-right-radius: 0 !important;
 }
+
+	#sub-card-credito h3, #sub-card-debito h3 {
+    display: none !important;
+}
 	
 }
 
@@ -1797,6 +1801,10 @@ tr[style*="opacity: 0.7"] td {
         align-items: center;
         justify-content: center;
     }
+}
+
+#g-forma-pagamento, #g-inicio-pagamento {
+	margin-bottom: 0;
 }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
