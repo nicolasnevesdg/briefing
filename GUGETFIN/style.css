@@ -2361,6 +2361,10 @@ tr[style*="opacity: 0.7"] td {
     padding: 0;
 }
 
+    #greeting-mobile {
+        display: none !important;
+    }
+
 .greet-time {
     font-size: 20px;
     font-weight: 500;
@@ -2383,9 +2387,12 @@ tr[style*="opacity: 0.7"] td {
         display: none !important;
     }
 	
+	    #greeting-mobile {
+        display: block !important;
+    }
+	
 	.greeting-box {
 		padding-left: 15px;
-		display: block !important;
 	}
 
 	.greet-time {
