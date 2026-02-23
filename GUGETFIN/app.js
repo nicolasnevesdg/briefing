@@ -1478,19 +1478,26 @@ async function login() {
 
 // Função de Registro Real (Mantenha apenas ESTA versão)
 async function registrar() {
+    const nome = document.getElementById('register-nome').value.trim();
     const email = document.getElementById('register-email').value;
     const senha = document.getElementById('register-senha').value;
+    const senhaConf = document.getElementById('register-senha-conf').value;
     const loader = document.getElementById('auth-loader');
     const form = document.getElementById('register-form');
 
-    if (!email || !senha) return alert("Preencha todos os campos!");
+    if (!nome || !email || !senha || !senhaConf) return alert("Preencha todos os campos!");
     if (senha.length < 6) return alert("A senha deve ter pelo menos 6 caracteres.");
+    if (senha !== senhaConf) return alert("As senhas não coincidem!");
 
     form.style.display = 'none';
     loader.style.display = 'block';
 
     try {
-        await window.createUserWithEmailAndPassword(window.auth, email, senha);
+        const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, senha);
+        // Atualiza o perfil no Firebase com o nome fornecido
+        await window.updateProfile(userCredential.user, { displayName: nome });
+        
+        // O onAuthStateChanged vai assumir daqui
     } catch (error) {
         alert("Erro ao cadastrar: " + error.message);
         form.style.display = 'block';
@@ -1509,6 +1516,8 @@ window.iniciarVigia = function() {
         
         if (user) {
             authScreen.style.display = 'none'; // Agora isso vai funcionar!
+            
+            atualizarSaudacao(user.displayName || "Visitante");
             
             const uid = user.uid;
             const userDoc = window.doc(window.db, "usuarios", uid);
@@ -1564,3 +1573,88 @@ function toggleAuth(isRegister) {
     document.getElementById('register-form').style.display = isRegister ? 'block' : 'none';
 }
 
+// --- FUNÇÃO DO OLHINHO DA SENHA ---
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fi-rr-eye', 'fi-rr-eye-crossed');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fi-rr-eye-crossed', 'fi-rr-eye');
+    }
+}
+
+// --- FUNÇÃO DA SAUDAÇÃO ---
+function atualizarSaudacao(nomeCompleto) {
+    if (!nomeCompleto) return;
+    
+    // Pega só o primeiro nome
+    const primeiroNome = nomeCompleto.split(' ')[0];
+    const hora = new Date().getHours();
+    
+    let saudacao = 'Boa noite';
+    if (hora >= 5 && hora < 12) saudacao = 'Bom dia';
+    else if (hora >= 12 && hora < 18) saudacao = 'Boa tarde';
+
+    const container = document.getElementById('greeting-container');
+    if (container) {
+        container.innerHTML = `<span class="greet-time">${saudacao},</span><br><span class="greet-name">${primeiroNome}!</span>`;
+        container.style.display = 'block';
+    }
+}
+
+// --- FUNÇÕES DO PERFIL ---
+function abrirModalPerfil() {
+    const user = window.auth.currentUser;
+    if (user) {
+        document.getElementById('perfil-nome').value = user.displayName || '';
+        document.getElementById('perfil-email').value = user.email || '';
+        document.getElementById('perfil-senha').value = ''; // Sempre limpo por segurança
+        document.getElementById('modal-perfil').showModal();
+        
+        // Fecha o menu cascata
+        document.getElementById('menu-dropdown').classList.remove('active');
+    }
+}
+
+async function salvarPerfil() {
+    const user = window.auth.currentUser;
+    if (!user) return;
+
+    const novoNome = document.getElementById('perfil-nome').value.trim();
+    const novaSenha = document.getElementById('perfil-senha').value;
+    const btn = document.querySelector('#modal-perfil button');
+    
+    btn.innerText = "Salvando...";
+    btn.disabled = true;
+
+    try {
+        // Atualiza o nome se foi alterado
+        if (novoNome && novoNome !== user.displayName) {
+            await window.updateProfile(user, { displayName: novoNome });
+            atualizarSaudacao(novoNome); // Atualiza a tela na hora
+        }
+
+        // Atualiza a senha se ele digitou algo
+        if (novaSenha) {
+            if (novaSenha.length < 6) throw new Error("A senha deve ter pelo menos 6 caracteres.");
+            await window.updatePassword(user, novaSenha);
+        }
+
+        alert("Perfil atualizado com sucesso!");
+        document.getElementById('modal-perfil').close();
+    } catch (error) {
+        // Erro comum: o Firebase exige que o usuário tenha feito login "recentemente" para mudar a senha
+        if (error.code === 'auth/requires-recent-login') {
+            alert("Por segurança, você precisa sair da conta e entrar novamente para alterar a senha.");
+        } else {
+            alert("Erro ao atualizar: " + error.message);
+        }
+    } finally {
+        btn.innerText = "Salvar Alterações";
+        btn.disabled = false;
+    }
+}

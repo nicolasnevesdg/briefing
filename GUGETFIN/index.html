@@ -27,8 +27,19 @@
         </div>
 
         <div id="register-form" style="display: none;">
+            <input type="text" id="register-nome" placeholder="Seu nome (ex: Nícolas Neves)" class="auth-input">
             <input type="email" id="register-email" placeholder="Seu melhor e-mail" class="auth-input">
-            <input type="password" id="register-senha" placeholder="Crie uma senha forte" class="auth-input">
+            
+            <div class="password-wrapper">
+                <input type="password" id="register-senha" placeholder="Crie uma senha forte" class="auth-input" style="margin-bottom: 0;">
+                <button type="button" class="btn-eye" onclick="togglePassword('register-senha', this)"><i class="fi fi-rr-eye"></i></button>
+            </div>
+            
+            <div class="password-wrapper" style="margin-top: 12px; margin-bottom: 12px;">
+                <input type="password" id="register-senha-conf" placeholder="Confirme sua senha" class="auth-input" style="margin-bottom: 0;">
+                <button type="button" class="btn-eye" onclick="togglePassword('register-senha-conf', this)"><i class="fi fi-rr-eye"></i></button>
+            </div>
+
             <button class="btn-auth-primary" onclick="registrar()">Cadastrar</button>
             <p class="auth-switch">Já tem conta? <a href="#" onclick="toggleAuth(false)">Fazer login</a></p>
         </div>
@@ -75,6 +86,12 @@
 						</svg>
 						<span class="btn-text-mobile">Opções</span> </button>
 					</button>
+					
+					<button class="dropdown-item option-btn" onclick="abrirModalPerfil()">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+						Editar Perfil
+					</button>
+					<hr class="dropdown-divider">
 
 <div class="options-dropdown" id="menu-dropdown">
 						<button class="dropdown-item option-btn" onclick="document.getElementById('input-import-js').click()">
@@ -196,6 +213,7 @@
 		</section>	
 		
 		<section id="aba-home" class="tab-content active">
+		<div id="greeting-container" class="greeting-box" style="display: none;"></div>
 			<div class="stats-grid">
 				<div class="stat-card"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
 				<div class="stat-card"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
@@ -598,6 +616,28 @@
 		</div>
 	</dialog>
 
+	<dialog id="modal-perfil" class="modal-estilizado">
+		<div style="padding: 25px;">
+			<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--dark-green); margin: 0;">Meu Perfil</h2>
+                <button class="btn-close-modal" onclick="this.closest('dialog').close()" style="position: static;">×</button>
+            </div>
+			<label class="input-label">Nome de Exibição</label>
+            <input type="text" id="perfil-nome" placeholder="Seu nome" style="width: 100%; margin-bottom: 15px;">
+			
+            <label class="input-label">E-mail</label>
+            <input type="email" id="perfil-email" placeholder="Seu e-mail" style="width: 100%; margin-bottom: 15px;" disabled title="Por segurança, o e-mail atual não pode ser alterado por aqui no momento.">
+			
+            <label class="input-label">Nova Senha (deixe em branco para não mudar)</label>
+            <div class="password-wrapper">
+                <input type="password" id="perfil-senha" placeholder="Digite a nova senha" style="width: 100%; margin-bottom: 20px;">
+                <button type="button" class="btn-eye" onclick="togglePassword('perfil-senha', this)" style="top: 15px;"><i class="fi fi-rr-eye"></i></button>
+            </div>
+
+			<button onclick="salvarPerfil()" style="width: 100%; background: var(--dark-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">Salvar Alterações</button>
+		</div>
+	</dialog>
+
 	<script>
 	  if ('serviceWorker' in navigator) {
 		navigator.serviceWorker.register('sw.js')
@@ -608,7 +648,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   // 👇 MUDANÇA 1: Adicionado o onSnapshot aqui na importação
   import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -634,7 +674,10 @@
   window.doc = doc;
   window.setDoc = setDoc;
   window.getDoc = getDoc;
-  window.onSnapshot = onSnapshot; 
+  window.onSnapshot = onSnapshot;
+  window.updateProfile = updateProfile;
+  window.updateEmail = updateEmail;
+  window.updatePassword = updatePassword;  
 
   // 👇 A MÁGICA: Puxa o gatilho do Vigia só depois que TUDO acima carregou
   if (window.iniciarVigia) {
