@@ -91,12 +91,6 @@
 						Editar Perfil
 					</button>
 					<hr class="dropdown-divider">
-						<button class="dropdown-item option-btn" onclick="document.getElementById('input-import-js').click()">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-							Importar Backup
-						</button>
-						
-						<input type="file" id="input-import-js" accept=".js" style="display:none" onchange="importarDadosJS(event)">
 
 						<button class="dropdown-item option-btn" onclick="abrirModalCartoes()">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
@@ -107,6 +101,15 @@
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
 							Gerenciar Categorias
 						</button>
+
+						<hr class="dropdown-divider">
+
+						<button class="dropdown-item option-btn" onclick="document.getElementById('input-import-js').click()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+							Importar Backup
+						</button>
+						
+						<input type="file" id="input-import-js" accept=".js" style="display:none" onchange="importarDadosJS(event)">
 
 						<button class="dropdown-item option-btn" onclick="limparMesAtual()">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -687,3 +690,4 @@
 </body>
 
 </html>
+
