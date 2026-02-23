@@ -597,6 +597,7 @@ function alternarStatusPago(index) {
 function salvarAlteracoes() {
     // Registra o backup para sumir com o banner de aviso
     localStorage.setItem('salsifin_ultimo_backup', new Date().getTime());
+	salvarNoFirebase();
 
     // Gera um nome de arquivo único com data e hora: SalsiFin_Backup_2026-02-18_01h45.js
     const agora = new Date();
@@ -656,7 +657,26 @@ function getCor(b) {
     // Retorna a cor da marca ou um cinza neutro se não encontrar
     return cores[b] || '#94a3b8';
 }
-function importarDadosJS(event) { const leitor = new FileReader(); leitor.onload = function(e) { try { let conteudo = e.target.result.replace(/const bancoInicial\s*=\s*/, "").trim().replace(/;$/, ""); salsiData = JSON.parse(conteudo); localStorage.setItem('salsifin_cache', JSON.stringify(salsiData)); renderizar(); alert("Importado! 🐾"); } catch (erro) { alert("Erro!"); } }; leitor.readAsText(event.target.files[0]); }
+function importarDadosJS(event) { 
+    const leitor = new FileReader(); 
+    leitor.onload = function(e) { 
+        try { 
+            let conteudo = e.target.result.replace(/const bancoInicial\s*=\s*/, "").trim().replace(/;$/, ""); 
+            salsiData = JSON.parse(conteudo); 
+            localStorage.setItem('salsifin_cache', JSON.stringify(salsiData)); 
+            
+            renderizar(); 
+            
+            // 👇 ENVIA O BACKUP PARA A NUVEM IMEDIATAMENTE 👇
+            salvarNoFirebase(); 
+            
+            alert("Importado! 🐾"); 
+        } catch (erro) { 
+            alert("Erro!"); 
+        } 
+    }; 
+    leitor.readAsText(event.target.files[0]); 
+}
 
 function injetarAssinatura() {
     const segredo = "YXBwIHdlYiBjcmlhZG8gcG9yIDxhIGhyZWY9Imh0dHA6Ly93d3cubmljb2xhc25ldmVzLmNvbS5iciIgdGFyZ2V0PSJfYmxhbmsiPk7DrWNvbGFzIE5ldmVzPC9hPg==";
@@ -868,11 +888,22 @@ function excluirCartaoConfig(index) {
     }
 }
 
-// 1. Função para Resetar TUDO (Limpa o cache e recarrega a página)
-function limparTudo() {
-    if (confirm("⚠️ ATENÇÃO: Isso apagará todos os seus gastos, entradas e configurações salvos no navegador. Deseja continuar?")) {
-        localStorage.removeItem('salsifin_cache'); // Remove o banco de dados do cache
-        location.reload(); // Recarrega para voltar ao estado inicial do dados.js
+// 1. Função para Resetar TUDO na Nuvem e no Local
+async function limparTudo() {
+    if (confirm("⚠️ ATENÇÃO: Isso apagará todos os seus gastos na nuvem e no navegador. Deseja continuar?")) {
+        
+        // Substitui os dados atuais por um "esqueleto" vazio
+        salsiData = {
+            config: { categorias: ["Alimentação", "Transporte"], bancos: ["Nubank", "Inter"] },
+            entradas: [], transacoes: [], metas: []
+        };
+        
+        // Manda o esqueleto vazio pra nuvem (isso vai avisar o celular para apagar tudo também na hora!)
+        await salvarNoFirebase(); 
+        
+        // Limpa o navegador e reinicia
+        localStorage.removeItem('salsifin_cache');
+        location.reload(); 
     }
 }
 
@@ -1468,7 +1499,10 @@ async function registrar() {
 }
 
 // --- O VIGIA (Monitora se o usuário está logado) ---
-window.onAuthStateChanged(window.auth, async (user) => {
+// Trava de segurança para evitar que o app trave num loop infinito
+let isSincronizando = false; 
+
+window.onAuthStateChanged(window.auth, (user) => {
     const authScreen = document.getElementById('auth-screen');
     
     if (user) {
@@ -1476,42 +1510,52 @@ window.onAuthStateChanged(window.auth, async (user) => {
         
         const uid = user.uid;
         const userDoc = window.doc(window.db, "usuarios", uid);
-        const docSnap = await window.getDoc(userDoc);
 
-        if (docSnap.exists()) {
-            // Se já tem dados na nuvem, usa eles
-            salsiData = docSnap.data().dados;
-            console.log("Dados carregados da nuvem!");
-        } else {
-            // SE É UM USUÁRIO NOVO: Criamos a estrutura inicial para não bugar o app
-            console.log("Usuário novo! Criando estrutura inicial...");
-            salsiData = {
-                config: { 
-                    categorias: ["Alimentação", "Transporte", "Lazer", "Saúde"], 
-                    bancos: ["Nubank", "Inter", "C6 Bank"] 
-                },
-                entradas: [],
-                transacoes: []
-            };
-            // Já salva essa estrutura inicial na nuvem pra ele
-            await salvarNoFirebase();
-        }
+        // A MÁGICA: onSnapshot substitui o getDoc e fica vigiando a nuvem 24h por dia
+        window.onSnapshot(userDoc, (docSnap) => {
+            if (docSnap.exists()) {
+                const dadosDaNuvem = docSnap.data().dados;
+                
+                // Só atualiza a tela se a nuvem tiver dados diferentes da tela atual
+                if (JSON.stringify(salsiData) !== JSON.stringify(dadosDaNuvem)) {
+                    console.log("☁️ Atualização detectada em outro aparelho! Sincronizando...");
+                    salsiData = dadosDaNuvem;
+                    
+                    isSincronizando = true;  // 1. Aciona a trava
+                    iniciar();               // 2. Atualiza os gráficos e tabelas
+                    isSincronizando = false; // 3. Solta a trava
+                }
+            } else {
+                // SE É UM USUÁRIO NOVO: Criamos a estrutura inicial
+                console.log("Usuário novo! Criando estrutura inicial...");
+                salsiData = {
+                    config: { 
+                        categorias: ["Alimentação", "Transporte", "Lazer", "Saúde"], 
+                        bancos: ["Nubank", "Inter", "C6 Bank"] 
+                    },
+                    entradas: [],
+                    transacoes: []
+                };
+                salvarNoFirebase();
+                iniciar(); 
+            }
+        });
         
-        iniciar(); 
     } else {
         authScreen.style.display = 'flex';
     }
 });
 
 async function salvarNoFirebase() {
-    if (!window.auth.currentUser) return; // Só salva se estiver logado
+    // A trava entra em ação aqui: se ele já está recebendo dados, não tenta salvar de volta!
+    if (!window.auth.currentUser || isSincronizando) return; 
 
     const uid = window.auth.currentUser.uid;
     const userDoc = window.doc(window.db, "usuarios", uid);
 
     try {
         await window.setDoc(userDoc, { dados: salsiData });
-        console.log("Dados sincronizados na nuvem!");
+        console.log("Dados salvos na nuvem com sucesso!");
     } catch (e) {
         console.error("Erro ao salvar na nuvem: ", e);
     }
@@ -1524,27 +1568,3 @@ function toggleAuth(isRegister) {
     document.getElementById('register-form').style.display = isRegister ? 'block' : 'none';
 }
 
-// Função de Registro Real
-async function registrar() {
-    const email = document.getElementById('register-email').value;
-    const senha = document.getElementById('register-senha').value;
-    const loader = document.getElementById('auth-loader');
-    const form = document.getElementById('register-form');
-
-    if (!email || !senha) return alert("Preencha todos os campos!");
-    if (senha.length < 6) return alert("A senha deve ter pelo menos 6 caracteres.");
-
-    form.style.display = 'none';
-    loader.style.display = 'block';
-
-    try {
-        await window.createUserWithEmailAndPassword(window.auth, email, senha);
-        // O onAuthStateChanged vai detectar e esconder a tela sozinho
-    } catch (error) {
-        console.error("Erro no registro:", error);
-        alert("Erro ao cadastrar: " + error.message);
-        // ISSO AQUI DESTRAVA A TELA:
-        form.style.display = 'block';
-        loader.style.display = 'none';
-    }
-}

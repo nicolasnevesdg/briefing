@@ -609,7 +609,8 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  // IMPORTANDO O ONSNAPSHOT AQUI:
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD1HyxzZ-YFMMbMSIwBDDKfNWdCWHb07AY",
@@ -620,12 +621,10 @@
     appId: "1:626285959649:web:9b1006694a4d05fa899aa0"
   };
 
-  // Inicializa o motor
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Deixa as ferramentas prontas para o seu app.js usar
   window.auth = auth;
   window.db = db;
   window.signInWithEmailAndPassword = signInWithEmailAndPassword;
@@ -635,27 +634,9 @@
   window.doc = doc;
   window.setDoc = setDoc;
   window.getDoc = getDoc;
+  window.onSnapshot = onSnapshot; // <- A ANTENA DO TEMPO REAL
   window.registrar = registrar; 
   window.login = login;
-  
-// Garante que o Vigia limpe a tela assim que detectar o usuário
-  onAuthStateChanged(auth, async (user) => {
-      const authScreen = document.getElementById('auth-screen');
-      if (user) {
-          console.log("Usuário detectado:", user.email);
-          if (authScreen) authScreen.style.display = 'none'; // ISSO DESTRAVA A TELA
-          
-          // Se tiver uma função de carregar dados no app.js, chame aqui
-          if (window.carregarDadosDoFirebase) {
-              await window.carregarDadosDoFirebase(user.uid);
-          }
-          
-          if (window.iniciar) window.iniciar();
-      } else {
-          if (authScreen) authScreen.style.display = 'flex';
-      }
-  });
-
 </script>
 
 <script src="app.js"></script>
