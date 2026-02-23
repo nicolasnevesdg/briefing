@@ -609,7 +609,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  // IMPORTANDO O ONSNAPSHOT AQUI:
+  // 👇 MUDANÇA 1: Adicionado o onSnapshot aqui na importação
   import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -634,9 +634,12 @@
   window.doc = doc;
   window.setDoc = setDoc;
   window.getDoc = getDoc;
-  window.onSnapshot = onSnapshot; // <- A ANTENA DO TEMPO REAL
+  // 👇 MUDANÇA 2: A ponte que faltava para o app.js não travar
+  window.onSnapshot = onSnapshot; 
   window.registrar = registrar; 
   window.login = login;
+  
+  // O Vigia que ficava aqui embaixo foi apagado para deixar o do app.js trabalhar sozinho!
 </script>
 
 <script src="app.js"></script>
