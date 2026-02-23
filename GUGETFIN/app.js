@@ -1587,7 +1587,7 @@ function togglePassword(inputId, btn) {
     }
 }
 
-// --- FUNÇÃO DA SAUDAÇÃO ---
+// --- FUNÇÃO DA SAUDAÇÃO (PC E MOBILE) ---
 function atualizarSaudacao(nomeCompleto) {
     if (!nomeCompleto) return;
     
@@ -1599,10 +1599,20 @@ function atualizarSaudacao(nomeCompleto) {
     if (hora >= 5 && hora < 12) saudacao = 'Bom dia';
     else if (hora >= 12 && hora < 18) saudacao = 'Boa tarde';
 
-    const container = document.getElementById('greeting-container');
-    if (container) {
-        container.innerHTML = `<span class="greet-time">${saudacao},</span><br><span class="greet-name">${primeiroNome}!</span>`;
-        container.style.display = 'block';
+    const htmlContent = `<span class="greet-time">${saudacao},</span><br><span class="greet-name">${primeiroNome}!</span>`;
+
+    // 1. Atualiza e mostra a saudação na Sidebar (PC)
+    const containerPC = document.getElementById('greeting-pc');
+    if (containerPC) {
+        containerPC.innerHTML = htmlContent;
+        containerPC.style.display = 'block';
+    }
+
+    // 2. Atualiza a saudação na Home (Mobile)
+    const containerMobile = document.getElementById('greeting-mobile');
+    if (containerMobile) {
+        containerMobile.innerHTML = htmlContent;
+        // O display do mobile é controlado automaticamente pela classe 'mobile-only' no CSS
     }
 }
 

@@ -2356,21 +2356,29 @@ tr[style*="opacity: 0.7"] td {
 /* --- Saudação Premium --- */
 .greeting-box {
     margin-bottom: 25px;
-    padding-left: 5px;
+    padding-left: 15px;
     animation: fadeIn 0.6s ease;
 }
 
 .greet-time {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 23px;
+    font-weight: 500;
     color: var(--text-sec);
     letter-spacing: -0.02em;
 }
 
 .greet-name {
-    font-size: 28px;
+    font-size: 33px;
     font-weight: 800;
     color: var(--dark-green);
     letter-spacing: -0.03em;
     line-height: 1.2;
+    text-transform: uppercase;
+}
+
+/* Esconde a saudação da Sidebar quando estiver no celular */
+@media (max-width: 1024px) {
+    #greeting-pc {
+        display: none !important;
+    }
 }
