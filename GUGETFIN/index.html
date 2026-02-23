@@ -634,12 +634,12 @@
   window.doc = doc;
   window.setDoc = setDoc;
   window.getDoc = getDoc;
-  // 👇 MUDANÇA 2: A ponte que faltava para o app.js não travar
   window.onSnapshot = onSnapshot; 
-  window.registrar = registrar; 
-  window.login = login;
-  
-  // O Vigia que ficava aqui embaixo foi apagado para deixar o do app.js trabalhar sozinho!
+
+  // 👇 A MÁGICA: Puxa o gatilho do Vigia só depois que TUDO acima carregou
+  if (window.iniciarVigia) {
+      window.iniciarVigia();
+  }
 </script>
 
 <script src="app.js"></script>

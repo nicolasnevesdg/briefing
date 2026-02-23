@@ -2325,6 +2325,6 @@ tr[style*="opacity: 0.7"] td {
 .auth-switch { margin-top: 25px; font-size: 14px; color: var(--text-sec); }
 .auth-switch a { color: var(--dark-green); font-weight: 700; text-decoration: none; padding: 5px; }
 
-/* Spinner
+/* Spinner */
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

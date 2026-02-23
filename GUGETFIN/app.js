@@ -1502,49 +1502,45 @@ async function registrar() {
 // Trava de segurança para evitar que o app trave num loop infinito
 let isSincronizando = false; 
 
-window.onAuthStateChanged(window.auth, (user) => {
-    const authScreen = document.getElementById('auth-screen');
-    
-    if (user) {
-        authScreen.style.display = 'none';
+// Envolvemos o vigia nesta função para ele esperar o Firebase carregar
+window.iniciarVigia = function() {
+    window.onAuthStateChanged(window.auth, (user) => {
+        const authScreen = document.getElementById('auth-screen');
         
-        const uid = user.uid;
-        const userDoc = window.doc(window.db, "usuarios", uid);
+        if (user) {
+            authScreen.style.display = 'none'; // Agora isso vai funcionar!
+            
+            const uid = user.uid;
+            const userDoc = window.doc(window.db, "usuarios", uid);
 
-        // A MÁGICA: onSnapshot substitui o getDoc e fica vigiando a nuvem 24h por dia
-        window.onSnapshot(userDoc, (docSnap) => {
-            if (docSnap.exists()) {
-                const dadosDaNuvem = docSnap.data().dados;
-                
-                // Só atualiza a tela se a nuvem tiver dados diferentes da tela atual
-                if (JSON.stringify(salsiData) !== JSON.stringify(dadosDaNuvem)) {
-                    console.log("☁️ Atualização detectada em outro aparelho! Sincronizando...");
-                    salsiData = dadosDaNuvem;
+            window.onSnapshot(userDoc, (docSnap) => {
+                if (docSnap.exists()) {
+                    const dadosDaNuvem = docSnap.data().dados;
                     
-                    isSincronizando = true;  // 1. Aciona a trava
-                    iniciar();               // 2. Atualiza os gráficos e tabelas
-                    isSincronizando = false; // 3. Solta a trava
+                    if (JSON.stringify(salsiData) !== JSON.stringify(dadosDaNuvem)) {
+                        console.log("☁️ Atualização detectada! Sincronizando...");
+                        salsiData = dadosDaNuvem;
+                        
+                        isSincronizando = true;  
+                        iniciar();               
+                        isSincronizando = false; 
+                    }
+                } else {
+                    console.log("Usuário novo! Criando estrutura inicial...");
+                    salsiData = {
+                        config: { categorias: ["Alimentação", "Transporte", "Lazer", "Saúde"], bancos: ["Nubank", "Inter", "C6 Bank"] },
+                        entradas: [], transacoes: [], metas: []
+                    };
+                    salvarNoFirebase();
+                    iniciar(); 
                 }
-            } else {
-                // SE É UM USUÁRIO NOVO: Criamos a estrutura inicial
-                console.log("Usuário novo! Criando estrutura inicial...");
-                salsiData = {
-                    config: { 
-                        categorias: ["Alimentação", "Transporte", "Lazer", "Saúde"], 
-                        bancos: ["Nubank", "Inter", "C6 Bank"] 
-                    },
-                    entradas: [],
-                    transacoes: []
-                };
-                salvarNoFirebase();
-                iniciar(); 
-            }
-        });
-        
-    } else {
-        authScreen.style.display = 'flex';
-    }
-});
+            });
+            
+        } else {
+            authScreen.style.display = 'flex';
+        }
+    });
+};
 
 async function salvarNoFirebase() {
     // A trava entra em ação aqui: se ele já está recebendo dados, não tenta salvar de volta!
