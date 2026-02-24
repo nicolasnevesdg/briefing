@@ -1,4 +1,4 @@
-let salsiData = JSON.parse(localStorage.getItem('salsifin_cache')) || (typeof bancoInicial !== 'undefined' ? bancoInicial : { config: { categorias: [], bancos: [] }, entradas: [], transacoes: [] });
+let salsiData = JSON.parse(localStorage.getItem('salsifin_cache')) || { config: { categorias: [], bancos: [] }, entradas: [], transacoes: [], metas: [] };
 let subAbaCartaoAtiva = 'credito';
 let dataFiltro = new Date();
 dataFiltro.setDate(1);
@@ -1537,7 +1537,8 @@ window.iniciarVigia = function() {
                 } else {
                     console.log("Usuário novo! Criando estrutura inicial...");
                     salsiData = {
-                        config: { categorias: ["Alimentação", "Transporte", "Lazer", "Saúde"], bancos: ["Nubank", "Inter", "C6 Bank"] },
+                        config: { categorias: [
+                                "Alimentação", "Assinaturas", "Lazer", "Outros", "Transporte", "Presentes", "Cuidados Pessoais", "Compras", "Mercado", "Fixos"], bancos: ["Nubank", "Inter", "C6 Bank"] },
                         entradas: [], transacoes: [], metas: []
                     };
                     salvarNoFirebase();
@@ -1677,4 +1678,22 @@ async function salvarPerfil() {
         btn.disabled = false;
     }
 
+}
+
+// --- FUNÇÃO PARA SAIR DA CONTA COM SEGURANÇA ---
+async function sairDaConta() {
+    try {
+        await window.signOut(window.auth);
+        
+        // 1. Limpa o cache do navegador
+        localStorage.removeItem('salsifin_cache');
+        
+        // 2. Esvazia a variável da memória
+        salsiData = null; 
+        
+        // 3. Força a página a recarregar limpa (F5)
+        location.reload(); 
+    } catch (error) {
+        console.error("Erro ao sair:", error);
+    }
 }
