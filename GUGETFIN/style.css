@@ -2402,4 +2402,7 @@ tr[style*="opacity: 0.7"] td {
 	.greet-name {
 		font-size: 33px;
 	}
+
 }
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
