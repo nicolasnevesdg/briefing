@@ -19,7 +19,12 @@
         <div class="brand"><h2>Guget Fin</h2></div>
         <p class="auth-subtitle">Sua gestão financeira, agora na nuvem.</p>
         
-        <div id="login-form">
+        <div id="auth-splash-loader" style="text-align: center; margin: 20px 0; color: var(--text-sec);">
+            <i class="fi fi-rr-spinner" style="font-size: 24px; display: inline-block; animation: spin 1s linear infinite;"></i>
+            <p style="margin-top: 10px; font-size: 14px;">Conectando ao cofre...</p>
+        </div>
+
+        <div id="login-form" style="display: none;">
             <input type="email" id="login-email" placeholder="E-mail" class="auth-input">
             <input type="password" id="login-senha" placeholder="Senha" class="auth-input">
             <button class="btn-auth-primary" onclick="login()">Entrar</button>
@@ -690,4 +695,5 @@
 </body>
 
 </html>
+
 
