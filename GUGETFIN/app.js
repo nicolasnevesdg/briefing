@@ -1515,7 +1515,7 @@ window.iniciarVigia = function() {
         const authScreen = document.getElementById('auth-screen');
         
         if (user) {
-            authScreen.style.display = 'none'; // Agora isso vai funcionar!
+            authScreen.style.display = 'none'; // Esconde a tela de loading/login
             
             atualizarSaudacao(user.displayName || "Visitante");
             
@@ -1546,7 +1546,16 @@ window.iniciarVigia = function() {
             });
             
         } else {
+            // 👇 AQUI ESTÁ A MÁGICA PARA QUEM NÃO ESTÁ LOGADO 👇
             authScreen.style.display = 'flex';
+            
+            // 1. Esconde a animação de "Conectando ao cofre..."
+            const splashLoader = document.getElementById('auth-splash-loader');
+            if (splashLoader) splashLoader.style.display = 'none';
+            
+            // 2. Revela os campos de e-mail e senha
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) loginForm.style.display = 'block';
         }
     });
 };
@@ -1667,4 +1676,5 @@ async function salvarPerfil() {
         btn.innerText = "Salvar Alterações";
         btn.disabled = false;
     }
+
 }
