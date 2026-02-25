@@ -1360,27 +1360,57 @@ function toggleSubCartao(alvo) {
 window.addEventListener('load', injetarAssinatura);
 window.onload = iniciar;
 
-// --- LÓGICA DE SWIPE (ARRASTAR) PARA TROCAR DE MÊS NO MOBILE ---
+// --- NOVA LÓGICA DE SWIPE GLOBAL E ANIMADA (TELA INTEIRA) ---
 let touchstartX = 0;
+let touchstartY = 0;
 let touchendX = 0;
+let touchendY = 0;
 
-window.addEventListener('DOMContentLoaded', () => {
-    const navMovel = document.getElementById('mobile-month-nav');
-    
-    if (navMovel) {
-        navMovel.addEventListener('touchstart', e => {
-            touchstartX = e.changedTouches[0].screenX;
-        }, {passive: true});
+// Escuta o toque na tela inteira
+document.addEventListener('touchstart', function(event) {
+    touchstartX = event.changedTouches[0].screenX;
+    touchstartY = event.changedTouches[0].screenY;
+}, {passive: true});
 
-        navMovel.addEventListener('touchend', e => {
-            touchendX = e.changedTouches[0].screenX;
-            // Se arrastou pra esquerda (dedo pra trás), avança o mês
-            if (touchendX < touchstartX - 40) mudarMes(1); 
-            // Se arrastou pra direita (dedo pra frente), volta o mês
-            if (touchendX > touchstartX + 40) mudarMes(-1); 
-        }, {passive: true});
+// Escuta quando o dedo solta
+document.addEventListener('touchend', function(event) {
+    touchendX = event.changedTouches[0].screenX;
+    touchendY = event.changedTouches[0].screenY;
+    analisarMovimentoSwipe();
+}, {passive: true});
+
+function analisarMovimentoSwipe() {
+    const distanciaX = touchendX - touchstartX;
+    const distanciaY = touchendY - touchstartY;
+
+    // Só ativa se arrastou pros lados (ignora se estiver rolando a tela pra baixo)
+    if (Math.abs(distanciaX) > Math.abs(distanciaY)) {
+        
+        // Arrasto maior que 60px (para não ser sensível demais)
+        if (Math.abs(distanciaX) > 60) {
+            
+            // Pega a sua barra de navegação que já existe no HTML
+            const navMovel = document.getElementById('mobile-month-nav');
+            
+            if(navMovel) {
+                // Limpa animações anteriores para rodar liso de novo
+                navMovel.classList.remove('anim-slide-left', 'anim-slide-right');
+                void navMovel.offsetWidth; 
+            }
+
+            if (distanciaX < 0) {
+                // Arrastou para ESQUERDA (Avança o mês)
+                mudarMes(1); // Usa a sua função original que já funciona perfeitamente!
+                if(navMovel) navMovel.classList.add('anim-slide-left');
+                
+            } else {
+                // Arrastou para DIREITA (Volta o mês)
+                mudarMes(-1);
+                if(navMovel) navMovel.classList.add('anim-slide-right');
+            }
+        }
     }
-});
+}
 
 // --- CRIA OS DROPDOWNS CUSTOMIZADOS ---
 function preencherFiltrosDropdown() {
@@ -1720,3 +1750,4 @@ function mostrarToast(mensagem) {
         }, 3000); 
     }
 }
+
