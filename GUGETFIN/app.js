@@ -1579,16 +1579,38 @@ window.iniciarVigia = function() {
             });
             
         } else {
-            // 👇 AQUI ESTÁ A MÁGICA PARA QUEM NÃO ESTÁ LOGADO 👇
+            // SE NÃO TIVER LOGADO: 
             authScreen.style.display = 'flex';
             
-            // 1. Esconde a animação de "Conectando ao cofre..."
+            // Esconde a animação de "Conectando ao cofre..."
             const splashLoader = document.getElementById('auth-splash-loader');
             if (splashLoader) splashLoader.style.display = 'none';
             
-            // 2. Revela os campos de e-mail e senha
+            // Pega os dois lados da nova estrutura
+            const authLeft = document.querySelector('.auth-left');
+            const authRight = document.getElementById('auth-showcase');
             const loginForm = document.getElementById('login-form');
-            if (loginForm) loginForm.style.display = 'block';
+            const registerForm = document.getElementById('register-form');
+            
+            if (window.innerWidth <= 1024) {
+                // SE FOR MOBILE: Esconde a esquerda (formulários) e mostra só a Vitrine (direita)
+                if (authLeft) authLeft.style.display = 'none';
+                if (authRight) authRight.style.display = 'flex';
+                
+                if (loginForm) loginForm.style.display = 'none';
+                if (registerForm) registerForm.style.display = 'none';
+            } else {
+                // SE FOR PC: Mostra os dois lados juntos (Split Screen)
+                if (authLeft) authLeft.style.display = 'flex';
+                if (authRight) authRight.style.display = 'flex';
+                
+                // No PC, o form de login já tem que estar visível na esquerda
+                if (loginForm) loginForm.style.display = 'block';
+                if (registerForm) registerForm.style.display = 'none';
+            }
+            
+            // Dá a partida no motor do Carrossel
+            iniciarSliderAuth(); 
         }
     });
 };
@@ -1751,3 +1773,49 @@ function mostrarToast(mensagem) {
     }
 }
 
+// --- SISTEMA DA TELA DE BOAS VINDAS E SLIDER ---
+let slideInterval;
+
+function iniciarSliderAuth() {
+    const container = document.getElementById('slides-container');
+    const dots = document.querySelectorAll('.slider-dots .dot');
+    if (!container || dots.length === 0) return;
+
+    let indexAtual = 0;
+    const totalSlides = dots.length;
+
+    // Atualiza a bolinha ativa se o usuário arrastar com o dedo
+    container.addEventListener('scroll', () => {
+        const scrollLeft = container.scrollLeft;
+        const width = container.offsetWidth;
+        indexAtual = Math.round(scrollLeft / width);
+        
+        dots.forEach(d => d.classList.remove('active'));
+        if (dots[indexAtual]) dots[indexAtual].classList.add('active');
+    }, { passive: true });
+
+    // Autoplay: muda de slide a cada 4 segundos
+    clearInterval(slideInterval);
+    slideInterval = setInterval(() => {
+        indexAtual = (indexAtual + 1) % totalSlides;
+        const width = container.offsetWidth;
+        container.scrollTo({ left: width * indexAtual, behavior: 'smooth' });
+    }, 4000);
+}
+
+// Quando o usuário clica em "Get Started" ou "Sign in" no celular
+function mostrarFormulario(tipo) {
+    if (window.innerWidth <= 1024) {
+        // No celular, esconde o slide e mostra o lado esquerdo (formulários)
+        document.getElementById('auth-showcase').style.display = 'none';
+        
+        const authLeft = document.querySelector('.auth-left');
+        if (authLeft) authLeft.style.display = 'flex';
+        
+        // Para o slider de rodar no fundo para economizar bateria
+        clearInterval(slideInterval); 
+    }
+    
+    // Aproveita a sua função nativa que alterna entre Login e Cadastro
+    toggleAuth(tipo === 'register'); 
+}
