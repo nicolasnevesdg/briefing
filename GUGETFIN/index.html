@@ -28,7 +28,7 @@
             <div id="login-form" style="display: none;">
                 <input type="email" id="login-email" placeholder="E-mail" class="auth-input">
                 <input type="password" id="login-senha" placeholder="Senha" class="auth-input">
-                <button class="btn-auth-primary" onclick="login()">Entrar</button>
+                <button class="btn-auth-primary" onclick="fazerLogin()">Entrar</button>
                 <p class="auth-switch">Não tem conta? <a href="#" onclick="toggleAuth(true)">Criar agora</a></p>
             </div>
 
@@ -46,7 +46,7 @@
                     <button type="button" class="btn-eye" onclick="togglePassword('register-senha-conf', this)"><i class="fi fi-rr-eye"></i></button>
                 </div>
 
-                <button class="btn-auth-primary" onclick="registrar()">Cadastrar</button>
+                <button class="btn-auth-primary" onclick="fazerCadastro()">Cadastrar</button>
                 <p class="auth-switch">Já tem conta? <a href="#" onclick="toggleAuth(false)">Fazer login</a></p>
             </div>
         </div>
@@ -78,7 +78,7 @@
                 </div>
             </div>
 
-            <button class="btn-auth-primary btn-get-started mobile-btn-only" onclick="mostrarFormulario('register')">Get Started ↗</button>
+            <button class="btn-auth-primary btn-get-started mobile-btn-only" onclick="mostrarFormulario('register')">Bora organizar ↗</button>
             <p class="auth-switch mobile-btn-only" style="margin-top: 20px;">Já possui cadastro? <a href="#" onclick="mostrarFormulario('login')">Sign in</a></p>
         </div>
 
@@ -729,6 +729,7 @@
 </body>
 
 </html>
+
 
 
 
