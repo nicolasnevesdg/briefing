@@ -2461,9 +2461,31 @@ tr[style*="opacity: 0.7"] td {
     }
 }
 
+/* --- Animações Premium de Swipe (Troca de Mês) --- */
+
+/* Suaviza as trocas de cor que já existem no seu .month-item */
+#mobile-month-nav {
+    transition: all 0.3s ease-in-out;
+}
+
+/* As classes que o JavaScript injeta ao arrastar */
+.anim-slide-left {
+    animation: deslizarEsquerda 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.anim-slide-right {
+    animation: deslizarDireita 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* O movimento físico com o "Fade" (Aparecimento gradual) */
+@keyframes deslizarEsquerda {
+    0% { transform: translateX(40px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes deslizarDireita {
+    0% { transform: translateX(-40px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
 @keyframes spin { 100% { transform: rotate(360deg); } }
-
-
-
-
-
