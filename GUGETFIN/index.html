@@ -15,43 +15,73 @@
 
 <div id="auth-screen" class="auth-overlay">
     <div class="auth-box">
-        <div class="brand"><h2>Guget Fin</h2></div>
-        <p class="auth-subtitle">Sua gestão financeira, agora na nuvem.</p>
         
-        <div id="auth-splash-loader" style="text-align: center; margin: 20px 0; color: var(--text-sec);">
-            <i class="fi fi-rr-spinner" style="font-size: 24px; display: inline-block; animation: spin 1s linear infinite;"></i>
-            <p style="margin-top: 10px; font-size: 14px;">Conectando ao cofre...</p>
-        </div>
-
-        <div id="login-form" style="display: none;">
-            <input type="email" id="login-email" placeholder="E-mail" class="auth-input">
-            <input type="password" id="login-senha" placeholder="Senha" class="auth-input">
-            <button class="btn-auth-primary" onclick="login()">Entrar</button>
-            <p class="auth-switch">Não tem conta? <a href="#" onclick="toggleAuth(true)">Criar agora</a></p>
-        </div>
-
-        <div id="register-form" style="display: none;">
-            <input type="text" id="register-nome" placeholder="Seu nome (ex: Nícolas Neves)" class="auth-input">
-            <input type="email" id="register-email" placeholder="Seu melhor e-mail" class="auth-input">
+        <div class="auth-left">
+            <div class="brand"><h2>Guget Fin</h2></div>
+            <p class="auth-subtitle">Sua gestão financeira, agora na nuvem.</p>
             
-            <div class="password-wrapper">
-                <input type="password" id="register-senha" placeholder="Crie uma senha forte" class="auth-input" style="margin-bottom: 0;">
-                <button type="button" class="btn-eye" onclick="togglePassword('register-senha', this)"><i class="fi fi-rr-eye"></i></button>
-            </div>
-            
-            <div class="password-wrapper" style="margin-top: 12px; margin-bottom: 12px;">
-                <input type="password" id="register-senha-conf" placeholder="Confirme sua senha" class="auth-input" style="margin-bottom: 0;">
-                <button type="button" class="btn-eye" onclick="togglePassword('register-senha-conf', this)"><i class="fi fi-rr-eye"></i></button>
+            <div id="auth-splash-loader" style="text-align: center; margin: 20px 0; color: var(--text-sec);">
+                <i class="fi fi-rr-spinner" style="font-size: 24px; display: inline-block; animation: spin 1s linear infinite;"></i>
+                <p style="margin-top: 10px; font-size: 14px;">Conectando ao cofre...</p>
             </div>
 
-            <button class="btn-auth-primary" onclick="registrar()">Cadastrar</button>
-            <p class="auth-switch">Já tem conta? <a href="#" onclick="toggleAuth(false)">Fazer login</a></p>
+            <div id="login-form" style="display: none;">
+                <input type="email" id="login-email" placeholder="E-mail" class="auth-input">
+                <input type="password" id="login-senha" placeholder="Senha" class="auth-input">
+                <button class="btn-auth-primary" onclick="login()">Entrar</button>
+                <p class="auth-switch">Não tem conta? <a href="#" onclick="toggleAuth(true)">Criar agora</a></p>
+            </div>
+
+            <div id="register-form" style="display: none;">
+                <input type="text" id="register-nome" placeholder="Seu nome (ex: Nícolas Neves)" class="auth-input">
+                <input type="email" id="register-email" placeholder="Seu melhor e-mail" class="auth-input">
+                
+                <div class="password-wrapper">
+                    <input type="password" id="register-senha" placeholder="Crie uma senha forte" class="auth-input" style="margin-bottom: 0;">
+                    <button type="button" class="btn-eye" onclick="togglePassword('register-senha', this)"><i class="fi fi-rr-eye"></i></button>
+                </div>
+                
+                <div class="password-wrapper" style="margin-top: 12px; margin-bottom: 12px;">
+                    <input type="password" id="register-senha-conf" placeholder="Confirme sua senha" class="auth-input" style="margin-bottom: 0;">
+                    <button type="button" class="btn-eye" onclick="togglePassword('register-senha-conf', this)"><i class="fi fi-rr-eye"></i></button>
+                </div>
+
+                <button class="btn-auth-primary" onclick="registrar()">Cadastrar</button>
+                <p class="auth-switch">Já tem conta? <a href="#" onclick="toggleAuth(false)">Fazer login</a></p>
+            </div>
         </div>
-        
-        <div id="auth-loader" style="display: none;">
-            <div class="spinner"></div>
-            <p>Conectando ao cofre...</p>
+
+        <div class="auth-right" id="auth-showcase" style="display: none;">
+            <div class="showcase-slider">
+                <div class="slides-container" id="slides-container">
+                    <div class="slide-item">
+                        <div class="slide-img-placeholder">IMG 1</div>
+                        <h3>Seu dinheiro sob controle</h3>
+                        <p>Gráficos inteligentes que mostram para onde seu dinheiro está indo.</p>
+                    </div>
+                    <div class="slide-item">
+                        <div class="slide-img-placeholder">IMG 2</div>
+                        <h3>Gastos de Terceiros</h3>
+                        <p>Controle os gastos da empresa ou amigos sem bagunçar seu bolso.</p>
+                    </div>
+                    <div class="slide-item">
+                        <div class="slide-img-placeholder">IMG 3</div>
+                        <h3>Alcance seus objetivos</h3>
+                        <p>Crie metas visuais, acompanhe seu progresso e realize seus sonhos.</p>
+                    </div>
+                </div>
+                
+                <div class="slider-dots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+
+            <button class="btn-auth-primary btn-get-started mobile-btn-only" onclick="mostrarFormulario('register')">Get Started ↗</button>
+            <p class="auth-switch mobile-btn-only" style="margin-top: 20px;">Já possui cadastro? <a href="#" onclick="mostrarFormulario('login')">Sign in</a></p>
         </div>
+
     </div>
 </div>
 
@@ -699,6 +729,7 @@
 </body>
 
 </html>
+
 
 
 
