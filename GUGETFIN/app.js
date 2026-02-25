@@ -555,6 +555,8 @@ function confirmarGasto() {
     
     renderizar(); 
     document.getElementById('modal-gasto').close();
+
+	mostrarToast("Lançamento salvo com sucesso! 💸");
 }
 
 function alternarStatusPago(index) {
@@ -621,7 +623,7 @@ function abrirModalConfig() {
 }
 
 function toggleOpcoes() { document.getElementById('menu-opcoes').classList.toggle('active'); }
-function confirmarEntrada() { salsiData.entradas.push({ nome: document.getElementById('e-nome').value, valor: parseFloat(document.getElementById('e-valor').value), mes: dataFiltro.getMonth(), ano: dataFiltro.getFullYear() }); renderizar(); document.getElementById('modal-entrada').close(); }
+function confirmarEntrada() { salsiData.entradas.push({ nome: document.getElementById('e-nome').value, valor: parseFloat(document.getElementById('e-valor').value), mes: dataFiltro.getMonth(), ano: dataFiltro.getFullYear() }); renderizar(); document.getElementById('modal-entrada').close(); mostrarToast("Receita adicionada! 💰");}
 function salvarConfig() {
     const bancosRaw = document.getElementById('conf-bancos').value.split(',');
     salsiData.config.detalhesBancos = bancosRaw.map(b => {
@@ -1695,5 +1697,26 @@ async function sairDaConta() {
         location.reload(); 
     } catch (error) {
         console.error("Erro ao sair:", error);
+    }
+}
+
+// --- FUNÇÃO DO TOAST DE NOTIFICAÇÃO ---
+let toastTimeout; // Variável para controlar o tempo
+
+function mostrarToast(mensagem) {
+    const toast = document.getElementById('toast-notificacao');
+    const toastMsg = document.getElementById('toast-mensagem');
+
+    if (toast && toastMsg) {
+        toastMsg.innerText = mensagem; // Define o texto que você enviou
+        toast.classList.add('mostrar'); // Faz a notificação subir na tela
+
+        // Limpa o timer anterior (caso o usuário clique várias vezes rápido)
+        clearTimeout(toastTimeout);
+
+        // Depois de 3 segundos (3000ms), ele remove a classe e a notificação desce
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('mostrar');
+        }, 3000); 
     }
 }
