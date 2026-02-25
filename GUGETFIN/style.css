@@ -2563,59 +2563,56 @@ tr[style*="opacity: 0.7"] td {
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
-/* --- TELA CHEIA IMERSIVA (PC E MOBILE) --- */
+/* ======================================================== */
+/* 🚀 TELA CHEIA IMERSIVA (CORREÇÃO DEFINITIVA)             */
+/* ======================================================== */
 
-/* 1. Remove a "caixinha" centralizada e faz ela ocupar tudo */
+/* 1. Mata o espaçamento do fundo da tela (O grande vilão) */
+#auth-screen.auth-overlay {
+    padding: 0 !important;
+    background: #ffffff !important;
+}
+
+/* 2. Força a caixa a ocupar tudo, sem bordas redondas e sem vão no meio */
 #auth-screen .auth-box {
-    width: 100vw !important;     /* Largura total da tela */
-    height: 100vh !important;    /* Altura total da tela */
-    max-width: none !important;  /* Remove limite de largura no PC */
-    border-radius: 0 !important; /* Remove cantos arredondados externos */
-    box-shadow: none !important; /* Remove a sombra */
-    padding: 0 !important;       /* Remove espaçamento externo */
-    margin: 0 !important;        /* Remove centralização */
-    background: #fff;            /* Garante fundo branco na área de formulários */
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important; /* Remove o espaço entre o lado branco e o verde */
+    display: flex !important;
 }
 
 /* --- AJUSTES ESPECÍFICOS PARA PC TELA CHEIA --- */
 @media (min-width: 1025px) {
-    #auth-screen .auth-box {
-        /* Garante que fiquem lado a lado esticados */
-        align-items: stretch !important; 
-    }
-    
     .auth-left {
-        /* Dá mais respiro no PC já que a tela é grande */
-        padding: 60px 80px !important; 
-        /* Garante que o conteúdo fique centralizado verticalmente */
-        justify-content: center;
+        /* Usa a medida 'vw' (viewport width) para dar um respiro lateral adaptável */
+        padding: 80px 10vw !important; 
+        justify-content: center !important;
+        background: #ffffff !important;
     }
 
     .auth-right {
-        /* Remove os cantos arredondados do lado verde no PC para ficar imersivo */
-        border-radius: 0 !important; 
-        padding: 60px !important;
+        border-radius: 0 !important; /* Fim dos cantos arredondados do lado verde */
+        padding: 80px 8vw !important;
+        justify-content: center !important;
     }
 }
 
 /* --- AJUSTES ESPECÍFICOS PARA MOBILE TELA CHEIA --- */
 @media (max-width: 1024px) {
-    /* No mobile, o lado que estiver visível deve ocupar 100% da altura */
     .auth-left, .auth-right {
-        min-height: 100vh; /* Força altura total */
-        padding: 40px 25px !important; /* Ajusta espaçamento interno */
-        justify-content: center; /* Centraliza conteúdo verticalmente */
+        padding: 40px 30px !important;
+        min-height: 100vh !important;
+        justify-content: center !important;
+        border-radius: 0 !important;
     }
     
-    /* Se for a vitrine (auth-right) no mobile, ela precisa de fundo branco */
+    /* Garante que a vitrine de fundo branco no mobile acompanhe */
     .auth-right#auth-showcase {
-        background: #fff !important;
+        background: #ffffff !important;
     }
-    
-    /* Ajusta a cor dos textos da vitrine de volta para escuro no mobile */
-    #auth-showcase h3 { color: var(--dark-green) !important; }
-    #auth-showcase p { color: var(--text-sec) !important; }
-    .slider-dots .dot { background: #e2e8f0 !important; }
-    .slider-dots .dot.active { background: var(--dark-green) !important; }
-    .slide-img-placeholder { background: #e8f5e9 !important; color: var(--acc-green) !important; border: none !important; }
 }
