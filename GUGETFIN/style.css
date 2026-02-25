@@ -2434,9 +2434,9 @@ tr[style*="opacity: 0.7"] td {
 /* Posição no PC (Canto inferior direito) */
 @media (min-width: 1025px) {
     #toast-notificacao {
-        bottom: 35px;
-        right: 40px;
-        transform: translateY(20px); /* Começa um pouco para baixo */
+        bottom: 30px;
+        right: 30px;
+        transform: translateY(15px); /* Começa um pouco para baixo */
     }
     #toast-notificacao.mostrar {
         opacity: 1;
@@ -2462,6 +2462,7 @@ tr[style*="opacity: 0.7"] td {
 }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
+
 
 
 
