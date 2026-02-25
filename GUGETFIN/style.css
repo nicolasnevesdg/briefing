@@ -2563,3 +2563,59 @@ tr[style*="opacity: 0.7"] td {
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
+/* --- TELA CHEIA IMERSIVA (PC E MOBILE) --- */
+
+/* 1. Remove a "caixinha" centralizada e faz ela ocupar tudo */
+#auth-screen .auth-box {
+    width: 100vw !important;     /* Largura total da tela */
+    height: 100vh !important;    /* Altura total da tela */
+    max-width: none !important;  /* Remove limite de largura no PC */
+    border-radius: 0 !important; /* Remove cantos arredondados externos */
+    box-shadow: none !important; /* Remove a sombra */
+    padding: 0 !important;       /* Remove espaçamento externo */
+    margin: 0 !important;        /* Remove centralização */
+    background: #fff;            /* Garante fundo branco na área de formulários */
+}
+
+/* --- AJUSTES ESPECÍFICOS PARA PC TELA CHEIA --- */
+@media (min-width: 1025px) {
+    #auth-screen .auth-box {
+        /* Garante que fiquem lado a lado esticados */
+        align-items: stretch !important; 
+    }
+    
+    .auth-left {
+        /* Dá mais respiro no PC já que a tela é grande */
+        padding: 60px 80px !important; 
+        /* Garante que o conteúdo fique centralizado verticalmente */
+        justify-content: center;
+    }
+
+    .auth-right {
+        /* Remove os cantos arredondados do lado verde no PC para ficar imersivo */
+        border-radius: 0 !important; 
+        padding: 60px !important;
+    }
+}
+
+/* --- AJUSTES ESPECÍFICOS PARA MOBILE TELA CHEIA --- */
+@media (max-width: 1024px) {
+    /* No mobile, o lado que estiver visível deve ocupar 100% da altura */
+    .auth-left, .auth-right {
+        min-height: 100vh; /* Força altura total */
+        padding: 40px 25px !important; /* Ajusta espaçamento interno */
+        justify-content: center; /* Centraliza conteúdo verticalmente */
+    }
+    
+    /* Se for a vitrine (auth-right) no mobile, ela precisa de fundo branco */
+    .auth-right#auth-showcase {
+        background: #fff !important;
+    }
+    
+    /* Ajusta a cor dos textos da vitrine de volta para escuro no mobile */
+    #auth-showcase h3 { color: var(--dark-green) !important; }
+    #auth-showcase p { color: var(--text-sec) !important; }
+    .slider-dots .dot { background: #e2e8f0 !important; }
+    .slider-dots .dot.active { background: var(--dark-green) !important; }
+    .slide-img-placeholder { background: #e8f5e9 !important; color: var(--acc-green) !important; border: none !important; }
+}
