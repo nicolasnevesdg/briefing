@@ -2412,7 +2412,7 @@ tr[style*="opacity: 0.7"] td {
     background: var(--dark-green);
     color: white;
     padding: 14px 24px;
-    border-radius: 50px; /* Estética arredondada em formato de pílula */
+    border-radius: 25px; /* Estética arredondada em formato de pílula */
     display: flex;
     align-items: center;
     gap: 12px;
@@ -2434,8 +2434,8 @@ tr[style*="opacity: 0.7"] td {
 /* Posição no PC (Canto inferior direito) */
 @media (min-width: 1025px) {
     #toast-notificacao {
-        bottom: 30px;
-        right: 30px;
+        bottom: 50px;
+        right: 40px;
         transform: translateY(20px); /* Começa um pouco para baixo */
     }
     #toast-notificacao.mostrar {
@@ -2448,7 +2448,7 @@ tr[style*="opacity: 0.7"] td {
 /* Posição no Mobile (Centralizado acima da barra de navegação) */
 @media (max-width: 1024px) {
     #toast-notificacao {
-        bottom: 90px; /* Espaço suficiente para não cobrir o menu inferior */
+        bottom: 105px; /* Espaço suficiente para não cobrir o menu inferior */
         left: 50%;
         transform: translate(-50%, 20px);
         width: max-content;
@@ -2462,4 +2462,5 @@ tr[style*="opacity: 0.7"] td {
 }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
+
 
