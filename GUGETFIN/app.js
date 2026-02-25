@@ -1490,21 +1490,21 @@ window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
 async function login() {
     const email = document.getElementById('login-email').value;
     const senha = document.getElementById('login-senha').value;
-    const loader = document.getElementById('auth-loader');
+    // 👇 Mudamos para usar o loader bonito que já existe na tela
+    const loader = document.getElementById('auth-splash-loader'); 
     const form = document.getElementById('login-form');
 
     if (!email || !senha) return alert("Preencha e-mail e senha!");
 
     form.style.display = 'none';
-    loader.style.display = 'block';
+    if (loader) loader.style.display = 'block'; // Prevenção de erro
 
     try {
-        // Usa a função que foi exposta no index.html
         await window.signInWithEmailAndPassword(window.auth, email, senha);
     } catch (error) {
         alert("Erro ao entrar: " + error.message);
         form.style.display = 'block';
-        loader.style.display = 'none';
+        if (loader) loader.style.display = 'none';
     }
 }
 
@@ -1514,7 +1514,8 @@ async function registrar() {
     const email = document.getElementById('register-email').value;
     const senha = document.getElementById('register-senha').value;
     const senhaConf = document.getElementById('register-senha-conf').value;
-    const loader = document.getElementById('auth-loader');
+    // 👇 Mudamos o loader aqui também
+    const loader = document.getElementById('auth-splash-loader'); 
     const form = document.getElementById('register-form');
 
     if (!nome || !email || !senha || !senhaConf) return alert("Preencha todos os campos!");
@@ -1522,18 +1523,17 @@ async function registrar() {
     if (senha !== senhaConf) return alert("As senhas não coincidem!");
 
     form.style.display = 'none';
-    loader.style.display = 'block';
+    if (loader) loader.style.display = 'block'; // Prevenção de erro
 
     try {
         const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, senha);
-        // Atualiza o perfil no Firebase com o nome fornecido
         await window.updateProfile(userCredential.user, { displayName: nome });
         
         // O onAuthStateChanged vai assumir daqui
     } catch (error) {
         alert("Erro ao cadastrar: " + error.message);
         form.style.display = 'block';
-        loader.style.display = 'none';
+        if (loader) loader.style.display = 'none';
     }
 }
 
@@ -1819,3 +1819,4 @@ function mostrarFormulario(tipo) {
     // Aproveita a sua função nativa que alterna entre Login e Cadastro
     toggleAuth(tipo === 'register'); 
 }
+
