@@ -1065,7 +1065,7 @@ tr[style*="opacity: 0.7"] td {
     transform: translateX(-50%); /* Centraliza perfeitamente */
     width: calc(100% - 30px); /* Dá uma margem de respiro nas laterais */
     max-width: 80%; /* Fica bonito até em celulares gigantões */
-    background-color: #ffffff;
+    background-color: #ffffffe0;
     border-radius: 50px; /* Arredonda como uma pílula */
     display: flex;
     justify-content: space-between;
@@ -2462,6 +2462,7 @@ tr[style*="opacity: 0.7"] td {
 }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
+
 
 
 
