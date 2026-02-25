@@ -2412,7 +2412,7 @@ tr[style*="opacity: 0.7"] td {
     background: var(--dark-green);
     color: white;
     padding: 14px 24px;
-    border-radius: 25px; /* Estética arredondada em formato de pílula */
+    border-radius: 0px; /* Estética arredondada em formato de pílula */
     display: flex;
     align-items: center;
     gap: 12px;
@@ -2434,7 +2434,7 @@ tr[style*="opacity: 0.7"] td {
 /* Posição no PC (Canto inferior direito) */
 @media (min-width: 1025px) {
     #toast-notificacao {
-        bottom: 50px;
+        bottom: 35px;
         right: 40px;
         transform: translateY(20px); /* Começa um pouco para baixo */
     }
@@ -2462,5 +2462,6 @@ tr[style*="opacity: 0.7"] td {
 }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
+
 
 
