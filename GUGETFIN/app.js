@@ -1487,52 +1487,79 @@ window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
 window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
 
 // Função de Login Real
-async function login() {
-    const email = document.getElementById('login-email').value;
-    const senha = document.getElementById('login-senha').value;
-    // 👇 Mudamos para usar o loader bonito que já existe na tela
-    const loader = document.getElementById('auth-splash-loader'); 
-    const form = document.getElementById('login-form');
-
-    if (!email || !senha) return alert("Preencha e-mail e senha!");
-
-    form.style.display = 'none';
-    if (loader) loader.style.display = 'block'; // Prevenção de erro
-
+async function fazerLogin() {
     try {
+        const email = document.getElementById('login-email').value;
+        const senha = document.getElementById('login-senha').value;
+        const loader = document.getElementById('auth-splash-loader'); 
+        const form = document.getElementById('login-form');
+
+        if (!email || !senha) {
+            alert("Preencha e-mail e senha!");
+            return;
+        }
+
+        // Esconde o formulário e mostra o loader
+        if (form) form.style.display = 'none';
+        if (loader) loader.style.display = 'block';
+
+        // Tenta fazer o login no Firebase
         await window.signInWithEmailAndPassword(window.auth, email, senha);
+        
+        // Se der certo, o Vigia (onAuthStateChanged) vai assumir e esconder a tela!
+        
     } catch (error) {
+        console.error("Erro no login:", error);
         alert("Erro ao entrar: " + error.message);
-        form.style.display = 'block';
+        
+        // Se der erro (ex: senha errada), ele remove o loader e devolve o formulário
+        const loader = document.getElementById('auth-splash-loader'); 
+        const form = document.getElementById('login-form');
+        if (form) form.style.display = 'block';
         if (loader) loader.style.display = 'none';
     }
 }
 
 // Função de Registro Real (Mantenha apenas ESTA versão)
-async function registrar() {
-    const nome = document.getElementById('register-nome').value.trim();
-    const email = document.getElementById('register-email').value;
-    const senha = document.getElementById('register-senha').value;
-    const senhaConf = document.getElementById('register-senha-conf').value;
-    // 👇 Mudamos o loader aqui também
-    const loader = document.getElementById('auth-splash-loader'); 
-    const form = document.getElementById('register-form');
-
-    if (!nome || !email || !senha || !senhaConf) return alert("Preencha todos os campos!");
-    if (senha.length < 6) return alert("A senha deve ter pelo menos 6 caracteres.");
-    if (senha !== senhaConf) return alert("As senhas não coincidem!");
-
-    form.style.display = 'none';
-    if (loader) loader.style.display = 'block'; // Prevenção de erro
-
+async function fazerCadastro() {
     try {
+        const nome = document.getElementById('register-nome').value.trim();
+        const email = document.getElementById('register-email').value;
+        const senha = document.getElementById('register-senha').value;
+        const senhaConf = document.getElementById('register-senha-conf').value;
+        
+        const loader = document.getElementById('auth-splash-loader'); 
+        const form = document.getElementById('register-form');
+
+        if (!nome || !email || !senha || !senhaConf) {
+            alert("Preencha todos os campos!");
+            return;
+        }
+        if (senha.length < 6) {
+            alert("A senha deve ter pelo menos 6 caracteres.");
+            return;
+        }
+        if (senha !== senhaConf) {
+            alert("As senhas não coincidem!");
+            return;
+        }
+
+        // Esconde o formulário e mostra o loader
+        if (form) form.style.display = 'none';
+        if (loader) loader.style.display = 'block';
+
+        // Cria a conta e atualiza o nome
         const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, senha);
         await window.updateProfile(userCredential.user, { displayName: nome });
         
-        // O onAuthStateChanged vai assumir daqui
     } catch (error) {
+        console.error("Erro no cadastro:", error);
         alert("Erro ao cadastrar: " + error.message);
-        form.style.display = 'block';
+        
+        // Se der erro (ex: e-mail já existe), ele remove o loader e devolve o formulário
+        const loader = document.getElementById('auth-splash-loader'); 
+        const form = document.getElementById('register-form');
+        if (form) form.style.display = 'block';
         if (loader) loader.style.display = 'none';
     }
 }
@@ -1819,4 +1846,5 @@ function mostrarFormulario(tipo) {
     // Aproveita a sua função nativa que alterna entre Login e Cadastro
     toggleAuth(tipo === 'register'); 
 }
+
 
