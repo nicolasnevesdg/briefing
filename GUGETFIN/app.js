@@ -34,12 +34,15 @@ function popularSelects() {
 }
 
 // NOVA FUNÇÃO: Filtro inteligente
+// NOVA FUNÇÃO: Filtro inteligente
 function atualizarListaBancos() {
     const selectBanco = document.getElementById('g-banco');
     if (!selectBanco) return;
 
     // Descobre se o usuário tá lançando um gasto de Crédito (cartao) ou Débito (debito)
     const tipoPagamentoEl = document.getElementById('g-tipo');
+    
+    // O VALOR CORRETO É 'cartao', 'debito' ou 'fixo' baseado no seu HTML
     const tipoPagamento = tipoPagamentoEl ? tipoPagamentoEl.value : 'cartao'; 
     
     selectBanco.innerHTML = '';
@@ -1960,6 +1963,7 @@ function toggleInputsDebito() {
         boxDatas.style.pointerEvents = 'auto'; // Libera o clique
     }
 }
+
 
 
 
