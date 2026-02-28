@@ -549,6 +549,11 @@ function ajustarCamposModal() {
             }
         }
     }
+    
+    // CHAMA O FILTRO AQUI PARA ATUALIZAR A LISTA NA HORA QUE TROCAR O TIPO!
+    if (typeof atualizarListaBancos === 'function') {
+        atualizarListaBancos();
+    }
 }
 
 function confirmarGasto() {
@@ -1955,6 +1960,7 @@ function toggleInputsDebito() {
         boxDatas.style.pointerEvents = 'auto'; // Libera o clique
     }
 }
+
 
 
 
