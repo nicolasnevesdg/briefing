@@ -891,16 +891,24 @@ function excluirCartaoConfig(index) {
 }
 
 // 1. Função para Resetar TUDO na Nuvem e no Local
+// 1. Função para Resetar TUDO na Nuvem e no Local
 async function limparTudo() {
     if (confirm("⚠️ ATENÇÃO: Isso apagará todos os seus gastos na nuvem e no navegador. Deseja continuar?")) {
         
-        // Substitui os dados atuais por um "esqueleto" vazio
+        // Substitui os dados atuais por um "esqueleto" vazio e perfeito
         salsiData = {
-            config: { categorias: ["Alimentação", "Transporte"], bancos: ["Nubank", "Inter"] },
+            config: { 
+                categorias: ["Alimentação", "Transporte"], 
+                bancos: ["Nubank", "Inter"],
+                detalhesBancos: [
+                    { nome: "Nubank", fechamento: 25, vencimento: 5 },
+                    { nome: "Inter", fechamento: 10, vencimento: 20 }
+                ]
+            },
             entradas: [], transacoes: [], metas: []
         };
         
-        // Manda o esqueleto vazio pra nuvem (isso vai avisar o celular para apagar tudo também na hora!)
+        // Manda o esqueleto vazio pra nuvem
         await salvarNoFirebase(); 
         
         // Limpa o navegador e reinicia
@@ -1570,6 +1578,7 @@ let isSincronizando = false;
 
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
+// Envolvemos o vigia nesta função para ele esperar o Firebase carregar
 window.iniciarVigia = function() {
     window.onAuthStateChanged(window.auth, async (user) => {
         const authScreen = document.getElementById('auth-screen');
@@ -1584,42 +1593,53 @@ window.iniciarVigia = function() {
             atualizarSaudacao(user.displayName || "Visitante");
             
             try {
-                // REGRA DE OURO: Vai na nuvem buscar os dados DESTE usuário
+                // Vai na nuvem buscar os dados
                 const uid = user.uid;
                 const userDoc = window.doc(window.db, "usuarios", uid);
                 const docSnap = await window.getDoc(userDoc);
 
                 if (docSnap.exists() && docSnap.data().dados) {
-                    // SE ELE JÁ TEM CONTA: Baixa da nuvem e ESMAGA o cache do PC
+                    // SE ELE JÁ TEM CONTA
                     salsiData = docSnap.data().dados;
+                    
+                    // Blindagem: Se for uma conta antiga que não tinha detalhesBancos
+                    if (!salsiData.config.detalhesBancos) salsiData.config.detalhesBancos = [];
+                    
                     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
                 } else {
-                    // SE É CONTA NOVA ZERADA: Cria estrutura inicial segura
+                    // SE É CONTA NOVA ZERADA: Cria estrutura inicial perfeitamente blindada
                     console.log("Usuário novo! Criando estrutura inicial...");
                     salsiData = {
-                        config: { categorias: [
-                                "Alimentação", "Assinaturas", "Lazer", "Outros", "Transporte", "Presentes", "Cuidados Pessoais", "Compras", "Mercado", "Fixos"], bancos: ["Nubank", "Inter", "C6 Bank"] },
+                        config: { 
+                            categorias: ["Alimentação", "Assinaturas", "Lazer", "Outros", "Transporte", "Presentes", "Cuidados Pessoais", "Compras", "Mercado", "Fixos"], 
+                            bancos: ["Nubank", "Inter", "C6 Bank"],
+                            detalhesBancos: [
+                                { nome: "Nubank", fechamento: 25, vencimento: 5 },
+                                { nome: "Inter", fechamento: 10, vencimento: 20 },
+                                { nome: "C6 Bank", fechamento: 1, vencimento: 10 }
+                            ]
+                        },
                         entradas: [], transacoes: [], metas: []
                     };
                     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
                     await window.setDoc(userDoc, { dados: salsiData });
                 }
 
-                // Tudo seguro! Libera a tela
-                if (splashLoader) splashLoader.style.display = 'none';
-                iniciar(); 
-
             } catch (error) {
-                console.error("Erro crítico ao baixar dados:", error);
-                alert("Erro ao carregar sua conta. Tente recarregar a página.");
+                console.error("Erro ao baixar dados do Firebase:", error);
+                alert("Erro de conexão com o servidor. Tente recarregar a página.");
+                if (splashLoader) splashLoader.style.display = 'none';
+                return; // Interrompe para não carregar a tela pela metade
             }
+
+            // A MÁGICA AQUI: Fora da verificação de erro do banco de dados
+            if (splashLoader) splashLoader.style.display = 'none';
+            iniciar(); 
             
         } else {
             // --- SE NÃO TIVER LOGADO --- 
-            
-            // 👇 DESTRÓI O CACHE ANTIGO ASSIM QUE A TELA DE LOGIN APARECER 👇
             localStorage.removeItem('salsifin_cache');
-            salsiData = { config: { categorias: [], bancos: [] }, entradas: [], transacoes: [], metas: [] };
+            salsiData = { config: { categorias: [], bancos: [], detalhesBancos: [] }, entradas: [], transacoes: [], metas: [] };
 
             authScreen.style.display = 'flex';
             
@@ -1858,6 +1878,7 @@ function mostrarFormulario(tipo) {
     // Aproveita a sua função nativa que alterna entre Login e Cadastro
     toggleAuth(tipo === 'register'); 
 }
+
 
 
 
