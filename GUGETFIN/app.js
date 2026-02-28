@@ -1949,19 +1949,26 @@ function mostrarFormulario(tipo) {
 function toggleInputsDebito() {
     const isDebito = document.getElementById('banco-apenas-debito').checked;
     const boxDatas = document.getElementById('box-datas-cartao');
-    const inputFechamento = document.getElementById('novo-banco-fechamento');
-    const inputVencimento = document.getElementById('novo-banco-vencimento');
+    
+    // 👇 AQUI ESTAVA O ERRO ANTES! AGORA ESTÃO COM OS IDs CORRETOS 👇
+    const inputFechamento = document.getElementById('nc-fechamento');
+    const inputVencimento = document.getElementById('nc-vencimento');
 
     if (isDebito) {
-        boxDatas.style.opacity = '0.4';
-        boxDatas.style.pointerEvents = 'none'; // Impede o clique
-        inputFechamento.value = ''; // Limpa caso a pessoa tenha digitado algo
-        inputVencimento.value = '';
+        if (boxDatas) {
+            boxDatas.style.opacity = '0.3';
+            boxDatas.style.pointerEvents = 'none'; // Impede o clique
+        }
+        if (inputFechamento) inputFechamento.value = ''; // Limpa se tinha algo
+        if (inputVencimento) inputVencimento.value = '';
     } else {
-        boxDatas.style.opacity = '1';
-        boxDatas.style.pointerEvents = 'auto'; // Libera o clique
+        if (boxDatas) {
+            boxDatas.style.opacity = '1';
+            boxDatas.style.pointerEvents = 'auto'; // Libera o clique
+        }
     }
 }
+
 
 
 
