@@ -1555,9 +1555,6 @@ window.addEventListener('click', () => {
 
 window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
 
-// Roda a função assim que o app abrir:
-window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
-
 // Função de Login Real
 async function fazerLogin() {
     try {
@@ -1968,6 +1965,7 @@ function toggleInputsDebito() {
         }
     }
 }
+
 
 
 
