@@ -27,9 +27,37 @@ function iniciar() { popularSelects(); renderizar(); verificarLembreteBackup(); 
 
 function popularSelects() {
     const cat = document.getElementById('g-categoria');
-    const ban = document.getElementById('g-banco');
     if(cat) cat.innerHTML = salsiData.config.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
-    if(ban) ban.innerHTML = salsiData.config.bancos.map(b => `<option value="${b}">${b}</option>`).join('');
+    
+    // Chama o nosso novo filtro inteligente de bancos
+    atualizarListaBancos();
+}
+
+// NOVA FUNÇÃO: Filtro inteligente
+function atualizarListaBancos() {
+    const selectBanco = document.getElementById('g-banco');
+    if (!selectBanco) return;
+
+    // Descobre se o usuário tá lançando um gasto de Crédito (cartao) ou Débito (debito)
+    const tipoPagamentoEl = document.getElementById('g-tipo');
+    const tipoPagamento = tipoPagamentoEl ? tipoPagamentoEl.value : 'cartao'; 
+    
+    selectBanco.innerHTML = '';
+    if (!salsiData.config.bancos) return;
+
+    salsiData.config.bancos.forEach(nomeBanco => {
+        // Busca os detalhes desse banco
+        const detalhe = salsiData.config.detalhesBancos?.find(d => d.nome === nomeBanco);
+        const isDebitoOnly = detalhe ? detalhe.isDebitoOnly : nomeBanco.includes('(débito)');
+        
+        // A REGRA DE OURO: Se o gasto for "cartao" (Crédito) E o cartão for "apenas débito", pula ele!
+        if (tipoPagamento === 'cartao' && isDebitoOnly) return; 
+        
+        const opt = document.createElement('option');
+        opt.value = nomeBanco;
+        opt.textContent = nomeBanco;
+        selectBanco.appendChild(opt);
+    });
 }
 
 function atualizarHumorSalsicha(saldo) {
@@ -866,7 +894,7 @@ function adicionarNovoCartao() {
 
     // 1. Mágica do Nome: Adiciona o sufixo automaticamente se for só débito
     if (isDebito) {
-        nome += " (débito)";
+        nome += " (Débito)";
     }
 
     // 2. Mágica das Datas: Ignora as datas se for débito
@@ -1927,6 +1955,7 @@ function toggleInputsDebito() {
         boxDatas.style.pointerEvents = 'auto'; // Libera o clique
     }
 }
+
 
 
 
