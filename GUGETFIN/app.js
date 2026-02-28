@@ -1569,89 +1569,101 @@ async function fazerCadastro() {
 let isSincronizando = false; 
 
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
+// Envolvemos o vigia nesta função para ele esperar o Firebase carregar
 window.iniciarVigia = function() {
-    window.onAuthStateChanged(window.auth, (user) => {
+    window.onAuthStateChanged(window.auth, async (user) => {
         const authScreen = document.getElementById('auth-screen');
         
         if (user) {
-            authScreen.style.display = 'none'; // Esconde a tela de loading/login
+            // --- USUÁRIO LOGADO ---
+            authScreen.style.display = 'none'; 
             
+            const splashLoader = document.getElementById('auth-splash-loader');
+            if (splashLoader) splashLoader.style.display = 'block';
+
             atualizarSaudacao(user.displayName || "Visitante");
             
-            const uid = user.uid;
-            const userDoc = window.doc(window.db, "usuarios", uid);
+            try {
+                // REGRA DE OURO: Vai na nuvem buscar os dados DESTE usuário
+                const uid = user.uid;
+                const userDoc = window.doc(window.db, "usuarios", uid);
+                const docSnap = await window.getDoc(userDoc);
 
-            window.onSnapshot(userDoc, (docSnap) => {
-                if (docSnap.exists()) {
-                    const dadosDaNuvem = docSnap.data().dados;
-                    
-                    if (JSON.stringify(salsiData) !== JSON.stringify(dadosDaNuvem)) {
-                        console.log("☁️ Atualização detectada! Sincronizando...");
-                        salsiData = dadosDaNuvem;
-                        
-                        isSincronizando = true;  
-                        iniciar();               
-                        isSincronizando = false; 
-                    }
+                if (docSnap.exists() && docSnap.data().dados) {
+                    // SE ELE JÁ TEM CONTA: Baixa da nuvem e ESMAGA o cache do PC
+                    salsiData = docSnap.data().dados;
+                    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
                 } else {
+                    // SE É CONTA NOVA ZERADA: Cria estrutura inicial segura
                     console.log("Usuário novo! Criando estrutura inicial...");
                     salsiData = {
                         config: { categorias: [
                                 "Alimentação", "Assinaturas", "Lazer", "Outros", "Transporte", "Presentes", "Cuidados Pessoais", "Compras", "Mercado", "Fixos"], bancos: ["Nubank", "Inter", "C6 Bank"] },
                         entradas: [], transacoes: [], metas: []
                     };
-                    salvarNoFirebase();
-                    iniciar(); 
+                    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+                    await window.setDoc(userDoc, { dados: salsiData });
                 }
-            });
+
+                // Tudo seguro! Libera a tela
+                if (splashLoader) splashLoader.style.display = 'none';
+                iniciar(); 
+
+            } catch (error) {
+                console.error("Erro crítico ao baixar dados:", error);
+                alert("Erro ao carregar sua conta. Tente recarregar a página.");
+            }
             
         } else {
-            // SE NÃO TIVER LOGADO: 
+            // --- SE NÃO TIVER LOGADO --- 
+            
+            // 👇 DESTRÓI O CACHE ANTIGO ASSIM QUE A TELA DE LOGIN APARECER 👇
+            localStorage.removeItem('salsifin_cache');
+            salsiData = { config: { categorias: [], bancos: [] }, entradas: [], transacoes: [], metas: [] };
+
             authScreen.style.display = 'flex';
             
-            // Esconde a animação de "Conectando ao cofre..."
             const splashLoader = document.getElementById('auth-splash-loader');
             if (splashLoader) splashLoader.style.display = 'none';
             
-            // Pega os dois lados da nova estrutura
             const authLeft = document.querySelector('.auth-left');
             const authRight = document.getElementById('auth-showcase');
             const loginForm = document.getElementById('login-form');
             const registerForm = document.getElementById('register-form');
             
             if (window.innerWidth <= 1024) {
-                // SE FOR MOBILE: Esconde a esquerda (formulários) e mostra só a Vitrine (direita)
                 if (authLeft) authLeft.style.display = 'none';
                 if (authRight) authRight.style.display = 'flex';
-                
                 if (loginForm) loginForm.style.display = 'none';
                 if (registerForm) registerForm.style.display = 'none';
             } else {
-                // SE FOR PC: Mostra os dois lados juntos (Split Screen)
                 if (authLeft) authLeft.style.display = 'flex';
                 if (authRight) authRight.style.display = 'flex';
-                
-                // No PC, o form de login já tem que estar visível na esquerda
                 if (loginForm) loginForm.style.display = 'block';
                 if (registerForm) registerForm.style.display = 'none';
             }
             
-            // Dá a partida no motor do Carrossel
             iniciarSliderAuth(); 
         }
     });
 };
 
 async function salvarNoFirebase() {
-    // A trava entra em ação aqui: se ele já está recebendo dados, não tenta salvar de volta!
-    if (!window.auth.currentUser || isSincronizando) return; 
+    // 1. Sempre salva no PC (pra ficar rápido)
+    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+
+    // 2. A trava entra em ação aqui: Tem alguém logado de verdade?
+    if (!window.auth || !window.auth.currentUser || isSincronizando) {
+        return; // Corta a função aqui e proíbe ir pra nuvem!
+    }
 
     const uid = window.auth.currentUser.uid;
     const userDoc = window.doc(window.db, "usuarios", uid);
 
+    // 3. Salva exclusivamente na gaveta do usuário logado
     try {
         await window.setDoc(userDoc, { dados: salsiData });
-        console.log("Dados salvos na nuvem com sucesso!");
+        console.log("Dados salvos na nuvem com segurança!");
     } catch (e) {
         console.error("Erro ao salvar na nuvem: ", e);
     }
@@ -1846,5 +1858,6 @@ function mostrarFormulario(tipo) {
     // Aproveita a sua função nativa que alterna entre Login e Cadastro
     toggleAuth(tipo === 'register'); 
 }
+
 
 
