@@ -892,17 +892,21 @@ function excluirCartaoConfig(index) {
 
 // 1. Função para Resetar TUDO na Nuvem e no Local
 // 1. Função para Resetar TUDO na Nuvem e no Local
+// 1. Função para Resetar TUDO na Nuvem e no Local
 async function limparTudo() {
     if (confirm("⚠️ ATENÇÃO: Isso apagará todos os seus gastos na nuvem e no navegador. Deseja continuar?")) {
         
-        // Substitui os dados atuais por um "esqueleto" vazio e perfeito
+        // Substitui os dados atuais pelo novo "esqueleto" perfeito
         salsiData = {
             config: { 
-                categorias: ["Alimentação", "Transporte"], 
-                bancos: ["Nubank", "Inter"],
+                categorias: [
+                    "Alimentação", "Assinaturas", "Lazer", "Outros", 
+                    "Transporte", "Presentes", "Saúde/Estética", 
+                    "Compras", "Mercado", "Fixos", "Terceiros"
+                ], 
+                bancos: ["Cadastre seus cartões!"],
                 detalhesBancos: [
-                    { nome: "Nubank", fechamento: 25, vencimento: 5 },
-                    { nome: "Inter", fechamento: 10, vencimento: 20 }
+                    { nome: "Cadastre seus cartões!", fechamento: 10, vencimento: 20 }
                 ]
             },
             entradas: [], transacoes: [], metas: []
@@ -1579,6 +1583,7 @@ let isSincronizando = false;
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
+// Envolvemos o vigia nesta função para ele esperar o Firebase carregar
 window.iniciarVigia = function() {
     window.onAuthStateChanged(window.auth, async (user) => {
         const authScreen = document.getElementById('auth-screen');
@@ -1607,16 +1612,18 @@ window.iniciarVigia = function() {
                     
                     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
                 } else {
-                    // SE É CONTA NOVA ZERADA: Cria estrutura inicial perfeitamente blindada
+                    // SE É CONTA NOVA ZERADA: Cria a estrutura inicial perfeita
                     console.log("Usuário novo! Criando estrutura inicial...");
                     salsiData = {
                         config: { 
-                            categorias: ["Alimentação", "Assinaturas", "Lazer", "Outros", "Transporte", "Presentes", "Cuidados Pessoais", "Compras", "Mercado", "Fixos"], 
-                            bancos: ["Nubank", "Inter", "C6 Bank"],
+                            categorias: [
+                                "Alimentação", "Assinaturas", "Lazer", "Outros", 
+                                "Transporte", "Presentes", "Saúde/Estética", 
+                                "Compras", "Mercado", "Fixos", "Terceiros"
+                            ], 
+                            bancos: ["Cadastre seus cartões!"],
                             detalhesBancos: [
-                                { nome: "Nubank", fechamento: 25, vencimento: 5 },
-                                { nome: "Inter", fechamento: 10, vencimento: 20 },
-                                { nome: "C6 Bank", fechamento: 1, vencimento: 10 }
+                                { nome: "Cadastre seus cartões!", fechamento: 10, vencimento: 20 }
                             ]
                         },
                         entradas: [], transacoes: [], metas: []
@@ -1632,7 +1639,7 @@ window.iniciarVigia = function() {
                 return; // Interrompe para não carregar a tela pela metade
             }
 
-            // A MÁGICA AQUI: Fora da verificação de erro do banco de dados
+            // Tudo seguro! Libera a tela
             if (splashLoader) splashLoader.style.display = 'none';
             iniciar(); 
             
@@ -1878,6 +1885,7 @@ function mostrarFormulario(tipo) {
     // Aproveita a sua função nativa que alterna entre Login e Cadastro
     toggleAuth(tipo === 'register'); 
 }
+
 
 
 
