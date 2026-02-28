@@ -34,7 +34,6 @@ function popularSelects() {
 }
 
 // NOVA FUNÇÃO: Filtro inteligente
-// NOVA FUNÇÃO: Filtro inteligente
 function atualizarListaBancos() {
     const selectBanco = document.getElementById('g-banco');
     if (!selectBanco) return;
@@ -1963,6 +1962,7 @@ function toggleInputsDebito() {
         boxDatas.style.pointerEvents = 'auto'; // Libera o clique
     }
 }
+
 
 
 
