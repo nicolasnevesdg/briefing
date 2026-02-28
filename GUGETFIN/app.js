@@ -853,30 +853,55 @@ function abrirModalCartoes() {
 }
 
 // 2. Adiciona um novo cartão ao banco de dados
+// 2. Adiciona um novo cartão ao banco de dados
 function adicionarNovoCartao() {
-    const nome = document.getElementById('nc-nome').value.trim();
-    const fechamento = parseInt(document.getElementById('nc-fechamento').value);
-    const vencimento = parseInt(document.getElementById('nc-vencimento').value);
+    let nome = document.getElementById('nc-nome').value.trim();
+    const checkbox = document.getElementById('banco-apenas-debito');
+    const isDebito = checkbox ? checkbox.checked : false;
 
-    if (!nome || !fechamento || !vencimento) {
-        alert("Preencha todos os campos do cartão!");
+    if (!nome) {
+        alert("Preencha o nome do cartão!");
         return;
     }
 
-    // Adiciona ao array de detalhes e atualiza a lista de nomes
+    // 1. Mágica do Nome: Adiciona o sufixo automaticamente se for só débito
+    if (isDebito) {
+        nome += " (débito)";
+    }
+
+    // 2. Mágica das Datas: Ignora as datas se for débito
+    const fechamento = isDebito ? null : parseInt(document.getElementById('nc-fechamento').value);
+    const vencimento = isDebito ? null : parseInt(document.getElementById('nc-vencimento').value);
+
+    // Se NÃO for débito, obriga a ter datas
+    if (!isDebito && (!fechamento || !vencimento)) {
+        alert("Preencha as datas para cartões de crédito!");
+        return;
+    }
+
     if (!salsiData.config.detalhesBancos) salsiData.config.detalhesBancos = [];
     
-    salsiData.config.detalhesBancos.push({ nome, fechamento, vencimento });
+    // 3. Salva no banco com a tag invisível
+    salsiData.config.detalhesBancos.push({ 
+        nome: nome, 
+        fechamento: fechamento, 
+        vencimento: vencimento,
+        isDebitoOnly: isDebito 
+    });
     salsiData.config.bancos = salsiData.config.detalhesBancos.map(b => b.nome);
 
-    // Limpa campos e atualiza
+    // Limpa campos e reseta a caixinha
     document.getElementById('nc-nome').value = '';
     document.getElementById('nc-fechamento').value = '';
     document.getElementById('nc-vencimento').value = '';
+    if (checkbox) {
+        checkbox.checked = false;
+        toggleInputsDebito(); // Reseta o visual opaco
+    }
     
     popularSelects();
-    abrirModalCartoes(); // Atualiza a lista visual
-    renderizar(); // Salva no cache
+    abrirModalCartoes(); 
+    renderizar(); 
 }
 
 // 3. Remove o cartão da lista de opções (mantém no histórico)
@@ -1902,6 +1927,7 @@ function toggleInputsDebito() {
         boxDatas.style.pointerEvents = 'auto'; // Libera o clique
     }
 }
+
 
 
 
