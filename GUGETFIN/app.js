@@ -692,11 +692,11 @@ function getCor(b) {
         'mais': '#e63946',          
         'santander': '#ec0000',
         'itaú': '#ec7000',
-        'itau': '#ec7000',          // Sem acento por precaução
+        'itau': '#ec7000',
         'bradesco': '#cc092f',
         'digio': '#151de0',
         'picpay': '#21c25e',
-        'banco do brasil': '#fcee21', // Adicionado com base no seu print!
+        'banco do brasil': '#efd049',
         'bb': '#fcee21',
         'c6': '#242424',
         'caixa': '#f58220'
@@ -893,7 +893,7 @@ function abrirModalCartoes() {
     lista.innerHTML = cartoes.length > 0 ? cartoes.map((c, index) => {
         // MÁGICA VISUAL: Substitui o "null" por uma etiqueta elegante ou por um traço
         const infoDatas = c.isDebitoOnly 
-            ? `<span style="color: #4299e1; font-weight: 700;">💳 Cartão de Débito</span>` 
+            ? `<span style="font-size: 10px; color: var(--text-sec); font-weight: 600;">Cartão de Débito</span>` 
             : `Fecha: ${c.fechamento || '--'} | Vence: ${c.vencimento || '--'}`;
 
         return `
@@ -1989,6 +1989,7 @@ function toggleInputsDebito() {
         }
     }
 }
+
 
 
 
