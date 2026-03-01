@@ -7,26 +7,33 @@ dataFiltro.setDate(1);
 // --- CONTROLE DE TELA (PC vs MOBILE) ---
 function ajustarTelas() {
     if (window.innerWidth <= 1024) {
-        // NO CELULAR: Garante que o Resumo seja a aba principal ao abrir
+        // NO CELULAR: Apenas garante que o Resumo seja a aba principal ao abrir
         const cardRes = document.getElementById('card-resumo-conteudo');
         const cardTer = document.getElementById('card-terceiros');
         
         if (cardRes) cardRes.style.setProperty('display', 'block', 'important');
         if (cardTer) cardTer.style.setProperty('display', 'none', 'important');
     } else {
-        // NO PC: Tira o véu de invisibilidade de TODOS os cards importantes
-        const cardsParaMostrar = [
+        // NO PC: Arranca o "none !important" das abas mães e dos cards!
+        const elementosParaMostrar = [
+            'aba-resumo',           // A aba mãe do resumo
+            'aba-planejamento',     // A aba mãe dos gráficos/metas (O SEU ACHADO!)
             'card-resumo-conteudo', 
             'card-terceiros', 
-            'card-grafico',         // ID exato do seu card de Fluxo
-            'card-metas-acordeon'   // ID exato do seu card de Metas
+            'card-grafico',         
+            'card-metas-acordeon'   
         ];
         
-        cardsParaMostrar.forEach(id => {
+        elementosParaMostrar.forEach(id => {
             const elemento = document.getElementById(id);
             if (elemento) {
-                // Remove qualquer estilo inline de display que o mobile tenha deixado
-                elemento.style.display = ''; 
+                // 1. Remove qualquer display inline que o clique do celular tenha colocado
+                elemento.style.removeProperty('display');
+                
+                // 2. Garantia dupla: se ainda estiver escondido, forçamos a aparecer!
+                if (window.getComputedStyle(elemento).display === 'none') {
+                    elemento.style.setProperty('display', 'block', 'important');
+                }
             }
         });
     }
@@ -2002,6 +2009,7 @@ function toggleInputsDebito() {
         }
     }
 }
+
 
 
 
