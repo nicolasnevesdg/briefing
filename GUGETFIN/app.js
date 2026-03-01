@@ -697,7 +697,7 @@ function getCor(b) {
         'digio': '#151de0',
         'picpay': '#21c25e',
         'banco do brasil': '#efd049',
-        'bb': '#fcee21',
+        'bb': '#efd049',
         'c6': '#242424',
         'caixa': '#f58220'
     };
@@ -1989,6 +1989,7 @@ function toggleInputsDebito() {
         }
     }
 }
+
 
 
 
