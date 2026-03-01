@@ -336,7 +336,7 @@ dialog input, dialog select, dialog textarea { width: 100%; padding: 12px; margi
 }
 
 /* --- Novo Layout do Gráfico Retrátil --- */
-.chart-card { border: 1px solid var(--border); transition: 0.3s; margin-bottom: 32px;}
+.chart-card { border: 1px solid var(--border); transition: 0.3s; margin-bottom: 25px;}
 
 .card-header { 
     padding: 20px 24px; 
@@ -2623,6 +2623,7 @@ tr[style*="opacity: 0.7"] td {
         background: #ffffff !important;
     }
 }
+
 
 
 
