@@ -442,7 +442,7 @@ function renderizar() {
         
         const txtMeta = meta > 0 ? `<span style="font-size: 11px; color: var(--text-sec); opacity: 0.6; margin-right: 15px; font-style: italic;">R$ ${meta.toFixed(2)}</span>` : '';
         
-        return `<div class="bank-row" style="cursor:pointer; padding: 8px 0; border-bottom: 1px dashed #e2e8f0; transition: 0.2s;" onclick="abrirModalOrcamento('${nome}')" onmouseover="this.style.opacity=0.6" onmouseout="this.style.opacity=1">
+        return `<div class="bank-row" style="cursor:pointer; padding: 8px 0; transition: 0.2s;" onclick="abrirModalOrcamento('${nome}')" onmouseover="this.style.opacity=0.6" onmouseout="this.style.opacity=1">
             <span style="font-weight: 600;">${nome}</span>
             <div style="text-align: right; display:flex; align-items:center; justify-content:flex-end;">
                 ${txtMeta} <span style="${corText}">R$ ${valor.toFixed(2)}</span>
@@ -2089,6 +2089,7 @@ function salvarOrcamento() {
     document.getElementById('modal-orcamento').close();
     renderizar();
 }
+
 
 
 
