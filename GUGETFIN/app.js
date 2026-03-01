@@ -677,22 +677,40 @@ function abrirModalGasto() { popularSelects(); ajustarCamposModal(); document.ge
 function abrirModalEntrada() { document.getElementById('modal-entrada').showModal(); }
 // Banco de dados de cores das marcas
 function getCor(b) {
+    if (!b) return '#94a3b8'; // Proteção contra valores vazios
+
+    // Transforma o nome que o utilizador digitou em letras minúsculas para não haver erros
+    const nomeLower = b.toLowerCase();
+    
+    // As nossas palavras-chave de pesquisa
     const cores = {
-        'Nubank': '#820ad1',        // Roxo Nubank
-        'Inter': '#ff7a00',         // Laranja Inter
-        'Mercado Pago': '#009ee3',  // Azul Mercado Pago
-        'Mercado Livre': '#fff159', // Amarelo Mercado Livre
-        'C&A': '#000000',           // Preto C&A
-        'Mais': '#e63946',          // Vermelho Cartão Mais
-        'Santander': '#ec0000',
-        'Itaú': '#ec7000',
-        'Bradesco': '#cc092f',
-        'Digio': '#151de0',
-        'PicPay': '#21c25e'
+        'nubank': '#820ad1',        
+        'inter': '#ff7a00',         
+        'mercado pago': '#009ee3',  
+        'mercado livre': '#fff159', 
+        'c&a': '#000000',           
+        'mais': '#e63946',          
+        'santander': '#ec0000',
+        'itaú': '#ec7000',
+        'itau': '#ec7000',          // Sem acento por precaução
+        'bradesco': '#cc092f',
+        'digio': '#151de0',
+        'picpay': '#21c25e',
+        'banco do brasil': '#fcee21', // Adicionado com base no seu print!
+        'bb': '#fcee21',
+        'c6': '#242424',
+        'caixa': '#f58220'
     };
     
-    // Retorna a cor da marca ou um cinza neutro se não encontrar
-    return cores[b] || '#94a3b8';
+    // O Detetive: Procura se o nome do banco digitado CONTÉM alguma das palavras-chave
+    for (const [chave, cor] of Object.entries(cores)) {
+        if (nomeLower.includes(chave)) {
+            return cor; // Se achar "inter" dentro de "inter (débito)", devolve a cor e pára
+        }
+    }
+    
+    // Retorna a cor padrão cinzenta se for um banco desconhecido
+    return '#94a3b8';
 }
 function importarDadosJS(event) { 
     const leitor = new FileReader(); 
@@ -872,17 +890,23 @@ function abrirModalCartoes() {
     const lista = document.getElementById('lista-cartoes-config');
     const cartoes = salsiData.config.detalhesBancos || [];
 
-    lista.innerHTML = cartoes.length > 0 ? cartoes.map((c, index) => `
+    lista.innerHTML = cartoes.length > 0 ? cartoes.map((c, index) => {
+        // MÁGICA VISUAL: Substitui o "null" por uma etiqueta elegante ou por um traço
+        const infoDatas = c.isDebitoOnly 
+            ? `<span style="color: #4299e1; font-weight: 700;">💳 Cartão de Débito</span>` 
+            : `Fecha: ${c.fechamento || '--'} | Vence: ${c.vencimento || '--'}`;
+
+        return `
         <div class="cartao-item-card">
             <div>
                 <span class="badge" style="background: ${getCor(c.nome)}; margin-bottom: 6px; display: inline-block;">${c.nome}</span>
                 <div style="font-size: 10px; color: var(--text-sec); font-weight: 600;">
-                    Fecha: ${c.fechamento} | Vence: ${c.vencimento || '--'}
+                    ${infoDatas}
                 </div>
             </div>
             <button class="btn-del" onclick="excluirCartaoConfig(${index})">×</button>
         </div>
-    `).join('') : "<p style='font-size:12px; opacity:0.5'>Nenhum cartão.</p>";
+    `}).join('') : "<p style='font-size:12px; opacity:0.5'>Nenhum cartão.</p>";
 
     document.getElementById('modal-cartoes').showModal();
 }
@@ -1965,6 +1989,7 @@ function toggleInputsDebito() {
         }
     }
 }
+
 
 
 
