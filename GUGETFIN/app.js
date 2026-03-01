@@ -428,30 +428,50 @@ function renderizar() {
     if (tTercMob) tTercMob.innerText = `R$ ${totalTerceirosMes.toFixed(2)}`;
     // ----------------------------------------------
 
-    // 5. Resumo Mensal Central (Bancos e Tags)
-    const htmlBancos = Object.entries(bankSum).map(([b,v]) => `<div class="bank-row"><span>${b}</span><span>R$ ${v.toFixed(2)}</span></div>`).join('');
-    const temBancos = salsiData.config.bancos && salsiData.config.bancos.length > 0;
-    document.getElementById('resumo-bancos-lista').innerHTML = htmlBancos || (temBancos ? '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Nenhum gasto.</p>' : '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Você ainda não cadastrou cartões.</p>');
+// 5. Resumo Mensal Central (Bancos, Tags e Entradas COM METAS INTELIGENTES)
     
+    // Função interna que constrói a linha de visualização
+    function renderLinhaOrcamento(nome, valor, isEntrada) {
+        const meta = getMetaOrcamento(nome, m, a);
+        let corText = '';
+        
+        // A regra de cor: Só fica vermelho se NÃO for entrada E o gasto for maior que a meta
+        if (meta > 0 && !isEntrada && valor > meta) {
+            corText = 'color: #ef4444; font-weight: 800;'; // Vermelho e negrito!
+        }
+        
+        const txtMeta = meta > 0 ? `<span style="font-size:10px; color:#a0aec0; font-weight:600; margin-right:6px;">Meta: R$ ${meta.toFixed(2)} | </span>` : '';
+        
+        return `<div class="bank-row" style="cursor:pointer; padding: 8px 0; border-bottom: 1px dashed #e2e8f0; transition: 0.2s;" onclick="abrirModalOrcamento('${nome}')" onmouseover="this.style.opacity=0.6" onmouseout="this.style.opacity=1">
+            <span style="font-weight: 600;">${nome}</span>
+            <div style="text-align: right; display:flex; align-items:center; justify-content:flex-end;">
+                ${txtMeta} <span style="${corText}">R$ ${valor.toFixed(2)}</span>
+            </div>
+        </div>`;
+    }
+
+    // Força a exibição na lista mesmo que o gasto seja R$ 0,00 (caso o usuário tenha definido uma meta)
+    salsiData.config.bancos?.forEach(b => { if(getMetaOrcamento(b, m, a) > 0) bankSum[b] = bankSum[b] || 0; });
+    salsiData.config.categorias?.forEach(c => { if(getMetaOrcamento(c, m, a) > 0) tagSum[c] = tagSum[c] || 0; });
+
+    // Renderiza Bancos
+    const htmlBancos = Object.entries(bankSum).map(([b,v]) => renderLinhaOrcamento(b, v, false)).join('');
+    const temBancos = salsiData.config.bancos && salsiData.config.bancos.length > 0;
+    document.getElementById('resumo-bancos-lista').innerHTML = htmlBancos || (temBancos ? '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Nenhum gasto registrado.</p>' : '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Você ainda não cadastrou cartões.</p>');
+    
+    // Renderiza Lembretes (Mantido o código original)
     const containerLembretes = document.getElementById('container-lembretes-fatura');
     if (containerLembretes) {
         containerLembretes.innerHTML = ''; 
-        salsiData.config.detalhesBancos.forEach(ban => {
+        salsiData.config.detalhesBancos?.forEach(ban => {
             const valorFatura = bankSum[ban.nome] || 0;
             if (valorFatura > 0) {
                 const hoje = new Date().getDate();
                 const vencimento = parseInt(ban.vencimento);
                 const diasFaltando = vencimento - hoje;
                 
-                let bgCor = '#f8faf9'; 
-                let borderCor = '#e2e8f0';
-                let statusTexto = `Vence dia ${vencimento}`;
-                
-                if (diasFaltando <= 3 && diasFaltando >= 0) {
-                    bgCor = '#fff5f5'; 
-                    borderCor = '#feb2b2';
-                    statusTexto = `⚠️ Vence dia ${vencimento}!`;
-                }
+                let bgCor = '#f8faf9', borderCor = '#e2e8f0', statusTexto = `Vence dia ${vencimento}`;
+                if (diasFaltando <= 3 && diasFaltando >= 0) { bgCor = '#fff5f5'; borderCor = '#feb2b2'; statusTexto = `⚠️ Vence dia ${vencimento}!`; }
 
                 containerLembretes.innerHTML += `
                     <div style="background: ${bgCor}; border: 1px solid ${borderCor}; padding: 10px 15px; border-radius: 12px; min-width: 140px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
@@ -465,12 +485,16 @@ function renderizar() {
             }
         });
     }
-    const htmlTags = Object.entries(tagSum).map(([k,v]) => `<div class="bank-row"><span>${k}</span><span>R$ ${v.toFixed(2)}</span></div>`).join('');
+
+    // Renderiza Categorias (Tags)
+    const htmlTags = Object.entries(tagSum).map(([k,v]) => renderLinhaOrcamento(k, v, false)).join('');
     const temTags = salsiData.config.categorias && salsiData.config.categorias.length > 0;
     const tagListaEl = document.getElementById('resumo-tags-lista');
-    if (tagListaEl) {
-        tagListaEl.innerHTML = htmlTags || (temTags ? '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Nenhum gasto.</p>' : '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Você ainda não cadastrou categorias.</p>');
-    }
+    if (tagListaEl) tagListaEl.innerHTML = htmlTags || (temTags ? '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Nenhum gasto.</p>' : '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Você ainda não cadastrou categorias.</p>');
+    
+    // Renderiza Entradas!
+    const resEntEl = document.getElementById('resumo-entradas-lista');
+    if (resEntEl) resEntEl.innerHTML = renderLinhaOrcamento('Total Recebido', totalEnt, true);
     
     // 6. CÁLCULO ANUAL
     let anEnt = 0, anCred = 0, anDeb = 0, anFixo = 0;
@@ -2010,6 +2034,61 @@ function toggleInputsDebito() {
     }
 }
 
+// --- SISTEMA INTELIGENTE DE METAS E LIMITES MENSAIS ---
+
+// Procura qual foi a última meta definida do passado até ao mês atual
+function getMetaOrcamento(nome, mesIndex, ano) {
+    if (!salsiData.orcamentos) return 0;
+    if (!salsiData.orcamentos[nome]) return 0;
+    
+    // Ex: "2026-02"
+    const targetChave = `${ano}-${String(mesIndex + 1).padStart(2, '0')}`;
+    const chaves = Object.keys(salsiData.orcamentos[nome]).sort(); // Ordena do mais antigo para o mais novo
+    
+    let metaAtual = 0;
+    for (let chave of chaves) {
+        if (chave <= targetChave) {
+            metaAtual = salsiData.orcamentos[nome][chave]; // Atualiza com o valor mais recente encontrado
+        }
+    }
+    return metaAtual;
+}
+
+// Prepara e abre o modal ao clicar no item
+function abrirModalOrcamento(nome) {
+    const m = dataFiltro.getMonth();
+    const a = dataFiltro.getFullYear();
+    const metaAtual = getMetaOrcamento(nome, m, a);
+    
+    document.getElementById('orc-titulo-display').innerText = `Definir Meta: ${nome}`;
+    document.getElementById('orc-nome').value = nome;
+    
+    const inputVal = document.getElementById('orc-valor');
+    // Multiplica por 100 para a função formatarMoeda ler corretamente como centavos
+    inputVal.value = metaAtual > 0 ? (metaAtual * 100).toFixed(0) : ''; 
+    formatarMoeda(inputVal); 
+    
+    document.getElementById('modal-orcamento').showModal();
+}
+
+// Salva a decisão a partir deste mês em diante
+function salvarOrcamento() {
+    const nome = document.getElementById('orc-nome').value;
+    const meta = parseFloat(document.getElementById('orc-valor').value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+    
+    const m = dataFiltro.getMonth();
+    const a = dataFiltro.getFullYear();
+    const chave = `${a}-${String(m + 1).padStart(2, '0')}`;
+
+    if (!salsiData.orcamentos) salsiData.orcamentos = {};
+    if (!salsiData.orcamentos[nome]) salsiData.orcamentos[nome] = {};
+
+    salsiData.orcamentos[nome][chave] = meta;
+    
+    // Fecha o modal e recarrega a tela para piscar os números
+    document.getElementById('modal-orcamento').close();
+    renderizar();
+}
 
 
 
