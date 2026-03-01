@@ -814,7 +814,7 @@ tr[style*="opacity: 0.7"] td {
 /* No seu CSS ou direto na Tag */
 #card-terceiros {
     background-color: #e8f5e9; /* Verde bem clarinho e elegante */
-    border: 1px solid #c8e6c9; /* Uma borda leve para definir o card */
+    border: 1px solid #c8e6c9 !important; /* Uma borda leve para definir o card */
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
@@ -1733,7 +1733,7 @@ tr[style*="opacity: 0.7"] td {
     /* Garante que o card de resumo respeite o JS e não o 'display: block' do PC */
     #card-resumo-conteudo {
         display: block!important;
-		border: 1px solid #c8e6c9;
+		border: 1px solid #c8e6c9 !important;
     }
 
     #card-terceiros {
@@ -2623,5 +2623,6 @@ tr[style*="opacity: 0.7"] td {
         background: #ffffff !important;
     }
 }
+
 
 
