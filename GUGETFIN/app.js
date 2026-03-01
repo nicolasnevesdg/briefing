@@ -4,24 +4,37 @@ let dataFiltro = new Date();
 dataFiltro.setDate(1);
 
 // Forçar estado inicial ao carregar a página APENAS NO MOBILE
-window.addEventListener('DOMContentLoaded', () => {
-    // Adicionamos a checagem de largura aqui também!
+// --- CONTROLE DE TELA (PC vs MOBILE) ---
+function ajustarTelas() {
     if (window.innerWidth <= 1024) {
+        // NO CELULAR: Garante que o Resumo seja a aba principal ao abrir
         const cardRes = document.getElementById('card-resumo-conteudo');
         const cardTer = document.getElementById('card-terceiros');
         
-        if (cardRes && cardTer) {
-            cardRes.style.setProperty('display', 'block', 'important');
-            cardTer.style.setProperty('display', 'none', 'important');
-        }
+        if (cardRes) cardRes.style.setProperty('display', 'block', 'important');
+        if (cardTer) cardTer.style.setProperty('display', 'none', 'important');
     } else {
-        // NO PC: Garante que os estilos voltem ao padrão original caso o JS tenha mexido
-        const cardTer = document.getElementById('card-terceiros');
-        if (cardTer) {
-            cardTer.style.display = ''; // Remove o 'none' forçado pelo JS
-        }
+        // NO PC: Tira o véu de invisibilidade de TODOS os cards importantes
+        const cardsParaMostrar = [
+            'card-resumo-conteudo', 
+            'card-terceiros', 
+            'card-grafico',         // ID exato do seu card de Fluxo
+            'card-metas-acordeon'   // ID exato do seu card de Metas
+        ];
+        
+        cardsParaMostrar.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                // Remove qualquer estilo inline de display que o mobile tenha deixado
+                elemento.style.display = ''; 
+            }
+        });
     }
-});
+}
+
+// Executa a função quando a página carrega e quando a janela é redimensionada
+window.addEventListener('DOMContentLoaded', ajustarTelas);
+window.addEventListener('resize', ajustarTelas);
 
 function iniciar() { popularSelects(); renderizar(); verificarLembreteBackup(); }
 
@@ -1989,6 +2002,7 @@ function toggleInputsDebito() {
         }
     }
 }
+
 
 
 
