@@ -2268,12 +2268,13 @@ function toggleDesejos() {
         
         // Gira a seta consoante o estado do card
         if (card.classList.contains('expanded')) {
-            if(icone) icone.style.transform = 'rotate(180deg)';
-        } else {
             if(icone) icone.style.transform = 'rotate(0deg)';
+        } else {
+            if(icone) icone.style.transform = 'rotate(-135deg)';
         }
     }
 }
+
 
 
 
