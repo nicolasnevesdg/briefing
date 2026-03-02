@@ -1,7 +1,7 @@
 let salsiData = JSON.parse(localStorage.getItem('salsifin_cache')) || { config: { categorias: [], bancos: [] }, entradas: [], transacoes: [], metas: [] };
 let subAbaCartaoAtiva = 'credito';
 let dataFiltro = new Date();
-dataFiltro.setDate(1);
+dataFiltro.setDate(1); 
 
 // Forçar estado inicial ao carregar a página APENAS NO MOBILE
 // --- CONTROLE DE TELA (PC vs MOBILE) ---
@@ -2269,6 +2269,7 @@ function toggleDesejos() {
         seta.style.transform = 'rotate(0deg)';   // Volta a seta ao normal
     }
 }
+
 
 
 
