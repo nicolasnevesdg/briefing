@@ -246,16 +246,16 @@
 			</div>
 
 			<div class="card chart-card" id="card-desejos-acordeon">
-				<div class="card-header" onclick="toggleDesejos()" style="padding:13px 40px;">
+				<div class="card-header" onclick="toggleDesejos()" style="padding:13px 24px;">
 					<div class="header-title-group">
 						<span id="desejo-toggle-icon" class="chevron"></span>
 						<h3>Lista de Desejos</h3>
 					</div>
-					<button onclick="event.stopPropagation(); abrirModalDesejo()" style="background: #daf3db;color: #577b72;border: 1px solid #c1e5c6;width: 30px;height: 30px;font-weight: 500;border-radius: 8px;font-size: 18px;cursor: pointer;display: flex;align-items: center;justify-content: center;transition: 0.2s;"><i class="fi fi-rr-plus"></i></button>
+					<button class="btn-novo-gasto" onclick="event.stopPropagation(); abrirModalDesejo()" style="width: fit-content;height: 29px!important;margin: 0;padding: 10px 20px;display: flex;align-items: center;">+ Add</button>
 				</div>
 				
 				<div class="chart-content-wrapper" id="desejo-body">
-					<div id="lista-desejos-conteudo" style="width: 100%; margin-bottom: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+					<div id="lista-desejos-conteudo" style="width: 100%; margin-bottom: 20px; padding-top: 15px;">
 						</div>
 				</div>
 			</div>
@@ -799,6 +799,7 @@
 </body>
 
 </html>
+
 
 
 
