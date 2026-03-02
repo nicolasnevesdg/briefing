@@ -2256,19 +2256,14 @@ async function excluirDesejo(index) {
     }
 }
 
-// Função para abrir/fechar a aba de desejos
+// Função para abrir/fechar usando a SUA animação original do CSS
 function toggleDesejos() {
-    const conteudo = document.getElementById('conteudo-desejos');
-    const seta = document.getElementById('seta-desejos');
-    
-    if (conteudo.style.display === 'none') {
-        conteudo.style.display = 'block';
-        seta.style.transform = 'rotate(180deg)'; // Gira a seta para cima
-    } else {
-        conteudo.style.display = 'none';
-        seta.style.transform = 'rotate(0deg)';   // Volta a seta ao normal
+    const card = document.getElementById('card-desejos-acordeon');
+    if (card) {
+        card.classList.toggle('expanded');
     }
 }
+
 
 
 
