@@ -21,7 +21,8 @@ function ajustarTelas() {
             'card-resumo-conteudo', 
             'card-terceiros', 
             'card-grafico',         
-            'card-metas-acordeon'   
+            'card-metas-acordeon',
+            'card-desejos'   
         ];
         
         elementosParaMostrar.forEach(id => {
@@ -2186,6 +2187,70 @@ function salvarOrcamento() {
     renderizar();
 }
 
+// --- SISTEMA DE LISTA DE DESEJOS ---
+
+// 1. Desenha a lista na tela
+function renderizarDesejos() {
+    const container = document.getElementById('lista-desejos-conteudo');
+    if (!container) return;
+
+    // Garante que o array existe no banco de dados para não dar erro
+    if (!salsiData.desejos) salsiData.desejos = [];
+
+    if (salsiData.desejos.length === 0) {
+        container.innerHTML = '<p style="font-size: 13px; color: var(--text-sec); text-align: center; padding: 15px 0; margin: 0;">Nenhum desejo cadastrado. Sonhe alto!</p>';
+        return;
+    }
+
+    // Monta o visual de cada item
+    container.innerHTML = salsiData.desejos.map((d, index) => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed var(--border);">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-weight: 700; font-size: 14px; color: var(--text-main);">${d.nome}</span>
+                <span style="font-size: 12px; color: var(--text-sec); font-weight: 600;">R$ ${d.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+            </div>
+            <button onclick="excluirDesejo(${index})" style="background: #fef2f2; color: #ef4444; border: 1px solid #fee2e2; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: 0.2s;" onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1">×</button>
+        </div>
+    `).join('');
+}
+
+// 2. Abre o Pop-up limpo
+function abrirModalDesejo() {
+    document.getElementById('d-nome').value = '';
+    document.getElementById('d-valor').value = '';
+    document.getElementById('modal-desejo').showModal();
+}
+
+// 3. Salva o desejo novo
+async function salvarDesejo() {
+    const nome = document.getElementById('d-nome').value.trim();
+    const valorRaw = document.getElementById('d-valor').value;
+    const valor = parseFloat(valorRaw.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+
+    if (!nome || valor <= 0) {
+        alert("Preencha o nome e um valor aproximado válido!");
+        return;
+    }
+
+    if (!salsiData.desejos) salsiData.desejos = [];
+    
+    salsiData.desejos.push({ nome, valor });
+    
+    document.getElementById('modal-desejo').close();
+    renderizarDesejos();
+    
+    if (typeof salvarNoFirebase === 'function') await salvarNoFirebase();
+    if (typeof mostrarToast === 'function') mostrarToast("Desejo adicionado! 🎯");
+}
+
+// 4. Exclui o desejo
+async function excluirDesejo(index) {
+    if (confirm("Já comprou ou desistiu desse desejo? Posso excluir?")) {
+        salsiData.desejos.splice(index, 1);
+        renderizarDesejos();
+        if (typeof salvarNoFirebase === 'function') await salvarNoFirebase();
+    }
+}
 
 
 
