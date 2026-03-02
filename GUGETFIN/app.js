@@ -1260,6 +1260,24 @@ function verDetalhes(index) {
         blocoParc.style.display = 'none';
     }
 
+	// 🔌 Conecta os botões novos ao gasto correto (index)
+    const btnEditar = document.getElementById('btn-editar-dinamico');
+    if (btnEditar) {
+        btnEditar.onclick = () => {
+            editarGasto(index); // Puxa a função de edição que criamos!
+        };
+    }
+
+    const btnExcluir = document.getElementById('btn-excluir-dinamico');
+    if (btnExcluir) {
+        btnExcluir.onclick = () => { 
+            // Substitua 'excluirGasto' pelo nome exato da sua função de excluir, se for diferente
+            excluirGasto(index); 
+            document.getElementById('modal-detalhes').close(); 
+            renderizar();
+        };
+    }
+	
     document.getElementById('modal-detalhes').showModal();
 }
 
@@ -2167,6 +2185,7 @@ function salvarOrcamento() {
     document.getElementById('modal-orcamento').close();
     renderizar();
 }
+
 
 
 
