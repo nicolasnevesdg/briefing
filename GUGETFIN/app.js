@@ -604,18 +604,20 @@ function ajustarCamposModal() {
 
 function confirmarGasto() {
     let rawValue = document.getElementById('g-valor').value;
-    // Remove o "R$", pontos de milhar e troca a vírgula por ponto
     const vTotal = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
     
-    // Captura o tipo (cartao, debito, fixo)
     const tipo = document.getElementById('g-tipo').value; 
     const nParc = Math.max(1, parseInt(document.getElementById('g-parcelas').value) || 1);
     
-    // NOVO: Captura o que o usuário escolheu no select de forma de pagamento
     const campoForma = document.getElementById('g-forma-pagamento');
     const formaPag = campoForma ? campoForma.value : 'Débito';
 
-    salsiData.transacoes.push({
+    // Lê o campo invisível para saber se estamos editando ou criando
+    const indexEditEl = document.getElementById('g-index-edit');
+    const indexEdit = indexEditEl ? parseInt(indexEditEl.value) : -1;
+
+    // Monta o pacote de dados com a sua estrutura exata
+    const novosDados = {
         nome: document.getElementById('g-nome').value,
         tipo: tipo,
         valorTotal: vTotal,
@@ -624,18 +626,27 @@ function confirmarGasto() {
         dataCompra: document.getElementById('g-data').value,
         banco: document.getElementById('g-banco').value,
         categoria: document.getElementById('g-categoria').value,
-        pago: false,
+        pago: false, 
         delayPagamento: parseInt(document.getElementById('g-inicio-pagamento').value) || 0,
         eDeTerceiro: document.getElementById('g-terceiro').checked,
         nomeTerceiro: document.getElementById('g-nome-terceiro').value || "",
-        // NOVO: Salva a forma de pagamento (se for débito) lá no banco de dados
         formaPagamento: (tipo === 'debito') ? formaPag : null
-    });
+    };
+
+    if (indexEdit >= 0) {
+        // --- MODO EDIÇÃO ---
+        // Mantém o status original de "pago" (para não desmarcar se já foi pago)
+        novosDados.pago = salsiData.transacoes[indexEdit].pago; 
+        salsiData.transacoes[indexEdit] = novosDados;
+        mostrarToast("Lançamento atualizado com sucesso! ✏️");
+    } else {
+        // --- MODO CRIAÇÃO ---
+        salsiData.transacoes.push(novosDados);
+        mostrarToast("Lançamento salvo com sucesso! 💸");
+    }
     
     renderizar(); 
     document.getElementById('modal-gasto').close();
-
-	mostrarToast("Lançamento salvo com sucesso! 💸");
 }
 
 function alternarStatusPago(index) {
@@ -717,7 +728,90 @@ function salvarConfig() {
 function excluirGasto(idx) { if(confirm("Apagar?")) { salsiData.transacoes.splice(idx,1); renderizar(); } }
 function excluirEntrada(idx) { if(confirm("Apagar?")) { salsiData.entradas.splice(idx,1); renderizar(); } }
 function mudarMes(n) { dataFiltro.setMonth(dataFiltro.getMonth() + n); renderizar(); }
-function abrirModalGasto() { popularSelects(); ajustarCamposModal(); document.getElementById('modal-gasto').showModal(); }
+// 1. DATA AUTOMÁTICA E RESET AO ABRIR (MODO CRIAÇÃO)
+function abrirModalGasto() {
+    popularSelects();
+    
+    // Define a data de hoje no formato YYYY-MM-DD
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('g-data').value = hoje;
+    
+    // Limpa todos os campos para um novo gasto
+    document.getElementById('g-nome').value = '';
+    document.getElementById('g-valor').value = '';
+    document.getElementById('g-parcelas').value = 1;
+    document.getElementById('g-tipo').value = 'cartao';
+    document.getElementById('g-inicio-pagamento').value = '0';
+    
+    const formaPag = document.getElementById('g-forma-pagamento');
+    if(formaPag) formaPag.value = 'Débito';
+
+    const checkTerceiro = document.getElementById('g-terceiro');
+    if(checkTerceiro) checkTerceiro.checked = false;
+    document.getElementById('g-nome-terceiro').value = '';
+
+    // Reseta o visual para Modo Criação
+    const titulo = document.getElementById('modal-titulo');
+    if (titulo) titulo.innerText = 'Novo Gasto 💸';
+    
+    // Reseta a memória invisível
+    const indexEdit = document.getElementById('g-index-edit');
+    if (indexEdit) indexEdit.value = '-1';
+    
+    if (typeof ajustarCamposModal === 'function') ajustarCamposModal();
+    if (typeof toggleCampoNomeTerceiro === 'function') toggleCampoNomeTerceiro();
+    
+    document.getElementById('modal-gasto').showModal();
+}
+
+// 2. NOVA FUNÇÃO: Puxa os dados para o formulário e abre como Edição
+function editarGasto(index) {
+    document.getElementById('modal-detalhes').close(); // Fecha o modal de detalhes
+    
+    const t = salsiData.transacoes[index];
+    if (!t) return;
+
+    popularSelects();
+
+    // Muda a cara do modal para Modo Edição
+    const titulo = document.getElementById('modal-titulo');
+    if (titulo) titulo.innerText = 'Editar Gasto ✏️';
+    
+    // Salva o index na memória invisível
+    const indexEdit = document.getElementById('g-index-edit');
+    if (indexEdit) indexEdit.value = index;
+
+    // Preenche todos os campos com as propriedades exatas do seu banco
+    document.getElementById('g-nome').value = t.nome || '';
+    
+    const inputValor = document.getElementById('g-valor');
+    inputValor.value = t.valorTotal ? (t.valorTotal * 100).toFixed(0) : '';
+    formatarMoeda(inputValor);
+
+    document.getElementById('g-data').value = t.dataCompra || '';
+    document.getElementById('g-tipo').value = t.tipo || 'cartao';
+    document.getElementById('g-parcelas').value = t.parcelas || 1;
+    document.getElementById('g-inicio-pagamento').value = t.delayPagamento || 0;
+    
+    // Resgata o banco e categoria
+    if (t.banco) document.getElementById('g-banco').value = t.banco;
+    if (t.categoria) document.getElementById('g-categoria').value = t.categoria;
+    
+    if (t.tipo === 'debito' && t.formaPagamento) {
+        document.getElementById('g-forma-pagamento').value = t.formaPagamento;
+    }
+
+    // Resgata os terceiros
+    const checkTerceiro = document.getElementById('g-terceiro');
+    if (checkTerceiro) checkTerceiro.checked = t.eDeTerceiro || false;
+    document.getElementById('g-nome-terceiro').value = t.nomeTerceiro || '';
+
+    // Atualiza o visual das caixinhas (esconde/mostra dependendo do tipo resgatado)
+    if (typeof ajustarCamposModal === 'function') ajustarCamposModal();
+    if (typeof toggleCampoNomeTerceiro === 'function') toggleCampoNomeTerceiro();
+
+    document.getElementById('modal-gasto').showModal();
+}
 function abrirModalEntrada() { document.getElementById('modal-entrada').showModal(); }
 // Banco de dados de cores das marcas
 function getCor(b) {
@@ -1172,22 +1266,6 @@ function verDetalhes(index) {
 function toggleCampoNomeTerceiro() {
     const check = document.getElementById('g-terceiro').checked;
     document.getElementById('div-nome-terceiro').style.display = check ? 'block' : 'none';
-}
-
-// 1. DATA AUTOMÁTICA E RESET AO ABRIR
-function abrirModalGasto() {
-    popularSelects();
-    ajustarCamposModal();
-    
-    // Define a data de hoje no formato YYYY-MM-DD
-    const hoje = new Date().toISOString().split('T')[0];
-    document.getElementById('g-data').value = hoje;
-    
-    // Reseta o valor e parcelas
-    document.getElementById('g-valor').value = '';
-    document.getElementById('g-parcelas').value = 1;
-    
-    document.getElementById('modal-gasto').showModal();
 }
 
 // 2. MÁSCARA DE MOEDA EM TEMPO REAL (Transforma 100 em R$ 100,00)
@@ -2089,6 +2167,7 @@ function salvarOrcamento() {
     document.getElementById('modal-orcamento').close();
     renderizar();
 }
+
 
 
 
