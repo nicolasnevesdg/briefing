@@ -473,6 +473,7 @@
         <div class="modal-content">
             <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
             <h3>Novo Gasto 💸</h3>
+			<input type="hidden" id="g-index-edit" value="-1">
             <form method="dialog">
                 <input type="text" id="g-nome" placeholder="Descrição" required>
                 <input type="text" id="g-valor" placeholder="Valor Total R$" onblur="formatarMoeda(this)">
@@ -633,7 +634,10 @@
 	<dialog id="modal-detalhes" class="modal-estilizado">
 		<div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
 			<h2 id="det-nome" style="margin: 0;">Detalhes</h2>
-			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+			<div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-primary" id="btn-editar-detalhe" style="flex: 1; padding: 12px; border-radius: 8px; font-weight: 600;">Editar</button>
+                <button class="btn-del" id="btn-excluir-detalhe" style="flex: 1; padding: 12px; border-radius: 8px; margin-top: 0; font-weight: 600;">Excluir</button>
+            </div>
 		</div>
 		
 		<div class="modal-body-detalhes">
@@ -760,6 +764,7 @@
 </body>
 
 </html>
+
 
 
 
