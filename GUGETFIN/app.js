@@ -2256,13 +2256,25 @@ async function excluirDesejo(index) {
     }
 }
 
+// --- SISTEMA DE LISTA DE DESEJOS ---
+
 // Função para abrir/fechar usando a SUA animação original do CSS
 function toggleDesejos() {
     const card = document.getElementById('card-desejos-acordeon');
+    const icone = document.getElementById('desejo-toggle-icon'); // Pega o ícone da seta
+    
     if (card) {
-        card.classList.toggle('expanded');
+        card.classList.toggle('expanded'); // O seu CSS faz a animação de abrir/fechar
+        
+        // Gira a seta consoante o estado do card
+        if (card.classList.contains('expanded')) {
+            if(icone) icone.style.transform = 'rotate(180deg)';
+        } else {
+            if(icone) icone.style.transform = 'rotate(0deg)';
+        }
     }
 }
+
 
 
 
