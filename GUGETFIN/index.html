@@ -245,13 +245,21 @@
 				</div>
 			</div>
 
-			<div id="card-desejos" class="card" style="margin-top: 20px;">
-			    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-			        <h3 style="margin: 0; color: var(--dark-green); font-size: 16px;">Lista de Desejos 🎁</h3>
-			        <button onclick="abrirModalDesejo()" style="background: var(--acc-green); color: var(--dark-green); border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: 800; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;">+</button>
-			    </div>
-			    <div id="lista-desejos-conteudo">
+			<div id="card-desejos-acordeon" class="card" style="margin-top: 20px; padding: 0; overflow: hidden;">
+			    <div onclick="toggleDesejos()" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;">
+			        <h3 style="margin: 0; color: var(--dark-green); font-size: 16px; display: flex; align-items: center; gap: 8px;">
+			            Lista de Desejos 🎁
+			        </h3>
+			        <div style="display: flex; align-items: center; gap: 15px;">
+			            <button onclick="event.stopPropagation(); abrirModalDesejo()" style="background: var(--acc-green); color: var(--dark-green); border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: 800; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">+</button>
+			            <span id="seta-desejos" style="color: var(--text-sec); font-size: 16px; font-weight: bold; transition: transform 0.3s ease;">▼</span>
 			        </div>
+			    </div>
+			    
+			    <div id="conteudo-desejos" style="display: none; padding: 0 20px 20px 20px; border-top: 1px solid var(--border);">
+			        <div id="lista-desejos-conteudo" style="margin-top: 10px;">
+			            </div>
+			    </div>
 			</div>
 		</section>	
 		
@@ -793,6 +801,7 @@
 </body>
 
 </html>
+
 
 
 
