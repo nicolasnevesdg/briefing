@@ -2275,6 +2275,51 @@ function toggleDesejos() {
     }
 }
 
+// --- SISTEMA DE SEGURANÇA: SYNC AUTOMÁTICO AO ACORDAR A TELA ---
+document.addEventListener('visibilitychange', async () => {
+    // Se a aba acabou de ficar visível e o usuário está logado
+    if (document.visibilityState === 'visible' && window.auth && window.auth.currentUser) {
+        console.log("Aba ativada: Sincronizando com a nuvem para evitar conflitos...");
+        
+        // Bloqueia salvamentos acidentais enquanto sincroniza
+        isSincronizando = true; 
+
+        try {
+            const uid = window.auth.currentUser.uid;
+            const userDoc = window.doc(window.db, "usuarios", uid);
+            const docSnap = await window.getDoc(userDoc);
+
+            if (docSnap.exists() && docSnap.data().dados) {
+                // Baixa a versão mais nova da nuvem
+                const dadosNuvem = docSnap.data().dados;
+                
+                // Transforma em texto para comparar se houve mudança
+                const cacheLocalText = localStorage.getItem('salsifin_cache');
+                const nuvemText = JSON.stringify(dadosNuvem);
+
+                // Só atualiza a tela se a nuvem tiver dados diferentes do PC
+                if (cacheLocalText !== nuvemText) {
+                    console.log("Mudanças detectadas na nuvem! Atualizando a tela...");
+                    salsiData = dadosNuvem;
+                    localStorage.setItem('salsifin_cache', nuvemText);
+                    
+                    // Mostra um aviso rápido e redesenha a tela
+                    if (typeof mostrarToast === 'function') {
+                        mostrarToast("🔄 Dados sincronizados com sucesso!");
+                    }
+                    renderizar();
+                } else {
+                    console.log("Os dados locais já estão iguais aos da nuvem.");
+                }
+            }
+        } catch (error) {
+            console.error("Erro ao sincronizar dados ao acordar a aba:", error);
+        } finally {
+            // Libera o sistema para salvar novamente
+            isSincronizando = false;
+        }
+    }
+});
 
 
 
