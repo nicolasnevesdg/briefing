@@ -244,6 +244,15 @@
 					<div id="conteudo-meta" style="width: 100%;"></div>
 				</div>
 			</div>
+
+			<div id="card-desejos" class="card" style="margin-top: 20px;">
+			    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+			        <h3 style="margin: 0; color: var(--dark-green); font-size: 16px;">Lista de Desejos 🎁</h3>
+			        <button onclick="abrirModalDesejo()" style="background: var(--acc-green); color: var(--dark-green); border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: 800; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;">+</button>
+			    </div>
+			    <div id="lista-desejos-conteudo">
+			        </div>
+			</div>
 		</section>	
 		
 		<section id="aba-home" class="tab-content active">
@@ -709,6 +718,23 @@
 			</div>
 		</div>
 	</dialog>
+
+	<dialog id="modal-desejo" class="modal-estilizado">
+	    <div style="padding: 25px;">
+	        <h2 style="color: var(--dark-green); margin-bottom: 20px; font-size: 20px;">Novo Desejo 🎯</h2>
+	        
+	        <label class="input-label" style="font-size: 12px;">O que você quer comprar?</label>
+	        <input type="text" id="d-nome" placeholder="Ex: PlayStation 5" style="width: 100%; margin-bottom: 15px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; outline: none; font-family: 'Inter', sans-serif;">
+	        
+	        <label class="input-label" style="font-size: 12px;">Valor Aproximado</label>
+	        <input type="text" id="d-valor" placeholder="R$ 0,00" oninput="formatarMoeda(this)" style="width: 100%; margin-bottom: 25px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 18px; font-weight: bold; color: var(--text-main); outline: none; font-family: 'Inter', sans-serif;">
+	        
+	        <div style="display: flex; gap: 10px;">
+	            <button onclick="salvarDesejo()" style="flex: 1; background: var(--dark-green); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">Salvar</button>
+	            <button onclick="this.closest('dialog').close()" style="flex: 1; background: #f0f2f1; border: none; border-radius: 8px; cursor: pointer; color: var(--text-main); font-weight: 600;">Cancelar</button>
+	        </div>
+	    </div>
+	</dialog>
 	
 	<div id="toast-notificacao">
         <i class="fi fi-rr-check-circle"></i>
@@ -767,6 +793,7 @@
 </body>
 
 </html>
+
 
 
 
