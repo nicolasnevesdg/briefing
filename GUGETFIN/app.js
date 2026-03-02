@@ -22,7 +22,7 @@ function ajustarTelas() {
             'card-terceiros', 
             'card-grafico',         
             'card-metas-acordeon',
-            'card-desejos'   
+            'card-desejos-acordeon'   
         ];
         
         elementosParaMostrar.forEach(id => {
@@ -554,7 +554,11 @@ function renderizar() {
             if(cardTer) cardTer.style.setProperty('display', 'none', 'important');
         }
     }
-    
+
+	if (typeof renderizarDesejos === 'function') {
+        renderizarDesejos();
+    }
+	
     atualizarGraficoMeta();
 }
 
@@ -2252,6 +2256,19 @@ async function excluirDesejo(index) {
     }
 }
 
+// Função para abrir/fechar a aba de desejos
+function toggleDesejos() {
+    const conteudo = document.getElementById('conteudo-desejos');
+    const seta = document.getElementById('seta-desejos');
+    
+    if (conteudo.style.display === 'none') {
+        conteudo.style.display = 'block';
+        seta.style.transform = 'rotate(180deg)'; // Gira a seta para cima
+    } else {
+        conteudo.style.display = 'none';
+        seta.style.transform = 'rotate(0deg)';   // Volta a seta ao normal
+    }
+}
 
 
 
