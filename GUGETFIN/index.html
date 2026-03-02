@@ -634,10 +634,7 @@
 	<dialog id="modal-detalhes" class="modal-estilizado">
 		<div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
 			<h2 id="det-nome" style="margin: 0;">Detalhes</h2>
-			<div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-primary" id="btn-editar-detalhe" style="flex: 1; padding: 12px; border-radius: 8px; font-weight: 600;">Editar</button>
-                <button class="btn-del" id="btn-excluir-detalhe" style="flex: 1; padding: 12px; border-radius: 8px; margin-top: 0; font-weight: 600;">Excluir</button>
-            </div>
+			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
 		</div>
 		
 		<div class="modal-body-detalhes">
@@ -652,6 +649,11 @@
 			<div class="det-linha"><strong>Cartão/Banco</strong> <span id="det-banco"></span></div>
 			<div class="det-linha"><strong>Categoria</strong> <span id="det-categoria"></span></div>
 		</div>
+
+			<div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-primary" id="btn-editar-detalhe" style="flex: 1; padding: 12px; border-radius: 8px; font-weight: 600;">Editar</button>
+                <button class="btn-del" id="btn-excluir-detalhe" style="flex: 1; padding: 12px; border-radius: 8px; margin-top: 0; font-weight: 600;">Excluir</button>
+            </div>
 	</dialog>
 
 	<dialog id="modal-meta" class="modal-estilizado">
@@ -764,6 +766,7 @@
 </body>
 
 </html>
+
 
 
 
