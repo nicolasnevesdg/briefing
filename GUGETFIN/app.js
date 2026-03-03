@@ -830,22 +830,47 @@ function getCor(b) {
     
     // As nossas palavras-chave de pesquisa
     const cores = {
-        'nubank': '#820ad1',        
-        'inter': '#ff7a00',         
-        'mercado pago': '#009ee3',  
-        'mercado livre': '#fff159', 
+        // --- Bancos Digitais ---
+        'nubank': '#8A05BE',        
+        'inter': '#FF7A00',         
+        'c6': '#242424',            
+        'neon': '#00E5FF',          
+        'next': '#00FF5F',          
+        'will': '#FFEB00',          
+        'digio': '#151DE0',
+        'iti': '#EC008C',           /* O digital do Itaú (Rosa) */
+        'pan': '#00A1FC',           /* Banco Pan (Azul claro) */
+        'original': '#00C389',      /* Banco Original (Verde) */
+        
+        // --- Carteiras e Corretoras ---
+        'picpay': '#11C76F',        
+        'mercado pago': '#009EE3',  
+        'mercado livre': '#FFE600', 
+        'pagbank': '#1DB76C',       /* PagBank / PagSeguro */
+        'pagseguro': '#1DB76C',
+        'xp': '#000000',            
+        'rico': '#FF5C00',          /* Corretora Rico (Laranja escuro) */
+        'clear': '#000000',
+        'btg': '#002B49',           
+        
+        // --- Bancos Tradicionais e Cooperativas ---
+        'itau': '#EC7000',          
+        'itaú': '#EC7000',          
+        'bradesco': '#CC092F',      
+        'santander': '#EC0000',     
+        'bb': '#FCEB00',            
+        'banco do brasil': '#FCEB00',
+        'caixa': '#005CA9',         
+        'sicredi': '#00B150',       
+        'sicoob': '#00AE9D',        /* Cooperativa Sicoob (Verde água) */
+        'banrisul': '#005CA9',      /* Gigante no Sul do Brasil */
+        'safra': '#002855',         /* Banco Safra (Azul marinho escuro) */
+        'bmg': '#FF6A13',           /* Banco BMG (Laranja) */
+        'bv': '#00A859',            /* Banco BV (Verde) */
+        
+        // --- Cartões de Lojas ---
         'c&a': '#000000',           
-        'mais': '#e63946',          
-        'santander': '#ec0000',
-        'itaú': '#ec7000',
-        'itau': '#ec7000',
-        'bradesco': '#cc092f',
-        'digio': '#151de0',
-        'picpay': '#21c25e',
-        'banco do brasil': '#efd049',
-        'bb': '#efd049',
-        'c6': '#242424',
-        'caixa': '#f58220'
+        'mais': '#e63946'           
     };
     
     // O Detetive: Procura se o nome do banco digitado CONTÉM alguma das palavras-chave
@@ -2406,6 +2431,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
