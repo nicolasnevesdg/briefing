@@ -2791,21 +2791,32 @@ tr[style*="opacity: 0.7"] td {
 @media (min-width: 1025px) {
     #aba-planejamento {
         display: grid;
-        grid-template-columns: repeat(3, 1fr); /* Divide em 3 colunas iguais */
+        grid-template-columns: repeat(6, 1fr); /* Usamos 6 colunas base para poder dividir 50/50 ou 33/33 */
         gap: 20px;
-        grid-auto-flow: dense; /* Reorganiza os fechados para tapar buracos! */
-        align-items: start; /* Impede que os fechados estiquem a altura atoa */
+        align-items: start;
+        margin-bottom: 25px; /* Devolve o respiro inferior antes da aba de saldo */
     }
 
+    /* ESTADO PADRÃO (Tudo fechado): 3 abas dividindo o espaço em 3 partes (ocupa 2 colunas de 6) */
     #aba-planejamento > .chart-card {
-        grid-column: span 1; /* Fechado: ocupa apenas 1 coluna */
-        margin-bottom: 0 !important; /* Tira a margem para usar o gap do grid */
+        grid-column: span 2; 
+        margin-bottom: 0 !important; 
+        order: 2; /* Todo mundo na linha 2 por padrão */
     }
 
+    /* ESTADO ABERTO: Ocupa 100% da largura (6 colunas de 6) e pula para o topo */
     #aba-planejamento > .chart-card.expanded {
-        grid-column: 1 / -1; /* Aberto: Toma a linha toda de fora a fora! */
+        grid-column: 1 / -1; 
+        order: 1; /* Força o bloco aberto a ser o primeiro (ficar em cima) */
+    }
+
+    /* A MÁGICA DOS 50/50: Se ALGUMA aba estiver aberta (has(.expanded)), 
+       os blocos que ficaram fechados vão ocupar METADE do espaço (3 colunas de 6) */
+    #aba-planejamento:has(.chart-card.expanded) > .chart-card:not(.expanded) {
+        grid-column: span 3;
     }
 }
+
 
 
 
