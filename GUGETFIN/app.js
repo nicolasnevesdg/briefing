@@ -2351,6 +2351,61 @@ function garantirOrdemCronologica() {
     if (salsiData.entradas) salsiData.entradas.sort(classificarPorData);
 }
 
+// --- SISTEMA DE ONBOARDING (TUTORIAL) ---
+let slideAtualOnb = 1;
+const totalSlidesOnb = 5;
+
+function abrirOnboarding() {
+    const modal = document.getElementById('modal-onboarding');
+    if (modal) {
+        slideAtualOnb = 1;
+        atualizarVisualOnb();
+        modal.showModal();
+    }
+}
+
+function proximoSlideOnb() {
+    if (slideAtualOnb < totalSlidesOnb) {
+        slideAtualOnb++;
+        atualizarVisualOnb();
+    } else {
+        fecharOnboarding(); // Se for o último, fecha.
+    }
+}
+
+function atualizarVisualOnb() {
+    // Esconde todos os slides e mostra só o atual
+    for (let i = 1; i <= totalSlidesOnb; i++) {
+        const slide = document.getElementById(`onb-slide-${i}`);
+        const dot = document.getElementById(`dot-${i}`);
+        
+        if (slide) slide.style.display = (i === slideAtualOnb) ? 'block' : 'none';
+        
+        // Pinta a barrinha de progresso no topo
+        if (dot) dot.classList.toggle('active', i <= slideAtualOnb);
+    }
+
+    // Muda o texto do botão no último slide
+    const btnNext = document.getElementById('btn-onb-next');
+    if (btnNext) {
+        btnNext.innerText = (slideAtualOnb === totalSlidesOnb) ? 'Começar a Usar! 🎉' : 'Próximo ❯';
+    }
+}
+
+function fecharOnboarding() {
+    document.getElementById('modal-onboarding').close();
+    // Marca no navegador do usuário que ele já fez o tutorial!
+    localStorage.setItem('guget_onboarding_concluido', 'true');
+}
+
+// Verifica automaticamente ao carregar a página se o usuário é novo
+document.addEventListener('DOMContentLoaded', () => {
+    // Se a chave não existir no localStorage, é a primeira vez dele!
+    if (!localStorage.getItem('guget_onboarding_concluido')) {
+        // Dá um pequeno delay de 1 segundo para a tela carregar bonita antes do pop-up
+        setTimeout(abrirOnboarding, 1000);
+    }
+});
 
 
 
