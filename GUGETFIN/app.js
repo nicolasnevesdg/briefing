@@ -105,6 +105,9 @@ function atualizarHumorSalsicha(saldo) {
 }
 
 function renderizar() {
+
+	if (typeof garantirOrdemCronologica === 'function') garantirOrdemCronologica();
+	
     const m = dataFiltro.getMonth();
     const a = dataFiltro.getFullYear();
     const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -2321,6 +2324,32 @@ document.addEventListener('visibilitychange', async () => {
     }
 });
 
+// --- SISTEMA DE INVERSÃO DE ORDEM (MAIS NOVOS / MAIS VELHOS) ---
+let ordemMaisNovos = true; // Padrão: mais novos no topo
+
+function alternarOrdem() {
+    ordemMaisNovos = !ordemMaisNovos; 
+    
+    // Gira TODOS os ícones das abas ao mesmo tempo usando a classe
+    const icones = document.querySelectorAll('.icone-ordem-rot');
+    icones.forEach(icone => {
+        icone.style.transform = ordemMaisNovos ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+    
+    renderizar(); // Manda desenhar a tela toda de novo com a nova ordem!
+}
+
+// Arrasta os itens na memória antes de desenhar
+function garantirOrdemCronologica() {
+    const classificarPorData = (a, b) => {
+        const dataA = new Date(a.dataCompra || a.data || 0).getTime();
+        const dataB = new Date(b.dataCompra || b.data || 0).getTime();
+        return ordemMaisNovos ? (dataB - dataA) : (dataA - dataB);
+    };
+
+    if (salsiData.transacoes) salsiData.transacoes.sort(classificarPorData);
+    if (salsiData.entradas) salsiData.entradas.sort(classificarPorData);
+}
 
 
 
