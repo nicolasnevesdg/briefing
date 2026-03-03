@@ -112,7 +112,7 @@ function renderizar() {
     const a = dataFiltro.getFullYear();
     const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
-    salsiData.transacoes.sort((a, b) => new Date(a.dataCompra) - new Date(b.dataCompra));
+    if (typeof garantirOrdemCronologica === 'function') garantirOrdemCronologica();
 
     document.getElementById('display-mes-ano').innerText = `${mesesNomes[m]} ${a}`;
     document.getElementById('ano-badge-dinamico').innerText = a;
@@ -2350,6 +2350,7 @@ function garantirOrdemCronologica() {
     if (salsiData.transacoes) salsiData.transacoes.sort(classificarPorData);
     if (salsiData.entradas) salsiData.entradas.sort(classificarPorData);
 }
+
 
 
 
