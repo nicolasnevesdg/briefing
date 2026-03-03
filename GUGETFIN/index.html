@@ -759,47 +759,72 @@
 	    </div>
 	</dialog>
 
-<dialog id="modal-onboarding" class="modal-estilizado">
-    
-    <div class="onb-progress">
-        <div class="onb-dot" id="dot-1"></div>
-        <div class="onb-dot" id="dot-2"></div>
-        <div class="onb-dot" id="dot-3"></div>
-        <div class="onb-dot" id="dot-4"></div>
-        <div class="onb-dot" id="dot-5"></div>
-    </div>
+<dialog id="modal-onboarding">
+    <div class="onb-wrapper">
+        
+        <div class="onb-progress">
+            <div class="onb-dot" id="dot-1"></div>
+            <div class="onb-dot" id="dot-2"></div>
+            <div class="onb-dot" id="dot-3"></div>
+            <div class="onb-dot" id="dot-4"></div>
+            <div class="onb-dot" id="dot-5"></div>
+        </div>
 
-    <div class="onb-content">
         <div id="onb-slide-1" class="onb-slide">
-            <h2 class="onb-title">Bem-vindo ao Guget Fin! 🚀</h2>
-            <p class="onb-text">Chega de planilhas confusas. Aqui você tem o controle total do seu dinheiro de forma simples, visual e salva na nuvem. Vamos dar uma volta rápida para você preparar a sua nova casa financeira.</p>
+            <div class="onb-content-center">
+                <h2 class="onb-title">Bem-vindo! 🚀</h2>
+                <p class="onb-text">Controle seu dinheiro de forma simples, visual e salva na nuvem.</p>
+            </div>
+            <div class="onb-actions">
+                <button onclick="proximoSlideOnb()" class="btn-onb-proximo">Vamos lá ❯</button>
+                <button onclick="fecharOnboarding()" class="btn-onb-pular">Pular</button>
+            </div>
         </div>
 
-        <div id="onb-slide-2" class="onb-slide" style="display: none;">
-            <h2 class="onb-title">O Passo Zero: Seus Bancos 🏦</h2>
-            <p class="onb-text">Antes de anotar gastos, vá na aba <strong>Cartões</strong> e cadastre os seus.<br>
-            <span class="onb-dica">💡 <strong>Dica de Ouro:</strong> Mesmo que você só use a função de <strong>Débito</strong>, é fundamental cadastrar o nome do seu banco lá! Isso vai organizar todas as suas tags e filtros perfeitamente.</span></p>
+        <div id="onb-slide-2" class="onb-slide">
+            <div class="onb-content-center">
+                <h2 class="onb-title">Passo Zero 🏦</h2>
+                <p class="onb-text">Antes de tudo, vá na aba <strong>Cartões</strong> e cadastre suas contas.</p>
+                <div class="onb-dica">💡 Até quem só usa <strong>Débito</strong> precisa cadastrar o banco lá para organizar as tags!</div>
+            </div>
+            <div class="onb-actions">
+                <button onclick="proximoSlideOnb()" class="btn-onb-proximo">Entendido ❯</button>
+                <button onclick="fecharOnboarding()" class="btn-onb-pular">Pular</button>
+            </div>
         </div>
 
-        <div id="onb-slide-3" class="onb-slide" style="display: none;">
-            <h2 class="onb-title">Registre tudo em segundos 💸</h2>
-            <p class="onb-text">Com os bancos cadastrados, comece a registrar suas Entradas (salário, freelas) e seus Gastos. Você pode separar tudo por Cartão de Crédito, Débito ou Gastos Fixos. Quanto mais você anota, mais inteligente o app fica.</p>
+        <div id="onb-slide-3" class="onb-slide">
+            <div class="onb-content-center">
+                <h2 class="onb-title">Registre Tudo 💸</h2>
+                <p class="onb-text">Anote Entradas e Gastos com facilidade. Nós fazemos as contas para você.</p>
+            </div>
+            <div class="onb-actions">
+                <button onclick="proximoSlideOnb()" class="btn-onb-proximo">Próximo ❯</button>
+                <button onclick="fecharOnboarding()" class="btn-onb-pular">Pular</button>
+            </div>
         </div>
 
-        <div id="onb-slide-4" class="onb-slide" style="display: none;">
-            <h2 class="onb-title">O poder dos Filtros 🔍</h2>
-            <p class="onb-text">Quer saber para onde seu dinheiro está indo? Use a barra de filtros no topo para buscar lançamentos específicos, ou filtre por Categorias e Bancos. Navegue pelas setas dos meses para ver o passado ou planejar o futuro.</p>
+        <div id="onb-slide-4" class="onb-slide">
+            <div class="onb-content-center">
+                <h2 class="onb-title">Analise 🔍</h2>
+                <p class="onb-text">Use os filtros no topo para buscar lançamentos e ver para onde o dinheiro está indo.</p>
+            </div>
+            <div class="onb-actions">
+                <button onclick="proximoSlideOnb()" class="btn-onb-proximo">Próximo ❯</button>
+                <button onclick="fecharOnboarding()" class="btn-onb-pular">Pular</button>
+            </div>
         </div>
 
-        <div id="onb-slide-5" class="onb-slide" style="display: none;">
-            <h2 class="onb-title">Planeje seus Sonhos 🎯</h2>
-            <p class="onb-text">O Guget Fin não é só para pagar boletos. Na aba de Planejamento, você pode criar Metas de economia e montar sua Lista de Desejos. Sonhe alto e deixe a gente te ajudar a chegar lá!</p>
+        <div id="onb-slide-5" class="onb-slide">
+            <div class="onb-content-center">
+                <h2 class="onb-title">Sonhe Alto 🎯</h2>
+                <p class="onb-text">Crie metas e uma Lista de Desejos. Nós ajudamos você a chegar lá!</p>
+            </div>
+            <div class="onb-actions">
+                <button onclick="fecharOnboarding()" class="btn-onb-proximo">Começar a Usar! 🎉</button>
+            </div>
         </div>
 
-        <div class="onb-actions">
-            <button onclick="fecharOnboarding()" class="btn-onb-pular">Pular</button>
-            <button id="btn-onb-next" onclick="proximoSlideOnb()" class="btn-onb-proximo">Próximo ❯</button>
-        </div>
     </div>
 </dialog>
 	
@@ -860,6 +885,7 @@
 </body>
 
 </html>
+
 
 
 
