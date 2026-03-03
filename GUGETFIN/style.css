@@ -2787,6 +2787,25 @@ tr[style*="opacity: 0.7"] td {
     .onb-text { font-size: 16px; }
 }
 
+/* --- LAYOUT GRID PARA ABAS DE PLANEJAMENTO (APENAS PC) --- */
+@media (min-width: 1025px) {
+    #aba-planejamento {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* Divide em 3 colunas iguais */
+        gap: 20px;
+        grid-auto-flow: dense; /* Reorganiza os fechados para tapar buracos! */
+        align-items: start; /* Impede que os fechados estiquem a altura atoa */
+    }
+
+    #aba-planejamento > .chart-card {
+        grid-column: span 1; /* Fechado: ocupa apenas 1 coluna */
+        margin-bottom: 0 !important; /* Tira a margem para usar o gap do grid */
+    }
+
+    #aba-planejamento > .chart-card.expanded {
+        grid-column: 1 / -1; /* Aberto: Toma a linha toda de fora a fora! */
+    }
+}
 
 
 
