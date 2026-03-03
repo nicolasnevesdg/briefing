@@ -182,7 +182,7 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 }
 }
 
-.btn-del { background: none; border: none; color: #cbd5e0; cursor: pointer; font-size: 18px; }
+.btn-del { background: unset; border: none; color: #cbd5e0; cursor: pointer; font-size: 18px; }
 .btn-del:hover { color: var(--acc-red); }
 
 .pago-checkbox { appearance: none; width: 19px; height: 19px; border: 2px solid var(--acc-green); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -657,7 +657,7 @@ dialog input, dialog select, dialog textarea { width: 100%; padding: 12px; margi
 }
 
 .chart-year-control button {
-    background: none;
+    background: unset;
     border: none;
     color: var(--text-sec);
     cursor: pointer;
@@ -856,7 +856,7 @@ tr[style*="opacity: 0.7"] td {
     position: absolute;
     top: 0;
     right: 0;
-    background: none;
+    background: unset;
     border: none;
     color: #cbd5e0; /* Um cinza claro elegante */
     font-size: 20px;
@@ -954,7 +954,7 @@ tr[style*="opacity: 0.7"] td {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: none;
+    background: unset;
     border: none;
     color: #cbd5e0;
     font-size: 18px;
@@ -2095,7 +2095,7 @@ tr[style*="opacity: 0.7"] td {
     .header-com-filtro { justify-content: center; padding-top: 5px; margin-bottom: 15px; }
     .filtros-wrapper { width: 100%; justify-content: center; }
     .custom-dropdown { flex: 1; max-width: 160px; }
-    .dropdown-trigger { width: 100%; box-sizing: border-box; background: none; border: none;}
+    .dropdown-trigger { width: 100%; box-sizing: border-box; background: unset; border: none;}
     .dropdown-menu { left: 0; right: auto; width: 100%; } 
 	.dropdown-trigger > .chevron { border-width: 0 1px 1px 0; }
 	
@@ -2347,7 +2347,7 @@ tr[style*="opacity: 0.7"] td {
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    background: none;
+    background: unset;
     border: none;
     color: var(--text-sec);
     cursor: pointer;
@@ -2623,6 +2623,7 @@ tr[style*="opacity: 0.7"] td {
         background: #ffffff !important;
     }
 }
+
 
 
 
