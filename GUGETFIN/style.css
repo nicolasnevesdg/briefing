@@ -2624,6 +2624,92 @@ tr[style*="opacity: 0.7"] td {
     }
 }
 
+/* --- MODAL DE ONBOARDING --- */
+#modal-onboarding {
+    padding: 0;
+    max-width: 450px;
+    overflow: hidden;
+    border-radius: var(--radius);
+}
+
+.onb-progress {
+    display: flex;
+    gap: 4px;
+    padding: 20px 20px 0 20px;
+}
+
+.onb-dot {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.onb-dot.active {
+    background: var(--acc-green);
+}
+
+.onb-content {
+    padding: 30px 25px;
+}
+
+.onb-title {
+    color: var(--dark-green);
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+
+.onb-text {
+    color: var(--text-sec);
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+.onb-dica {
+    background: var(--bg-app);
+    padding: 12px;
+    border-radius: 8px;
+    display: inline-block;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    font-size: 13.5px;
+    margin-top: 10px;
+}
+
+.onb-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-onb-pular {
+    background: transparent;
+    color: var(--text-sec);
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    text-align: left;
+}
+
+.btn-onb-proximo {
+    background: var(--dark-green);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    flex: 2;
+    transition: opacity 0.2s;
+}
+
+.btn-onb-proximo:hover {
+    opacity: 0.9;
+}
 
 
 
