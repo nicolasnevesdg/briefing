@@ -1036,17 +1036,42 @@ function limparMesAtual() {
     }
 }
 
+// --- SISTEMA DE ACORDEON INTELIGENTE (PLANEJAMENTO) ---
+
+// Função nova: Fecha os outros cards automaticamente no PC
+function fecharOutrosPlanejamento(excecaoId) {
+    if (window.innerWidth <= 1024) return; // No celular, continua livre (pode abrir todos)
+
+    const listas = [
+        { id: 'card-grafico', icon: 'chart-toggle-icon' },
+        { id: 'card-metas-acordeon', icon: 'meta-toggle-icon' },
+        { id: 'card-desejos-acordeon', icon: 'desejo-toggle-icon' }
+    ];
+
+    listas.forEach(item => {
+        if (item.id !== excecaoId) {
+            const card = document.getElementById(item.id);
+            const icone = document.getElementById(item.icon);
+            if (card && card.classList.contains('expanded')) {
+                card.classList.remove('expanded');
+                if (icone) icone.style.transform = 'rotate(-135deg)';
+            }
+        }
+    });
+}
+
 function toggleGrafico() {
+    fecharOutrosPlanejamento('card-grafico'); // Força os vizinhos a fecharem
+    
     const card = document.getElementById('card-grafico');
     const seta = document.getElementById('chart-toggle-icon');
     
     card.classList.toggle('expanded');
     
     if (card.classList.contains('expanded')) {
-        seta.style.transform = 'rotate(0deg)'; // Seta para baixo (aberto)
+        seta.style.transform = 'rotate(0deg)';
         setTimeout(atualizarGraficoAnual, 100);
     } else {
-        // Altere aqui para -135deg para combinar com o ícone de metas
         seta.style.transform = 'rotate(-135deg)'; 
     }
 }
@@ -1440,6 +1465,8 @@ salsiData.metas.forEach(meta => {
 }
 
 function toggleMetas() {
+    fecharOutrosPlanejamento('card-metas-acordeon'); // Força os vizinhos a fecharem
+    
     const card = document.getElementById('card-metas-acordeon');
     const seta = document.getElementById('meta-toggle-icon');
     
@@ -1449,7 +1476,7 @@ function toggleMetas() {
         seta.style.transform = 'rotate(0deg)';
         setTimeout(atualizarGraficoMeta, 100); 
     } else {
-        seta.style.transform = 'rotate(-135deg)'; // Padrão fechado
+        seta.style.transform = 'rotate(-135deg)';
     }
 }
 
@@ -2283,13 +2310,14 @@ async function excluirDesejo(index) {
 
 // Função para abrir/fechar usando a SUA animação original do CSS
 function toggleDesejos() {
+    fecharOutrosPlanejamento('card-desejos-acordeon'); // Força os vizinhos a fecharem
+    
     const card = document.getElementById('card-desejos-acordeon');
-    const icone = document.getElementById('desejo-toggle-icon'); // Pega o ícone da seta
+    const icone = document.getElementById('desejo-toggle-icon');
     
     if (card) {
-        card.classList.toggle('expanded'); // O seu CSS faz a animação de abrir/fechar
+        card.classList.toggle('expanded');
         
-        // Gira a seta consoante o estado do card
         if (card.classList.contains('expanded')) {
             if(icone) icone.style.transform = 'rotate(0deg)';
         } else {
@@ -2426,6 +2454,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
