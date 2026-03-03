@@ -2374,21 +2374,21 @@ function proximoSlideOnb() {
 }
 
 function atualizarVisualOnb() {
-    // Esconde todos os slides e mostra só o atual
     for (let i = 1; i <= totalSlidesOnb; i++) {
         const slide = document.getElementById(`onb-slide-${i}`);
         const dot = document.getElementById(`dot-${i}`);
         
-        if (slide) slide.style.display = (i === slideAtualOnb) ? 'block' : 'none';
+        // Coloca ou tira a classe 'active' para ativar a animação em cascata
+        if (slide) {
+            if (i === slideAtualOnb) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
+        }
         
-        // Pinta a barrinha de progresso no topo
+        // Atualiza a bolinha de progresso no topo
         if (dot) dot.classList.toggle('active', i <= slideAtualOnb);
-    }
-
-    // Muda o texto do botão no último slide
-    const btnNext = document.getElementById('btn-onb-next');
-    if (btnNext) {
-        btnNext.innerText = (slideAtualOnb === totalSlidesOnb) ? 'Começar a Usar! 🎉' : 'Próximo ❯';
     }
 }
 
@@ -2406,6 +2406,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
