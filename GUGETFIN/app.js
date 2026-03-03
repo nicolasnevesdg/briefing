@@ -821,16 +821,11 @@ function editarGasto(index) {
     document.getElementById('modal-gasto').showModal();
 }
 function abrirModalEntrada() { document.getElementById('modal-entrada').showModal(); }
-// Banco de dados de cores das marcas
-function getCor(b) {
-    if (!b) return '#94a3b8'; // Proteção contra valores vazios
 
-    // Transforma o nome que o utilizador digitou em letras minúsculas para não haver erros
-    const nomeLower = b.toLowerCase();
-    
-    // As nossas palavras-chave de pesquisa
+// O Cérebro do Contraste: Define a cor do banco e o contraste legível da letra
+function getCor(b) {
+    // 1. A paleta premium (Mais de 30 instituições)
     const cores = {
-        // --- Bancos Digitais ---
         'nubank': '#8A05BE',        
         'inter': '#FF7A00',         
         'c6': '#242424',            
@@ -838,22 +833,18 @@ function getCor(b) {
         'next': '#00FF5F',          
         'will': '#FFEB00',          
         'digio': '#151DE0',
-        'iti': '#EC008C',           /* O digital do Itaú (Rosa) */
-        'pan': '#00A1FC',           /* Banco Pan (Azul claro) */
-        'original': '#00C389',      /* Banco Original (Verde) */
-        
-        // --- Carteiras e Corretoras ---
+        'iti': '#EC008C',           
+        'pan': '#00A1FC',           
+        'original': '#00C389',      
         'picpay': '#11C76F',        
         'mercado pago': '#009EE3',  
         'mercado livre': '#FFE600', 
-        'pagbank': '#1DB76C',       /* PagBank / PagSeguro */
+        'pagbank': '#1DB76C',       
         'pagseguro': '#1DB76C',
         'xp': '#000000',            
-        'rico': '#FF5C00',          /* Corretora Rico (Laranja escuro) */
+        'rico': '#FF5C00',          
         'clear': '#000000',
         'btg': '#002B49',           
-        
-        // --- Bancos Tradicionais e Cooperativas ---
         'itau': '#EC7000',          
         'itaú': '#EC7000',          
         'bradesco': '#CC092F',      
@@ -862,27 +853,45 @@ function getCor(b) {
         'banco do brasil': '#FCEB00',
         'caixa': '#005CA9',         
         'sicredi': '#00B150',       
-        'sicoob': '#00AE9D',        /* Cooperativa Sicoob (Verde água) */
-        'banrisul': '#005CA9',      /* Gigante no Sul do Brasil */
-        'safra': '#002855',         /* Banco Safra (Azul marinho escuro) */
-        'bmg': '#FF6A13',           /* Banco BMG (Laranja) */
-        'bv': '#00A859',            /* Banco BV (Verde) */
-        
-        // --- Cartões de Lojas ---
+        'sicoob': '#00AE9D',        
+        'banrisul': '#005CA9',      
+        'safra': '#002855',         
+        'bmg': '#FF6A13',           
+        'bv': '#00A859',            
         'c&a': '#000000',           
         'mais': '#e63946'           
     };
+
+    let corFundo = '#94a3b8'; // Cor neutra para bancos não mapeados (Cinza)
     
-    // O Detetive: Procura se o nome do banco digitado CONTÉM alguma das palavras-chave
-    for (const [chave, cor] of Object.entries(cores)) {
-        if (nomeLower.includes(chave)) {
-            return cor; // Se achar "inter" dentro de "inter (débito)", devolve a cor e pára
+    // 2. Busca o banco e define a cor de fundo
+    if (b) {
+        const nomeLower = b.toLowerCase();
+        for (const [chave, cor] of Object.entries(cores)) {
+            if (nomeLower.includes(chave)) {
+                corFundo = cor;
+                break; // Achou o banco, para a pesquisa
+            }
         }
     }
+
+    // 3. O CÉREBRO MATEMÁTICO (Fórmula de Luminância YIQ)
+    // Tira o "#" e converte para os canais Red, Green e Blue
+    const hex = corFundo.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const bl = parseInt(hex.substring(4, 6), 16);
     
-    // Retorna a cor padrão cinzenta se for um banco desconhecido
-    return '#94a3b8';
+    // Calcula o brilho geral da cor
+    const luminosidade = ((r * 299) + (g * 587) + (bl * 114)) / 1000;
+    
+    // Se a luminosidade for maior ou igual a 128 (clara como o Will ou BB), texto PRETO. Senão, texto BRANCO.
+    const corTexto = luminosidade >= 128 ? '#000000' : '#ffffff';
+
+    // 4. O Truque Ninja: Devolve as duas cores na mesma string de estilo!
+    return `${corFundo}; color: ${corTexto} !important`;
 }
+
 function importarDadosJS(event) { 
     const leitor = new FileReader(); 
     leitor.onload = function(e) { 
@@ -2431,6 +2440,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
