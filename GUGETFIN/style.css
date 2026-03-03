@@ -1,7 +1,7 @@
 /* --- SalsiFin: Mint & Dark Forest Edition --- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-:root {
+:root { 
     /* Paleta baseada na referência Andrew Forbist */
     --bg-app: #f4f7f6;           /* Fundo levemente mentolado */
     --sidebar-bg: #ffffff;
@@ -2623,6 +2623,7 @@ tr[style*="opacity: 0.7"] td {
         background: #ffffff !important;
     }
 }
+
 
 
 
