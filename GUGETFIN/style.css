@@ -2624,12 +2624,15 @@ tr[style*="opacity: 0.7"] td {
     }
 }
 
-/* --- MODAL DE ONBOARDING --- */
+/* --- MODAL DE ONBOARDING (BASE E PC) --- */
 #modal-onboarding {
     padding: 0;
-    max-width: 450px;
+    width: 100%;
+    max-width: 450px; /* No PC, ele trava nesse tamanho */
     overflow: hidden;
     border-radius: var(--radius);
+    border: none;
+    background: var(--sidebar-bg);
 }
 
 .onb-progress {
@@ -2710,6 +2713,33 @@ tr[style*="opacity: 0.7"] td {
 .btn-onb-proximo:hover {
     opacity: 0.9;
 }
+
+/* --- AJUSTES EXCLUSIVOS PARA MOBILE --- */
+@media (max-width: 768px) {
+    #modal-onboarding {
+        width: 90vw; /* Ocupa 90% da tela do celular */
+        max-width: none;
+    }
+    
+    .onb-content {
+        padding: 25px 20px; /* Diminui o respiro interno para caber mais coisa */
+    }
+    
+    .onb-title {
+        font-size: 20px; /* Fonte levemente menor */
+        margin-bottom: 10px;
+    }
+    
+    .onb-text {
+        font-size: 14px; /* Texto mais compacto */
+        margin-bottom: 25px;
+    }
+    
+    .btn-onb-proximo, .btn-onb-pular {
+        padding: 10px 15px; /* Botões um pouco mais finos para não ocupar meia tela */
+    }
+}
+
 
 
 
