@@ -823,73 +823,59 @@ function editarGasto(index) {
 function abrirModalEntrada() { document.getElementById('modal-entrada').showModal(); }
 
 // O Cérebro do Contraste: Define a cor do banco e o contraste legível da letra
+// O Cérebro das Cores: Paleta Premium Escurecida (Padronizada para letra Branca)
 function getCor(b) {
-    // 1. A paleta premium (Mais de 30 instituições)
     const cores = {
         'nubank': '#8A05BE',        
-        'inter': '#FF7A00',         
+        'inter': '#D46A00',         // Laranja aprofundado (Fica lindo com branco)
         'c6': '#242424',            
-        'neon': '#00E5FF',          
-        'next': '#00FF5F',          
-        'will': '#FFEB00',          
+        'neon': '#008C99',          // Ciano escurecido (Teal)
+        'next': '#009E3A',          // Verde profundo
+        'will': '#A39400',          // Amarelo mostarda escuro
         'digio': '#151DE0',
-        'iti': '#EC008C',           
-        'pan': '#00A1FC',           
-        'original': '#00C389',      
-        'picpay': '#11C76F',        
-        'mercado pago': '#009EE3',  
-        'mercado livre': '#FFE600', 
-        'pagbank': '#1DB76C',       
-        'pagseguro': '#1DB76C',
+        'iti': '#D1007A',           
+        'pan': '#0080C9',           
+        'original': '#009E6D',      
+        'picpay': '#0D9E57',        
+        'mercado pago': '#0084BD',  
+        'mercado livre': '#B89C00', // Ouro escurecido
+        'pagbank': '#169155',       
+        'pagseguro': '#169155',
         'xp': '#000000',            
-        'rico': '#FF5C00',          
+        'rico': '#D94E00',          
         'clear': '#000000',
         'btg': '#002B49',           
-        'itau': '#EC7000',          
-        'itaú': '#EC7000',          
+        'itau': '#D96600',          
+        'itaú': '#D96600',          
         'bradesco': '#CC092F',      
-        'santander': '#EC0000',     
-        'bb': '#FCEB00',            
-        'banco do brasil': '#FCEB00',
+        'santander': '#D90000',     
+        'bb': '#003DA5',            // Azul Marinho Oficial do BB 
+        'banco do brasil': '#003DA5',
         'caixa': '#005CA9',         
-        'sicredi': '#00B150',       
-        'sicoob': '#00AE9D',        
+        'sicredi': '#009643',       
+        'sicoob': '#008C7E',        
         'banrisul': '#005CA9',      
         'safra': '#002855',         
-        'bmg': '#FF6A13',           
-        'bv': '#00A859',            
+        'bmg': '#E65C00',           
+        'bv': '#008C4A',            
         'c&a': '#000000',           
-        'mais': '#e63946'           
+        'mais': '#CC323E'           
     };
 
-    let corFundo = '#94a3b8'; // Cor neutra para bancos não mapeados (Cinza)
+    let corFundo = '#94a3b8'; // Cor cinza neutra padrão
     
-    // 2. Busca o banco e define a cor de fundo
     if (b) {
         const nomeLower = b.toLowerCase();
         for (const [chave, cor] of Object.entries(cores)) {
             if (nomeLower.includes(chave)) {
                 corFundo = cor;
-                break; // Achou o banco, para a pesquisa
+                break;
             }
         }
     }
 
-    // 3. O CÉREBRO MATEMÁTICO (Fórmula de Luminância YIQ)
-    // Tira o "#" e converte para os canais Red, Green e Blue
-    const hex = corFundo.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const bl = parseInt(hex.substring(4, 6), 16);
-    
-    // Calcula o brilho geral da cor
-    const luminosidade = ((r * 299) + (g * 587) + (bl * 114)) / 1000;
-    
-    // Se a luminosidade for maior ou igual a 128 (clara como o Will ou BB), texto PRETO. Senão, texto BRANCO.
-    const corTexto = luminosidade >= 128 ? '#000000' : '#ffffff';
-
-    // 4. O Truque Ninja: Devolve as duas cores na mesma string de estilo!
-    return `${corFundo}; color: ${corTexto} !important`;
+    // Retorna a cor de fundo adaptada e OBRIGA o texto a ser branco e sem bordas perdidas
+    return `${corFundo}; color: #ffffff !important; border: none !important;`;
 }
 
 function importarDadosJS(event) { 
@@ -2440,6 +2426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
