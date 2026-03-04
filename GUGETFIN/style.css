@@ -403,27 +403,6 @@ dialog input, dialog select, dialog textarea { width: 100%; padding: 12px; margi
 .ann-item small { font-size: 9px; font-weight: 800; color: var(--text-sec); letter-spacing: 0.05em; }
 .ann-item h4 { margin: 4px 0 12px 0; font-size: 16px; font-weight: 800; color: var(--dark-green); }
 
-/* --- Linha de Total Minimalista --- */
-.row-total { 
-    background-color: #f9fafb !important; 
-}
-
-.row-total td { 
-    border-top: 1px solid var(--border) !important; 
-    padding: 12px 8px !important;
-    font-size: 10px !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.05em;
-    color: var(--text-sec) !important;
-    text-transform: uppercase;
-}
-
-.row-total td:last-child { 
-    color: var(--dark-green) !important; 
-    font-size: 13px !important; 
-    text-align: right;
-}
-
 .txt-green { color: #10b981; }
 .txt-red { color: #ef4444; }
 
@@ -467,62 +446,8 @@ dialog input, dialog select, dialog textarea { width: 100%; padding: 12px; margi
 
 /* Mantenha os outros estilos (sidebar, stats-grid, chart, etc.) */
 
-/* --- Estilo da Lista dentro do Modal --- */
-.config-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: 200px;
-    overflow-y: auto;
-    margin-top: 15px;
-}
-
-.cartao-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    background: var(--bg-app);
-    border-radius: 10px;
-    border: 1px solid var(--border);
-}
-
-.cartao-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
 .cartao-info strong { font-size: 13px; color: var(--dark-green); }
 .cartao-info span { font-size: 10px; color: var(--text-sec); font-weight: 600; }
-
-.novo-cartao-form h4 {
-    font-size: 12px;
-    color: var(--text-sec);
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-/* --- Layout Split para Modais --- */
-.modal-split {
-    display: flex;
-    gap: 40px;
-    align-items: flex-start;
-}
-
-.modal-column {
-    flex: 1;
-}
-
-.column-title {
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--text-sec);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 20px;
-}
 
 .input-label {
     font-size: 11px;
@@ -548,16 +473,6 @@ dialog input, dialog select, dialog textarea { width: 100%; padding: 12px; margi
 .cartao-item:hover {
     border-color: var(--acc-green);
     transform: translateX(5px);
-}
-
-.cartao-brand-tag {
-    font-size: 10px;
-    font-weight: 800;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-bottom: 4px;
-    display: inline-block;
 }
 
 /* --- Layout Split para Modal de Cartões --- */
@@ -711,13 +626,6 @@ tr[style*="opacity: 0.7"] td {
     margin: 0 auto;
 }
 
-.detalhe-item {
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: space-between;
-}
-
 .detalhe-item strong {
     color: var(--dark-green); /* Use a cor verde escura do seu card de saldo */
 }
@@ -760,56 +668,6 @@ tr[style*="opacity: 0.7"] td {
 .det-linha strong {
     color: #1b3a32; /* O verde escuro do seu Saldo Mensal */
     font-weight: 600;
-}
-
-/* O novo botão de fechar "X" estilizado */
-.btn-close-x {
-    background: #ffeded; /* Fundo avermelhado bem suave */
-    border: 1px solid #ffdbdb; /* Borda levemente mais escura que o fundo */
-    width: 34px;
-    height: 34px;
-    border-radius: 10px; /* Bordas arredondadas conforme a imagem */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    padding: 0;
-}
-
-/* O ícone "X" dentro do botão */
-.btn-close-x span {
-    color: #ff5c5c; /* Vermelho vibrante para o X */
-    font-size: 1.4rem;
-    font-weight: bold;
-    line-height: 1;
-}
-
-/* Efeito ao passar o mouse */
-.btn-close-x:hover {
-    background: #ffdada;
-    transform: scale(1.05);
-}
-
-/* Este é o estilo padrão que você já usa nos outros modais */
-.btn-close {
-    background: #f0f2f1;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px; /* Bordas levemente arredondadas */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: #7a8b87;
-    transition: all 0.2s ease;
-}
-
-.btn-close:hover {
-    background: #e2e5e4;
-    color: #1b3a32;
 }
 
 /* No seu CSS ou direto na Tag */
@@ -1699,23 +1557,6 @@ tr[style*="opacity: 0.7"] td {
 	.card.resumo-mensal h3, .card.card-terceiros h3 {
 		display: none;
     }
-	
-	.container-abas-pasta {
-        display: flex;
-        gap: 0;
-        padding-left: 10px;
-        margin-bottom: -1px; /* Encosta no card */
-        position: relative;
-        z-index: 10;
-    }
-
-    .tab-pasta.active {
-        background: #ffffff;
-        color: var(--dark-green);
-        border: 1px solid #f0f2f1;
-        border-bottom: none; /* Remove a borda de baixo */
-        position: relative;
-    }
 
     /* O elemento que vai 'apagar' a linha do card */
     .tab-pasta.active::after {
@@ -1862,52 +1703,6 @@ tr[style*="opacity: 0.7"] td {
     display: none !important;
 }
 	
-}
-
-@media (max-width: 1024px) {
-    .terceiros-item-mobile {
-        background: #ffffff;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 12px;
-        position: relative;
-    }
-
-    .terceiros-linha {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 6px 0;
-        border-bottom: 1px solid #f8fcf9;
-    }
-
-    .terceiros-linha:last-of-type { border-bottom: none; }
-
-    .ter-label {
-        font-size: 10px;
-        font-weight: 700;
-        color: #a0aec0;
-        text-transform: uppercase;
-    }
-
-    .ter-info { font-size: 13px; color: var(--text-main); text-align: right; }
-    .ter-valor { font-weight: 800; color: #ef4444; font-size: 14px; }
-
-    .btn-del-absolute {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: #fff1f1;
-        color: #ef4444;
-        border: none;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
 }
 
 #g-forma-pagamento, #g-inicio-pagamento {
@@ -2831,6 +2626,7 @@ tr[style*="opacity: 0.7"] td {
 .mobile-total-card span:last-child {
     white-space: nowrap; 
 }
+
 
 
 
