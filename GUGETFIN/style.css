@@ -2583,33 +2583,90 @@ tr[style*="opacity: 0.7"] td {
     .onb-text { font-size: 16px; }
 }
 
-/* --- LAYOUT GRID PARA ABAS DE PLANEJAMENTO (APENAS PC) --- */
+/* --- LAYOUT DE ABAS PREMIUM (APENAS PC) --- */
 @media (min-width: 1025px) {
     #aba-planejamento {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr); /* Usamos 6 colunas base para poder dividir 50/50 ou 33/33 */
-        gap: 20px;
-        align-items: start;
-        margin-bottom: 25px; /* Devolve o respiro inferior antes da aba de saldo */
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end; /* Alinha as abas pela base perfeitamente */
+        margin-bottom: 25px;
+        position: relative;
     }
 
-    /* ESTADO PADRÃO (Tudo fechado): 3 abas dividindo o espaço em 3 partes (ocupa 2 colunas de 6) */
+    /* O Segredo: Remove a "caixa" do card, mas mantém o HTML intacto pro Mobile */
     #aba-planejamento > .chart-card {
-        grid-column: span 2; 
-        margin-bottom: 0 !important; 
-        order: 2; /* Todo mundo na linha 2 por padrão */
+        display: contents; 
     }
 
-    /* ESTADO ABERTO: Ocupa 100% da largura (6 colunas de 6) e pula para o topo */
-    #aba-planejamento > .chart-card.expanded {
-        grid-column: 1 / -1; 
-        order: 1; /* Força o bloco aberto a ser o primeiro (ficar em cima) */
+    /* 1. OS BOTÕES VIRAM ABAS NO TOPO */
+    #aba-planejamento .card-header {
+        order: 1; /* Força todos os botões a ficarem na linha 1 */
+        width: calc(33.333% - 10px);
+        margin-right: 15px;
+        background: #f4f7f6; /* Fundo inativo para não chamar atenção */
+        border: 1px solid var(--border);
+        border-bottom: none;
+        border-radius: 16px 16px 0 0;
+        transition: all 0.3s ease;
+        opacity: 0.5; /* Fica apagadinho quando fechado */
+        position: relative;
+        top: 1px; /* Desce 1px para "costurar" com a caixa de baixo */
+        z-index: 1;
+        justify-content: center; /* Centraliza o título e o botão de ADD se houver */
+        gap: 15px; 
     }
 
-    /* A MÁGICA DOS 50/50: Se ALGUMA aba estiver aberta (has(.expanded)), 
-       os blocos que ficaram fechados vão ocupar METADE do espaço (3 colunas de 6) */
-    #aba-planejamento:has(.chart-card.expanded) > .chart-card:not(.expanded) {
-        grid-column: span 3;
+    /* Tira a margem da última aba para preencher 100% do espaço */
+    #aba-planejamento .chart-card:nth-child(3) .card-header {
+        margin-right: 0;
+    }
+
+    /* 2. O ESTADO ATIVO DA ABA */
+    #aba-planejamento .chart-card.expanded .card-header {
+        opacity: 1;
+        background: #ffffff;
+        border-color: var(--border);
+        border-bottom: 2px solid #ffffff; /* Apaga a linha para fundir com o conteúdo */
+        z-index: 3; /* Fica acima da caixa */
+        padding-top: 25px; /* A aba ativa cresce um pouquinho pra cima (efeito pasta) */
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.01);
+    }
+
+    /* Esconde as setinhas, pois no PC agora são Abas clicáveis */
+    #aba-planejamento .chevron {
+        display: none !important;
+    }
+
+    /* 3. A CAIXA GIGANTE DE CONTEÚDO (Linha de baixo) */
+    #aba-planejamento .chart-content-wrapper {
+        order: 2; /* Força os conteúdos a descerem para debaixo dos botões */
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        z-index: 2;
+        
+        /* A curva matemática que tira o "choque" e desce parecendo seda */
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        padding: 0 30px;
+        transition: max-height 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease, padding 0.5s ease !important;
+    }
+    
+    #aba-planejamento .chart-card.expanded .chart-content-wrapper {
+        max-height: 1500px;
+        opacity: 1;
+        padding: 30px;
+    }
+
+    /* DETALHE DE LUXO: O formato da pasta se adapta a aba selecionada! */
+    #aba-planejamento:has(.chart-card:nth-child(1).expanded) .chart-content-wrapper {
+        border-top-left-radius: 0; /* Cola perfeitamente com o esquadro da 1ª aba */
+    }
+    #aba-planejamento:has(.chart-card:nth-child(3).expanded) .chart-content-wrapper {
+        border-top-right-radius: 0; /* Cola perfeitamente com a última aba */
     }
 }
 
@@ -2626,6 +2683,7 @@ tr[style*="opacity: 0.7"] td {
 .mobile-total-card span:last-child {
     white-space: nowrap; 
 }
+
 
 
 
