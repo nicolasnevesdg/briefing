@@ -193,8 +193,9 @@ function renderizar() {
     if(fMobile) fMobile.innerHTML = ''; 
     if(mTerceiros) mTerceiros.innerHTML = '';
 
-    // 3. Acumuladores do Mês (AGORA COM O TERCEIROS)
+    // 3. Acumuladores do Mês
     let totalGastoMes = 0, totalCartMes = 0, totalFixoMes = 0, totalDebitoMes = 0, totalTerceirosMes = 0;
+    let totalGastoMesGeral = 0, totalFixoMesGeral = 0; // NOVOS: Somam tudo, inclusive não pagos
     let tagSum = {}, bankSum = {};
     let temGastoTerceiro = false;
 
@@ -294,11 +295,22 @@ function renderizar() {
                     totalGastoMes += val;
                     tagSum[t.categoria] = (tagSum[t.categoria] || 0) + val;
                 }
+                if (t.tipo !== 'fixo') {
+                   totalGastoMesGeral += val; // Entra na previsão do resumo
+                }
 
+                // 👇 AQUI ESTAVA O PROBLEMA: Faltava esta linha para abrir os fixos!
                 if (t.tipo === 'fixo') {
-                    if (t.pago === true) totalFixoMes += val;
+                    
+                    if (t.pago === true) {
+                        totalFixoMes += val;
+                        totalGastoMesGeral += val; // Soma no geral pago
+                    }
+                    totalFixoMesGeral += val; // Sempre soma no total previsto da aba fixos
+                    if(t.pago === false) totalGastoMesGeral += val; // Se não tá pago, soma no geral previsto também
                     
                     const estiloPC = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
+                    
                     if(fTable) {
                         fTable.innerHTML += `
                             <tr ${estiloPC} class="desktop-only-row">
@@ -418,18 +430,27 @@ function renderizar() {
     if (cMobile && cMobile.innerHTML.trim() === '') cMobile.innerHTML = msgVazio("Nenhum gasto.");
     // -------------------------------------------------------
 
-    // --- A MÁGICA: ATUALIZA OS TOTAIS NO MOBILE ---
+    // --- A MÁGICA: ATUALIZA OS TOTAIS NO MOBILE COM PREVISÃO ---
+    const formatarMoedaSimples = (v) => `R$ ${v.toFixed(2)}`;
+
     const tDebMob = document.getElementById('total-debito-mobile-val');
-    if (tDebMob) tDebMob.innerText = `R$ ${totalDebitoMes.toFixed(2)}`;
+    if (tDebMob) tDebMob.innerHTML = formatarMoedaSimples(totalDebitoMes);
 
     const tCredMob = document.getElementById('total-credito-mobile-val');
-    if (tCredMob) tCredMob.innerText = `R$ ${totalCartMes.toFixed(2)}`;
-
-    const tFixMob = document.getElementById('total-fixos-mobile-val');
-    if (tFixMob) tFixMob.innerText = `R$ ${totalFixoMes.toFixed(2)}`;
+    if (tCredMob) tCredMob.innerHTML = formatarMoedaSimples(totalCartMes);
 
     const tTercMob = document.getElementById('total-terceiros-mobile-val');
-    if (tTercMob) tTercMob.innerText = `R$ ${totalTerceirosMes.toFixed(2)}`;
+    if (tTercMob) tTercMob.innerHTML = formatarMoedaSimples(totalTerceirosMes);
+
+    // FIXOS: Mostra o "de R$ XXX" se houver conta pendente
+    const tFixMob = document.getElementById('total-fixos-mobile-val');
+    if (tFixMob) {
+        if (totalFixoMesGeral > totalFixoMes) {
+            tFixMob.innerHTML = `${formatarMoedaSimples(totalFixoMes)} <span class="texto-previsto">de ${formatarMoedaSimples(totalFixoMesGeral)}</span>`;
+        } else {
+            tFixMob.innerHTML = formatarMoedaSimples(totalFixoMes);
+        }
+    }
     // ----------------------------------------------
 
 // 5. Resumo Mensal Central (Bancos, Tags e Entradas COM METAS INTELIGENTES)
@@ -532,16 +553,24 @@ function renderizar() {
         document.getElementById('ann-debito').innerText = `R$ ${anDeb.toFixed(2)}`;
     }
 
-    // 7. Finalização e Cache
+    // 7. Finalização e Cache (COM O NOVO SALDO PREVISTO NO PC E MOBILE)
     const saldoFinal = totalEnt - totalGastoMes;
-    document.getElementById('resumo-saldo').innerText = `R$ ${saldoFinal.toFixed(2)}`;
+    const saldoPrevisto = totalEnt - totalGastoMesGeral;
+    
+    const saldoElement = document.getElementById('resumo-saldo');
+    if (saldoElement) {
+        // Se houver fixos pendentes, o saldo previsto será menor que o atual
+        if (saldoPrevisto < saldoFinal) {
+            saldoElement.innerHTML = `R$ ${saldoFinal.toFixed(2)} <span class="texto-previsto" style="font-size: 15px !important;">de R$ ${saldoPrevisto.toFixed(2)}</span>`;
+        } else {
+            saldoElement.innerHTML = `R$ ${saldoFinal.toFixed(2)}`;
+        }
+    }
+
     document.getElementById('resumo-cartao').innerText = `R$ ${totalCartMes.toFixed(2)}`;
     document.getElementById('resumo-porcentagem').innerText = `${totalEnt > 0 ? ((totalGastoMes/totalEnt)*100).toFixed(1) : 0}%`;
 
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
-	salvarNoFirebase();
-    atualizarHumorSalsicha(saldoFinal);
-    setTimeout(atualizarGraficoAnual, 100);
     
     // Controle da Aba Ativa ao mudar de mês (Mobile)
     if (window.innerWidth <= 1024) {
@@ -2453,6 +2482,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
