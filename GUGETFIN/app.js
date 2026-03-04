@@ -193,9 +193,8 @@ function renderizar() {
     if(fMobile) fMobile.innerHTML = ''; 
     if(mTerceiros) mTerceiros.innerHTML = '';
 
-    // 3. Acumuladores do Mês
+    // 3. Acumuladores do Mês (AGORA COM O TERCEIROS)
     let totalGastoMes = 0, totalCartMes = 0, totalFixoMes = 0, totalDebitoMes = 0, totalTerceirosMes = 0;
-    let totalFixoMesGeral = 0; // NOVO: Soma tudo apenas para a aba de fixos
     let tagSum = {}, bankSum = {};
     let temGastoTerceiro = false;
 
@@ -297,14 +296,9 @@ function renderizar() {
                 }
 
                 if (t.tipo === 'fixo') {
-                    
-                    if (t.pago === true) {
-                        totalFixoMes += val;
-                    }
-                    totalFixoMesGeral += val; // Sempre soma no total previsto EXCLUSIVO da aba fixos
+                    if (t.pago === true) totalFixoMes += val;
                     
                     const estiloPC = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
-                    
                     if(fTable) {
                         fTable.innerHTML += `
                             <tr ${estiloPC} class="desktop-only-row">
@@ -424,27 +418,18 @@ function renderizar() {
     if (cMobile && cMobile.innerHTML.trim() === '') cMobile.innerHTML = msgVazio("Nenhum gasto.");
     // -------------------------------------------------------
 
-    // --- A MÁGICA: ATUALIZA OS TOTAIS NO MOBILE COM PREVISÃO ---
-    const formatarMoedaSimples = (v) => `R$ ${v.toFixed(2)}`;
-
+    // --- A MÁGICA: ATUALIZA OS TOTAIS NO MOBILE ---
     const tDebMob = document.getElementById('total-debito-mobile-val');
-    if (tDebMob) tDebMob.innerHTML = formatarMoedaSimples(totalDebitoMes);
+    if (tDebMob) tDebMob.innerText = `R$ ${totalDebitoMes.toFixed(2)}`;
 
     const tCredMob = document.getElementById('total-credito-mobile-val');
-    if (tCredMob) tCredMob.innerHTML = formatarMoedaSimples(totalCartMes);
+    if (tCredMob) tCredMob.innerText = `R$ ${totalCartMes.toFixed(2)}`;
+
+    const tFixMob = document.getElementById('total-fixos-mobile-val');
+    if (tFixMob) tFixMob.innerText = `R$ ${totalFixoMes.toFixed(2)}`;
 
     const tTercMob = document.getElementById('total-terceiros-mobile-val');
-    if (tTercMob) tTercMob.innerHTML = formatarMoedaSimples(totalTerceirosMes);
-
-    // FIXOS: Mostra o "de R$ XXX" se houver conta pendente
-    const tFixMob = document.getElementById('total-fixos-mobile-val');
-    if (tFixMob) {
-        if (totalFixoMesGeral > totalFixoMes) {
-            tFixMob.innerHTML = `${formatarMoedaSimples(totalFixoMes)} <span class="texto-previsto">de ${formatarMoedaSimples(totalFixoMesGeral)}</span>`;
-        } else {
-            tFixMob.innerHTML = formatarMoedaSimples(totalFixoMes);
-        }
-    }
+    if (tTercMob) tTercMob.innerText = `R$ ${totalTerceirosMes.toFixed(2)}`;
     // ----------------------------------------------
 
 // 5. Resumo Mensal Central (Bancos, Tags e Entradas COM METAS INTELIGENTES)
@@ -1689,30 +1674,31 @@ function analisarMovimentoSwipe() {
     const distanciaX = touchendX - touchstartX;
     const distanciaY = touchendY - touchstartY;
 
-    // 👇 O SEGREDO ESTÁ AQUI: Regras rígidas anti-bug do iPhone
-    // 1. O arrasto lateral (X) tem que ser longo (maior que 90 pixels em vez de 60)
-    // 2. O arrasto vertical (Y) TEM que ser pequeno (menor que 50 pixels). 
-    // Isso garante que se ele estiver rolando a tela "torto" para baixo, o mês não muda!
-    if (Math.abs(distanciaX) > 90 && Math.abs(distanciaY) < 50) {
-            
-        // Pega a sua barra de navegação
-        const navMovel = document.getElementById('mobile-month-nav');
+    // Só ativa se arrastou pros lados (ignora se estiver rolando a tela pra baixo)
+    if (Math.abs(distanciaX) > Math.abs(distanciaY)) {
         
-        if(navMovel) {
-            // Limpa animações anteriores para rodar liso de novo
-            navMovel.classList.remove('anim-slide-left', 'anim-slide-right');
-            void navMovel.offsetWidth; 
-        }
-
-        if (distanciaX < 0) {
-            // Arrastou para ESQUERDA (Avança o mês)
-            mudarMes(1); 
-            if(navMovel) navMovel.classList.add('anim-slide-left');
+        // Arrasto maior que 60px (para não ser sensível demais)
+        if (Math.abs(distanciaX) > 60) {
             
-        } else if (distanciaX > 0) {
-            // Arrastou para DIREITA (Volta o mês)
-            mudarMes(-1);
-            if(navMovel) navMovel.classList.add('anim-slide-right');
+            // Pega a sua barra de navegação que já existe no HTML
+            const navMovel = document.getElementById('mobile-month-nav');
+            
+            if(navMovel) {
+                // Limpa animações anteriores para rodar liso de novo
+                navMovel.classList.remove('anim-slide-left', 'anim-slide-right');
+                void navMovel.offsetWidth; 
+            }
+
+            if (distanciaX < 0) {
+                // Arrastou para ESQUERDA (Avança o mês)
+                mudarMes(1); // Usa a sua função original que já funciona perfeitamente!
+                if(navMovel) navMovel.classList.add('anim-slide-left');
+                
+            } else {
+                // Arrastou para DIREITA (Volta o mês)
+                mudarMes(-1);
+                if(navMovel) navMovel.classList.add('anim-slide-right');
+            }
         }
     }
 }
@@ -2468,10 +2454,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
-
-
-
-
 
 
 
