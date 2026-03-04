@@ -1674,31 +1674,30 @@ function analisarMovimentoSwipe() {
     const distanciaX = touchendX - touchstartX;
     const distanciaY = touchendY - touchstartY;
 
-    // Só ativa se arrastou pros lados (ignora se estiver rolando a tela pra baixo)
-    if (Math.abs(distanciaX) > Math.abs(distanciaY)) {
+    // 👇 O SEGREDO ESTÁ AQUI: Regras rígidas anti-bug do iPhone
+    // 1. O arrasto lateral (X) tem que ser longo (maior que 90 pixels em vez de 60)
+    // 2. O arrasto vertical (Y) TEM que ser pequeno (menor que 50 pixels). 
+    // Isso garante que se ele estiver rolando a tela "torto" para baixo, o mês não muda!
+    if (Math.abs(distanciaX) > 90 && Math.abs(distanciaY) < 50) {
+            
+        // Pega a sua barra de navegação
+        const navMovel = document.getElementById('mobile-month-nav');
         
-        // Arrasto maior que 60px (para não ser sensível demais)
-        if (Math.abs(distanciaX) > 60) {
-            
-            // Pega a sua barra de navegação que já existe no HTML
-            const navMovel = document.getElementById('mobile-month-nav');
-            
-            if(navMovel) {
-                // Limpa animações anteriores para rodar liso de novo
-                navMovel.classList.remove('anim-slide-left', 'anim-slide-right');
-                void navMovel.offsetWidth; 
-            }
+        if(navMovel) {
+            // Limpa animações anteriores para rodar liso de novo
+            navMovel.classList.remove('anim-slide-left', 'anim-slide-right');
+            void navMovel.offsetWidth; 
+        }
 
-            if (distanciaX < 0) {
-                // Arrastou para ESQUERDA (Avança o mês)
-                mudarMes(1); // Usa a sua função original que já funciona perfeitamente!
-                if(navMovel) navMovel.classList.add('anim-slide-left');
-                
-            } else {
-                // Arrastou para DIREITA (Volta o mês)
-                mudarMes(-1);
-                if(navMovel) navMovel.classList.add('anim-slide-right');
-            }
+        if (distanciaX < 0) {
+            // Arrastou para ESQUERDA (Avança o mês)
+            mudarMes(1); 
+            if(navMovel) navMovel.classList.add('anim-slide-left');
+            
+        } else if (distanciaX > 0) {
+            // Arrastou para DIREITA (Volta o mês)
+            mudarMes(-1);
+            if(navMovel) navMovel.classList.add('anim-slide-right');
         }
     }
 }
@@ -2454,6 +2453,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
