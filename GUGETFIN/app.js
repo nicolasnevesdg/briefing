@@ -714,24 +714,7 @@ function salvarAlteracoes() {
     a.click();
 }
 
-function abrirModalConfig() {
-    document.getElementById('conf-bancos').value = salsiData.config.bancos.join(', ');
-    document.getElementById('conf-categorias').value = salsiData.config.categorias.join(', ');
-    document.getElementById('modal-config').showModal();
-}
-
-function toggleOpcoes() { document.getElementById('menu-opcoes').classList.toggle('active'); }
 function confirmarEntrada() { salsiData.entradas.push({ nome: document.getElementById('e-nome').value, valor: parseFloat(document.getElementById('e-valor').value), mes: dataFiltro.getMonth(), ano: dataFiltro.getFullYear() }); renderizar(); document.getElementById('modal-entrada').close(); mostrarToast("Receita adicionada! 💰");}
-function salvarConfig() {
-    const bancosRaw = document.getElementById('conf-bancos').value.split(',');
-    salsiData.config.detalhesBancos = bancosRaw.map(b => {
-        const [nome, fechamento] = b.split(':');
-        return { nome: nome.trim(), fechamento: fechamento ? parseInt(fechamento.trim()) : 1 };
-    });
-    salsiData.config.bancos = salsiData.config.detalhesBancos.map(b => b.nome);
-    salsiData.config.categorias = document.getElementById('conf-categorias').value.split(',').map(s => s.trim());
-    popularSelects(); renderizar(); document.getElementById('modal-config').close();
-}
 
 function excluirGasto(idx) { if(confirm("Apagar?")) { salsiData.transacoes.splice(idx,1); renderizar(); } }
 function excluirEntrada(idx) { if(confirm("Apagar?")) { salsiData.entradas.splice(idx,1); renderizar(); } }
@@ -1023,19 +1006,6 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// 3. Função para limpar apenas os gastos do mês que você está vendo
-function limparMesAtual() {
-    if(confirm("Deseja apagar todos os gastos deste mês?")) {
-        const m = dataFiltro.getMonth();
-        const a = dataFiltro.getFullYear();
-        salsiData.transacoes = salsiData.transacoes.filter(t => {
-            const d = new Date(t.dataCompra + "T00:00:00");
-            return !(d.getMonth() === m && d.getFullYear() === a);
-        });
-        renderizar();
-    }
-}
-
 // --- SISTEMA DE ACORDEON INTELIGENTE (PLANEJAMENTO) ---
 
 // Função nova: Fecha os outros cards automaticamente no PC
@@ -1103,7 +1073,6 @@ function abrirModalCartoes() {
 }
 
 // 2. Adiciona um novo cartão ao banco de dados
-// 2. Adiciona um novo cartão ao banco de dados
 function adicionarNovoCartao() {
     let nome = document.getElementById('nc-nome').value.trim();
     const checkbox = document.getElementById('banco-apenas-debito');
@@ -1165,8 +1134,6 @@ function excluirCartaoConfig(index) {
     }
 }
 
-// 1. Função para Resetar TUDO na Nuvem e no Local
-// 1. Função para Resetar TUDO na Nuvem e no Local
 // 1. Função para Resetar TUDO na Nuvem e no Local
 async function limparTudo() {
     if (confirm("⚠️ ATENÇÃO: Isso apagará todos os seus gastos na nuvem e no navegador. Deseja continuar?")) {
@@ -2454,6 +2421,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
