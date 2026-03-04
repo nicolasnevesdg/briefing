@@ -2818,6 +2818,13 @@ tr[style*="opacity: 0.7"] td {
     }
 }
 
+/* --- ESTILO PARA O TOTAL PREVISTO --- */
+.texto-previsto {
+    font-size: 14px; /* Fica menorzinho que o valor principal */
+    color: var(--text-sec); /* Usa o seu verde-acinzentado/cinza padrão */
+    font-weight: 400; /* Tira o negrito para não chamar tanta atenção */
+    margin-left: 4px; /* Dá um espacinho do valor principal */
+}
 
 
 
