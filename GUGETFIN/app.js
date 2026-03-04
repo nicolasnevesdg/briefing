@@ -37,18 +37,6 @@ function ajustarTelas() {
                 }
             }
         });
-
-		// 👇 MÁGICA DAS ABAS NO PC: Abre o Gráfico por padrão se nenhuma aba estiver aberta 👇
-        setTimeout(() => {
-            const abaGrafico = document.getElementById('card-grafico');
-            const temAbaAberta = document.querySelector('#aba-planejamento .chart-card.expanded');
-            
-            if (abaGrafico && !temAbaAberta) {
-                abaGrafico.classList.add('expanded');
-                document.getElementById('chart-toggle-icon').style.transform = 'rotate(0deg)';
-                if (typeof atualizarGraficoAnual === 'function') atualizarGraficoAnual();
-            }
-        }, 100);
 		
     }
 }
@@ -2434,6 +2422,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
