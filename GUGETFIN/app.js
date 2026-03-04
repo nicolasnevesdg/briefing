@@ -195,7 +195,7 @@ function renderizar() {
 
     // 3. Acumuladores do Mês
     let totalGastoMes = 0, totalCartMes = 0, totalFixoMes = 0, totalDebitoMes = 0, totalTerceirosMes = 0;
-    let totalGastoMesGeral = 0, totalFixoMesGeral = 0; // NOVOS: Somam tudo, inclusive não pagos
+    let totalFixoMesGeral = 0; // NOVO: Soma tudo apenas para a aba de fixos
     let tagSum = {}, bankSum = {};
     let temGastoTerceiro = false;
 
@@ -295,19 +295,13 @@ function renderizar() {
                     totalGastoMes += val;
                     tagSum[t.categoria] = (tagSum[t.categoria] || 0) + val;
                 }
-                if (t.tipo !== 'fixo') {
-                   totalGastoMesGeral += val; // Entra na previsão do resumo
-                }
 
-                // 👇 AQUI ESTAVA O PROBLEMA: Faltava esta linha para abrir os fixos!
                 if (t.tipo === 'fixo') {
                     
                     if (t.pago === true) {
                         totalFixoMes += val;
-                        totalGastoMesGeral += val; // Soma no geral pago
                     }
-                    totalFixoMesGeral += val; // Sempre soma no total previsto da aba fixos
-                    if(t.pago === false) totalGastoMesGeral += val; // Se não tá pago, soma no geral previsto também
+                    totalFixoMesGeral += val; // Sempre soma no total previsto EXCLUSIVO da aba fixos
                     
                     const estiloPC = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
                     
@@ -553,18 +547,12 @@ function renderizar() {
         document.getElementById('ann-debito').innerText = `R$ ${anDeb.toFixed(2)}`;
     }
 
-    // 7. Finalização e Cache (COM O NOVO SALDO PREVISTO NO PC E MOBILE)
+    // 7. Finalização e Cache (SALDO LIMPO, COMO ANTES)
     const saldoFinal = totalEnt - totalGastoMes;
-    const saldoPrevisto = totalEnt - totalGastoMesGeral;
     
     const saldoElement = document.getElementById('resumo-saldo');
     if (saldoElement) {
-        // Se houver fixos pendentes, o saldo previsto será menor que o atual
-        if (saldoPrevisto < saldoFinal) {
-            saldoElement.innerHTML = `R$ ${saldoFinal.toFixed(2)} <span class="texto-previsto" style="font-size: 15px !important;">de R$ ${saldoPrevisto.toFixed(2)}</span>`;
-        } else {
-            saldoElement.innerHTML = `R$ ${saldoFinal.toFixed(2)}`;
-        }
+        saldoElement.innerHTML = `R$ ${saldoFinal.toFixed(2)}`;
     }
 
     document.getElementById('resumo-cartao').innerText = `R$ ${totalCartMes.toFixed(2)}`;
@@ -2482,6 +2470,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
