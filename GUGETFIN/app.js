@@ -547,18 +547,16 @@ function renderizar() {
         document.getElementById('ann-debito').innerText = `R$ ${anDeb.toFixed(2)}`;
     }
 
-    // 7. Finalização e Cache (SALDO LIMPO, COMO ANTES)
+    // 7. Finalização e Cache
     const saldoFinal = totalEnt - totalGastoMes;
-    
-    const saldoElement = document.getElementById('resumo-saldo');
-    if (saldoElement) {
-        saldoElement.innerHTML = `R$ ${saldoFinal.toFixed(2)}`;
-    }
-
+    document.getElementById('resumo-saldo').innerText = `R$ ${saldoFinal.toFixed(2)}`;
     document.getElementById('resumo-cartao').innerText = `R$ ${totalCartMes.toFixed(2)}`;
     document.getElementById('resumo-porcentagem').innerText = `${totalEnt > 0 ? ((totalGastoMes/totalEnt)*100).toFixed(1) : 0}%`;
 
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+	salvarNoFirebase();
+    atualizarHumorSalsicha(saldoFinal);
+    setTimeout(atualizarGraficoAnual, 100);
     
     // Controle da Aba Ativa ao mudar de mês (Mobile)
     if (window.innerWidth <= 1024) {
@@ -2470,6 +2468,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
