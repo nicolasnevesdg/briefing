@@ -800,8 +800,16 @@ function editarGasto(index) {
     document.getElementById('g-inicio-pagamento').value = t.delayPagamento || 0;
     
     // Resgata o banco e categoria
-    if (t.banco) document.getElementById('g-banco').value = t.banco;
-    if (t.categoria) document.getElementById('g-categoria').value = t.categoria;
+     if (t.banco) {
+         document.getElementById('g-banco').value = t.banco;
+         
+         // 👇 A LINHA MÁGICA VISUAL ENTRA AQUI 👇
+         if (typeof selecionarBancoAbaGasto === 'function') {
+             selecionarBancoAbaGasto(t.banco);
+         }
+     }
+
+    if (t.categoria) document.getElementById('g-categoria').value = t.categoria;
     
     if (t.tipo === 'debito' && t.formaPagamento) {
         document.getElementById('g-forma-pagamento').value = t.formaPagamento;
@@ -2436,6 +2444,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
