@@ -144,10 +144,11 @@ function renderizar() {
     document.getElementById('lista-entradas').innerHTML = entMes.map(e => {
         const idx = salsiData.entradas.indexOf(e);
         return `<div class="sidebar-list-item">
-            <td><span class="nome-entrada-hover" onclick="verDetalhes(${idx})">${t.nome}</span></td>
+            <span class="nome-entrada-hover" onclick="verDetalhesEntrada(${idx})" title="Ver Detalhes">${e.nome}</span>
             <div class="sidebar-value">
                 R$ ${e.valor.toFixed(2)}
-                <button class="btn-del" onclick="excluirEntrada(${idx})" title="Apagar">×</button>
+                <button class="btn-del" onclick="editarEntrada(${idx})" style="color: #10b981; margin-left:8px;" title="Editar"><i class="fi fi-rr-pencil"></i></button>
+				<button class="btn-del" onclick="excluirEntrada(${idx})" title="Apagar"><i class="fi fi-rr-trash"></i></button>
             </div>
         </div>`;
     }).join('');
@@ -260,7 +261,7 @@ function renderizar() {
                 if(tTable) {
                     tTable.innerHTML += `
                         <tr class="desktop-only-row">
-                            <td><span class="nome-entrada-hover" onclick="verDetalhes(${idx})">${t.nome}</span></td>
+                            <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
                             <td><span class="badge-tag">${t.nomeTerceiro}</span></td>
                             <td style="text-align: center;">${tagTipoPC}</td>
                             <td style="text-align: center;">${diff + 1}/${t.parcelas}</td>
@@ -319,7 +320,7 @@ function renderizar() {
                     if(fTable) {
                         fTable.innerHTML += `
                             <tr ${estiloPC} class="desktop-only-row">
-                                <td><span class="nome-entrada-hover" onclick="verDetalhes(${idx})">${t.nome}</span></td>
+                                <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
                                 <td>R$ ${val.toFixed(2)}</td>
                                 <td style="text-align: center;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
                                 <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
@@ -360,8 +361,8 @@ function renderizar() {
                     if(dTable) {
                         dTable.innerHTML += `
                             <tr class="desktop-only-row">
-                                <td style="line-height: 1.4;">
-                                    <div class="nome-entrada-hover" onclick="verDetalhes(${idx})" style="font-weight: 600; color: var(--text-main);">${t.nome}</div>
+                                <td style="cursor:pointer; line-height: 1.4;" onclick="verDetalhes(${idx})">
+                                    <div style="font-weight: 600; color: var(--text-main);">${t.nome}</div>
                                     <div style="font-size: 11px; color: #7a8b87; margin-top: 2px;">${t.categoria}</div>
                                 </td>
                                 <td style="text-align: center; vertical-align: middle;">
@@ -397,7 +398,7 @@ function renderizar() {
                     if(cTable) {
                         cTable.innerHTML += `
                             <tr class="desktop-only-row">
-                                <td><span class="nome-entrada-hover" onclick="verDetalhes(${idx})">${t.nome}</span></td>
+                                <td style="font-weight: 500; cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome}</td>
                                 <td style="color: var(--text-sec); font-size: 11px; text-align: center;">${diff + 1}/${t.parcelas}</td>
                                 <td style="text-align: center;"><span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span></td>
                                 <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
@@ -914,8 +915,7 @@ function verDetalhesEntrada(index) {
     if (btnEditar) {
         btnEditar.onclick = () => {
             document.getElementById('modal-detalhes-entrada').close(); 
-            // 👇 O Atraso Mágico que estava faltando 👇
-            setTimeout(() => { editarEntrada(index); }, 100); 
+            editarEntrada(index);
         };
     }
 
@@ -1504,9 +1504,7 @@ function verDetalhes(index) {
     const btnEditar = document.getElementById('btn-editar-dinamico');
     if (btnEditar) {
         btnEditar.onclick = () => {
-            document.getElementById('modal-detalhes').close();
-            // 👇 Atraso Mágico aqui também 👇
-            setTimeout(() => { editarGasto(index); }, 100); 
+            editarGasto(index); // Puxa a função de edição que criamos!
         };
     }
 
@@ -2657,9 +2655,6 @@ function ajustarCamposEntrada() {
         document.getElementById('e-parcelas').value = "1"; // Volta logo a 1x para não haver erros de cálculo
     }
 }
-
-
-
 
 
 
