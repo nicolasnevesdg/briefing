@@ -682,9 +682,9 @@
 			<div class="det-linha"><strong>Categoria</strong> <span id="det-categoria"></span></div>
 
 			<div id="container-botoes-detalhe" style="display: flex; gap: 12px; margin-top: 25px;">
-                <button id="btn-editar-dinamico" style="flex: 1; background-color: var(--dark-green, #1b3a32); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;">
-                    Editar Gasto
-                </button>
+                <button type="button" id="btn-editar-dinamico" style="flex: 1; background-color: var(--dark-green, #1b3a32); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;">
+				    Editar Gasto
+				</button>
             </div>
 		</div>
 	</dialog>
@@ -827,6 +827,54 @@
 
     </div>
 </dialog>
+
+<dialog id="modal-entrada">
+        <div class="modal-content">
+            <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+            <h3 id="modal-titulo-entrada">Nova Entrada</h3>
+            
+            <input type="hidden" id="e-index-edit" value="-1">
+            <input type="hidden" id="e-projeto-id" value="">
+
+            <form method="dialog">
+                <div class="input-group">
+                    <input type="text" id="e-valor" placeholder="Valor Total R$" onblur="formatarMoeda(this)">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="e-nome" placeholder="Serviço (ex: Identidade Visual)">
+                </div>
+                <div class="input-group" style="margin-top: 10px;">
+                    <input type="text" id="e-cliente" placeholder="Cliente / Pagador">
+                </div>
+                <div class="input-group" style="margin-top: 10px;">
+                    <label style="font-size: 12px; color: var(--text-sec); margin-bottom: 5px; display: block;">Data de Recebimento</label>
+                    <input type="date" id="e-data">
+                </div>
+                <div class="input-group" style="margin-top: 10px;">
+                    <label style="font-size: 12px; color: var(--text-sec); margin-bottom: 5px; display: block;">Categoria de Renda</label>
+                    <select id="e-categoria" onchange="ajustarCamposEntrada()">
+                        <option value="Projetos / Serviços">Projetos / Serviços</option>
+                        <option value="Fixo / Contrato">Fixo / Contrato</option>
+                        <option value="Renda Extra">Renda Extra</option>
+                    </select>
+                </div>
+                <div id="div-entrada-parcelas" class="input-group" style="margin-top: 10px; display: none;">
+                    <label style="font-size: 12px; color: var(--text-sec); margin-bottom: 5px; display: block;">Parcelamento</label>
+                    <select id="e-parcelas">
+                        <option value="1">Pagamento Único (1x)</option>
+                        <option value="2">Parcelado em 2x</option>
+                        <option value="3">Parcelado em 3x</option>
+                        <option value="4">Parcelado em 4x</option>
+                        <option value="5">Parcelado em 5x</option>
+                        <option value="6">Parcelado em 6x</option>
+                        <option value="12">Parcelado em 12x</option>
+                    </select>
+                </div>
+                
+                <button type="button" onclick="confirmarEntrada()" style="width:100%; background:#10b981; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:20px;">Salvar Entrada</button>
+            </form>
+        </div>
+    </dialog>
 	
 	<div id="toast-notificacao">
         <i class="fi fi-rr-check-circle"></i>
@@ -885,6 +933,7 @@
 </body>
 
 </html>
+
 
 
 
