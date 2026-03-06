@@ -807,6 +807,14 @@ function confirmarEntrada() {
             let parcelasDoProjeto = salsiData.entradas.filter(e => e.projetoId === entradaEditada.projetoId);
             parcelasDoProjeto.sort((a, b) => a.parcelaAtual - b.parcelaAtual);
 
+            // 👇 NOVO: Lê se você aumentou ou diminuiu o orçamento global daquele projeto 👇
+            let rawTotalProj = document.getElementById('e-valor-total-projeto').value;
+            let novoTotalProjeto = parseFloat(rawTotalProj.replace(/[^\d,]/g, '').replace(',', '.')) || entradaEditada.valorTotalProjeto;
+            
+            // Atualiza todas as parcelas com esse novo teto de orçamento
+            parcelasDoProjeto.forEach(p => p.valorTotalProjeto = novoTotalProjeto);
+            entradaEditada.valorTotalProjeto = novoTotalProjeto;
+			
             // 1. Descobre quanto o cliente já pagou até este mês
             let somaPagaAteAgora = 0;
             parcelasDoProjeto.forEach(p => {
@@ -894,11 +902,25 @@ function editarEntrada(index) {
     const inputProjId = document.getElementById('e-projeto-id');
     if (inputProjId) inputProjId.value = entrada.projetoId || "";
 
-    // MÁGICA VISUAL: Altera o texto de fundo para você saber que está editando a parcela
     const inputValor = document.getElementById('e-valor');
-    inputValor.placeholder = "Valor desta parcela R$";
     inputValor.value = (entrada.valor * 100).toFixed(0); 
     if (typeof formatarMoeda === 'function') formatarMoeda(inputValor);
+
+    // 👇 MÁGICA VISUAL: Mostra o Total do Projeto se for parcelado 👇
+    const divTotalProj = document.getElementById('div-valor-total-projeto');
+    const inputTotalProj = document.getElementById('e-valor-total-projeto');
+    
+    if (entrada.projetoId && entrada.totalParcelas > 1) {
+        if (divTotalProj) divTotalProj.style.display = 'block';
+        if (inputTotalProj) {
+            inputTotalProj.value = (entrada.valorTotalProjeto * 100).toFixed(0);
+            if (typeof formatarMoeda === 'function') formatarMoeda(inputTotalProj);
+        }
+        inputValor.placeholder = "Valor desta parcela R$"; // O placeholder da parcela
+    } else {
+        if (divTotalProj) divTotalProj.style.display = 'none';
+        inputValor.placeholder = "Valor R$"; // O placeholder normal
+    }
 
     // Remove o " (1/4)" do nome para não poluir a edição
     let nomeLimpo = entrada.nome;
@@ -914,7 +936,7 @@ function editarEntrada(index) {
     document.getElementById('e-categoria').value = entrada.categoria || "Projetos / Serviços";
     if (typeof ajustarCamposEntrada === 'function') ajustarCamposEntrada();
     
-    // DESTRAVA AS PARCELAS: Permite que você mude de 4x para 3x na edição!
+    // DESTRAVA AS PARCELAS
     const selectParcelas = document.getElementById('e-parcelas');
     if (entrada.projetoId && entrada.totalParcelas) {
         selectParcelas.value = entrada.totalParcelas.toString();
@@ -930,6 +952,13 @@ function limparFormularioEntrada() {
     const inputProjId = document.getElementById('e-projeto-id');
     if (inputProjId) inputProjId.value = "";
     
+    // 👇 Esconde a caixa do Total e limpa o valor 👇
+    const divTotalProj = document.getElementById('div-valor-total-projeto');
+    if (divTotalProj) divTotalProj.style.display = 'none';
+    const inputTotalProj = document.getElementById('e-valor-total-projeto');
+    if (inputTotalProj) inputTotalProj.value = "";
+
+    document.getElementById('e-valor').placeholder = "Valor Total R$"; // Restaura o placeholder
     document.getElementById('e-valor').value = "";
     document.getElementById('e-nome').value = "";
     document.getElementById('e-cliente').value = "";
@@ -2722,6 +2751,7 @@ function ajustarCamposEntrada() {
         document.getElementById('e-parcelas').value = "1"; // Volta logo a 1x para não haver erros de cálculo
     }
 }
+
 
 
 
