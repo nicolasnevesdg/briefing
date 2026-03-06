@@ -2766,21 +2766,29 @@ async function solicitarPermissaoNotificacao() {
         return;
     }
 
+    // Definimos aqui dentro para evitar o erro de "not defined"
+    const firebaseConfig = {
+        apiKey: "AIzaSyD1HyxzZ-YFMMbMSIwBDDKfNWdCWHb07AY",
+        authDomain: "guget-fin.firebaseapp.com",
+        projectId: "guget-fin",
+        storageBucket: "guget-fin.firebasestorage.app",
+        messagingSenderId: "626285959649",
+        appId: "1:626285959649:web:9b1006694a4d05fa899aa0"
+    };
+
     try {
         const permission = await Notification.requestPermission();
         
         if (permission === 'granted') {
             console.log('Permissão concedida! Gerando acesso...');
             
-            // 1. Importa as ferramentas necessárias (garante que o Firebase Messaging está ativo)
             const { getMessaging, getToken } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js");
             const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js");
 
-            // 2. Inicializa (usa o seu firebaseConfig que já existe no app.js)
-            const app = initializeApp(firebaseConfig);
-            const messaging = getMessaging(app);
+            // Inicializa uma instância local para as notificações
+            const appPush = initializeApp(firebaseConfig, "notifications-app");
+            const messaging = getMessaging(appPush);
 
-            // 3. Registra o Service Worker e gera o Token
             const swRegistration = await navigator.serviceWorker.register('sw.js');
             
             const token = await getToken(messaging, { 
@@ -2791,16 +2799,15 @@ async function solicitarPermissaoNotificacao() {
             if (token) {
                 console.log('Token gerado com sucesso:', token);
                 if (typeof mostrarToast === 'function') mostrarToast("Notificações ativadas! 🔔");
-                // DICA: Em um sistema com login, aqui você salvaria esse token no banco de dados do usuário
             }
         } else {
-            console.log('Permissão negada.');
             alert("Para receber lembretes, ative as notificações nas configurações do navegador.");
         }
     } catch (error) {
         console.error('Erro ao configurar notificações:', error);
     }
 }
+
 
 
 
