@@ -140,15 +140,14 @@ function renderizar() {
     const entMes = salsiData.entradas.filter(e => e.mes === m && e.ano === a);
     const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
 
-    // RENDER PC (Sidebar - Mantém botões visíveis, mas texto é clicável)
+    // RENDER PC (Sidebar - Apenas o X estiloso)
     document.getElementById('lista-entradas').innerHTML = entMes.map(e => {
         const idx = salsiData.entradas.indexOf(e);
         return `<div class="sidebar-list-item">
             <span class="nome-entrada-hover" onclick="verDetalhesEntrada(${idx})" title="Ver Detalhes">${e.nome}</span>
             <div class="sidebar-value">
                 R$ ${e.valor.toFixed(2)}
-                <button class="btn-del" onclick="editarEntrada(${idx})" style="color: #10b981; margin-left:8px;" title="Editar"><i class="fi fi-rr-pencil"></i></button>
-				<button class="btn-del" onclick="excluirEntrada(${idx})" title="Apagar"><i class="fi fi-rr-trash"></i></button>
+                <button class="btn-del" onclick="excluirEntrada(${idx})" title="Apagar">×</button>
             </div>
         </div>`;
     }).join('');
@@ -1021,8 +1020,11 @@ function editarGasto(index) {
 }
 
 function abrirModalEntrada() {
-    limparFormularioEntrada();
-    document.getElementById('modal-entrada').showModal(); 
+    // Tenta limpar os dados antigos de forma segura
+    if (typeof limparFormularioEntrada === 'function') {
+        limparFormularioEntrada();
+    }
+    document.getElementById('modal-entrada').showModal();
 }
 
 // O Cérebro do Contraste: Define a cor do banco e o contraste legível da letra
@@ -1504,7 +1506,12 @@ function verDetalhes(index) {
     const btnEditar = document.getElementById('btn-editar-dinamico');
     if (btnEditar) {
         btnEditar.onclick = () => {
-            editarGasto(index); // Puxa a função de edição que criamos!
+            document.getElementById('modal-detalhes').close(); // Força o fecho
+            
+            // O Atraso que resolve o bug:
+            setTimeout(() => {
+                editarGasto(index); 
+            }, 100); 
         };
     }
 
@@ -2655,6 +2662,7 @@ function ajustarCamposEntrada() {
         document.getElementById('e-parcelas').value = "1"; // Volta logo a 1x para não haver erros de cálculo
     }
 }
+
 
 
 
