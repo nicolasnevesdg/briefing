@@ -880,10 +880,17 @@ function confirmarEntrada() {
     }
 
     // 🔴 IMPORTANTE: Para evitar bugs com valores fantasma na próxima vez que clicar em "+ ADD"
-    document.getElementById('e-valor').placeholder = "Valor Total R$"; 
+    const inputValorEl = document.getElementById('e-valor');
+    if (inputValorEl) inputValorEl.placeholder = "Valor Total R$"; 
 
+    // 1. Fecha o pop-up primeiro para a tela ficar livre
     document.getElementById('modal-entrada').close();
-    renderizar(); // Atualiza a tela inteira e salva no Firebase
+    
+    // 2. Manda o comando para o Firebase salvar os dados em segundo plano
+    if (typeof salvarDados === 'function') salvarDados(); 
+    
+    // 3. Só depois redesenha a tela
+    if (typeof renderizar === 'function') renderizar();
 }
 
 // Função que faltava: Puxa os dados da entrada para o formulário e abre como Edição
@@ -2751,6 +2758,7 @@ function ajustarCamposEntrada() {
         document.getElementById('e-parcelas').value = "1"; // Volta logo a 1x para não haver erros de cálculo
     }
 }
+
 
 
 
