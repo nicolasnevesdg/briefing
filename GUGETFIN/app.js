@@ -141,30 +141,35 @@ function renderizar() {
     const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
 
     // RENDER PC (Sidebar)
-    document.getElementById('lista-entradas').innerHTML = entMes.map(e => `
-        <div class="sidebar-list-item">
-            <span>${e.nome}</span>
+    document.getElementById('lista-entradas').innerHTML = entMes.map(e => {
+        const idx = salsiData.entradas.indexOf(e);
+        return `<div class="sidebar-list-item">
+            <span style="cursor: pointer;" onclick="editarEntrada(${idx})">${e.nome}</span>
             <div class="sidebar-value">
                 R$ ${e.valor.toFixed(2)}
-                <button class="btn-del" onclick="excluirEntrada(${salsiData.entradas.indexOf(e)})">×</button>
+                <button class="btn-del" onclick="editarEntrada(${idx})" style="color: #10b981; font-size: 14px; margin-left:8px;" title="Editar">✏️</button>
+                <button class="btn-del" onclick="excluirEntrada(${idx})" title="Apagar">×</button>
             </div>
-        </div>`).join('');
+        </div>`;
+    }).join('');
 
     // RENDER MOBILE (Aba dedicada)
     const listaMob = document.getElementById('lista-entradas-mobile');
     if (listaMob) {
-        listaMob.innerHTML = entMes.map(e => `
-            <div class="entrada-item-mobile">
-                <div class="ent-info">
+        listaMob.innerHTML = entMes.map(e => {
+            const idx = salsiData.entradas.indexOf(e);
+            return `<div class="entrada-item-mobile">
+                <div class="ent-info" style="cursor: pointer;" onclick="editarEntrada(${idx})">
                     <strong>${e.nome}</strong>
-                    <span>Recebido</span>
+                    <span style="font-size: 11px; color: var(--text-sec);">${e.categoria || 'Recebido'}</span>
                 </div>
                 <div class="ent-valor-box">
-                    <span class="ent-valor">+ R$ ${e.valor.toFixed(2)}</span>
-                    <button class="btn-del" onclick="excluirEntrada(${salsiData.entradas.indexOf(e)})" style="margin-left:10px">×</button>
+                    <span class="ent-valor" style="font-weight: 600;">+ R$ ${e.valor.toFixed(2)}</span>
+                    <button class="btn-del" onclick="editarEntrada(${idx})" style="color: #10b981; font-size: 14px; margin-left:10px;">✏️</button>
+                    <button class="btn-del" onclick="excluirEntrada(${idx})" style="margin-left:5px">×</button>
                 </div>
-            </div>
-        `).join('') || '<p style="text-align:center; padding:20px; color:var(--text-sec)">Nenhuma entrada.</p>';
+            </div>`;
+        }).join('') || '<p style="text-align:center; padding:20px; color:var(--text-sec)">Nenhuma entrada.</p>';
     }
 
 // Atualiza os totais (PC e Mobile)
@@ -812,6 +817,53 @@ function confirmarEntrada() {
 
     document.getElementById('modal-entrada').close();
     renderizar(); // Grava no ecrã o novo saldo e atualiza os gráficos
+}
+
+// Função que faltava: Puxa os dados da entrada para o formulário e abre como Edição
+function editarEntrada(index) {
+    // Fecha qualquer modal de detalhes que esteja aberto
+    const modalDet = document.getElementById('modal-detalhes');
+    if(modalDet) modalDet.close();
+
+    const entrada = salsiData.entradas[index];
+    if (!entrada) return;
+
+    if (typeof limparFormularioEntrada === 'function') limparFormularioEntrada();
+
+    document.getElementById('modal-titulo-entrada').innerText = 'Editar Entrada ✏️';
+    document.getElementById('e-index-edit').value = index;
+    
+    // O campo invisível do ID da Família
+    const inputProjId = document.getElementById('e-projeto-id');
+    if (inputProjId) inputProjId.value = entrada.projetoId || "";
+
+    // ATENÇÃO: Na edição, o valor é o da PARCELA atual, não do total!
+    const inputValor = document.getElementById('e-valor');
+    inputValor.value = (entrada.valor * 100).toFixed(0); 
+    if (typeof formatarMoeda === 'function') formatarMoeda(inputValor);
+
+    document.getElementById('e-nome').value = entrada.nome || "";
+    document.getElementById('e-cliente').value = entrada.cliente || "";
+    
+    // Formatar data para o input date (corrige o fuso horário visual)
+    let mesStr = (entrada.mes + 1).toString().padStart(2, '0');
+    document.getElementById('e-data').value = entrada.dataRecebimento || `${entrada.ano}-${mesStr}-01`;
+
+    document.getElementById('e-categoria').value = entrada.categoria || "Projetos / Serviços";
+    if (typeof ajustarCamposEntrada === 'function') ajustarCamposEntrada();
+    
+    // Se for um projeto, não deixamos mudar o número de parcelas a meio para não bugar a matemática
+    const selectParcelas = document.getElementById('e-parcelas');
+    if (entrada.projetoId && entrada.totalParcelas) {
+        selectParcelas.value = entrada.totalParcelas.toString();
+        selectParcelas.disabled = true; // Trava o campo
+        selectParcelas.style.opacity = "0.6"; // Dá um aspeto de inativo
+    } else {
+        selectParcelas.disabled = false;
+        selectParcelas.style.opacity = "1";
+    }
+
+    document.getElementById('modal-entrada').showModal();
 }
 
 function limparFormularioEntrada() {
@@ -2554,6 +2606,7 @@ function ajustarCamposEntrada() {
         document.getElementById('e-parcelas').value = "1"; // Volta logo a 1x para não haver erros de cálculo
     }
 }
+
 
 
 
