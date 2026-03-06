@@ -2676,3 +2676,24 @@ dialog select option {
     color: var(--text-main);
     padding: 10px;
 }
+
+/* --- HOVER NAS ENTRADAS --- */
+/* PC: Apenas o nome fica interativo */
+.nome-entrada-hover {
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+}
+.nome-entrada-hover:hover {
+    color: #10b981; /* Verde menta brilhante */
+    transform: translateX(3px); /* Um micro-deslize charmoso */
+}
+
+/* MOBILE: O card inteiro reage ao toque */
+.entrada-card-hover {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.entrada-card-hover:active {
+    background-color: #f0f4f3; /* Fica ligeiramente escuro ao tocar */
+}
