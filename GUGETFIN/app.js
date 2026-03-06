@@ -260,8 +260,8 @@ function renderizar() {
                 if(tTable) {
                     tTable.innerHTML += `
                         <tr class="desktop-only-row">
-                            <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
                             <td><span class="nome-entrada-hover" onclick="verDetalhes(${idx})">${t.nome}</span></td>
+                            <td><span class="badge-tag">${t.nomeTerceiro}</span></td>
                             <td style="text-align: center;">${tagTipoPC}</td>
                             <td style="text-align: center;">${diff + 1}/${t.parcelas}</td>
                             <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
@@ -319,8 +319,8 @@ function renderizar() {
                     if(fTable) {
                         fTable.innerHTML += `
                             <tr ${estiloPC} class="desktop-only-row">
-                                <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
                                 <td><span class="nome-entrada-hover" onclick="verDetalhes(${idx})">${t.nome}</span></td>
+                                <td>R$ ${val.toFixed(2)}</td>
                                 <td style="text-align: center;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
                                 <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
                             </tr>`;
@@ -361,9 +361,9 @@ function renderizar() {
                         dTable.innerHTML += `
                             <tr class="desktop-only-row">
                                 <td style="line-height: 1.4;">
-							        <div class="nome-entrada-hover" onclick="verDetalhes(${idx})" style="font-weight: 600; color: var(--text-main);">${t.nome}</div>
-							        <div style="font-size: 11px; color: #7a8b87; margin-top: 2px;">${t.categoria}</div>
-							    </td>
+                                    <div class="nome-entrada-hover" onclick="verDetalhes(${idx})" style="font-weight: 600; color: var(--text-main);">${t.nome}</div>
+                                    <div style="font-size: 11px; color: #7a8b87; margin-top: 2px;">${t.categoria}</div>
+                                </td>
                                 <td style="text-align: center; vertical-align: middle;">
                                     <span class="badge" style="background:${corTag}; font-size: 10px; padding: 4px 8px; letter-spacing: 0.5px;">${formaPagTag}</span>
                                 </td>
@@ -397,8 +397,8 @@ function renderizar() {
                     if(cTable) {
                         cTable.innerHTML += `
                             <tr class="desktop-only-row">
-                                <td style="font-weight: 500; cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome}</td>
                                 <td><span class="nome-entrada-hover" onclick="verDetalhes(${idx})">${t.nome}</span></td>
+                                <td style="color: var(--text-sec); font-size: 11px; text-align: center;">${diff + 1}/${t.parcelas}</td>
                                 <td style="text-align: center;"><span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span></td>
                                 <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
                                 <td style="text-align: center;"><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
@@ -2657,6 +2657,7 @@ function ajustarCamposEntrada() {
         document.getElementById('e-parcelas').value = "1"; // Volta logo a 1x para não haver erros de cálculo
     }
 }
+
 
 
 
