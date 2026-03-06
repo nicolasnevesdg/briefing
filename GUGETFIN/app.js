@@ -140,33 +140,31 @@ function renderizar() {
     const entMes = salsiData.entradas.filter(e => e.mes === m && e.ano === a);
     const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
 
-    // RENDER PC (Sidebar)
+    // RENDER PC (Sidebar - Mantém botões visíveis, mas texto é clicável)
     document.getElementById('lista-entradas').innerHTML = entMes.map(e => {
         const idx = salsiData.entradas.indexOf(e);
         return `<div class="sidebar-list-item">
-            <span style="cursor: pointer;" onclick="editarEntrada(${idx})">${e.nome}</span>
+            <span class="nome-entrada-hover" onclick="verDetalhesEntrada(${idx})" title="Ver Detalhes">${e.nome}</span>
             <div class="sidebar-value">
                 R$ ${e.valor.toFixed(2)}
-                <button class="btn-del" onclick="editarEntrada(${idx})" style="color: #10b981; font-size: 14px; margin-left:8px;" title="Editar">✏️</button>
-                <button class="btn-del" onclick="excluirEntrada(${idx})" title="Apagar">×</button>
+                <button class="btn-del" onclick="editarEntrada(${idx})" style="color: #10b981; margin-left:8px;" title="Editar"><i class="fi fi-rr-pencil"></i></button>
+				<button class="btn-del" onclick="excluirEntrada(${idx})" title="Apagar"><i class="fi fi-rr-trash"></i></button>
             </div>
         </div>`;
     }).join('');
 
-    // RENDER MOBILE (Aba dedicada)
+    // RENDER MOBILE (Aba dedicada - Fica um card limpo e totalmente clicável)
     const listaMob = document.getElementById('lista-entradas-mobile');
     if (listaMob) {
         listaMob.innerHTML = entMes.map(e => {
             const idx = salsiData.entradas.indexOf(e);
-            return `<div class="entrada-item-mobile">
-                <div class="ent-info" style="cursor: pointer;" onclick="editarEntrada(${idx})">
+            return `<div class="entrada-item-mobile entrada-card-hover" onclick="verDetalhesEntrada(${idx})">
+                <div class="ent-info">
                     <strong>${e.nome}</strong>
                     <span style="font-size: 11px; color: var(--text-sec);">${e.categoria || 'Recebido'}</span>
                 </div>
                 <div class="ent-valor-box">
                     <span class="ent-valor" style="font-weight: 600;">+ R$ ${e.valor.toFixed(2)}</span>
-                    <button class="btn-del" onclick="editarEntrada(${idx})" style="color: #10b981; font-size: 14px; margin-left:10px;">✏️</button>
-                    <button class="btn-del" onclick="excluirEntrada(${idx})" style="margin-left:5px">×</button>
                 </div>
             </div>`;
         }).join('') || '<p style="text-align:center; padding:20px; color:var(--text-sec)">Nenhuma entrada.</p>';
@@ -666,7 +664,7 @@ function confirmarGasto() {
         // Mantém o status original de "pago" (para não desmarcar se já foi pago)
         novosDados.pago = salsiData.transacoes[indexEdit].pago; 
         salsiData.transacoes[indexEdit] = novosDados;
-        mostrarToast("Lançamento atualizado com sucesso! ✏️");
+        mostrarToast("Lançamento atualizado com sucesso!");
     } else {
         // --- MODO CRIAÇÃO ---
         salsiData.transacoes.push(novosDados);
@@ -795,7 +793,7 @@ function confirmarEntrada() {
             });
         }
         
-        mostrarToast(parcelas > 1 ? `Projeto parcelado em ${parcelas}x com sucesso! 💼` : "Entrada registada! 💰");
+        mostrarToast(parcelas > 1 ? `Projeto parcelado em ${parcelas}x com sucesso!` : "Entrada registada!");
     } 
     // --- SE FOR EDIÇÃO (Deixamos a cama pronta para o Passo 3) ---
     else {
@@ -812,7 +810,7 @@ function confirmarEntrada() {
             entrada.mes = parseInt(partesData[1]) - 1;
             entrada.ano = parseInt(partesData[0]);
         }
-        mostrarToast("Entrada atualizada! ✏️");
+        mostrarToast("Entrada atualizada!");
     }
 
     document.getElementById('modal-entrada').close();
@@ -830,7 +828,7 @@ function editarEntrada(index) {
 
     if (typeof limparFormularioEntrada === 'function') limparFormularioEntrada();
 
-    document.getElementById('modal-titulo-entrada').innerText = 'Editar Entrada ✏️';
+    document.getElementById('modal-titulo-entrada').innerText = 'Editar Entrada';
     document.getElementById('e-index-edit').value = index;
     
     // O campo invisível do ID da Família
@@ -880,6 +878,57 @@ function limparFormularioEntrada() {
     document.getElementById('e-categoria').value = "Projetos / Serviços";
     document.getElementById('e-parcelas').value = "1";
     if (typeof ajustarCamposEntrada === 'function') ajustarCamposEntrada();
+}
+
+// --- VER DETALHES DA ENTRADA (POP-UP) ---
+function verDetalhesEntrada(index) {
+    const e = salsiData.entradas[index];
+    if (!e) return; 
+
+    document.getElementById('det-ent-nome').innerText = e.nome;
+    
+    // Tratamento de data
+    let dataFormatada = "";
+    if (e.dataRecebimento) {
+        dataFormatada = new Date(e.dataRecebimento + "T00:00:00").toLocaleDateString('pt-BR');
+    } else {
+        dataFormatada = `01/${(e.mes + 1).toString().padStart(2, '0')}/${e.ano}`;
+    }
+    document.getElementById('det-ent-data').innerText = dataFormatada;
+    
+    document.getElementById('det-ent-valor').innerText = `R$ ${e.valor.toFixed(2)}`;
+    document.getElementById('det-ent-cliente').innerText = e.cliente || "-";
+    document.getElementById('det-ent-categoria').innerText = e.categoria || "Entrada";
+
+    // Mostra o bloco de projeto só se for parcelado
+    const blocoProj = document.getElementById('det-ent-bloco-projeto');
+    if (e.projetoId && e.totalParcelas > 1) {
+        blocoProj.style.display = 'block';
+        document.getElementById('det-ent-projeto-total').innerText = `R$ ${e.valorTotalProjeto.toFixed(2)}`;
+        document.getElementById('det-ent-parcela').innerText = `${e.parcelaAtual} de ${e.totalParcelas}`;
+    } else {
+        blocoProj.style.display = 'none';
+    }
+
+	// Conecta os botões do modal à entrada certa
+    const btnEditar = document.getElementById('btn-editar-entrada-dinamico');
+    if (btnEditar) {
+        btnEditar.onclick = () => {
+            document.getElementById('modal-detalhes-entrada').close(); 
+            editarEntrada(index);
+        };
+    }
+
+    const btnExcluir = document.getElementById('btn-excluir-entrada-dinamico');
+    if (btnExcluir) {
+        btnExcluir.onclick = () => { 
+            excluirEntrada(index); 
+            document.getElementById('modal-detalhes-entrada').close(); 
+            renderizar();
+        };
+    }
+	
+    document.getElementById('modal-detalhes-entrada').showModal();
 }
 
 function excluirGasto(idx) { if(confirm("Apagar?")) { salsiData.transacoes.splice(idx,1); renderizar(); } }
@@ -2606,6 +2655,7 @@ function ajustarCamposEntrada() {
         document.getElementById('e-parcelas').value = "1"; // Volta logo a 1x para não haver erros de cálculo
     }
 }
+
 
 
 
