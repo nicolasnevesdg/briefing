@@ -772,22 +772,20 @@ function abrirModalGasto() {
 
 // 2. NOVA FUNÇÃO: Puxa os dados para o formulário e abre como Edição
 function editarGasto(index) {
-    document.getElementById('modal-detalhes').close(); // Fecha o modal de detalhes
+    document.getElementById('modal-detalhes').close(); 
     
     const t = salsiData.transacoes[index];
     if (!t) return;
 
     popularSelects();
 
-    // Muda a cara do modal para Modo Edição
     const titulo = document.getElementById('modal-titulo');
     if (titulo) titulo.innerText = 'Editar Gasto ✏️';
     
-    // Salva o index na memória invisível
     const indexEdit = document.getElementById('g-index-edit');
     if (indexEdit) indexEdit.value = index;
 
-    // Preenche todos os campos com as propriedades exatas do seu banco
+    // 1. Preenche primeiro os dados básicos e de texto
     document.getElementById('g-nome').value = t.nome || '';
     
     const inputValor = document.getElementById('g-valor');
@@ -799,33 +797,29 @@ function editarGasto(index) {
     document.getElementById('g-parcelas').value = t.parcelas || 1;
     document.getElementById('g-inicio-pagamento').value = t.delayPagamento || 0;
     
-    // Resgata o banco e categoria
-     if (t.banco) {
-         document.getElementById('g-banco').value = t.banco;
-         
-         // 👇 A LINHA MÁGICA VISUAL ENTRA AQUI 👇
-         if (typeof selecionarBancoAbaGasto === 'function') {
-             selecionarBancoAbaGasto(t.banco);
-         }
-     }
-
-    if (t.categoria) document.getElementById('g-categoria').value = t.categoria;
-    
     if (t.tipo === 'debito' && t.formaPagamento) {
         document.getElementById('g-forma-pagamento').value = t.formaPagamento;
     }
 
-    // Resgata os terceiros
     const checkTerceiro = document.getElementById('g-terceiro');
     if (checkTerceiro) checkTerceiro.checked = t.eDeTerceiro || false;
     document.getElementById('g-nome-terceiro').value = t.nomeTerceiro || '';
 
-    // Atualiza o visual das caixinhas (esconde/mostra dependendo do tipo resgatado)
+    // 👇 2. Atualiza o visual e reconstrói as listas vazias ANTES de preencher o banco
     if (typeof ajustarCamposModal === 'function') ajustarCamposModal();
     if (typeof toggleCampoNomeTerceiro === 'function') toggleCampoNomeTerceiro();
 
+    // 👇 3. A MÁGICA: Agora sim, com a lista totalmente pronta, resgata o Banco e Categoria
+    if (t.banco) {
+         document.getElementById('g-banco').value = t.banco;
+    }
+    if (t.categoria) {
+         document.getElementById('g-categoria').value = t.categoria;
+    }
+
     document.getElementById('modal-gasto').showModal();
 }
+
 function abrirModalEntrada() { document.getElementById('modal-entrada').showModal(); }
 
 // O Cérebro do Contraste: Define a cor do banco e o contraste legível da letra
@@ -2444,6 +2438,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
