@@ -729,7 +729,106 @@ function salvarAlteracoes() {
     a.click();
 }
 
-function confirmarEntrada() { salsiData.entradas.push({ nome: document.getElementById('e-nome').value, valor: parseFloat(document.getElementById('e-valor').value), mes: dataFiltro.getMonth(), ano: dataFiltro.getFullYear() }); renderizar(); document.getElementById('modal-entrada').close(); mostrarToast("Receita adicionada! 💰");}
+function confirmarEntrada() {
+    // Capturar e converter o Valor (com a mesma segurança do Gasto)
+    let rawValue = document.getElementById('e-valor').value;
+    const valorTotal = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+    
+    if (valorTotal <= 0) {
+        alert("Por favor, insira um valor válido.");
+        return;
+    }
+
+    const indexEdit = parseInt(document.getElementById('e-index-edit').value) || -1;
+    const nome = document.getElementById('e-nome').value || 'Nova Entrada';
+    const cliente = document.getElementById('e-cliente').value || '';
+    const dataStr = document.getElementById('e-data').value;
+    const categoria = document.getElementById('e-categoria').value;
+    
+    // Captura as parcelas apenas se for um projeto
+    let parcelas = 1;
+    if (categoria === 'Projetos / Serviços') {
+        parcelas = parseInt(document.getElementById('e-parcelas').value) || 1;
+    }
+
+    // Validação da data
+    let dataBase = new Date();
+    if (dataStr) {
+        const partesData = dataStr.split('-');
+        // Evita bugs de fuso horário lendo o ano, mês e dia exatos
+        dataBase = new Date(partesData[0], partesData[1] - 1, partesData[2]);
+    } else {
+        dataBase.setMonth(dataFiltro.getMonth());
+        dataBase.setFullYear(dataFiltro.getFullYear());
+    }
+
+    // --- SE FOR UMA ENTRADA NOVA (Fatiar e Criar) ---
+    if (indexEdit === -1) {
+        const valorPorParcela = valorTotal / parcelas;
+        
+        // O "Código de Família" (projetoId) para amarrar as parcelas
+        const projetoId = parcelas > 1 ? 'proj_' + new Date().getTime() : '';
+
+        for (let i = 0; i < parcelas; i++) {
+            let dataParcela = new Date(dataBase);
+            dataParcela.setMonth(dataParcela.getMonth() + i); // Joga as próximas parcelas para o futuro
+
+            salsiData.entradas.push({
+                nome: parcelas > 1 ? `${nome} (${i+1}/${parcelas})` : nome,
+                cliente: cliente,
+                categoria: categoria,
+                valor: valorPorParcela, // O dinheiro fatiado perfeitamente
+                mes: dataParcela.getMonth(),
+                ano: dataParcela.getFullYear(),
+                dataRecebimento: dataParcela.toISOString().split('T')[0],
+                
+                // Dados invisíveis cruciais para a Edição Inteligente depois
+                projetoId: projetoId,
+                valorTotalProjeto: valorTotal,
+                parcelaAtual: i + 1,
+                totalParcelas: parcelas
+            });
+        }
+        
+        mostrarToast(parcelas > 1 ? `Projeto parcelado em ${parcelas}x com sucesso! 💼` : "Entrada registada! 💰");
+    } 
+    // --- SE FOR EDIÇÃO (Deixamos a cama pronta para o Passo 3) ---
+    else {
+        // Por enquanto atualiza só a linha editada (A matemática genial vem no próximo passo)
+        const entrada = salsiData.entradas[indexEdit];
+        entrada.nome = nome;
+        entrada.cliente = cliente;
+        entrada.categoria = categoria;
+        entrada.valor = valorTotal; 
+        
+        if (dataStr) {
+            entrada.dataRecebimento = dataStr;
+            const partesData = dataStr.split('-');
+            entrada.mes = parseInt(partesData[1]) - 1;
+            entrada.ano = parseInt(partesData[0]);
+        }
+        mostrarToast("Entrada atualizada! ✏️");
+    }
+
+    document.getElementById('modal-entrada').close();
+    renderizar(); // Grava no ecrã o novo saldo e atualiza os gráficos
+}
+
+function limparFormularioEntrada() {
+    const inputEdit = document.getElementById('e-index-edit');
+    if (inputEdit) inputEdit.value = "-1";
+    
+    const inputProjId = document.getElementById('e-projeto-id');
+    if (inputProjId) inputProjId.value = "";
+    
+    document.getElementById('e-valor').value = "";
+    document.getElementById('e-nome').value = "";
+    document.getElementById('e-cliente').value = "";
+    document.getElementById('e-data').value = "";
+    document.getElementById('e-categoria').value = "Projetos / Serviços";
+    document.getElementById('e-parcelas').value = "1";
+    if (typeof ajustarCamposEntrada === 'function') ajustarCamposEntrada();
+}
 
 function excluirGasto(idx) { if(confirm("Apagar?")) { salsiData.transacoes.splice(idx,1); renderizar(); } }
 function excluirEntrada(idx) { if(confirm("Apagar?")) { salsiData.entradas.splice(idx,1); renderizar(); } }
@@ -820,7 +919,10 @@ function editarGasto(index) {
     document.getElementById('modal-gasto').showModal();
 }
 
-function abrirModalEntrada() { document.getElementById('modal-entrada').showModal(); }
+function abrirModalEntrada() {
+    limparFormularioEntrada();
+    document.getElementById('modal-entrada').showModal(); 
+}
 
 // O Cérebro do Contraste: Define a cor do banco e o contraste legível da letra
 // O Cérebro das Cores: Paleta Premium Escurecida (Padronizada para letra Branca)
@@ -2439,6 +2541,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// --- CONTROLO VISUAL DO MODAL DE ENTRADAS ---
+function ajustarCamposEntrada() {
+    const categoria = document.getElementById('e-categoria').value;
+    const divParcelas = document.getElementById('div-entrada-parcelas');
+    
+    // Só mostra a opção de parcelamento se for um "Projeto / Serviço"
+    if (categoria === 'Projetos / Serviços') {
+        divParcelas.style.display = 'block';
+    } else {
+        divParcelas.style.display = 'none';
+        document.getElementById('e-parcelas').value = "1"; // Volta logo a 1x para não haver erros de cálculo
+    }
+}
 
 
 
