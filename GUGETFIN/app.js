@@ -732,11 +732,10 @@ function salvarAlteracoes() {
 }
 
 function confirmarEntrada() {
-    // Capturar e converter o Valor (com a mesma segurança do Gasto)
     let rawValue = document.getElementById('e-valor').value;
-    const valorTotal = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+    const valorDigitado = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
     
-    if (valorTotal <= 0) {
+    if (valorDigitado <= 0) {
         alert("Por favor, insira um valor válido.");
         return;
     }
@@ -747,79 +746,141 @@ function confirmarEntrada() {
     const dataStr = document.getElementById('e-data').value;
     const categoria = document.getElementById('e-categoria').value;
     
-    // Captura as parcelas apenas se for um projeto
     let parcelas = 1;
     if (categoria === 'Projetos / Serviços') {
         parcelas = parseInt(document.getElementById('e-parcelas').value) || 1;
     }
 
-    // Validação da data
     let dataBase = new Date();
     if (dataStr) {
         const partesData = dataStr.split('-');
-        // Evita bugs de fuso horário lendo o ano, mês e dia exatos
         dataBase = new Date(partesData[0], partesData[1] - 1, partesData[2]);
     } else {
         dataBase.setMonth(dataFiltro.getMonth());
         dataBase.setFullYear(dataFiltro.getFullYear());
     }
 
-    // --- SE FOR UMA ENTRADA NOVA (Fatiar e Criar) ---
+    // --- CRIANDO UMA ENTRADA NOVA ---
     if (indexEdit === -1) {
-        const valorPorParcela = valorTotal / parcelas;
-        
-        // O "Código de Família" (projetoId) para amarrar as parcelas
+        // Na criação, o 'valorDigitado' é o TOTAL do projeto (ex: 2500)
+        const valorPorParcela = valorDigitado / parcelas;
         const projetoId = parcelas > 1 ? 'proj_' + new Date().getTime() : '';
 
         for (let i = 0; i < parcelas; i++) {
             let dataParcela = new Date(dataBase);
-            dataParcela.setMonth(dataParcela.getMonth() + i); // Joga as próximas parcelas para o futuro
+            dataParcela.setMonth(dataParcela.getMonth() + i); 
 
             salsiData.entradas.push({
                 nome: parcelas > 1 ? `${nome} (${i+1}/${parcelas})` : nome,
                 cliente: cliente,
                 categoria: categoria,
-                valor: valorPorParcela, // O dinheiro fatiado perfeitamente
+                valor: valorPorParcela, 
                 mes: dataParcela.getMonth(),
                 ano: dataParcela.getFullYear(),
                 dataRecebimento: dataParcela.toISOString().split('T')[0],
-                
-                // Dados invisíveis cruciais para a Edição Inteligente depois
                 projetoId: projetoId,
-                valorTotalProjeto: valorTotal,
+                valorTotalProjeto: valorDigitado,
                 parcelaAtual: i + 1,
                 totalParcelas: parcelas
             });
         }
-        
-        mostrarToast(parcelas > 1 ? `Projeto parcelado em ${parcelas}x com sucesso!` : "Entrada registada!");
     } 
-    // --- SE FOR EDIÇÃO (Deixamos a cama pronta para o Passo 3) ---
+    // --- EDITANDO (O CENÁRIO QUE VOCÊ CRIOU) ---
     else {
-        // Por enquanto atualiza só a linha editada (A matemática genial vem no próximo passo)
-        const entrada = salsiData.entradas[indexEdit];
-        entrada.nome = nome;
-        entrada.cliente = cliente;
-        entrada.categoria = categoria;
-        entrada.valor = valorTotal; 
+        // Na edição, o 'valorDigitado' é o valor DESTA parcela (ex: os 1250)
+        const entradaEditada = salsiData.entradas[indexEdit];
+        
+        entradaEditada.nome = nome;
+        entradaEditada.cliente = cliente;
+        entradaEditada.categoria = categoria;
+        entradaEditada.valor = valorDigitado; // Grava os 1250 que o cliente pagou
         
         if (dataStr) {
-            entrada.dataRecebimento = dataStr;
+            entradaEditada.dataRecebimento = dataStr;
             const partesData = dataStr.split('-');
-            entrada.mes = parseInt(partesData[1]) - 1;
-            entrada.ano = parseInt(partesData[0]);
+            entradaEditada.mes = parseInt(partesData[1]) - 1;
+            entradaEditada.ano = parseInt(partesData[0]);
         }
-        mostrarToast("Entrada atualizada!");
+
+        // LÓGICA DE RECALCULAR / APAGAR PARCELAS
+        if (entradaEditada.projetoId) {
+            let parcelasDoProjeto = salsiData.entradas.filter(e => e.projetoId === entradaEditada.projetoId);
+            parcelasDoProjeto.sort((a, b) => a.parcelaAtual - b.parcelaAtual);
+
+            // 1. Descobre quanto o cliente já pagou até este mês
+            let somaPagaAteAgora = 0;
+            parcelasDoProjeto.forEach(p => {
+                if (p.parcelaAtual <= entradaEditada.parcelaAtual) {
+                    somaPagaAteAgora += p.valor; 
+                }
+            });
+
+            // 2. Vê quanto de dinheiro ainda falta e quantas parcelas sobraram
+            const saldoRestante = entradaEditada.valorTotalProjeto - somaPagaAteAgora;
+            const parcelasFuturasNecessarias = parcelas - entradaEditada.parcelaAtual;
+
+            // 3. Atualiza o número total de parcelas (ex: se mudou pra 3x)
+            parcelasDoProjeto.forEach(p => p.totalParcelas = parcelas);
+
+            let parcelasFuturasAtuais = parcelasDoProjeto.filter(p => p.parcelaAtual > entradaEditada.parcelaAtual);
+
+            if (parcelasFuturasNecessarias > 0) {
+                const novoValorFuturo = saldoRestante / parcelasFuturasNecessarias;
+                
+                // Se diminuiu (ex: 4x pra 3x), APAGA a parcela que sobrou lá no futuro!
+                while(parcelasFuturasAtuais.length > parcelasFuturasNecessarias) {
+                    let pToRemove = parcelasFuturasAtuais.pop();
+                    let idxToRemove = salsiData.entradas.indexOf(pToRemove);
+                    if(idxToRemove > -1) salsiData.entradas.splice(idxToRemove, 1);
+                }
+
+                // Atualiza o valor para as que ficaram
+                parcelasFuturasAtuais.forEach(p => p.valor = novoValorFuturo);
+
+                // Se ele AUMENTOU (ex: 3x pra 5x), CRIA as parcelas extras
+                let ultimaDataObj = new Date(entradaEditada.ano, entradaEditada.mes, 1);
+                for (let i = parcelasFuturasAtuais.length; i < parcelasFuturasNecessarias; i++) {
+                    ultimaDataObj.setMonth(ultimaDataObj.getMonth() + 1);
+                    salsiData.entradas.push({
+                        nome: nome, // Atualizado no final
+                        cliente: cliente,
+                        categoria: categoria,
+                        valor: novoValorFuturo,
+                        mes: ultimaDataObj.getMonth(),
+                        ano: ultimaDataObj.getFullYear(),
+                        dataRecebimento: ultimaDataObj.toISOString().split('T')[0],
+                        projetoId: entradaEditada.projetoId,
+                        valorTotalProjeto: entradaEditada.valorTotalProjeto,
+                        parcelaAtual: entradaEditada.parcelaAtual + i + 1,
+                        totalParcelas: parcelas
+                    });
+                }
+            } else {
+                // Se pagou tudo agora ou zerou as futuras, apaga o que havia para a frente
+                parcelasFuturasAtuais.forEach(pToRemove => {
+                    let idxToRemove = salsiData.entradas.indexOf(pToRemove);
+                    if(idxToRemove > -1) salsiData.entradas.splice(idxToRemove, 1);
+                });
+            }
+
+            // 4. Corrige as etiquetas dos nomes para ficar perfeito (ex: (1/3), (2/3))
+            let projAtualizado = salsiData.entradas.filter(e => e.projetoId === entradaEditada.projetoId);
+            projAtualizado.forEach(p => {
+                 p.nome = `${nome} (${p.parcelaAtual}/${p.totalParcelas})`;
+            });
+        }
     }
 
+    // 🔴 IMPORTANTE: Para evitar bugs com valores fantasma na próxima vez que clicar em "+ ADD"
+    document.getElementById('e-valor').placeholder = "Valor Total R$"; 
+
     document.getElementById('modal-entrada').close();
-    renderizar(); // Grava no ecrã o novo saldo e atualiza os gráficos
+    renderizar(); // Atualiza a tela inteira e salva no Firebase
 }
 
 // Função que faltava: Puxa os dados da entrada para o formulário e abre como Edição
 function editarEntrada(index) {
-    // Fecha qualquer modal de detalhes que esteja aberto
-    const modalDet = document.getElementById('modal-detalhes');
+    const modalDet = document.getElementById('modal-detalhes-entrada');
     if(modalDet) modalDet.close();
 
     const entrada = salsiData.entradas[index];
@@ -827,37 +888,36 @@ function editarEntrada(index) {
 
     if (typeof limparFormularioEntrada === 'function') limparFormularioEntrada();
 
-    document.getElementById('modal-titulo-entrada').innerText = 'Editar Entrada';
+    document.getElementById('modal-titulo-entrada').innerText = 'Editar Parcela';
     document.getElementById('e-index-edit').value = index;
     
-    // O campo invisível do ID da Família
     const inputProjId = document.getElementById('e-projeto-id');
     if (inputProjId) inputProjId.value = entrada.projetoId || "";
 
-    // ATENÇÃO: Na edição, o valor é o da PARCELA atual, não do total!
+    // MÁGICA VISUAL: Altera o texto de fundo para você saber que está editando a parcela
     const inputValor = document.getElementById('e-valor');
+    inputValor.placeholder = "Valor desta parcela R$";
     inputValor.value = (entrada.valor * 100).toFixed(0); 
     if (typeof formatarMoeda === 'function') formatarMoeda(inputValor);
 
-    document.getElementById('e-nome').value = entrada.nome || "";
+    // Remove o " (1/4)" do nome para não poluir a edição
+    let nomeLimpo = entrada.nome;
+    if (entrada.projetoId) {
+        nomeLimpo = entrada.nome.replace(/\s\(\d+\/\d+\)$/, '');
+    }
+    document.getElementById('e-nome').value = nomeLimpo || "";
     document.getElementById('e-cliente').value = entrada.cliente || "";
     
-    // Formatar data para o input date (corrige o fuso horário visual)
     let mesStr = (entrada.mes + 1).toString().padStart(2, '0');
     document.getElementById('e-data').value = entrada.dataRecebimento || `${entrada.ano}-${mesStr}-01`;
 
     document.getElementById('e-categoria').value = entrada.categoria || "Projetos / Serviços";
     if (typeof ajustarCamposEntrada === 'function') ajustarCamposEntrada();
     
-    // Se for um projeto, não deixamos mudar o número de parcelas a meio para não bugar a matemática
+    // DESTRAVA AS PARCELAS: Permite que você mude de 4x para 3x na edição!
     const selectParcelas = document.getElementById('e-parcelas');
     if (entrada.projetoId && entrada.totalParcelas) {
         selectParcelas.value = entrada.totalParcelas.toString();
-        selectParcelas.disabled = true; // Trava o campo
-        selectParcelas.style.opacity = "0.6"; // Dá um aspeto de inativo
-    } else {
-        selectParcelas.disabled = false;
-        selectParcelas.style.opacity = "1";
     }
 
     document.getElementById('modal-entrada').showModal();
@@ -2662,6 +2722,7 @@ function ajustarCamposEntrada() {
         document.getElementById('e-parcelas').value = "1"; // Volta logo a 1x para não haver erros de cálculo
     }
 }
+
 
 
 
