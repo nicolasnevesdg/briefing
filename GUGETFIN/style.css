@@ -1894,6 +1894,7 @@ tr[style*="opacity: 0.7"] td {
     .dropdown-trigger { width: 100%; box-sizing: border-box; background: unset; border: none;}
     .dropdown-menu { left: 0; right: auto; width: 100%; } 
 	.dropdown-trigger > .chevron { border-width: 0 1px 1px 0; }
+}
 	
 	/* --- ESTÉTICA PERFEITA DOS MODAIS (Mobile) --- */
 @media (max-width: 1024px) {
@@ -2630,16 +2631,48 @@ tr[style*="opacity: 0.7"] td {
     white-space: nowrap; 
 }
 
+/* ======================================================== */
+/* 🚀 REDESIGN PREMIUM DOS MENUS CASCATA (SELECTS NATIVOS)  */
+/* ======================================================== */
 
+dialog select {
+    /* 1. Mata o visual "velho" padrão do navegador */
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    /* 2. Cria a nossa própria setinha combinando com os filtros */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231b3a32' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center; 
+    background-size: 14px;
+    
+    /* 3. Estética Premium */
+    background-color: #ffffff;
+    padding-right: 40px !important; /* Espaço para a seta não esmagar o texto */
+    cursor: pointer;
+    font-weight: 600 !important;
+    color: var(--dark-green) !important;
+    transition: all 0.3s ease !important;
+}
 
+/* Efeito ao passar o mouse */
+dialog select:hover {
+    border-color: var(--acc-green);
+    background-color: #fafffb; /* Um verde muuuito clarinho de fundo */
+    box-shadow: 0 4px 12px rgba(150, 230, 161, 0.15);
+}
 
+/* Efeito quando está aberto (focado) */
+dialog select:focus {
+    outline: none !important;
+    border-color: var(--dark-green) !important;
+    box-shadow: 0 0 0 3px rgba(27, 58, 50, 0.1) !important;
+}
 
-
-
-
-
-
-
-
-
-
+/* Melhora as opções dentro da lista (Aplicável mais no PC) */
+dialog select option {
+    font-weight: 600;
+    color: var(--text-main);
+    padding: 10px;
+}
