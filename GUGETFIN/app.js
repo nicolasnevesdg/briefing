@@ -294,6 +294,20 @@ function renderizar() {
                 if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
                     totalGastoMes += val;
                     tagSum[t.categoria] = (tagSum[t.categoria] || 0) + val;
+                    
+                    // 👇 A MÁGICA: O Gasto Fixo entra na Fatura do Cartão ou Débito 👇
+                    if (t.tipo === 'fixo' && t.banco) {
+                        const detalheBanco = salsiData.config.detalhesBancos?.find(d => d.nome === t.banco);
+                        const isDebitoOnly = detalheBanco ? detalheBanco.isDebitoOnly : t.banco.toLowerCase().includes('débito');
+                        
+                        if (!isDebitoOnly) {
+                            totalCartMes += val; 
+                            bankSum[t.banco] = (bankSum[t.banco] || 0) + val; 
+                        } else {
+                            totalDebitoMes += val;
+                        }
+                    }
+                    // 👆 FIM DA MÁGICA 👆
                 }
 
                 if (t.tipo === 'fixo') {
@@ -2422,6 +2436,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(abrirOnboarding, 1000);
     }
 });
+
 
 
 
