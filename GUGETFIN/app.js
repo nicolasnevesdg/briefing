@@ -2759,15 +2759,15 @@ function ajustarCamposEntrada() {
     }
 }
 
-// --- SISTEMA DE NOTIFICAÇÕES PUSH (FINAL) ---
+// --- SISTEMA DE NOTIFICAÇÕES PUSH (CORRIGIDO) ---
 async function solicitarPermissaoNotificacao() {
     if (!('Notification' in window)) {
         console.log('Este navegador não suporta notificações.');
         return;
     }
 
-    // Definimos aqui dentro para evitar o erro de "not defined"
-    const firebaseConfig = {
+    // Definimos as tuas credenciais aqui para garantir que a função as encontra sempre
+    const configLocal = {
         apiKey: "AIzaSyD1HyxzZ-YFMMbMSIwBDDKfNWdCWHb07AY",
         authDomain: "guget-fin.firebaseapp.com",
         projectId: "guget-fin",
@@ -2780,33 +2780,38 @@ async function solicitarPermissaoNotificacao() {
         const permission = await Notification.requestPermission();
         
         if (permission === 'granted') {
-            console.log('Permissão concedida! Gerando acesso...');
+            console.log('Permissão concedida! A gerar Token...');
             
-            const { getMessaging, getToken } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js");
+            // Importa o Firebase dinamicamente para evitar conflitos de versões
             const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js");
+            const { getMessaging, getToken } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging.js");
 
-            // Inicializa uma instância local para as notificações
-            const appPush = initializeApp(firebaseConfig, "notifications-app");
+            // Cria uma instância isolada apenas para o Push
+            const appPush = initializeApp(configLocal, "push-instance");
             const messaging = getMessaging(appPush);
 
+            // Regista o teu Service Worker (sw.js)
             const swRegistration = await navigator.serviceWorker.register('sw.js');
             
+            // Gera o Token com a tua VAPID Key
             const token = await getToken(messaging, { 
                 vapidKey: 'BHi1jJ27NXlLSnyE8odTIm5mULqA3NWQGrcOM7d1l1fdSgPKUv8e0_IKccuBVd-UfYYkKPwr-bG15gttuLWVMhg', 
                 serviceWorkerRegistration: swRegistration 
             });
 
             if (token) {
-                console.log('Token gerado com sucesso:', token);
+                console.log('SUCESSO! O teu Token de teste apareceu:');
+                console.log(token); // <--- COPIA ESTE CÓDIGO DO CONSOLE (F12)
                 if (typeof mostrarToast === 'function') mostrarToast("Notificações ativadas! 🔔");
             }
         } else {
-            alert("Para receber lembretes, ative as notificações nas configurações do navegador.");
+            alert("Ativa as notificações nas definições do navegador para receberes os lembretes.");
         }
     } catch (error) {
         console.error('Erro ao configurar notificações:', error);
     }
 }
+
 
 
 
