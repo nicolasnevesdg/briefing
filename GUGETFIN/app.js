@@ -2759,6 +2759,23 @@ function ajustarCamposEntrada() {
     }
 }
 
+// --- SISTEMA DE NOTIFICAÇÕES PUSH ---
+function solicitarPermissaoNotificacao() {
+    if (!('Notification' in window)) {
+        console.log('Este navegador não suporta notificações de sistema.');
+        return;
+    }
+
+    Notification.requestPermission().then(function(permission) {
+        if (permission === 'granted') {
+            console.log('Permissão de notificação concedida!');
+            mostrarToast("Notificações ativadas! 🔔");
+            // Nota: Aqui futuramente você liga a geração do Token do Firebase
+        } else {
+            console.log('Permissão de notificação negada.');
+        }
+    });
+}
 
 
 
