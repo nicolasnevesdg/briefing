@@ -524,29 +524,31 @@ function renderizar() {
     const resEntEl = document.getElementById('resumo-entradas-lista');
     if (resEntEl) resEntEl.innerHTML = renderLinhaOrcamento('Total Recebido', totalEnt, true);
     
-    // 6. CÁLCULO ANUAL
-    let anEnt = 0, anCred = 0, anDeb = 0, anFixo = 0;
-    salsiData.entradas.forEach(e => { if(e.ano === a) anEnt += e.valor; });
-    
-    for (let mesIdx = 0; mesIdx < 12; mesIdx++) {
-        salsiData.transacoes.forEach(t => {
-            const d = new Date(t.dataCompra + "T00:00:00");
-            const infoB = salsiData.config.detalhesBancos?.find(b => b.nome === t.banco);
-            const f = infoB ? parseInt(infoB.fechamento) : 1;
-            let mr = d.getMonth(); 
-            if (d.getDate() >= f) mr += 1;
-            const df = (a - d.getFullYear()) * 12 + (mesIdx - mr);
-
-            if (df >= 0 && df < t.parcelas && !t.eDeTerceiro) {
-                const v = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
-                if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
-                    if (t.tipo === 'cartao') anCred += v; 
-                    else if (t.tipo === 'debito') anDeb += v; 
-                    else anFixo += v;
-                }
-            }
-        });
-    }
+	// 6. CÁLCULO ANUAL
+	    let anEnt = 0, anCred = 0, anDeb = 0, anFixo = 0;
+	    salsiData.entradas.forEach(e => { if(e.ano === a) anEnt += e.valor; });
+	    
+	    for (let mesIdx = 0; mesIdx < 12; mesIdx++) {
+	        salsiData.transacoes.forEach(t => {
+	            const d = new Date(t.dataCompra + "T00:00:00");
+	            
+	            // 👇 CORREÇÃO: Usa a mesma lógica do painel principal (sem empurrar débito)
+	            let mesRef = d.getMonth() + (t.delayPagamento || 0);
+	            let anoRef = d.getFullYear();
+	            if (mesRef > 11) { mesRef -= 12; anoRef++; }
+	
+	            const df = (a - anoRef) * 12 + (mesIdx - mesRef);
+	
+	            if (df >= 0 && df < t.parcelas && !t.eDeTerceiro) {
+	                const v = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
+	                if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
+	                    if (t.tipo === 'cartao') anCred += v; 
+	                    else if (t.tipo === 'debito') anDeb += v; 
+	                    else anFixo += v;
+	                }
+	            }
+	        });
+	    }
 
     const eAnnEntradas = document.getElementById('ann-entradas');
     if(eAnnEntradas) {
@@ -1260,13 +1262,13 @@ const ano = anoFiltroGrafico;
         // 2. CALCULA OS GASTOS CONFIRMADOS (Faz o saldo descer)
         salsiData.transacoes.forEach(t => {
             const d = new Date(t.dataCompra + "T00:00:00");
-            const infoB = salsiData.config.detalhesBancos?.find(b => b.nome === t.banco);
-            const f = infoB ? parseInt(infoB.fechamento) : 1;
             
-            let mr = d.getMonth(); 
-            if (d.getDate() >= f) mr += 1;
+            // 👇 CORREÇÃO: Alinhado com o motor principal (impede que PIX e Débito vazem pro mês seguinte)
+            let mesRef = d.getMonth() + (t.delayPagamento || 0);
+            let anoRef = d.getFullYear();
+            if (mesRef > 11) { mesRef -= 12; anoRef++; }
             
-            const diff = (ano - d.getFullYear()) * 12 + (m - mr);
+            const diff = (ano - anoRef) * 12 + (m - mesRef);
 
             if (diff >= 0 && diff < t.parcelas) {
                 const v = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
@@ -2977,6 +2979,15 @@ function parseCSV(csvString) {
 function renderizarPreviewImportacao() {
     const container = document.getElementById('lista-importacao-preview');
     container.innerHTML = '';
+    
+    // 👇 NOVO: Puxa os bancos que você já tem cadastrados no sistema
+    const selectBanco = document.getElementById('import-banco-select');
+    if (selectBanco && selectBanco.options.length === 0) { // Só preenche se estiver vazio
+        salsiData.config.bancos.forEach(banco => {
+            selectBanco.innerHTML += `<option value="${banco}">${banco}</option>`;
+        });
+    }
+
     let mesAtual = '';
 
     dadosImportacaoTemporaria.forEach(t => {
@@ -3018,21 +3029,24 @@ function removerItemImportacao(id) {
 }
 
 function confirmarImportacao() {
+    // 👇 NOVO: Lê qual banco você selecionou lá no pop-up
+    const selectBanco = document.getElementById('import-banco-select');
+    const bancoEscolhido = selectBanco ? selectBanco.value : 'Nubank'; // Usa o escolhido (ou Nubank por segurança)
+
     dadosImportacaoTemporaria.forEach(t => {
         if (t.tipo === 'saida') {
-            // Decide se joga pra lista de PIX ou de Débito com base na análise
             let tipoFinal = t.formaPagamento === 'PIX' ? 'pix' : 'debito';
 
             salsiData.transacoes.push({
                 nome: t.nome,
-                valorTotal: t.valor,        // Formato correto do Guget Fin
-                valorParcela: t.valor,      // Como é à vista no extrato, os dois são iguais
+                valorTotal: t.valor,        
+                valorParcela: t.valor,      
                 dataCompra: t.data,
-                tipo: tipoFinal,            // 'pix' ou 'debito' (em minúsculo)
-                banco: "Nubank",            // Banco padrão pra não dar conflito de cor/ícone
+                tipo: tipoFinal,            
+                banco: bancoEscolhido,      // 👈 AGORA ELE SALVA O BANCO QUE VOCÊ ESCOLHEU!
                 categoria: "Outros",
                 formaPagamento: t.formaPagamento,
-                pago: true,                 // Se tá no extrato, já foi descontado da conta!
+                pago: true,                 
                 parcelas: 1,
                 delayPagamento: 0,
                 eDeTerceiro: false,
@@ -3071,6 +3085,7 @@ function confirmarImportacao() {
     // Esvazia a memória do pop-up
     dadosImportacaoTemporaria = []; 
 }
+
 
 
 
