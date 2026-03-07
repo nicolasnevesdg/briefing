@@ -2721,17 +2721,18 @@ dialog select option {
 
 /* Efeito de brilho quando passa o mouse */
 .btn-nova-entrada:hover {
-    background: #81c88b;
+    background: #6cc080;
     color: white;
     border-style: solid;
-    border-color: #81c88b;
+    border-color: #6cc080;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 4px 12px rgb(108 192 128 / 20%);
 }
 
 .btn-nova-entrada i {
     font-size: 14px;
     line-height: 0;
 }
+
 
 
