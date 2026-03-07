@@ -953,18 +953,19 @@ tr[style*="opacity: 0.7"] td {
     transition: all 0.2s ease;
 }
 
-/* O fundo cinza claro para as abas normais */
+/* O fundo transparente para as abas inativas */
 .tab-btn {
     width: 46px;  
     height: 46px; 
-    background-color: #f4f6f5; /* O cinza super clarinho da sua foto */
-    color: #1a362d; /* Cor do ícone desativado */
+    background-color: transparent; 
+    color: #a0aec0; /* Ícone cinza claro para não roubar a atenção */
 }
 
-/* Quando a aba estiver ativa, o ícone ganha destaque */
+/* Quando a aba estiver ativa, o ícone ganha destaque premium */
 .tab-btn.active {
-    color: #1a362d; /* Ícone fica verde bem escuro */
-    /* O fundo cinza se mantém para não quebrar a estética das bolinhas */
+    background-color: #e8f5e9; /* Fundo verdinho suave da sua paleta */
+    color: #1b3a32; /* Ícone verde escuro principal */
+    transform: scale(1.05); /* Leve pulinho de destaque */
 }
 
 /* O botão principal (+) em destaque dentro da barra */
@@ -2697,3 +2698,4 @@ dialog select option {
 .entrada-card-hover:active {
     background-color: #f0f4f3; /* Fica ligeiramente escuro ao tocar */
 }
+
