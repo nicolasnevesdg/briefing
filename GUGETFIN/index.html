@@ -913,12 +913,21 @@
 	            <button class="fechar-modal" onclick="document.getElementById('modal-importacao').close()">×</button>
 	        </div>
 	        <div class="modal-body">
-	            <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 15px;">
-	                Identificamos as movimentações abaixo. Clique no "X" vermelho para <strong>excluir</strong> as que você não quer salvar no sistema.
-	            </p>
-	            <div id="lista-importacao-preview" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
-	                </div>
-	        </div>
+            <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 15px;">
+                Identificamos as movimentações abaixo. Clique no "X" para excluir o que não quiser importar.
+            </p>
+            
+            <div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
+                <label for="import-banco-select" style="font-size: 13px; font-weight: 700; color: var(--dark-green); white-space: nowrap;">
+                    <i class="fi fi-rr-bank"></i> Banco de Origem:
+                </label>
+                <select id="import-banco-select" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: 'Inter', sans-serif; font-size: 13px; outline: none; cursor: pointer; background: white;">
+                    </select>
+            </div>
+
+            <div id="lista-importacao-preview" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                </div>
+        </div>
 	        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
 	            <button class="btn-cancelar" onclick="document.getElementById('modal-importacao').close()">Cancelar</button>
 	            <button class="btn-salvar" onclick="confirmarImportacao()" style="background: var(--primary-color);">Confirmar e Importar</button>
@@ -983,6 +992,7 @@
 </body>
 
 </html>
+
 
 
 
