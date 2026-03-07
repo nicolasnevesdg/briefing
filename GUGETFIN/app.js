@@ -324,10 +324,10 @@ function renderizar() {
                     if(fTable) {
                         fTable.innerHTML += `
                             <tr ${estiloPC} class="desktop-only-row">
-                                <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
-                                <td>R$ ${val.toFixed(2)}</td>
-                                <td style="text-align: center;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
-                                <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
+                                <td style="cursor: pointer; font-weight: 500; width: 50%;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                                <td style="width: 25%;">R$ ${val.toFixed(2)}</td>
+                                <td style="text-align: center; width: 15%;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
+                                <td style="width: 10%;"><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
                             </tr>`;
                     }
 
@@ -2826,6 +2826,7 @@ async function solicitarPermissaoNotificacao() {
         console.error('Erro ao configurar notificações:', error);
     }
 }
+
 
 
 
