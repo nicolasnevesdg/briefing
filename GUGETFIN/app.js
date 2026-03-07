@@ -3020,33 +3020,45 @@ function removerItemImportacao(id) {
 function confirmarImportacao() {
     dadosImportacaoTemporaria.forEach(t => {
         if (t.tipo === 'saida') {
+            // Decide se joga pra lista de PIX ou de Débito com base na análise
+            let tipoFinal = t.formaPagamento === 'PIX' ? 'pix' : 'debito';
+
             salsiData.transacoes.push({
                 nome: t.nome,
-                data: t.data, 
+                valorTotal: t.valor,        // Formato correto do Guget Fin
+                valorParcela: t.valor,      // Como é à vista no extrato, os dois são iguais
                 dataCompra: t.data,
-                valor: t.valor,
+                tipo: tipoFinal,            // 'pix' ou 'debito' (em minúsculo)
+                banco: "Nubank",            // Banco padrão pra não dar conflito de cor/ícone
                 categoria: "Outros",
-                tipoGasto: "Variavel",
-                formaPagamento: t.formaPagamento, // Agora injeta PIX, Débito ou Transferência automático!
+                formaPagamento: t.formaPagamento,
+                pago: true,                 // Se tá no extrato, já foi descontado da conta!
                 parcelas: 1,
-                fixo: false
+                delayPagamento: 0,
+                eDeTerceiro: false,
+                nomeTerceiro: ""
             });
         } else if (t.tipo === 'entrada') {
-            const dObj = new Date(t.data + 'T12:00:00');
-            // Anexa a forma de recebimento no nome da entrada para você saber
-            const nomeEntrada = t.formaPagamento !== 'Débito' ? `${t.nome} (${t.formaPagamento})` : t.nome;
+            // Separa a data para extrair o Mês (0-11) e o Ano corretamente
+            const partes = t.data.split('-');
+            const anoImportado = parseInt(partes[0]);
+            const mesImportado = parseInt(partes[1]) - 1; 
+            
             salsiData.entradas.push({
-                nome: nomeEntrada,
+                nome: "Entrada via Extrato",// Padronizado
+                cliente: t.nome,            // O nome que veio do banco (quem pagou)
                 valor: t.valor,
                 dataRecebimento: t.data,
-                mes: dObj.getMonth(),
-                ano: dObj.getFullYear(),
-                categoria: "Projetos / Serviços"
+                mes: mesImportado,          
+                ano: anoImportado,
+                categoria: "Renda Extra"
             });
         }
     });
 
     document.getElementById('modal-importacao').close();
+    
+    // Salva no Firebase e recalcula a tela com a estrutura perfeita
     if (typeof salvarDados === 'function') salvarDados();
     if (typeof renderizar === 'function') renderizar();
     
@@ -3056,8 +3068,10 @@ function confirmarImportacao() {
         alert("Importação concluída com sucesso!");
     }
     
+    // Esvazia a memória do pop-up
     dadosImportacaoTemporaria = []; 
 }
+
 
 
 
