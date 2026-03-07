@@ -612,11 +612,11 @@ tr[style*="opacity: 0.7"] td {
 }
 
 /* Definindo larguras para alinhar as colunas */
-#tabela-cartao th:nth-child(1), #tabela-cartao td:nth-child(1) { width: 40%; } /* Item */
-#tabela-cartao th:nth-child(2), #tabela-cartao td:nth-child(2) { width: 15%; text-align: center; } /* Parc. */
-#tabela-cartao th:nth-child(3), #tabela-cartao td:nth-child(3) { width: 25%; text-align: center; } /* Banco */
-#tabela-cartao th:nth-child(4), #tabela-cartao td:nth-child(4) { width: 15%; text-align: right; }  /* Valor */
-#tabela-cartao th:nth-child(5), #tabela-cartao td:nth-child(5) { width: 5%; text-align: center; }  /* Delete */
+#tabela-cartao th:nth-child(1), #tabela-cartao td:nth-child(1) { width: 10%; } /* Item */
+#tabela-cartao th:nth-child(2), #tabela-cartao td:nth-child(2) { width: 40%; text-align: left; } /* Parc. */
+#tabela-cartao th:nth-child(3), #tabela-cartao td:nth-child(3) { width: 10%; text-align: center; } /* Banco */
+#tabela-cartao th:nth-child(4), #tabela-cartao td:nth-child(4) { width: 25%; text-align: center; }  /* Valor */
+#tabela-cartao th:nth-child(5), #tabela-cartao td:nth-child(5) { width: 15%; text-align: center; }  /* Delete */
 
 /* Ajuste no Badge para ele não flutuar */
 #tabela-cartao .badge {
@@ -2698,4 +2698,5 @@ dialog select option {
 .entrada-card-hover:active {
     background-color: #f0f4f3; /* Fica ligeiramente escuro ao tocar */
 }
+
 
