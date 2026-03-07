@@ -2702,14 +2702,13 @@ dialog select option {
 /* --- Novo Botão de Entradas (Sidebar PC) --- */
 .btn-nova-entrada {
     width: 100%;
-    background: #f0fdf4; /* Fundo verde bem clarinho */
-    color: #15803d; /* Texto verde forte */
-    border: 1px dashed #bbf7d0; /* Bordinha tracejada para indicar "área de adição" */
+    background: #e8f5e9;
+    color: #15803d;
+    border: 1px dashed #c8e6c9;
     padding: 10px;
     border-radius: 10px;
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
     letter-spacing: 0.05em;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -2722,10 +2721,10 @@ dialog select option {
 
 /* Efeito de brilho quando passa o mouse */
 .btn-nova-entrada:hover {
-    background: #10b981;
+    background: #81c88b;
     color: white;
     border-style: solid;
-    border-color: #10b981;
+    border-color: #81c88b;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
@@ -2734,4 +2733,5 @@ dialog select option {
     font-size: 14px;
     line-height: 0;
 }
+
 
