@@ -149,6 +149,17 @@
 
 						<hr class="dropdown-divider">
 
+						<button class="dropdown-item option-btn" onclick="document.getElementById('input-import-extrato').click()">
+						    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+						        <polyline points="14 2 14 8 20 8"></polyline>
+						        <line x1="12" y1="18" x2="12" y2="12"></line>
+						        <polyline points="9 15 12 12 15 15"></polyline>
+						    </svg>
+						    Importar Extrato OFX/CSV
+						</button>
+						<input type="file" id="input-import-extrato" accept=".ofx,.csv" style="display:none" onchange="processarArquivoExtrato(event)">
+						
 						<button class="dropdown-item option-btn" onclick="document.getElementById('input-import-js').click()">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
 							Importar Backup
@@ -894,6 +905,26 @@
             </form>
         </div>
     </dialog>
+
+	<dialog id="modal-importacao" class="modal-padrao">
+	    <div class="modal-content" style="max-width: 550px;">
+	        <div class="modal-header">
+	            <h2>Revisar Importação</h2>
+	            <button class="fechar-modal" onclick="document.getElementById('modal-importacao').close()">×</button>
+	        </div>
+	        <div class="modal-body">
+	            <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 15px;">
+	                Identificamos as movimentações abaixo. Clique no "X" vermelho para <strong>excluir</strong> as que você não quer salvar no sistema.
+	            </p>
+	            <div id="lista-importacao-preview" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+	                </div>
+	        </div>
+	        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+	            <button class="btn-cancelar" onclick="document.getElementById('modal-importacao').close()">Cancelar</button>
+	            <button class="btn-salvar" onclick="confirmarImportacao()" style="background: var(--primary-color);">Confirmar e Importar</button>
+	        </div>
+	    </div>
+	</dialog>
 	
 	<div id="toast-notificacao">
         <i class="fi fi-rr-check-circle"></i>
@@ -952,6 +983,7 @@
 </body>
 
 </html>
+
 
 
 
