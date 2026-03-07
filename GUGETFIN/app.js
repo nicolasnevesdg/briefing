@@ -2827,6 +2827,206 @@ async function solicitarPermissaoNotificacao() {
     }
 }
 
+// ==========================================
+// MÓDULO DE IMPORTAÇÃO DE EXTRATOS (OFX/CSV)
+// ==========================================
+
+let dadosImportacaoTemporaria = [];
+
+function processarArquivoExtrato(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const conteudo = e.target.result;
+        const extensao = file.name.split('.').pop().toLowerCase();
+        
+        if (extensao === 'ofx' || extensao === 'ofc') {
+            dadosImportacaoTemporaria = parseOFX(conteudo);
+        } else if (extensao === 'csv') {
+            dadosImportacaoTemporaria = parseCSV(conteudo);
+        } else {
+            alert("Formato não suportado. Envie OFX ou CSV.");
+            return;
+        }
+
+        if (dadosImportacaoTemporaria.length > 0) {
+            // Ordena por data (mais antigo primeiro)
+            dadosImportacaoTemporaria.sort((a, b) => new Date(a.data) - new Date(b.data));
+            renderizarPreviewImportacao();
+            document.getElementById('modal-importacao').showModal();
+        } else {
+            alert("Nenhuma transação válida encontrada no arquivo.");
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = ''; // Limpa o input
+}
+
+// O Parser que lê o padrão bancário OFX
+function parseOFX(ofxString) {
+    let transacoes = [];
+    // Busca os blocos de transação <STMTTRN>...</STMTTRN>
+    const regexTrn = /<STMTTRN>([\s\S]*?)<\/STMTTRN>/g;
+    let match;
+
+    while ((match = regexTrn.exec(ofxString)) !== null) {
+        const bloco = match[1];
+        
+        const trnType = bloco.match(/<TRNTYPE>(.*?)(?:\r|\n|<)/)?.[1];
+        const dtPosted = bloco.match(/<DTPOSTED>(\d{8})/)?.[1]; // YYYYMMDD
+        const trnAmt = bloco.match(/<TRNAMT>(.*?)(?:\r|\n|<)/)?.[1];
+        let memo = bloco.match(/<MEMO>(.*?)(?:\r|\n|<)/)?.[1] || bloco.match(/<NAME>(.*?)(?:\r|\n|<)/)?.[1] || "Gasto Importado";
+
+        if (dtPosted && trnAmt) {
+            const dataFormatada = `${dtPosted.substring(0,4)}-${dtPosted.substring(4,6)}-${dtPosted.substring(6,8)}`;
+            const valorReal = parseFloat(trnAmt);
+            
+            transacoes.push({
+                id: 'imp_' + Math.random().toString(36).substr(2, 9),
+                data: dataFormatada,
+                nome: memo.trim(),
+                valor: Math.abs(valorReal),
+                tipo: valorReal < 0 ? 'saida' : 'entrada'
+            });
+        }
+    }
+    return transacoes;
+}
+
+// A Heurística Inteligente para ler CSV de vários bancos diferentes
+function parseCSV(csvString) {
+    let transacoes = [];
+    const linhas = csvString.split('\n');
+
+    linhas.forEach(linha => {
+        const colunas = linha.split(/[;,]/); // Divide por ponto-e-vírgula ou vírgula
+        if (colunas.length < 3) return;
+
+        let dFmt = null, vFmt = null, nFmt = "Gasto Importado";
+
+        colunas.forEach(col => {
+            let c = col.trim().replace(/"/g, ''); // Limpa aspas
+            
+            // Tenta achar a Data (DD/MM/YYYY ou YYYY-MM-DD)
+            if (/^\d{2}\/\d{2}\/\d{4}$/.test(c)) {
+                let p = c.split('/');
+                dFmt = `${p[2]}-${p[1]}-${p[0]}`;
+            } else if (/^\d{4}-\d{2}-\d{2}$/.test(c)) {
+                dFmt = c;
+            }
+            // Tenta achar o Valor numérico
+            else if ((/^-?[\d.,]+$/.test(c) || c.includes('R$')) && /[0-9]/.test(c)) {
+                let numStr = c.replace(/[R$\s]/g, '');
+                if (numStr.includes('.') && numStr.includes(',')) {
+                    numStr = numStr.replace(/\./g, '').replace(',', '.'); // BR para Float
+                } else if (numStr.includes(',')) {
+                    numStr = numStr.replace(',', '.');
+                }
+                let parsed = parseFloat(numStr);
+                if (!isNaN(parsed) && vFmt === null) vFmt = parsed;
+            } 
+            // Se for texto grande, assume que é o nome
+            else if (c.length > 3 && isNaN(c) && !dFmt) {
+                nFmt = c;
+            }
+        });
+
+        if (dFmt && vFmt !== null) {
+            transacoes.push({
+                id: 'imp_' + Math.random().toString(36).substr(2, 9),
+                data: dFmt,
+                nome: nFmt,
+                valor: Math.abs(vFmt),
+                tipo: vFmt < 0 ? 'saida' : 'entrada'
+            });
+        }
+    });
+    return transacoes;
+}
+
+// Desenha a lista no Pop-up separada por mês
+function renderizarPreviewImportacao() {
+    const container = document.getElementById('lista-importacao-preview');
+    container.innerHTML = '';
+    
+    let mesAtual = '';
+
+    dadosImportacaoTemporaria.forEach(t => {
+        // Pega o nome do mês (ex: "Março 2026")
+        const dataObj = new Date(t.data + 'T12:00:00');
+        const mesExtenso = dataObj.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+
+        if (mesExtenso !== mesAtual) {
+            mesAtual = mesExtenso;
+            container.innerHTML += `<div class="mes-header-importacao">${mesAtual}</div>`;
+        }
+
+        const dataCurta = `${dataObj.getDate().toString().padStart(2, '0')}/${(dataObj.getMonth() + 1).toString().padStart(2, '0')}`;
+        
+        container.innerHTML += `
+            <div class="item-importacao ${t.tipo}">
+                <div style="flex: 1;">
+                    <span style="font-size: 11px; color: #a0aec0; font-weight: bold; margin-right: 8px;">${dataCurta}</span>
+                    <strong style="color: var(--text-main);">${t.nome}</strong>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <strong style="color: ${t.tipo === 'entrada' ? '#10b981' : '#ef4444'};">
+                        ${t.tipo === 'entrada' ? '+' : '-'} R$ ${t.valor.toFixed(2)}
+                    </strong>
+                    <button class="btn-del-import" title="Remover" onclick="removerItemImportacao('${t.id}')">X</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function removerItemImportacao(id) {
+    dadosImportacaoTemporaria = dadosImportacaoTemporaria.filter(t => t.id !== id);
+    renderizarPreviewImportacao();
+}
+
+// Joga os dados aprovados para o Guget Fin
+function confirmarImportacao() {
+    dadosImportacaoTemporaria.forEach(t => {
+        if (t.tipo === 'saida') {
+            salsiData.transacoes.push({
+                nome: t.nome,
+                data: t.data, // formato YYYY-MM-DD usado na sua listagem principal
+                dataCompra: t.data,
+                valor: t.valor,
+                categoria: "Outros", // Categoria padrão
+                tipoGasto: "Variavel",
+                formaPagamento: "Débito",
+                parcelas: 1,
+                fixo: false
+            });
+        } else if (t.tipo === 'entrada') {
+            const dObj = new Date(t.data + 'T12:00:00');
+            salsiData.entradas.push({
+                nome: t.nome,
+                valor: t.valor,
+                dataRecebimento: t.data,
+                mes: dObj.getMonth(),
+                ano: dObj.getFullYear(),
+                categoria: "Outros"
+            });
+        }
+    });
+
+    document.getElementById('modal-importacao').close();
+    if (typeof salvarDados === 'function') salvarDados();
+    if (typeof renderizar === 'function') renderizar();
+    
+    if (typeof mostrarToast === 'function') {
+        mostrarToast(`${dadosImportacaoTemporaria.length} itens importados com sucesso! 🚀`);
+    } else {
+        alert("Importação concluída com sucesso!");
+    }
+    
+    dadosImportacaoTemporaria = []; // Limpa a memória
+}
 
 
 
