@@ -214,6 +214,9 @@ function renderizar() {
             const val = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
             const idx = salsiData.transacoes.indexOf(t);
 
+			// Formata a data (Ex: 05/12) para usar nos cartões mobile
+            const dFmt = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+
             // --- NOVA LÓGICA DE FILTRAGEM PREMIUM (MOTOR V8) ---
             const pegarFiltro = (id) => document.getElementById(id) ? document.getElementById(id).getAttribute('data-value') : 'Todos';
 
@@ -1870,7 +1873,15 @@ function navegar(abaId) {
         }
     }
 
-    window.scrollTo(0, 0);
+	window.scrollTo(0, 0);
+
+    // 👇 MÁGICA VISUAL: Troca a cor da aba na barra flutuante inferior 👇
+    document.querySelectorAll('.mobile-tab-bar .tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(abaId)) {
+            btn.classList.add('active');
+        }
+    });
 }
 
 function toggleSubAba(alvo) {
@@ -2811,6 +2822,7 @@ async function solicitarPermissaoNotificacao() {
         console.error('Erro ao configurar notificações:', error);
     }
 }
+
 
 
 
