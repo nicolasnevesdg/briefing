@@ -216,6 +216,7 @@ function renderizar() {
 
 			// Formata a data (Ex: 05/12) para usar nos cartões mobile
             const dFmt = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+			const dataSutil = `<span style="font-size: 11px; color: #a0aec0; margin-right: 10px; font-weight: 500; background: #f8fafc; padding: 2px 6px; border-radius: 4px;">${dFmt}</span>`;
 
             // --- NOVA LÓGICA DE FILTRAGEM PREMIUM (MOTOR V8) ---
             const pegarFiltro = (id) => document.getElementById(id) ? document.getElementById(id).getAttribute('data-value') : 'Todos';
@@ -263,7 +264,7 @@ function renderizar() {
                 if(tTable) {
                     tTable.innerHTML += `
                         <tr class="desktop-only-row">
-                            <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                            <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${dataSutil}${t.nome}</td>
                             <td><span class="badge-tag">${t.nomeTerceiro}</span></td>
                             <td style="text-align: center;">${tagTipoPC}</td>
                             <td style="text-align: center;">${diff + 1}/${t.parcelas}</td>
@@ -364,7 +365,7 @@ function renderizar() {
                         dTable.innerHTML += `
                             <tr class="desktop-only-row">
                                 <td style="cursor:pointer; line-height: 1.4;" onclick="verDetalhes(${idx})">
-                                    <div style="font-weight: 600; color: var(--text-main);">${t.nome}</div>
+                                    <div style="font-weight: 600; color: var(--text-main);">${dataSutil}${t.nome}</div>
                                     <div style="font-size: 11px; color: #7a8b87; margin-top: 2px;">${t.categoria}</div>
                                 </td>
                                 <td style="text-align: center; vertical-align: middle;">
@@ -400,7 +401,7 @@ function renderizar() {
                     if(cTable) {
                         cTable.innerHTML += `
                             <tr class="desktop-only-row">
-                                <td style="font-weight: 500; cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                                <td style="font-weight: 500; cursor: pointer;" onclick="verDetalhes(${idx})">${dataSutil}${t.nome}</td>
                                 <td style="color: var(--text-sec); font-size: 11px; text-align: center;">${diff + 1}/${t.parcelas}</td>
                                 <td style="text-align: center;"><span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span></td>
                                 <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
@@ -2822,6 +2823,7 @@ async function solicitarPermissaoNotificacao() {
         console.error('Erro ao configurar notificações:', error);
     }
 }
+
 
 
 
