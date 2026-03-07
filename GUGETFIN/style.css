@@ -71,7 +71,7 @@ body {
     transform: translateY(-1px); 
 }
 
-.sidebar-middle { flex: 1; overflow-y: auto; padding-right: 5px; }
+.sidebar-middle { flex: 1; overflow-y: auto;}
 
 /* Seções e Cabeçalhos */
 .sidebar-section { margin-bottom: 48px; } 
@@ -2733,6 +2733,7 @@ dialog select option {
     font-size: 14px;
     line-height: 0;
 }
+
 
 
 
