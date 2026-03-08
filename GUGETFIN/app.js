@@ -3048,7 +3048,7 @@ function renderizarPreviewImportacao() {
                     <strong style="color: ${t.tipo === 'entrada' ? '#10b981' : '#ef4444'}; font-size: 14px;">
                         ${t.tipo === 'entrada' ? '+' : '-'} R$ ${t.valor.toFixed(2)}
                     </strong>
-                    <button class="btn-del-import" title="Remover" onclick="removerItemImportacao('${t.id}')">X</button>
+                    <button class="btn-del" title="Remover" onclick="removerItemImportacao('${t.id}')">×</button>
                 </div>
             </div>
         `;
@@ -3117,6 +3117,7 @@ function confirmarImportacao() {
     // Esvazia a memória do pop-up
     dadosImportacaoTemporaria = []; 
 }
+
 
 
 
