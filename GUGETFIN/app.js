@@ -3229,16 +3229,17 @@ function toggleTema() {
     
     if (isDark) {
         document.body.classList.add('dark-theme');
-        localStorage.setItem('guget_theme', 'dark'); // Salva na memória do celular
+        localStorage.setItem('guget_theme', 'dark'); 
     } else {
         document.body.classList.remove('dark-theme');
         localStorage.setItem('guget_theme', 'light');
     }
 
-    // Se o gráfico anual estiver na tela, redesenha ele para a fonte ficar clara/escura
-    if (typeof atualizarGraficoAnual === 'function') {
-        atualizarGraficoAnual();
-    }
+    // Atualiza o gráfico anual e os gráficos de metas para as cores ajustarem
+    setTimeout(() => {
+        if (typeof atualizarGraficoAnual === 'function') atualizarGraficoAnual();
+        if (typeof atualizarGraficoMeta === 'function') atualizarGraficoMeta();
+    }, 100);
 }
 
 function carregarTemaPreferido() {
@@ -3247,25 +3248,12 @@ function carregarTemaPreferido() {
 
     if (temaSalvo === 'dark') {
         document.body.classList.add('dark-theme');
-        if (toggleEl) toggleEl.checked = true; // Deixa o interruptor verdinho
+        if (toggleEl) toggleEl.checked = true; 
     } else {
         document.body.classList.remove('dark-theme');
         if (toggleEl) toggleEl.checked = false;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
