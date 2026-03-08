@@ -2765,9 +2765,14 @@ dialog select option {
 
 /* Card do Banco de Origem */
 .seletor-banco-premium {
-    display: flex; align-items: center; justify-content: space-between; 
-    background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px 24px; 
-    border-radius: 12px; margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 18px 24px;
+    border-radius: 12px;
+    margin-bottom: 25px;
 }
 .seletor-banco-texto { display: flex; flex-direction: column; gap: 4px; }
 .seletor-banco-texto strong { color: var(--text-main); font-size: 15px; display: flex; align-items: center; gap: 8px;}
@@ -2784,11 +2789,22 @@ dialog select option {
 
 /* Lista de Itens com Respiro */
 .lista-importacao-premium {
-    max-height: 450px; overflow-y: auto; padding-right: 15px; 
-    display: flex; flex-direction: column; gap: 10px;
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 .lista-importacao-premium::-webkit-scrollbar { width: 8px; }
 .lista-importacao-premium::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+.mes-header-importacao {
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 15px;
+}
 
 /* Cards de cada Gasto (com margens separadas ao invés de linhas grudadas) */
 .item-importacao {
@@ -2818,6 +2834,7 @@ dialog select option {
 #modal-importacao {
     width: 50%;
 }
+
 
 
 
