@@ -907,33 +907,41 @@
     </dialog>
 
 	<dialog id="modal-importacao" class="modal-padrao">
-	    <div class="modal-content" style="max-width: 550px;">
-	        <div class="modal-header">
-	            <h2>Revisar Importação</h2>
-	            <button class="fechar-modal" onclick="document.getElementById('modal-importacao').close()">×</button>
-	        </div>
-	        <div class="modal-body">
-            <p style="font-size: 13px; color: var(--text-sec); margin-bottom: 15px;">
-                Identificamos as movimentações abaixo. Clique no "X" para excluir o que não quiser importar.
-            </p>
-            
-            <div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px; display: flex; align-items: center; gap: 12px;">
-                <label for="import-banco-select" style="font-size: 13px; font-weight: 700; color: var(--dark-green); white-space: nowrap;">
-                    <i class="fi fi-rr-bank"></i> Banco de Origem:
-                </label>
-                <select id="import-banco-select" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: 'Inter', sans-serif; font-size: 13px; outline: none; cursor: pointer; background: white;">
+    <div class="modal-content" style="max-width: 800px; padding: 30px; border-radius: 16px;">
+        
+        <div class="modal-header" style="margin-bottom: 25px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
+            <h2 style="font-size: 24px; color: var(--text-main); font-weight: 800; display: flex; align-items: center; gap: 12px;">
+                <i class="fi fi-rr-file-invoice-dollar" style="color: #10b981;"></i> Revisar Importação
+            </h2>
+            <button class="fechar-modal-elegante" onclick="document.getElementById('modal-importacao').close()">×</button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="seletor-banco-premium">
+                <div class="seletor-banco-texto">
+                    <strong><i class="fi fi-rr-bank"></i> Banco de Origem</strong>
+                    <span>Para qual cartão ou conta esses dados devem ir?</span>
+                </div>
+                <select id="import-banco-select" class="select-premium">
                     </select>
             </div>
 
-            <div id="lista-importacao-preview" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+            <p style="font-size: 14px; color: #64748b; margin-bottom: 15px;">
+                Revise as movimentações do seu extrato. Clique no <strong>"X"</strong> vermelho para remover o que não for necessário.
+            </p>
+            
+            <div id="lista-importacao-preview" class="lista-importacao-premium">
                 </div>
         </div>
-	        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-	            <button class="btn-cancelar" onclick="document.getElementById('modal-importacao').close()">Cancelar</button>
-	            <button class="btn-salvar" onclick="confirmarImportacao()" style="background: var(--primary-color);">Confirmar e Importar</button>
-	        </div>
-	    </div>
-	</dialog>
+        
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px; border-top: 1px solid #f1f5f9; padding-top: 20px;">
+            <button class="btn-cancelar-premium" onclick="document.getElementById('modal-importacao').close()">Cancelar</button>
+            <button class="btn-salvar-premium" onclick="confirmarImportacao()">
+                <i class="fi fi-rr-check-circle"></i> Confirmar e Importar
+            </button>
+        </div>
+    </div>
+</dialog>
 	
 	<div id="toast-notificacao">
         <i class="fi fi-rr-check-circle"></i>
@@ -992,6 +1000,7 @@
 </body>
 
 </html>
+
 
 
 
