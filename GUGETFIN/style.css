@@ -2759,44 +2759,78 @@ dialog select option {
     border-color: var(--dark-green);
 }
 
-/* --- Lista do Modal de Importação --- */
-.mes-header-importacao {
-    background: #f1f5f9;
-    padding: 6px 12px;
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: #475569;
-    border-radius: 6px;
-    margin: 15px 0 5px 0;
-}
+/* =======================================
+   ESTÉTICA PREMIUM - MODAL DE IMPORTAÇÃO
+========================================== */
 
-.item-importacao {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #f1f5f9;
-    font-size: 13px;
+/* Botão de Fechar mais suave e moderno */
+.fechar-modal-elegante {
+    background: #f1f5f9; border: none; font-size: 24px; color: #64748b; 
+    width: 40px; height: 40px; border-radius: 50%; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center; transition: 0.2s;
+}
+.fechar-modal-elegante:hover { background: #fee2e2; color: #ef4444; }
+
+/* Card do Banco de Origem */
+.seletor-banco-premium {
+    display: flex; align-items: center; justify-content: space-between; 
+    background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px 24px; 
+    border-radius: 12px; margin-bottom: 25px;
+}
+.seletor-banco-texto { display: flex; flex-direction: column; gap: 4px; }
+.seletor-banco-texto strong { color: var(--text-main); font-size: 15px; display: flex; align-items: center; gap: 8px;}
+.seletor-banco-texto span { color: #64748b; font-size: 13px; }
+
+/* Caixinha de Select Elegante */
+.select-premium { 
+    padding: 12px 18px; border-radius: 8px; border: 1px solid #cbd5e1; 
+    font-weight: 600; color: var(--text-main); outline: none; background: white; 
+    min-width: 180px; cursor: pointer; font-family: 'Inter', sans-serif;
     transition: 0.2s;
 }
+.select-premium:hover { border-color: #94a3b8; }
 
-.item-importacao.entrada { border-left: 4px solid #10b981; }
-.item-importacao.saida { border-left: 4px solid #ef4444; }
-
-.item-importacao:hover { background: #f8fafc; }
-
-.btn-del-import {
-    background: #fee2e2;
-    color: #ef4444;
-    border: none;
-    border-radius: 6px;
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-    font-weight: bold;
+/* Lista de Itens com Respiro */
+.lista-importacao-premium {
+    max-height: 450px; overflow-y: auto; padding-right: 15px; 
+    display: flex; flex-direction: column; gap: 10px;
 }
-.btn-del-import:hover { background: #f87171; color: white; }
+.lista-importacao-premium::-webkit-scrollbar { width: 8px; }
+.lista-importacao-premium::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+/* Cards de cada Gasto (com margens separadas ao invés de linhas grudadas) */
+.item-importacao {
+    background: white; border: 1px solid #e2e8f0; border-radius: 12px; 
+    padding: 16px 20px; display: flex; justify-content: space-between; 
+    align-items: center; font-size: 14px; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+.item-importacao:hover { border-color: #cbd5e1; transform: translateX(4px); }
+.item-importacao.entrada { border-left: 6px solid #10b981; }
+.item-importacao.saida { border-left: 6px solid #ef4444; }
+
+/* Botões do Footer */
+.btn-cancelar-premium {
+    background: white; border: 1px solid #cbd5e1; color: #64748b; 
+    padding: 14px 28px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+.btn-cancelar-premium:hover { background: #f1f5f9; color: var(--text-main); }
+
+.btn-salvar-premium {
+    background: #10b981; color: white; border: none; padding: 14px 28px; 
+    border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; 
+    transition: 0.2s; display: flex; align-items: center; gap: 8px; 
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+.btn-salvar-premium:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3); }
+
+/* Botão de Apagar Item na Lista */
+.btn-del-import {
+    background: transparent; color: #cbd5e1; border: 2px solid #e2e8f0; 
+    border-radius: 50%; width: 32px; height: 32px; cursor: pointer; 
+    font-weight: bold; font-size: 12px; transition: 0.2s;
+}
+.btn-del-import:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; transform: rotate(90deg); }
+
 
 
 
