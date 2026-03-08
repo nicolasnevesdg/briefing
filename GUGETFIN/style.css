@@ -2895,6 +2895,67 @@ dialog select option {
     }
 }
 
+/* ======================================================== */
+/* 🌙 MODO NOTURNO (DARK THEME)                             */
+/* ======================================================== */
+
+body.dark-theme {
+    --bg-app: #0f172a;           /* Fundo principal escuro (Slate/Indigo) */
+    --sidebar-bg: #1e293b;       /* Fundo dos cards e sidebar */
+    --text-main: #f1f5f9;        /* Texto principal branco/gelo */
+    --text-sec: #94a3b8;         /* Texto secundário cinza claro */
+    --acc-green: #14b8a6;        /* Verde Teal vibrante para destaques */
+    --dark-green: #2dd4bf;       /* Verde mais claro para títulos no escuro */
+    --border: rgba(255, 255, 255, 0.08); /* Bordas sutis */
+}
+
+/* Força os elementos brancos a ficarem escuros no modo noturno */
+body.dark-theme .stat-card,
+body.dark-theme .card,
+body.dark-theme .meta-item-card,
+body.dark-theme .cartao-item-mobile,
+body.dark-theme .auth-box,
+body.dark-theme .mascot-container,
+body.dark-theme dialog .modal-content,
+body.dark-theme .options-dropdown,
+body.dark-theme .custom-dropdown .dropdown-menu,
+body.dark-theme tr {
+    background-color: var(--sidebar-bg);
+}
+
+/* O primeiro card (Saldo Principal) ganha destaque vibrante no escuro */
+body.dark-theme .stat-card:first-child {
+    background: var(--acc-green); 
+}
+body.dark-theme .stat-card:first-child h2, 
+body.dark-theme .stat-card:first-child small {
+    color: #0f172a; 
+}
+
+/* Correção para inputs e selects não ficarem com texto invisível */
+body.dark-theme select,
+body.dark-theme input {
+    color: var(--text-main);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* O fundo do app quando o modal está aberto */
+body.dark-theme dialog::backdrop {
+    background: rgba(15, 23, 42, 0.8);
+}
+
+/* --- ESTILO DO INTERRUPTOR (SWITCH) DO MODO NOTURNO --- */
+.switch-container { 
+    display: flex; align-items: center; justify-content: space-between; 
+    padding: 12px 15px; background: var(--bg-app); border-radius: 12px; 
+    border: 1px solid var(--border); margin-bottom: 20px; 
+}
+.switch { position: relative; display: inline-block; width: 44px; height: 24px; margin: 0;}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider-switch { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e0; transition: .4s; border-radius: 24px; }
+.slider-switch:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider-switch { background-color: var(--acc-green); }
+input:checked + .slider-switch:before { transform: translateX(20px); }
 
 
 
