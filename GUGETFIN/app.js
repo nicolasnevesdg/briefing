@@ -3220,6 +3220,39 @@ async function recuperarSenha() {
     }
 }
 
+// ==========================================
+// MÓDULO: MODO NOTURNO (DARK THEME)
+// ==========================================
+
+function toggleTema() {
+    const isDark = document.getElementById('theme-toggle').checked;
+    
+    if (isDark) {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('guget_theme', 'dark'); // Salva na memória do celular
+    } else {
+        document.body.classList.remove('dark-theme');
+        localStorage.setItem('guget_theme', 'light');
+    }
+
+    // Se o gráfico anual estiver na tela, redesenha ele para a fonte ficar clara/escura
+    if (typeof atualizarGraficoAnual === 'function') {
+        atualizarGraficoAnual();
+    }
+}
+
+function carregarTemaPreferido() {
+    const temaSalvo = localStorage.getItem('guget_theme');
+    const toggleEl = document.getElementById('theme-toggle');
+
+    if (temaSalvo === 'dark') {
+        document.body.classList.add('dark-theme');
+        if (toggleEl) toggleEl.checked = true; // Deixa o interruptor verdinho
+    } else {
+        document.body.classList.remove('dark-theme');
+        if (toggleEl) toggleEl.checked = false;
+    }
+}
 
 
 
