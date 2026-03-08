@@ -45,7 +45,12 @@ function ajustarTelas() {
 window.addEventListener('DOMContentLoaded', ajustarTelas);
 window.addEventListener('resize', ajustarTelas);
 
-function iniciar() { popularSelects(); renderizar(); verificarLembreteBackup(); }
+function iniciar() { 
+    carregarTemaPreferido(); // Dispara o Modo Noturno se estiver salvo
+    popularSelects(); 
+    renderizar(); 
+    verificarLembreteBackup(); 
+}
 
 function popularSelects() {
     const cat = document.getElementById('g-categoria');
@@ -3254,6 +3259,7 @@ function carregarTemaPreferido() {
         if (toggleEl) toggleEl.checked = false;
     }
 }
+
 
 
 
