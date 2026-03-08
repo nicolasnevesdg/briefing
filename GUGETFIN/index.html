@@ -26,11 +26,16 @@
             </div>
 
             <div id="login-form" style="display: none;">
-                <input type="email" id="login-email" placeholder="E-mail" class="auth-input">
-                <input type="password" id="login-senha" placeholder="Senha" class="auth-input">
-                <button class="btn-auth-primary" onclick="fazerLogin()">Entrar</button>
-                <p class="auth-switch">Não tem conta? <a href="#" onclick="toggleAuth(true)">Criar agora</a></p>
-            </div>
+			    <input type="email" id="login-email" placeholder="E-mail" class="auth-input">
+			    <input type="password" id="login-senha" placeholder="Senha" class="auth-input" style="margin-bottom: 8px;">
+			    
+			    <div style="text-align: right; margin-bottom: 15px;">
+			        <a href="#" onclick="recuperarSenha()" style="font-size: 12px; color: var(--text-sec); text-decoration: none; font-weight: 500;">Esqueceu a senha?</a>
+			    </div>
+			
+			    <button class="btn-auth-primary" onclick="fazerLogin()">Entrar</button>
+			    <p class="auth-switch">Não tem conta? <a href="#" onclick="toggleAuth(true)">Criar agora</a></p>
+			</div>
 
             <div id="register-form" style="display: none;">
                 <input type="text" id="register-nome" placeholder="Seu nome (ex: Nícolas Neves)" class="auth-input">
@@ -738,7 +743,8 @@
             <input type="text" id="perfil-nome" placeholder="Seu nome" style="width: 100%; margin-bottom: 15px;">
 			
             <label class="input-label">E-mail</label>
-            <input type="email" id="perfil-email" placeholder="Seu e-mail" style="width: 100%; margin-bottom: 15px;" disabled title="Por segurança, o e-mail atual não pode ser alterado por aqui no momento.">
+			<input type="email" id="perfil-email" placeholder="Seu e-mail" style="width: 100%; margin-bottom: 5px;">
+			<p style="font-size: 11px; color: #ef4444; margin-top: 0; margin-bottom: 15px;">Atenção: Mudar senha ou e-mail pode exigir que você faça login novamente por segurança.</p>
 			
             <label class="input-label">Nova Senha (deixe em branco para não mudar)</label>
             <div class="password-wrapper">
@@ -958,8 +964,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  // 👇 MUDANÇA 1: Adicionado o onSnapshot aqui na importação
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, updateEmail, updatePassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -988,8 +993,8 @@
   window.updateProfile = updateProfile;
   window.updateEmail = updateEmail;
   window.updatePassword = updatePassword;  
+  window.sendPasswordResetEmail = sendPasswordResetEmail;
 
-  // 👇 A MÁGICA: Puxa o gatilho do Vigia só depois que TUDO acima carregou
   if (window.iniciarVigia) {
       window.iniciarVigia();
   }
@@ -1000,6 +1005,7 @@
 </body>
 
 </html>
+
 
 
 
