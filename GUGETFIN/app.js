@@ -3260,6 +3260,30 @@ function carregarTemaPreferido() {
     }
 }
 
+// ==========================================
+// MÓDULO: CARREGAMENTO AUTOMÁTICO DO TEMA
+// ==========================================
+
+function carregarTemaPreferido() {
+    // 1. Lê a memória do navegador
+    const temaSalvo = localStorage.getItem('guget_theme');
+    const toggleEl = document.getElementById('theme-toggle');
+
+    // 2. Aplica a cor correta e ajusta o interruptor no modal de perfil
+    if (temaSalvo === 'dark') {
+        document.body.classList.add('dark-theme');
+        if (toggleEl) toggleEl.checked = true; 
+    } else {
+        document.body.classList.remove('dark-theme');
+        if (toggleEl) toggleEl.checked = false;
+    }
+}
+
+// 3. GATILHO AUTOMÁTICO: Roda a função assim que o HTML da página termina de carregar
+document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
+
+// 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
+carregarTemaPreferido();
 
 
 
