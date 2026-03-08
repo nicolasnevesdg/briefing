@@ -2909,7 +2909,7 @@ function parseOFX(ofxString) {
         const bloco = match[1];
         const dtPosted = bloco.match(/<DTPOSTED>(\d{8})/)?.[1]; 
         const trnAmt = bloco.match(/<TRNAMT>(.*?)(?:\r|\n|<)/)?.[1];
-        let memo = bloco.match(/<MEMO>(.*?)(?:\r|\n|<)/)?.[1] || bloco.match(/<NAME>(.*?)(?:\r|\n|<)/)?.[1] || "Gasto Importado";
+        let memo = bloco.match(/<MEMO>(.*?)(?:\r|\n|<)/)?.[1] || bloco.match(/<NAME>(.*?)(?:\r|\n|<)/)?.[1] || "Transação Bancária";
 
         if (dtPosted && trnAmt) {
             const dataFmt = `${dtPosted.substring(0,4)}-${dtPosted.substring(4,6)}-${dtPosted.substring(6,8)}`;
@@ -2934,20 +2934,36 @@ function parseCSV(csvString) {
     const linhas = csvString.split('\n');
 
     linhas.forEach(linha => {
-        const colunas = linha.split(/[;,]/);
-        if (colunas.length < 3) return;
+        if (!linha.trim()) return;
+        
+        // 👇 MAGIA NEGRA: Protege valores como "1.000,00" para a vírgula não quebrar a coluna
+        let linhaSegura = linha;
+        let matchAspas = linha.match(/"[^"]+"/g);
+        if (matchAspas) {
+            matchAspas.forEach(m => {
+                let mLimpo = m.replace(/,/g, '.').replace(/"/g, ''); // Tira aspas e troca vírgula por ponto
+                linhaSegura = linhaSegura.replace(m, mLimpo);
+            });
+        }
 
-        let dFmt = null, vFmt = null, nFmt = "Gasto Importado";
+        const colunas = linhaSegura.split(/[;,]/);
+        if (colunas.length < 2) return;
+
+        let dFmt = null, vFmt = null, nFmt = "";
 
         colunas.forEach(col => {
-            let c = col.trim().replace(/"/g, ''); 
+            let c = col.trim(); 
+            if (!c) return;
             
+            // 1. Tenta achar a Data
             if (/^\d{2}\/\d{2}\/\d{4}$/.test(c)) {
                 let p = c.split('/');
                 dFmt = `${p[2]}-${p[1]}-${p[0]}`;
             } else if (/^\d{4}-\d{2}-\d{2}$/.test(c)) {
                 dFmt = c;
-            } else if ((/^-?[\d.,]+$/.test(c) || c.includes('R$')) && /[0-9]/.test(c)) {
+            } 
+            // 2. Tenta achar o Valor (ignorando horas como 12:30)
+            else if ((/^-?[\d.,]+$/.test(c) || c.includes('R$')) && /[0-9]/.test(c) && !c.includes(':')) {
                 let numStr = c.replace(/[R$\s]/g, '');
                 if (numStr.includes('.') && numStr.includes(',')) {
                     numStr = numStr.replace(/\./g, '').replace(',', '.');
@@ -2956,12 +2972,21 @@ function parseCSV(csvString) {
                 }
                 let parsed = parseFloat(numStr);
                 if (!isNaN(parsed) && vFmt === null) vFmt = parsed;
-            } else if (c.length > 3 && isNaN(c) && !dFmt) {
-                nFmt = c;
+            } 
+            // 3. Tenta achar o NOME (Se tem letras e não é data nem número puro)
+            else if (isNaN(c) && !c.includes('/') && c.length > 2) {
+                // Remove aspas extras que os bancos colocam e pega a descrição mais detalhada
+                let textoLimpo = c.replace(/"/g, '').trim();
+                if (textoLimpo.length > nFmt.length) {
+                    nFmt = textoLimpo;
+                }
             }
         });
 
+        // Se achou Data e Valor, salva a transação!
         if (dFmt && vFmt !== null) {
+            if (!nFmt) nFmt = "Transferência/Outros"; // Nome de segurança
+            
             const analise = analisarTransacao(nFmt, vFmt);
             transacoes.push({
                 id: 'imp_' + Math.random().toString(36).substr(2, 9),
@@ -3053,14 +3078,13 @@ function confirmarImportacao() {
                 nomeTerceiro: ""
             });
         } else if (t.tipo === 'entrada') {
-            // Separa a data para extrair o Mês (0-11) e o Ano corretamente
             const partes = t.data.split('-');
             const anoImportado = parseInt(partes[0]);
             const mesImportado = parseInt(partes[1]) - 1; 
             
             salsiData.entradas.push({
-                nome: "Entrada via Extrato",// Padronizado
-                cliente: t.nome,            // O nome que veio do banco (quem pagou)
+                nome: t.nome,               // 👈 AGORA USA O NOME REAL DO EXTRATO (Ex: Pix de João)
+                cliente: "Via Extrato",     // 👈 Deixa apenas um aviso no cliente
                 valor: t.valor,
                 dataRecebimento: t.data,
                 mes: mesImportado,          
@@ -3085,6 +3109,7 @@ function confirmarImportacao() {
     // Esvazia a memória do pop-up
     dadosImportacaoTemporaria = []; 
 }
+
 
 
 
