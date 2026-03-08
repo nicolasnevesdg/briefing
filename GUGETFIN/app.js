@@ -2935,57 +2935,65 @@ function parseCSV(csvString) {
 
     linhas.forEach(linha => {
         if (!linha.trim()) return;
+
+        // 1. Descobre se o banco usou ponto-e-vírgula ou vírgula para separar as colunas
+        const delimitador = linha.includes(';') ? ';' : ',';
         
-        // 👇 MAGIA NEGRA: Protege valores como "1.000,00" para a vírgula não quebrar a coluna
-        let linhaSegura = linha;
-        let matchAspas = linha.match(/"[^"]+"/g);
-        if (matchAspas) {
-            matchAspas.forEach(m => {
-                let mLimpo = m.replace(/,/g, '.').replace(/"/g, ''); // Tira aspas e troca vírgula por ponto
-                linhaSegura = linhaSegura.replace(m, mLimpo);
-            });
+        // 2. Separa as colunas sem quebrar o que está dentro de aspas (ex: "1.000,00")
+        const regex = new RegExp(`(?:^|${delimitador})("(?:[^"]|"")*"|[^${delimitador}]*)`, 'g');
+        let colunas = [];
+        let match;
+        while ((match = regex.exec(linha)) !== null) {
+            colunas.push(match[1]);
         }
 
-        const colunas = linhaSegura.split(/[;,]/);
         if (colunas.length < 2) return;
 
         let dFmt = null, vFmt = null, nFmt = "";
 
         colunas.forEach(col => {
-            let c = col.trim(); 
+            if (!col) return;
+            // Limpa aspas em volta da palavra/número
+            let c = col.replace(/^"|"$/g, '').trim(); 
             if (!c) return;
             
-            // 1. Tenta achar a Data
+            // Tenta achar a Data
             if (/^\d{2}\/\d{2}\/\d{4}$/.test(c)) {
                 let p = c.split('/');
                 dFmt = `${p[2]}-${p[1]}-${p[0]}`;
             } else if (/^\d{4}-\d{2}-\d{2}$/.test(c)) {
                 dFmt = c;
             } 
-            // 2. Tenta achar o Valor (ignorando horas como 12:30)
-            else if ((/^-?[\d.,]+$/.test(c) || c.includes('R$')) && /[0-9]/.test(c) && !c.includes(':')) {
+            // Tenta achar o Valor (agora ele não é mais quebrado ao meio!)
+            else if ((/^-?[\d.,]+$/.test(c) || c.includes('R$')) && /[0-9]/.test(c) && !c.includes(':') && !c.includes('/')) {
                 let numStr = c.replace(/[R$\s]/g, '');
+                
+                // Trata o padrão Brasileiro 1.000,00 vs padrão Americano 1,000.00
                 if (numStr.includes('.') && numStr.includes(',')) {
-                    numStr = numStr.replace(/\./g, '').replace(',', '.');
+                    let ultimoPonto = numStr.lastIndexOf('.');
+                    let ultimaVirgula = numStr.lastIndexOf(',');
+                    if (ultimaVirgula > ultimoPonto) {
+                        numStr = numStr.replace(/\./g, '').replace(',', '.'); // É BR! (1.000,00 -> 1000.00)
+                    } else {
+                        numStr = numStr.replace(/,/g, ''); // É Americano! (1,000.00 -> 1000.00)
+                    }
                 } else if (numStr.includes(',')) {
-                    numStr = numStr.replace(',', '.');
+                    numStr = numStr.replace(',', '.'); // Só tem vírgula (100,00 -> 100.00)
                 }
+                
                 let parsed = parseFloat(numStr);
                 if (!isNaN(parsed) && vFmt === null) vFmt = parsed;
             } 
-            // 3. Tenta achar o NOME (Se tem letras e não é data nem número puro)
-            else if (isNaN(c) && !c.includes('/') && c.length > 2) {
-                // Remove aspas extras que os bancos colocam e pega a descrição mais detalhada
-                let textoLimpo = c.replace(/"/g, '').trim();
-                if (textoLimpo.length > nFmt.length) {
-                    nFmt = textoLimpo;
+            // Tenta achar o NOME (Pega o maior texto da linha)
+            else if (/[a-zA-Z]/.test(c) && c.length > 2) {
+                if (c.length > nFmt.length) {
+                    nFmt = c;
                 }
             }
         });
 
-        // Se achou Data e Valor, salva a transação!
         if (dFmt && vFmt !== null) {
-            if (!nFmt) nFmt = "Transferência/Outros"; // Nome de segurança
+            if (!nFmt) nFmt = "Transferência/Outros"; 
             
             const analise = analisarTransacao(nFmt, vFmt);
             transacoes.push({
@@ -3109,6 +3117,7 @@ function confirmarImportacao() {
     // Esvazia a memória do pop-up
     dadosImportacaoTemporaria = []; 
 }
+
 
 
 
