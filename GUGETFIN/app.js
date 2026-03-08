@@ -2865,38 +2865,63 @@ function processarArquivoExtrato(event) {
     event.target.value = ''; 
 }
 
-// O CÉREBRO: Analisa o nome e decide o que é
+// O CÉREBRO: Analisa o nome e decide o que é. 
+// (Fique tranquilo: atua APENAS nos gastos do Extrato OFX/CSV!)
 function analisarTransacao(nome, valorLido) {
     let nomeUpper = nome.toUpperCase();
     let isSaida = valorLido < 0; 
-    let formaPag = "Débito"; // Padrão
+    let formaPag = "Débito"; // Padrão se o banco não der nenhuma pista
 
-    // Palavras que indicam que o dinheiro SAIU (mesmo se o valor for positivo no CSV)
+    // 1. Descobre se o dinheiro ENTROU ou SAIU
     const indiciosSaida = ['COMPRA', 'PAGAMENTO', 'PGTO', 'PAGO', 'ENVIO', 'ENVIADO', 'TARIFA', 'MENSALIDADE', 'SAQUE', 'DEBITO', 'DÉBITO', 'IFOOD', 'UBER'];
-    
-    // Palavras que indicam que o dinheiro ENTROU
     const indiciosEntrada = ['RECEBIDO', 'RECEBIMENTO', 'REMUNERACAO', 'SALARIO', 'DEPOSITO', 'RENDIMENTO', 'RESGATE', 'ESTORNO', 'REEMBOLSO'];
 
-    // Se o banco mandou positivo, mas o nome diz que é compra, vira saída!
-    if (!isSaida && valorLido > 0 && indiciosSaida.some(p => nomeUpper.includes(p))) {
-        isSaida = true;
-    }
-    
-    // Corrigindo falsos negativos
-    if (isSaida && indiciosEntrada.some(p => nomeUpper.includes(p))) {
-        isSaida = false;
+    if (!isSaida && valorLido > 0 && indiciosSaida.some(p => nomeUpper.includes(p))) isSaida = true;
+    if (isSaida && indiciosEntrada.some(p => nomeUpper.includes(p))) isSaida = false;
+
+    // 2. DETETIVE DE PIX SUPER AFIADO
+    // Caça variações que os bancos usam para não escrever "PIX"
+    const indiciosPix = ['PIX', 'INSTANTANEO', 'INSTANTÂNEO', 'QR CODE', 'QRCODE', 'CHAVE'];
+    const indiciosTransf = ['TED', 'DOC', 'TRANSF', 'TEF', 'TRANSFERENCIA', 'TRANSFERÊNCIA'];
+
+    if (indiciosPix.some(p => nomeUpper.includes(p))) {
+        formaPag = "PIX";
+    } else if (indiciosTransf.some(p => nomeUpper.includes(p))) {
+        formaPag = "Transferência";
+    } else if (nomeUpper.includes('BOLETO')) {
+        formaPag = "Boleto";
     }
 
-    // Descobrir se é PIX ou Transferência
-    if (nomeUpper.includes('PIX')) {
-        formaPag = "PIX";
-    } else if (nomeUpper.includes('TED') || nomeUpper.includes('DOC') || nomeUpper.includes('TRANSF') || nomeUpper.includes('TEF')) {
-        formaPag = "Transferência";
+    // 3. MAGIA DA CATEGORIZAÇÃO (Aplica apenas na importação)
+    let categoriaSugerida = "Outros"; 
+
+    if (!isSaida) {
+        categoriaSugerida = "Renda Extra"; // Padrão para entradas
+    } else {
+        // O seu dicionário de lojas (Pode incluir mais depois!)
+        const regrasCategorias = [
+            { cat: "Alimentação", palavras: ["IFOOD", "MCDONALDS", "BURGER KING", "RESTAURANTE", "PADARIA", "PIZZARIA", "LANCHE", "RAPPI", "ZEM", "IFOOD*"] },
+            { cat: "Transporte", palavras: ["UBER", "99APP", "99", "POSTO", "GASOLINA", "COMBUSTIVEL", "METRO", "PASSAGEM", "BILHETE", "IPIRANGA", "SHELL", "BUSER", "99 POP"] },
+            { cat: "Assinaturas", palavras: ["NETFLIX", "SPOTIFY", "AMAZON PRIME", "DISNEY", "GLOBOPLAY", "APPLE", "GOOGLE", "YOUTUBE", "HBO"] },
+            { cat: "Mercado", palavras: ["MERCADO", "ATACADAO", "CARREFOUR", "EXTRA", "GUANABARA", "ASSAI", "SUPERMERCADO", "MUNDIAL", "ZONA SUL"] },
+            { cat: "Cuidados Pessoais", palavras: ["FARMACIA", "DROGARIA", "PACHECO", "RAIA", "BARBEARIA", "SALAO", "BELEZA", "CLINICA", "ODONTO"] },
+            { cat: "Compras", palavras: ["SHOPEE", "MERCADOLIVRE", "MERCADO LIVRE", "AMAZON", "ALIEXPRESS", "SHEIN", "MAGALU", "RENNER", "C&A", "ZARA"] },
+            { cat: "Lazer", palavras: ["CINEMA", "INGRESSO", "SYMPLA", "SHOW", "CINEMARK", "EVENTO"] }
+        ];
+
+        for (let regra of regrasCategorias) {
+            // Se o nome no extrato tiver a palavra-chave, ele marca a categoria!
+            if (regra.palavras.some(p => nomeUpper.includes(p))) {
+                categoriaSugerida = regra.cat;
+                break; 
+            }
+        }
     }
 
     return {
         tipo: isSaida ? 'saida' : 'entrada',
-        formaPagamento: formaPag
+        formaPagamento: formaPag,
+        categoria: categoriaSugerida 
     };
 }
 
@@ -3117,6 +3142,7 @@ function confirmarImportacao() {
     // Esvazia a memória do pop-up
     dadosImportacaoTemporaria = []; 
 }
+
 
 
 
