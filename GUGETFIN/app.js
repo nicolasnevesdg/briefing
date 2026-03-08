@@ -2300,7 +2300,7 @@ function togglePassword(inputId, btn) {
     }
 }
 
-// --- FUNÇÃO DA SAUDAÇÃO (PC E MOBILE) ---
+// --- FUNÇÃO DA SAUDAÇÃO (PC E MOBILE) ATUALIZADA ---
 function atualizarSaudacao(nomeCompleto) {
     if (!nomeCompleto) return;
     
@@ -2308,11 +2308,44 @@ function atualizarSaudacao(nomeCompleto) {
     const primeiroNome = nomeCompleto.split(' ')[0];
     const hora = new Date().getHours();
     
-    let saudacao = 'Boa noite';
-    if (hora >= 5 && hora < 12) saudacao = 'Bom dia';
-    else if (hora >= 12 && hora < 18) saudacao = 'Boa tarde';
+    // 1. Define a saudação inicial baseada no tempo
+    let saudacaoBase = 'Boa noite';
+    if (hora >= 5 && hora < 12) saudacaoBase = 'Bom dia';
+    else if (hora >= 12 && hora < 18) saudacaoBase = 'Boa tarde';
 
-    const htmlContent = `<span class="greet-time">${saudacao},</span><br><span class="greet-name">${primeiroNome}!</span>`;
+    // 2. Mistura com saudações mais informais para não ficar repetitivo
+    const variacoes = ["Olá", "Eaí", "Fala", "Opa", saudacaoBase];
+    const saudacaoRandom = variacoes[Math.floor(Math.random() * variacoes.length)];
+
+    // 3. Banco de Frases da "Personalidade" (Mistura horário + Dicas)
+    let frases = [];
+    if (hora >= 5 && hora < 12) {
+        frases = ["Começando o dia com controle?", "Hora de planejar o dia financeiro!", "Manhã boa para checar as metas."];
+    } else if (hora >= 12 && hora < 18) {
+        frases = ["Metade do dia! Dá tempo de organizar.", "Não esqueceu de lançar o café da tarde, né?", "Como estão os gastos hoje?"];
+    } else {
+        frases = ["Dia produtivo nas finanças?", "Hora de registrar os gastos do dia.", "Dando aquela olhada final antes de dormir?"];
+    }
+
+    const dicas = [
+        "Tente guardar 10% do que ganha este mês.",
+        "Cartão de crédito não é extensão do salário.",
+        "Evite compras por impulso.",
+        "Vamos construir seu patrimônio juntos.",
+        "Acompanhando seu progresso de perto."
+    ];
+
+    const superBanco = [...frases, ...dicas];
+    const fraseEscolhida = superBanco[Math.floor(Math.random() * superBanco.length)];
+
+    // 4. Monta a nova estética leve/sutil + subtítulo
+    const htmlContent = `
+        <div class="greeting-title-wrapper">
+            <span class="greet-light">${saudacaoRandom},</span> 
+            <span class="greet-bold">${primeiroNome}!</span>
+        </div>
+        <div class="greet-subtitle">${fraseEscolhida}</div>
+    `;
 
     // 1. Atualiza e mostra a saudação na Sidebar (PC)
     const containerPC = document.getElementById('greeting-pc');
@@ -3186,6 +3219,7 @@ async function recuperarSenha() {
         }
     }
 }
+
 
 
 
