@@ -2831,9 +2831,63 @@ dialog select option {
 }
 .btn-salvar-premium:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3); }
 
+/* Estilo Base para PC (Largo e elegante) */
 #modal-importacao {
-    width: 50%;
+    width: 800px;
+    max-width: 95vw;
 }
+
+/* =======================================
+   AJUSTES MOBILE - MODAL DE IMPORTAÇÃO
+========================================== */
+@media (max-width: 600px) {
+    #modal-importacao .modal-content {
+        padding: 15px !important; 
+    }
+    
+    #modal-importacao .modal-header h2 {
+        font-size: 18px !important;
+    }
+
+    /* Empilha o Seletor de Banco (Texto em cima, Caixinha embaixo) */
+    .seletor-banco-premium {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 15px;
+    }
+    
+    .select-premium {
+        width: 100%; /* Caixinha ocupa a tela toda */
+    }
+
+    /* Ajusta os Gastos (Nome em cima, Valor embaixo) */
+    .item-importacao {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    /* Joga o Valor e o botão "X" para a linha de baixo organizados */
+    .item-importacao > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* Empilha os botões do final (Confirmar em cima, Cancelar embaixo) */
+    #modal-importacao .modal-footer {
+        flex-direction: column-reverse;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .btn-cancelar-premium, .btn-salvar-premium {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 
 
 
