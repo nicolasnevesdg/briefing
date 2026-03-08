@@ -1035,7 +1035,7 @@ function verDetalhesEntrada(index) {
     document.getElementById('modal-detalhes-entrada').showModal();
 }
 
-function excluirGasto(idx) { if(confirm("Apagar?")) { salsiData.transacoes.splice(idx,1); renderizar(); } }
+function excluirGasto(idx) { salsiData.transacoes.splice(idx,1); renderizar(); }
 function excluirEntrada(idx) { if(confirm("Apagar?")) { salsiData.entradas.splice(idx,1); renderizar(); } }
 function mudarMes(n) { dataFiltro.setMonth(dataFiltro.getMonth() + n); renderizar(); }
 // 1. DATA AUTOMÁTICA E RESET AO ABRIR (MODO CRIAÇÃO)
@@ -3142,6 +3142,7 @@ function confirmarImportacao() {
     // Esvazia a memória do pop-up
     dadosImportacaoTemporaria = []; 
 }
+
 
 
 
