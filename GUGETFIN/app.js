@@ -2348,6 +2348,7 @@ async function salvarPerfil() {
     if (!user) return;
 
     const novoNome = document.getElementById('perfil-nome').value.trim();
+    const novoEmail = document.getElementById('perfil-email').value.trim();
     const novaSenha = document.getElementById('perfil-senha').value;
     const btn = document.querySelector('#modal-perfil button');
     
@@ -2355,24 +2356,45 @@ async function salvarPerfil() {
     btn.disabled = true;
 
     try {
-        // Atualiza o nome se foi alterado
+        let atualizouAlgo = false;
+
+        // 1. Atualiza o nome se foi alterado
         if (novoNome && novoNome !== user.displayName) {
             await window.updateProfile(user, { displayName: novoNome });
             atualizarSaudacao(novoNome); // Atualiza a tela na hora
+            atualizouAlgo = true;
         }
 
-        // Atualiza a senha se ele digitou algo
+        // 2. Atualiza o e-mail se foi alterado
+        if (novoEmail && novoEmail !== user.email) {
+            await window.updateEmail(user, novoEmail);
+            atualizouAlgo = true;
+        }
+
+        // 3. Atualiza a senha se ele digitou algo
         if (novaSenha) {
             if (novaSenha.length < 6) throw new Error("A senha deve ter pelo menos 6 caracteres.");
             await window.updatePassword(user, novaSenha);
+            atualizouAlgo = true;
         }
 
-        alert("Perfil atualizado com sucesso!");
+        if (atualizouAlgo) {
+            alert("Perfil atualizado com sucesso!");
+        }
+        
+        document.getElementById('perfil-senha').value = ''; // Limpa o campo de senha
         document.getElementById('modal-perfil').close();
+
     } catch (error) {
-        // Erro comum: o Firebase exige que o usuário tenha feito login "recentemente" para mudar a senha
+        console.error("Erro no perfil:", error);
+        
+        // Trata o erro de segurança do Firebase (Precisa logar de novo para ações sensíveis)
         if (error.code === 'auth/requires-recent-login') {
-            alert("Por segurança, você precisa sair da conta e entrar novamente para alterar a senha.");
+            alert("🔐 Por segurança, o servidor exige que você tenha feito login recentemente para alterar e-mail ou senha.\n\nPor favor, saia da sua conta, entre novamente e tente fazer a alteração.");
+        } else if (error.code === 'auth/email-already-in-use') {
+            alert("Este endereço de e-mail já está sendo usado por outra conta.");
+        } else if (error.code === 'auth/invalid-email') {
+            alert("O formato do e-mail é inválido.");
         } else {
             alert("Erro ao atualizar: " + error.message);
         }
@@ -2380,7 +2402,6 @@ async function salvarPerfil() {
         btn.innerText = "Salvar Alterações";
         btn.disabled = false;
     }
-
 }
 
 // --- FUNÇÃO PARA SAIR DA CONTA COM SEGURANÇA ---
@@ -3143,6 +3164,28 @@ function confirmarImportacao() {
     dadosImportacaoTemporaria = []; 
 }
 
+// --- FUNÇÃO PARA RECUPERAR SENHA ---
+async function recuperarSenha() {
+    const email = document.getElementById('login-email').value.trim();
+    
+    if (!email) {
+        alert("Por favor, digite seu e-mail no campo acima para receber o link de recuperação.");
+        document.getElementById('login-email').focus();
+        return;
+    }
+
+    try {
+        await window.sendPasswordResetEmail(window.auth, email);
+        alert(`E-mail de redefinição enviado para ${email}!\n\nVerifique sua caixa de entrada e também a pasta de Spam.`);
+    } catch (error) {
+        console.error("Erro ao enviar recuperação:", error);
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
+            alert("Não encontramos nenhuma conta com este e-mail.");
+        } else {
+            alert("Erro ao tentar recuperar a senha: " + error.message);
+        }
+    }
+}
 
 
 
