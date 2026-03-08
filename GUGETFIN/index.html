@@ -907,13 +907,13 @@
     </dialog>
 
 	<dialog id="modal-importacao" class="modal-padrao">
-    <div class="modal-content" style="max-width: 800px; padding: 30px; border-radius: 16px;">
+    <div class="modal-content" style="padding: 30px; border-radius: 16px;">
         
         <div class="modal-header" style="margin-bottom: 25px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
             <h2 style="font-size: 24px; color: var(--text-main); font-weight: 800; display: flex; align-items: center; gap: 12px;">
                 <i class="fi fi-rr-file-invoice-dollar" style="color: #10b981;"></i> Revisar Importação
             </h2>
-            <button class="fechar-modal-elegante" onclick="document.getElementById('modal-importacao').close()">×</button>
+            <button class="btn-close-modal" onclick="document.getElementById('modal-importacao').close()">×</button>
         </div>
         
         <div class="modal-body">
@@ -937,7 +937,7 @@
         <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 30px; border-top: 1px solid #f1f5f9; padding-top: 20px;">
             <button class="btn-cancelar-premium" onclick="document.getElementById('modal-importacao').close()">Cancelar</button>
             <button class="btn-salvar-premium" onclick="confirmarImportacao()">
-                <i class="fi fi-rr-check-circle"></i> Confirmar e Importar
+            	Confirmar e Importar
             </button>
         </div>
     </div>
@@ -1000,6 +1000,7 @@
 </body>
 
 </html>
+
 
 
 
