@@ -528,40 +528,6 @@ function renderizar() {
     // Renderiza Entradas!
     const resEntEl = document.getElementById('resumo-entradas-lista');
     if (resEntEl) resEntEl.innerHTML = renderLinhaOrcamento('Total Recebido', totalEnt, true);
-    
-	// 6. CÁLCULO ANUAL
-	    let anEnt = 0, anCred = 0, anDeb = 0, anFixo = 0;
-	    salsiData.entradas.forEach(e => { if(e.ano === a) anEnt += e.valor; });
-	    
-	    for (let mesIdx = 0; mesIdx < 12; mesIdx++) {
-	        salsiData.transacoes.forEach(t => {
-	            const d = new Date(t.dataCompra + "T00:00:00");
-	            
-	            // 👇 CORREÇÃO: Usa a mesma lógica do painel principal (sem empurrar débito)
-	            let mesRef = d.getMonth() + (t.delayPagamento || 0);
-	            let anoRef = d.getFullYear();
-	            if (mesRef > 11) { mesRef -= 12; anoRef++; }
-	
-	            const df = (a - anoRef) * 12 + (mesIdx - mesRef);
-	
-	            if (df >= 0 && df < t.parcelas && !t.eDeTerceiro) {
-	                const v = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
-	                if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
-	                    if (t.tipo === 'cartao') anCred += v; 
-	                    else if (t.tipo === 'debito') anDeb += v; 
-	                    else anFixo += v;
-	                }
-	            }
-	        });
-	    }
-
-    const eAnnEntradas = document.getElementById('ann-entradas');
-    if(eAnnEntradas) {
-        eAnnEntradas.innerText = `R$ ${anEnt.toFixed(2)}`;
-        document.getElementById('ann-saidas').innerText = `R$ ${(anCred + anDeb + anFixo).toFixed(2)}`;
-        document.getElementById('ann-credito').innerText = `R$ ${anCred.toFixed(2)}`;
-        document.getElementById('ann-debito').innerText = `R$ ${anDeb.toFixed(2)}`;
-    }
 
     // 7. Finalização e Cache
     const saldoFinal = totalEnt - totalGastoMes;
@@ -1254,17 +1220,25 @@ function atualizarGraficoAnual() {
     
     const ano = anoFiltroGrafico; 
     
-    // 👇 1. LÊ O QUE VOCÊ ESCOLHEU NO SELETOR (Padrão é 'saldo')
+    // LÊ A OPÇÃO DO NOVO DROPDOWN PREMIUM
     const filtroEl = document.getElementById('filtro-tipo-grafico');
-    const tipoVisao = filtroEl ? filtroEl.value : 'saldo';
+    const tipoVisao = filtroEl ? filtroEl.getAttribute('data-value') : 'saldo';
 
     const dados = Array(12).fill(0);
+
+    // Variáveis que vão alimentar os 4 painéis de totais do ano
+    let anEnt = 0;
+    let anCred = 0;
+    let anDeb = 0;
+    let anFixo = 0;
 
     for (let m = 0; m < 12; m++) {
         let entradasDoMes = salsiData.entradas
             .filter(e => e.mes === m && e.ano === ano)
             .reduce((acc, curr) => acc + curr.valor, 0);
         
+        anEnt += entradasDoMes; // Soma pro painel
+
         let gastosDoMes = 0;
 
         salsiData.transacoes.forEach(t => {
@@ -1280,34 +1254,48 @@ function atualizarGraficoAnual() {
                 const v = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
                 if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
                     gastosDoMes += v;
+
+                    // Soma pro painel
+                    if (t.tipo === 'cartao') anCred += v; 
+                    else if (t.tipo === 'debito') anDeb += v; 
+                    else anFixo += v;
                 }
             }
         });
 
-        // 👇 2. A MÁGICA: DECIDE O QUE PLOTAR NA LINHA
+        // Decide a linha
         if (tipoVisao === 'entradas') {
             dados[m] = entradasDoMes;
         } else if (tipoVisao === 'saidas') {
             dados[m] = gastosDoMes;
         } else {
-            dados[m] = entradasDoMes - gastosDoMes; // Saldo
+            dados[m] = entradasDoMes - gastosDoMes; 
         }
+    }
+
+    // ATUALIZA OS 4 PAINÉIS DE TOTAIS EMBAIXO DO GRÁFICO NA HORA
+    const eAnnEntradas = document.getElementById('ann-entradas');
+    if(eAnnEntradas) {
+        eAnnEntradas.innerText = `R$ ${anEnt.toFixed(2)}`;
+        document.getElementById('ann-saidas').innerText = `R$ ${(anCred + anDeb + anFixo).toFixed(2)}`;
+        document.getElementById('ann-credito').innerText = `R$ ${anCred.toFixed(2)}`;
+        document.getElementById('ann-debito').innerText = `R$ ${anDeb.toFixed(2)}`;
     }
 
     if (window.meuGrafico) window.meuGrafico.destroy();
 
-    // 👇 3. CORES DINÂMICAS: Verde pra Entradas, Vermelho pra Saídas, Normal pro Saldo
     const isDark = document.body.classList.contains('dark-theme');
     let corLinha, corFundo, corPonto;
 
+    // CORES DINÂMICAS: Verde, Vermelho ou Teal
     if (tipoVisao === 'entradas') {
-        corLinha = '#10b981'; // Verde Sucesso
+        corLinha = '#10b981'; 
         corFundo = isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.1)';
     } else if (tipoVisao === 'saidas') {
-        corLinha = '#ef4444'; // Vermelho Alerta
+        corLinha = '#ef4444'; 
         corFundo = isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.1)';
     } else {
-        corLinha = isDark ? '#14b8a6' : '#96e6a1'; // O Teal ou Verde claro original
+        corLinha = isDark ? '#14b8a6' : '#96e6a1'; 
         corFundo = isDark ? 'rgba(20, 184, 166, 0.1)' : 'rgba(150, 230, 161, 0.1)';
     }
     
@@ -1341,6 +1329,34 @@ function atualizarGraficoAnual() {
             }
         }
     });
+}
+
+// --- CONTROLE DO NOVO FILTRO DO GRÁFICO ---
+function toggleDropdownGrafico(e) {
+    e.stopPropagation();
+    // Fecha os outros dropdowns caso estejam abertos
+    document.querySelectorAll('.custom-dropdown').forEach(d => {
+        if (d.id !== 'filtro-tipo-grafico') d.classList.remove('active');
+    });
+    // Abre/fecha este
+    document.getElementById('filtro-tipo-grafico').classList.toggle('active');
+}
+
+function selecionarFiltroGrafico(valor, texto, event) {
+    const container = document.getElementById('filtro-tipo-grafico');
+    
+    // 1. Atualiza o texto e o valor oculto
+    container.setAttribute('data-value', valor);
+    document.getElementById('texto-filtro-grafico').innerText = texto;
+    
+    // 2. Muda a cor de quem está selecionado na lista
+    const items = container.querySelectorAll('.dropdown-item');
+    items.forEach(i => i.classList.remove('selected'));
+    if (event) event.target.classList.add('selected');
+    
+    // 3. Fecha o menu e RECARREGA O GRÁFICO
+    container.classList.remove('active');
+    atualizarGraficoAnual();
 }
 
 // 1. Abre/Fecha o menu cascata
@@ -3305,6 +3321,7 @@ document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
 
 // 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
 carregarTemaPreferido();
+
 
 
 
