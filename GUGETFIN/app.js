@@ -1253,7 +1253,7 @@ function atualizarGraficoAnual() {
     const ctx = canvas.getContext('2d');
     
     // Agora usamos a variável de navegação do ano
-const ano = anoFiltroGrafico; 
+    const ano = anoFiltroGrafico; 
     const dados = Array(12).fill(0);
 
     for (let m = 0; m < 12; m++) {
@@ -1268,14 +1268,15 @@ const ano = anoFiltroGrafico;
         salsiData.transacoes.forEach(t => {
             const d = new Date(t.dataCompra + "T00:00:00");
             
-            // 👇 CORREÇÃO: Alinhado com o motor principal (impede que PIX e Débito vazem pro mês seguinte)
+            // Lógica de atraso (ex: cartão pro mês seguinte)
             let mesRef = d.getMonth() + (t.delayPagamento || 0);
             let anoRef = d.getFullYear();
             if (mesRef > 11) { mesRef -= 12; anoRef++; }
             
             const diff = (ano - anoRef) * 12 + (m - mesRef);
 
-            if (diff >= 0 && diff < t.parcelas) {
+            // 👇 A CORREÇÃO ESTÁ AQUI: O "!t.eDeTerceiro" impede gastos de terceiros de entrarem no seu gráfico!
+            if (diff >= 0 && diff < t.parcelas && !t.eDeTerceiro) {
                 const v = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
 
                 // REGRA DE OURO: Só subtrai se não for fixo OU se for fixo PAGO
@@ -1297,13 +1298,13 @@ const ano = anoFiltroGrafico;
             labels: ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"],
             datasets: [{
                 data: dados,
-                borderColor: '#96e6a1',
-                backgroundColor: 'rgba(150, 230, 161, 0.1)',
+                borderColor: '#14b8a6', // Já coloquei a cor Teal do Dark Mode aqui!
+                backgroundColor: 'rgba(20, 184, 166, 0.1)',
                 borderWidth: 3,
                 tension: 0.4,
                 fill: true,
-                pointRadius: 4, // Aumentei um pouco para marcar o mês
-                pointBackgroundColor: '#1b3a32'
+                pointRadius: 4, 
+                pointBackgroundColor: '#1e293b' // Cor de fundo do botão do Dark Mode
             }]
         },
         options: {
@@ -1311,12 +1312,11 @@ const ano = anoFiltroGrafico;
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                // Configuração para mostrar valores acima dos pontos
-                tooltip: { enabled: true }, // Mantém o detalhe no mouse
+                tooltip: { enabled: true }, 
             },
             scales: {
                 y: { display: false, padding: 20 },
-                x: { grid: { display: false }, ticks: { color: '#7a8b87', font: { size: 10 } } }
+                x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
             }
         }
     });
@@ -3284,6 +3284,7 @@ document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
 
 // 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
 carregarTemaPreferido();
+
 
 
 
