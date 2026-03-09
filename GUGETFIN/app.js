@@ -66,7 +66,13 @@ function iniciar() {
     carregarTemaPreferido(); 
     popularSelects(); 
     renderizar(); 
-    verificarLembreteBackup(); 
+    verificarLembreteBackup();
+	
+	// 👇 NOVA VERIFICAÇÃO INTELIGENTE POR CONTA 👇
+    // Só abre o tutorial se este usuário logado específico nunca tiver visto
+    if (salsiData && salsiData.config && !salsiData.config.tutorialVisto) {
+        setTimeout(abrirOnboarding, 1000);
+    }
 }
 
 function popularSelects() {
@@ -2862,18 +2868,16 @@ function atualizarVisualOnb() {
 
 function fecharOnboarding() {
     document.getElementById('modal-onboarding').close();
-    // Marca no navegador do usuário que ele já fez o tutorial!
-    localStorage.setItem('guget_onboarding_concluido', 'true');
-}
-
-// Verifica automaticamente ao carregar a página se o usuário é novo
-document.addEventListener('DOMContentLoaded', () => {
-    // Se a chave não existir no localStorage, é a primeira vez dele!
-    if (!localStorage.getItem('guget_onboarding_concluido')) {
-        // Dá um pequeno delay de 1 segundo para a tela carregar bonita antes do pop-up
-        setTimeout(abrirOnboarding, 1000);
+    
+    // 👇 NOVO: Salva direto no banco de dados do usuário logado 👇
+    if (salsiData && salsiData.config) {
+        salsiData.config.tutorialVisto = true;
+        
+        // Salva localmente e manda pra nuvem do Firebase
+        localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+        if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
     }
-});
+}
 
 // --- CONTROLO VISUAL DO MODAL DE ENTRADAS ---
 function ajustarCamposEntrada() {
@@ -3339,6 +3343,7 @@ document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
 
 // 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
 carregarTemaPreferido();
+
 
 
 
