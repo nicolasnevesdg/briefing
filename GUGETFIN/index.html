@@ -228,10 +228,18 @@
 		
 				<div class="chart-content-wrapper" id="chart-body">
 					<div class="chart-main">
-						<div class="chart-year-control">
-							<button onclick="mudarAnoGrafico(-1)">❮</button>
-							<span id="ano-badge-dinamico">2026</span>
-							<button onclick="mudarAnoGrafico(1)">❯</button>
+						<div class="chart-year-control" style="justify-content: space-between; width: 100%;">
+						    <div style="display: flex; align-items: center; gap: 12px;">
+						        <button onclick="mudarAnoGrafico(-1)">❮</button>
+						        <span id="ano-badge-dinamico">2026</span>
+						        <button onclick="mudarAnoGrafico(1)">❯</button>
+						    </div>
+						    
+						    <select id="filtro-tipo-grafico" onchange="atualizarGraficoAnual()" class="select-grafico">
+						        <option value="saldo" selected>Saldo Mensal</option>
+						        <option value="entradas">Entradas</option>
+						        <option value="saidas">Saídas</option>
+						    </select>
 						</div>
 						<div class="chart-container">
 							<canvas id="graficoSalsi"></canvas>
@@ -1029,6 +1037,7 @@
 </body>
 
 </html>
+
 
 
 
