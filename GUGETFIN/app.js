@@ -46,7 +46,24 @@ window.addEventListener('DOMContentLoaded', ajustarTelas);
 window.addEventListener('resize', ajustarTelas);
 
 function iniciar() { 
-    carregarTemaPreferido(); // Dispara o Modo Noturno se estiver salvo
+    // 💉 VACINA ANTI-FANTASMA: Corrige os dados que ficaram invisíveis
+    let precisaSalvar = false;
+    if (salsiData && salsiData.transacoes) {
+        salsiData.transacoes.forEach(t => {
+            if (t.tipo === 'pix') {
+                t.tipo = 'debito'; // Volta para o tipo correto do sistema
+                t.formaPagamento = 'PIX'; // Mantém a etiqueta de PIX
+                precisaSalvar = true;
+            }
+        });
+        if (precisaSalvar) {
+            localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+            if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
+        }
+    }
+    // --------------------------------------------------------------
+
+    carregarTemaPreferido(); 
     popularSelects(); 
     renderizar(); 
     verificarLembreteBackup(); 
@@ -3183,21 +3200,22 @@ function removerItemImportacao(id) {
 }
 
 function confirmarImportacao() {
-    // 👇 NOVO: Lê qual banco você selecionou lá no pop-up
     const selectBanco = document.getElementById('import-banco-select');
-    const bancoEscolhido = selectBanco ? selectBanco.value : 'Nubank'; // Usa o escolhido (ou Nubank por segurança)
+    const bancoEscolhido = selectBanco ? selectBanco.value : 'Nubank';
 
     dadosImportacaoTemporaria.forEach(t => {
         if (t.tipo === 'saida') {
-            let tipoFinal = t.formaPagamento === 'PIX' ? 'pix' : 'debito';
+            
+            // 👇 A CORREÇÃO ESTÁ AQUI: Força o tipo base para 'debito' para não sumir da tela
+            let tipoFinal = 'debito';
 
             salsiData.transacoes.push({
                 nome: t.nome,
                 valorTotal: t.valor,        
                 valorParcela: t.valor,      
                 dataCompra: t.data,
-                tipo: tipoFinal,            
-                banco: bancoEscolhido,      // 👈 AGORA ELE SALVA O BANCO QUE VOCÊ ESCOLHEU!
+                tipo: tipoFinal,            // Agora o sistema vai enxergar!
+                banco: bancoEscolhido,      
                 categoria: "Outros",
                 formaPagamento: t.formaPagamento,
                 pago: true,                 
@@ -3321,6 +3339,7 @@ document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
 
 // 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
 carregarTemaPreferido();
+
 
 
 
