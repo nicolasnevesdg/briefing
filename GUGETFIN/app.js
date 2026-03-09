@@ -1252,45 +1252,66 @@ function atualizarGraficoAnual() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     
-    // Agora usamos a variável de navegação do ano
     const ano = anoFiltroGrafico; 
+    
+    // 👇 1. LÊ O QUE VOCÊ ESCOLHEU NO SELETOR (Padrão é 'saldo')
+    const filtroEl = document.getElementById('filtro-tipo-grafico');
+    const tipoVisao = filtroEl ? filtroEl.value : 'saldo';
+
     const dados = Array(12).fill(0);
 
     for (let m = 0; m < 12; m++) {
-        // 1. COMEÇA O MÊS COM AS ENTRADAS (Faz o saldo subir)
         let entradasDoMes = salsiData.entradas
             .filter(e => e.mes === m && e.ano === ano)
             .reduce((acc, curr) => acc + curr.valor, 0);
         
         let gastosDoMes = 0;
 
-        // 2. CALCULA OS GASTOS CONFIRMADOS (Faz o saldo descer)
         salsiData.transacoes.forEach(t => {
             const d = new Date(t.dataCompra + "T00:00:00");
             
-            // Lógica de atraso (ex: cartão pro mês seguinte)
             let mesRef = d.getMonth() + (t.delayPagamento || 0);
             let anoRef = d.getFullYear();
             if (mesRef > 11) { mesRef -= 12; anoRef++; }
             
             const diff = (ano - anoRef) * 12 + (m - mesRef);
 
-            // 👇 A CORREÇÃO ESTÁ AQUI: O "!t.eDeTerceiro" impede gastos de terceiros de entrarem no seu gráfico!
             if (diff >= 0 && diff < t.parcelas && !t.eDeTerceiro) {
                 const v = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
-
-                // REGRA DE OURO: Só subtrai se não for fixo OU se for fixo PAGO
                 if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
                     gastosDoMes += v;
                 }
             }
         });
 
-        // 3. O RESULTADO É O SALDO FINAL DO MÊS
-        dados[m] = entradasDoMes - gastosDoMes;
+        // 👇 2. A MÁGICA: DECIDE O QUE PLOTAR NA LINHA
+        if (tipoVisao === 'entradas') {
+            dados[m] = entradasDoMes;
+        } else if (tipoVisao === 'saidas') {
+            dados[m] = gastosDoMes;
+        } else {
+            dados[m] = entradasDoMes - gastosDoMes; // Saldo
+        }
     }
 
     if (window.meuGrafico) window.meuGrafico.destroy();
+
+    // 👇 3. CORES DINÂMICAS: Verde pra Entradas, Vermelho pra Saídas, Normal pro Saldo
+    const isDark = document.body.classList.contains('dark-theme');
+    let corLinha, corFundo, corPonto;
+
+    if (tipoVisao === 'entradas') {
+        corLinha = '#10b981'; // Verde Sucesso
+        corFundo = isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.1)';
+    } else if (tipoVisao === 'saidas') {
+        corLinha = '#ef4444'; // Vermelho Alerta
+        corFundo = isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+    } else {
+        corLinha = isDark ? '#14b8a6' : '#96e6a1'; // O Teal ou Verde claro original
+        corFundo = isDark ? 'rgba(20, 184, 166, 0.1)' : 'rgba(150, 230, 161, 0.1)';
+    }
+    
+    corPonto = isDark ? '#1e293b' : '#1b3a32';
 
     window.meuGrafico = new Chart(ctx, {
         type: 'line',
@@ -1298,13 +1319,13 @@ function atualizarGraficoAnual() {
             labels: ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"],
             datasets: [{
                 data: dados,
-                borderColor: '#14b8a6', // Já coloquei a cor Teal do Dark Mode aqui!
-                backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                borderColor: corLinha,
+                backgroundColor: corFundo,
                 borderWidth: 3,
                 tension: 0.4,
                 fill: true,
                 pointRadius: 4, 
-                pointBackgroundColor: '#1e293b' // Cor de fundo do botão do Dark Mode
+                pointBackgroundColor: corPonto
             }]
         },
         options: {
@@ -1316,7 +1337,7 @@ function atualizarGraficoAnual() {
             },
             scales: {
                 y: { display: false, padding: 20 },
-                x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+                x: { grid: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#7a8b87', font: { size: 10 } } }
             }
         }
     });
@@ -3284,6 +3305,7 @@ document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
 
 // 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
 carregarTemaPreferido();
+
 
 
 
