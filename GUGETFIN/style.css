@@ -2931,12 +2931,12 @@ body.dark-theme .cartao-item-card {
     border-color: var(--border) !important;
 }
 
-#card-terceiros.dark-theme [
+.card-terceiros.dark-theme [
 	background: #192321 !important;
 	border-color: #000 !important;
 }
 
-#tabela-terceiros.dark-theme tr {
+.tabela-terceiros.dark-theme tr {
     background: unset;
 }
 
@@ -3019,6 +3019,7 @@ body.dark-theme .dropdown-item:hover {
 .slider-switch:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
 input:checked + .slider-switch { background-color: var(--dark-green); }
 input:checked + .slider-switch:before { transform: translateX(20px); }
+
 
 
 
