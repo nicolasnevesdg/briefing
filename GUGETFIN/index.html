@@ -235,11 +235,17 @@
 						        <button onclick="mudarAnoGrafico(1)">❯</button>
 						    </div>
 						    
-						    <select id="filtro-tipo-grafico" onchange="atualizarGraficoAnual()" class="select-grafico">
-						        <option value="saldo" selected>Saldo Mensal</option>
-						        <option value="entradas">Entradas</option>
-						        <option value="saidas">Saídas</option>
-						    </select>
+						    <div class="custom-dropdown" id="filtro-tipo-grafico" data-value="saldo" style="min-width: 130px;">
+						        <div class="dropdown-trigger" onclick="toggleDropdownGrafico(event)" style="padding: 6px 12px; height: 32px;">
+						            <span id="texto-filtro-grafico" style="font-size: 11px;">Saldo Mensal</span> 
+						            <i class="chevron"></i>
+						        </div>
+						        <div class="dropdown-menu">
+						            <div class="dropdown-item selected" onclick="selecionarFiltroGrafico('saldo', 'Saldo Mensal', event)">Saldo Mensal</div>
+						            <div class="dropdown-item" onclick="selecionarFiltroGrafico('entradas', 'Entradas', event)">Entradas</div>
+						            <div class="dropdown-item" onclick="selecionarFiltroGrafico('saidas', 'Saídas', event)">Saídas</div>
+						        </div>
+						    </div>
 						</div>
 						<div class="chart-container">
 							<canvas id="graficoSalsi"></canvas>
@@ -1037,6 +1043,7 @@
 </body>
 
 </html>
+
 
 
 
