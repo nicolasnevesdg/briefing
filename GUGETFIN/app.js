@@ -289,29 +289,29 @@ function renderizar() {
                     ? `<span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>`
                     : `<span class="badge-tag">DÉBITO</span>`;
 
-                // 👇 NOVA LÓGICA: CONTROLE DE DEVOLUÇÃO (CHECKBOX) 👇
-                // Se a pessoa já pagou, a linha fica meio transparente
-                const estiloPCTerceiro = t.pago ? 'opacity: 0.5; font-style: italic;' : '';
                 const statusChecked = t.pago ? 'checked' : '';
 
                 if(tTable) {
+                    // 👇 Visual da linha e Checkbox IGUAIS ao de Fixos 👇
+                    const estiloPCTerceiro = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
                     tTable.innerHTML += `
-                        <tr class="desktop-only-row" style="${estiloPCTerceiro}; transition: 0.2s;">
+                        <tr class="desktop-only-row" ${estiloPCTerceiro}>
                             <td>${dataSutil}</td>
                             <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
                             <td><span class="badge-tag">${t.nomeTerceiro}</span></td>
                             <td style="text-align: center;">${tagTipoPC}</td>
                             <td style="text-align: center;">${diff + 1}/${t.parcelas}</td>
                             <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
-                            <td style="text-align: center;"><input type="checkbox" ${statusChecked} onchange="alternarStatusPago(${idx})" style="transform: scale(1.3); cursor: pointer; accent-color: #21c25e;"></td>
+                            <td style="text-align: center;"><input type="checkbox" ${statusChecked} onchange="alternarStatusPago(${idx})"></td>
                             <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
                         </tr>`;
                 }
 
                 if (mTerceiros) {
-                    const opacidadeMob = t.pago ? '0.6' : '1'; 
+                    // 👇 Lógica de opacidade e Tags EXATAMENTE iguais as de Fixos 👇
+                    const opacidadeMob = t.pago ? '1' : '0.6'; 
                     const tagStatus = t.pago 
-                        ? `<span class="badge" style="background: #21c25e; font-size: 9px; color: white;">RECEBIDO</span>`
+                        ? `<span class="badge" style="background: #21c25e; font-size: 9px;">PAGO</span>`
                         : `<span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 9px;">PENDENTE</span>`;
 
                     mTerceiros.innerHTML += `
@@ -321,15 +321,10 @@ function renderizar() {
                                     <strong>${t.nome}</strong>
                                     <span class="cartao-parcela-tag">${diff + 1}/${t.parcelas}</span>
                                 </div>
-                                <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
-                                    <span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>
-                                    <span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 11px; padding: 2px 6px;">
-                                        ${t.nomeTerceiro}
-                                    </span>
-                                </div>
-                                <div style="display: flex; gap: 8px; align-items: center; margin-top: 10px;">
+                                <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
                                     <input type="checkbox" ${statusChecked} onclick="event.stopPropagation()" onchange="alternarStatusPago(${idx})" style="transform: scale(1.3); cursor: pointer; accent-color: #21c25e;">
                                     ${tagStatus}
+                                    <span style="font-size: 10px; color: #a0aec0; margin-left: 4px;">${t.nomeTerceiro} • ${t.banco}</span>
                                 </div>
                             </div>
                             <div class="cartao-valor-grupo">
@@ -3358,6 +3353,7 @@ document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
 
 // 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
 carregarTemaPreferido();
+
 
 
 
