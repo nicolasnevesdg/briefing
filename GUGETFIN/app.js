@@ -336,25 +336,25 @@ function renderizar() {
             }
             // --- GASTOS PESSOAIS ---
             else {
+                // 1. Só contabiliza se NÃO for fixo, ou se for fixo e estiver PAGO (Checked)
                 if (t.tipo !== 'fixo' || (t.tipo === 'fixo' && t.pago === true)) {
                     totalGastoMes += val;
                     tagSum[t.categoria] = (tagSum[t.categoria] || 0) + val;
                     
-                    // 👇 A MÁGICA: O Gasto Fixo entra na Fatura do Cartão ou Débito 👇
+                    // 2. A MÁGICA DO RESUMO MENSAL: 
+                    // Soma o Gasto Fixo na barra do Banco (para formar a Fatura real no painel central),
+                    // MAS não adiciona no "totalCartMes", blindando a aba de Cartões contra bugs de filtro!
                     if (t.tipo === 'fixo' && t.banco) {
                         const detalheBanco = salsiData.config.detalhesBancos?.find(d => d.nome === t.banco);
                         const isDebitoOnly = detalheBanco ? detalheBanco.isDebitoOnly : t.banco.toLowerCase().includes('débito');
                         
                         if (!isDebitoOnly) {
-                            totalCartMes += val; 
                             bankSum[t.banco] = (bankSum[t.banco] || 0) + val; 
-                        } else {
-                            totalDebitoMes += val;
                         }
                     }
-                    // 👆 FIM DA MÁGICA 👆
                 }
 
+                // Lógicas específicas de renderização das Tabelas
                 if (t.tipo === 'fixo') {
                     if (t.pago === true) totalFixoMes += val;
                     
@@ -3353,6 +3353,7 @@ document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
 
 // 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
 carregarTemaPreferido();
+
 
 
 
