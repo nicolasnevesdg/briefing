@@ -974,6 +974,39 @@
         </div>
     </div>
 </dialog>
+
+<dialog id="modal-assistente" class="modal-estilizado" style="width: 90%; max-width: 400px; padding: 0; overflow: hidden;">
+    <div style="display: flex; flex-direction: column; height: 500px; max-height: 80vh;">
+        <div style="padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--sidebar-bg);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 20px;">🍌</span>
+                <div style="display: flex; flex-direction: column;">
+                    <h3 style="margin: 0; color: var(--dark-green); font-size: 15px;">nano banana</h3>
+                    <span style="font-size: 10px; color: var(--text-sec);">Assistente Financeira AI</span>
+                </div>
+            </div>
+            <button class="btn-close-modal" onclick="document.getElementById('modal-assistente').close()" style="position: static; padding: 5px;">×</button>
+        </div>
+        
+        <div id="chat-messages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-app);">
+            </div>
+        
+        <div style="padding: 15px; border-top: 1px solid var(--border); background: var(--sidebar-bg); display: flex; flex-direction: column; gap: 12px;">
+            
+            <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -ms-overflow-style: none;">
+                <button onclick="enviarPerguntaPronta('Resumo do mês')" style="white-space: nowrap; padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Resumo do mês</button>
+                <button onclick="enviarPerguntaPronta('Comparar com mês passado')" style="white-space: nowrap; padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Comparar c/ Mês Passado</button>
+                <button onclick="enviarPerguntaPronta('Previsão próximo mês')" style="white-space: nowrap; padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Previsão Próximo Mês</button>
+                <button onclick="enviarPerguntaPronta('Meus maiores vícios')" style="white-space: nowrap; padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Meus maiores vícios</button>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="chat-input" placeholder="Pergunte algo..." style="flex: 1; padding: 12px 15px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); outline: none; font-size: 13px;" onkeypress="if(event.key === 'Enter') enviarMensagemAssistente()">
+                <button onclick="enviarMensagemAssistente()" style="background: var(--dark-green); color: #121212; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;">➔</button>
+            </div>
+        </div>
+    </div>
+</dialog>
 	
 	<div id="toast-notificacao">
         <i class="fi fi-rr-check-circle"></i>
@@ -1043,6 +1076,7 @@
 </body>
 
 </html>
+
 
 
 
