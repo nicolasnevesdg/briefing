@@ -3,6 +3,24 @@ let subAbaCartaoAtiva = 'credito';
 let dataFiltro = new Date();
 dataFiltro.setDate(1);  
 
+// 👇 CÓDIGO NOVO DA TRAVA DE SCROLL FICA AQUI 👇
+// ==========================================
+// TRAVA GLOBAL DE SCROLL PARA POP-UPS
+// ==========================================
+const originalShowModal = HTMLDialogElement.prototype.showModal;
+const originalClose = HTMLDialogElement.prototype.close;
+
+HTMLDialogElement.prototype.showModal = function() {
+    document.body.style.overflow = 'hidden'; // Trava o fundo
+    originalShowModal.apply(this, arguments);
+};
+
+HTMLDialogElement.prototype.close = function() {
+    document.body.style.overflow = ''; // Destrava o fundo
+    originalClose.apply(this, arguments);
+};
+// ==========================================
+
 // Forçar estado inicial ao carregar a página APENAS NO MOBILE
 // --- CONTROLE DE TELA (PC vs MOBILE) ---
 function ajustarTelas() {
@@ -2053,6 +2071,9 @@ document.addEventListener('touchend', function(event) {
 }, {passive: true});
 
 function analisarMovimentoSwipe() {
+    // 👇 TRAVA DE SEGURANÇA: Se houver algum pop-up aberto, ignora o arrasto!
+    if (document.querySelector('dialog[open]')) return;
+
     const distanciaX = touchendX - touchstartX;
     const distanciaY = touchendY - touchstartY;
 
@@ -2073,7 +2094,7 @@ function analisarMovimentoSwipe() {
 
             if (distanciaX < 0) {
                 // Arrastou para ESQUERDA (Avança o mês)
-                mudarMes(1); // Usa a sua função original que já funciona perfeitamente!
+                mudarMes(1); 
                 if(navMovel) navMovel.classList.add('anim-slide-left');
                 
             } else {
@@ -3554,6 +3575,7 @@ function gerarRespostaAssistente(pergunta, chat) {
     `;
     chat.scrollTop = chat.scrollHeight;
 }
+
 
 
 
