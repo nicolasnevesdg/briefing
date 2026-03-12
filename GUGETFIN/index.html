@@ -975,8 +975,8 @@
     </div>
 </dialog>
 
-<dialog id="modal-assistente" class="modal-estilizado" style="width: 90%; max-width: 400px; padding: 0; overflow: hidden;">
-    <div style="display: flex; flex-direction: column; height: 500px; max-height: 80vh;">
+<dialog id="modal-assistente" class="modal-estilizado" style="width: 90%; max-width: 550px; padding: 0; overflow: hidden;">
+    <div style="display: flex; flex-direction: column; height: 600px; max-height: 85vh;">
         <div style="padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--sidebar-bg);">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <span style="font-size: 20px;">🍌</span>
@@ -993,11 +993,11 @@
         
         <div style="padding: 15px; border-top: 1px solid var(--border); background: var(--sidebar-bg); display: flex; flex-direction: column; gap: 12px;">
             
-            <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -ms-overflow-style: none;">
-                <button onclick="enviarPerguntaPronta('Resumo do mês')" style="white-space: nowrap; padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Resumo do mês</button>
-                <button onclick="enviarPerguntaPronta('Comparar com mês passado')" style="white-space: nowrap; padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Comparar c/ Mês Passado</button>
-                <button onclick="enviarPerguntaPronta('Previsão próximo mês')" style="white-space: nowrap; padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Previsão Próximo Mês</button>
-                <button onclick="enviarPerguntaPronta('Meus maiores vícios')" style="white-space: nowrap; padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Meus maiores vícios</button>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; padding-bottom: 5px;">
+                <button onclick="enviarPerguntaPronta('Resumo do mês')" style="padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Resumo do mês</button>
+                <button onclick="enviarPerguntaPronta('Comparar com mês passado')" style="padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Comparar c/ Mês Passado</button>
+                <button onclick="enviarPerguntaPronta('Previsão próximo mês')" style="padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Previsão Próximo Mês</button>
+                <button onclick="enviarPerguntaPronta('Meus maiores vícios')" style="padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Meus maiores vícios</button>
             </div>
 
             <div style="display: flex; gap: 10px; align-items: center;">
@@ -1076,6 +1076,7 @@
 </body>
 
 </html>
+
 
 
 
