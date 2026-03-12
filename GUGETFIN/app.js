@@ -2413,13 +2413,16 @@ function atualizarSaudacao(nomeCompleto) {
     const superBanco = [...frases, ...dicas];
     const fraseEscolhida = superBanco[Math.floor(Math.random() * superBanco.length)];
 
-    // 4. Monta a nova estética leve/sutil + subtítulo
+    // 4. Monta a nova estética com o BOTÃO DO ASSISTENTE
     const htmlContent = `
         <div class="greeting-title-wrapper">
             <span class="greet-light">${saudacaoRandom},</span> 
             <span class="greet-bold">${primeiroNome}!</span>
         </div>
-        <div class="greet-subtitle">${fraseEscolhida}</div>
+        <div class="ai-trigger" onclick="abrirAssistente()" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(52, 211, 153, 0.2)'" onmouseout="this.style.background='rgba(52, 211, 153, 0.1)'">
+            <span style="font-size: 13px;">✨</span>
+            <span style="font-size: 11px; font-weight: 600; color: var(--dark-green);">Me pergunte algo...</span>
+        </div>
     `;
 
     // 1. Atualiza e mostra a saudação na Sidebar (PC)
@@ -3551,6 +3554,7 @@ function gerarRespostaAssistente(pergunta, chat) {
     `;
     chat.scrollTop = chat.scrollHeight;
 }
+
 
 
 
