@@ -3354,6 +3354,203 @@ document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
 // 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
 carregarTemaPreferido();
 
+// ==========================================
+// MÓDULO: ASSISTENTE VIRTUAL (NANO BANANA)
+// ==========================================
+
+function abrirAssistente() {
+    const chat = document.getElementById('chat-messages');
+    
+    // Zera o chat e dá as boas vindas sempre que abrir
+    chat.innerHTML = `
+        <div style="align-self: flex-start; background: var(--sidebar-bg); padding: 12px 16px; border-radius: 12px 12px 12px 0; border: 1px solid var(--border); max-width: 85%; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+            <p style="margin: 0; font-size: 13px; color: var(--text-main); line-height: 1.5;">Olá! Eu sou a <strong>nano banana</strong> 🍌.<br>Posso analisar os seus dados em tempo real. Escolha uma das opções abaixo ou digite a sua pergunta!</p>
+        </div>
+    `;
+    
+    document.getElementById('modal-assistente').showModal();
+}
+
+// Nova função para os botões de atalho
+function enviarPerguntaPronta(texto) {
+    const input = document.getElementById('chat-input');
+    input.value = texto;
+    enviarMensagemAssistente();
+}
+
+function enviarMensagemAssistente() {
+    const input = document.getElementById('chat-input');
+    const texto = input.value.trim();
+    if(!texto) return;
+
+    const chat = document.getElementById('chat-messages');
+
+    // Plota a mensagem do Usuário
+    chat.innerHTML += `
+        <div style="align-self: flex-end; background: var(--dark-green); color: #121212; padding: 10px 15px; border-radius: 12px 12px 0 12px; max-width: 80%;">
+            <p style="margin: 0; font-size: 13px; font-weight: 600;">${texto}</p>
+        </div>
+    `;
+    
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
+
+    // Simula o "Digitando..."
+    const typingId = 'typing-' + Date.now();
+    chat.innerHTML += `
+        <div id="${typingId}" style="align-self: flex-start; background: var(--sidebar-bg); padding: 10px 15px; border-radius: 12px 12px 12px 0; border: 1px solid var(--border); max-width: 80%; margin-top: 5px;">
+            <p style="margin: 0; font-size: 12px; color: var(--text-sec); font-style: italic;">nano banana está a analisar os dados...</p>
+        </div>
+    `;
+    chat.scrollTop = chat.scrollHeight;
+
+    setTimeout(() => {
+        document.getElementById(typingId).remove();
+        gerarRespostaAssistente(texto, chat);
+    }, 1200);
+}
+
+function gerarRespostaAssistente(pergunta, chat) {
+    let resposta = "";
+    const p = pergunta.toLowerCase();
+    
+    const m = dataFiltro.getMonth();
+    const a = dataFiltro.getFullYear();
+
+    // SETUP DE VIAGEM NO TEMPO
+    let prevM = m - 1, prevA = a;
+    if (prevM < 0) { prevM = 11; prevA--; }
+    
+    let nextM = m + 1, nextA = a;
+    if (nextM > 11) { nextM = 0; nextA++; }
+
+    // VARIÁVEIS DE CÁLCULO
+    let totalGastos = 0, totalEntradas = 0, faturasCartao = 0;
+    let gastosPassado = 0;
+    let faturaFutura = 0, fixosFuturos = 0;
+    let tagSum = {};
+    let nomesSum = {}; // Novo: Agrupa por NOME (ex: Uber, iFood)
+
+    // Recolhe entradas do mês atual
+    salsiData.entradas.forEach(e => {
+        if (e.mes === m && e.ano === a) totalEntradas += e.valor;
+    });
+
+    // VARREDURA TEMPORAL DE GASTOS
+    salsiData.transacoes.forEach(t => {
+        if (t.eDeTerceiro) return; // Ignora terceiros nas análises
+
+        const d = new Date(t.dataCompra + "T00:00:00");
+        let mesRef = d.getMonth() + (t.delayPagamento || 0);
+        let anoRef = d.getFullYear();
+        if (mesRef > 11) { mesRef -= 12; anoRef++; }
+        
+        const diffAtual = (a - anoRef) * 12 + (m - mesRef);
+        const diffPassado = (prevA - anoRef) * 12 + (prevM - mesRef);
+        const diffFuturo = (nextA - anoRef) * 12 + (nextM - mesRef);
+
+        const val = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
+        const bancoCredito = t.tipo === 'cartao' || (t.tipo === 'fixo' && t.banco && !(salsiData.config.detalhesBancos?.find(d => d.nome === t.banco)?.isDebitoOnly || t.banco.toLowerCase().includes('débito')));
+
+        // 1. DADOS DO MÊS ATUAL
+        if (diffAtual >= 0 && diffAtual < t.parcelas) {
+            if (bancoCredito) faturasCartao += val;
+            if (t.tipo !== 'fixo' || t.pago) {
+                totalGastos += val;
+                tagSum[t.categoria] = (tagSum[t.categoria] || 0) + val;
+                
+                // Agrupa por NOME específico (Limpa nomes parecidos)
+                let nomeLimpo = t.nome.toUpperCase().trim().split(' ')[0]; // Pega a primeira palavra (ex: "UBER *TRIP" vira "UBER")
+                if(nomeLimpo.length > 2) nomesSum[nomeLimpo] = (nomesSum[nomeLimpo] || 0) + val;
+            }
+        }
+
+        // 2. DADOS DO MÊS PASSADO
+        if (diffPassado >= 0 && diffPassado < t.parcelas) {
+            if (t.tipo !== 'fixo' || t.pago) gastosPassado += val;
+        }
+
+        // 3. DADOS DO FUTURO (Próximo mês)
+        if (diffFuturo >= 0 && diffFuturo < t.parcelas) {
+            if (bancoCredito) faturaFutura += val;
+            if (t.tipo === 'fixo') fixosFuturos += val;
+        }
+    });
+
+    // 🧠 LÓGICA 1: Onde gasto mais (Categorias)?
+    if (p.includes("gasto") || p.includes("categoria") || p.includes("onde") || p.includes("maior")) {
+        const catOrdenadas = Object.entries(tagSum).sort((x, y) => y[1] - x[1]);
+        if (catOrdenadas.length > 0) {
+            resposta = `O seu maior foco de despesas este mês é com <strong>${catOrdenadas[0][0]}</strong>, totalizando R$ ${catOrdenadas[0][1].toFixed(2)}.<br><br>`;
+            if(catOrdenadas.length > 1) resposta += `Em seguida vem <strong>${catOrdenadas[1][0]}</strong> (R$ ${catOrdenadas[1][1].toFixed(2)}). `;
+        } else {
+            resposta = "Você ainda não tem gastos registrados para este mês! O seu bolso agradece. 💸";
+        }
+    } 
+    // 🧠 LÓGICA 2: Resumo do Mês Atual
+    else if (p.includes("resumo") || p.includes("balanço") || p.includes("saldo") || p.includes("atual")) {
+        let saldo = totalEntradas - totalGastos;
+        resposta = `Panorama do mês atual:<br><br>🟢 <strong>Entradas:</strong> R$ ${totalEntradas.toFixed(2)}<br>🔴 <strong>Saídas:</strong> R$ ${totalGastos.toFixed(2)}<br><br>`;
+        if (saldo > 0) resposta += `Seu saldo está positivo em <strong>R$ ${saldo.toFixed(2)}</strong>! Excelente trabalho.`;
+        else if (saldo < 0) resposta += `Atenção: Seu saldo está negativo em <strong>R$ ${Math.abs(saldo).toFixed(2)}</strong>.`;
+        else resposta += `Você está exatamente no limite (R$ 0,00).`;
+    }
+    // 🧠 LÓGICA 3: Faturas Atuais
+    else if (p.includes("fatura") && !p.includes("futuro") && !p.includes("próximo")) {
+        if (faturasCartao > 0) resposta = `A soma de todas as suas faturas de crédito (incluindo fixos) está em <strong>R$ ${faturasCartao.toFixed(2)}</strong> este mês.`;
+        else resposta = `Ótimas notícias! Nenhuma fatura de crédito para pagar este mês.`;
+    }
+    // 🧠 LÓGICA 4: Comparação Passado vs Presente
+    else if (p.includes("comparar") || p.includes("passado") || p.includes("anterior")) {
+        let diferenca = totalGastos - gastosPassado;
+        resposta = `No mês passado você gastou um total de <strong>R$ ${gastosPassado.toFixed(2)}</strong>.<br><br>`;
+        
+        if (diferenca > 0) {
+            resposta += `📈 Este mês você já gastou <strong>R$ ${diferenca.toFixed(2)} a mais</strong> do que no mês passado inteiro. Cuidado para não estourar o orçamento!`;
+        } else if (diferenca < 0) {
+            resposta += `📉 Parabéns! Você economizou <strong>R$ ${Math.abs(diferenca).toFixed(2)}</strong> em comparação ao mês passado. Continue assim!`;
+        } else {
+            resposta += `Seus gastos estão exatamente iguais ao mês passado. Muita consistência!`;
+        }
+    }
+    // 🧠 LÓGICA 5: Previsão do Próximo Mês (Futuro)
+    else if (p.includes("previsão") || p.includes("próximo") || p.includes("futuro")) {
+        let despesaGarantida = faturaFutura + fixosFuturos; // Dívidas que já existem
+        resposta = `🔮 Olhando para o futuro (próximo mês), você já tem <strong>R$ ${despesaGarantida.toFixed(2)}</strong> comprometidos.<br><br>`;
+        resposta += `Deste valor:<br>💳 <strong>R$ ${faturaFutura.toFixed(2)}</strong> são de faturas de cartão (parcelas e fixos).<br>📌 <strong>R$ ${fixosFuturos.toFixed(2)}</strong> são de contas fixas.<br><br>`;
+        
+        if (despesaGarantida > totalEntradas && totalEntradas > 0) {
+            resposta += `⚠️ <strong>ALERTA:</strong> Suas dívidas do próximo mês já ultrapassam a sua renda média atual. Freie os parcelamentos!`;
+        } else {
+            resposta += `Isso significa que você começará o próximo mês já devendo esse valor. Planeje-se!`;
+        }
+    }
+    // 🧠 LÓGICA 6: Vícios e Hábitos (Agrupamento Específico)
+    else if (p.includes("vício") || p.includes("hábito") || p.includes("específico") || p.includes("ifood") || p.includes("uber")) {
+        const nomesOrdenados = Object.entries(nomesSum).sort((x, y) => y[1] - x[1]);
+        if (nomesOrdenados.length > 0) {
+            resposta = `🕵️ Analisei os nomes dos seus gastos. Seus maiores "ralos" de dinheiro específicos neste mês são:<br><br>`;
+            resposta += `🍔 <strong>${nomesOrdenados[0][0]}</strong>: R$ ${nomesOrdenados[0][1].toFixed(2)}<br>`;
+            if (nomesOrdenados.length > 1) resposta += `🛍️ <strong>${nomesOrdenados[1][0]}</strong>: R$ ${nomesOrdenados[1][1].toFixed(2)}<br>`;
+            if (nomesOrdenados.length > 2) resposta += `💸 <strong>${nomesOrdenados[2][0]}</strong>: R$ ${nomesOrdenados[2][1].toFixed(2)}<br><br>`;
+            resposta += `Esses pequenos (ou grandes) gastos frequentes são os que mais corroem o saldo. Fique de olho!`;
+        } else {
+            resposta = `Não consegui identificar repetições significativas de nomes neste mês.`;
+        }
+    }
+    // 🧠 LÓGICA 7: Resposta padrão
+    else {
+        resposta = `Como sou uma IA focada nas suas finanças, sou melhor analisando números! Tente usar os botões acima ou perguntar algo como <strong>"Previsão do próximo mês"</strong> ou <strong>"Comparar com o mês passado"</strong>.`;
+    }
+
+    // Plota a resposta na tela com animação de entrada
+    chat.innerHTML += `
+        <div style="align-self: flex-start; background: var(--sidebar-bg); padding: 12px 16px; border-radius: 12px 12px 12px 0; border: 1px solid var(--border); max-width: 85%; margin-top: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); animation: fadeIn 0.3s ease;">
+            <p style="margin: 0; font-size: 13px; color: var(--text-main); line-height: 1.5;">${resposta}</p>
+        </div>
+    `;
+    chat.scrollTop = chat.scrollHeight;
+}
 
 
 
