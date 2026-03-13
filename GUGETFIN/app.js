@@ -3388,7 +3388,7 @@ function abrirAssistente() {
     // Zera o chat e dá as boas vindas sempre que abrir
     chat.innerHTML = `
         <div style="align-self: flex-start; background: var(--sidebar-bg); padding: 12px 16px; border-radius: 12px 12px 12px 0; border: 1px solid var(--border); max-width: 85%; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-            <p style="margin: 0; font-size: 13px; color: var(--text-main); line-height: 1.5;">Olá! Eu sou a <strong>nano banana</strong> 🍌.<br>Posso analisar os seus dados em tempo real. Escolha uma das opções abaixo ou digite a sua pergunta!</p>
+            <p style="margin: 0; font-size: 13px; color: var(--text-main); line-height: 1.5;">Au au! Olá! Eu sou a <strong>Guget</strong> 🐕.<br>Posso analisar os seus dados em tempo real. Escolha uma das opções abaixo ou digite a sua pergunta!</p>
         </div>
     `;
     
@@ -3411,7 +3411,7 @@ function enviarMensagemAssistente() {
 
     // Plota a mensagem do Usuário
     chat.innerHTML += `
-        <div style="align-self: flex-end; background: var(--dark-green); color: #121212; padding: 10px 15px; border-radius: 12px 12px 0 12px; max-width: 80%;">
+        <div style="align-self: flex-end; background: var(--dark-green); color: white; padding: 10px 15px; border-radius: 12px 12px 0 12px; max-width: 80%;">
             <p style="margin: 0; font-size: 13px; font-weight: 600;">${texto}</p>
         </div>
     `;
@@ -3419,11 +3419,11 @@ function enviarMensagemAssistente() {
     input.value = '';
     chat.scrollTop = chat.scrollHeight;
 
-    // Simula o "Digitando..."
+    // Simula o "Digitando..." da cachorrinha
     const typingId = 'typing-' + Date.now();
     chat.innerHTML += `
         <div id="${typingId}" style="align-self: flex-start; background: var(--sidebar-bg); padding: 10px 15px; border-radius: 12px 12px 12px 0; border: 1px solid var(--border); max-width: 80%; margin-top: 5px;">
-            <p style="margin: 0; font-size: 12px; color: var(--text-sec); font-style: italic;">nano banana está a analisar os dados...</p>
+            <p style="margin: 0; font-size: 12px; color: var(--text-sec); font-style: italic;">Guget está farejando seus dados...</p>
         </div>
     `;
     chat.scrollTop = chat.scrollHeight;
@@ -3450,10 +3450,11 @@ function gerarRespostaAssistente(pergunta, chat) {
 
     // VARIÁVEIS DE CÁLCULO
     let totalGastos = 0, totalEntradas = 0, faturasCartao = 0;
-    let gastosPassado = 0;
+    let gastosPassado = 0, gastosPassadoAteHoje = 0; // NOVA LÓGICA DE RITMO
     let faturaFutura = 0, fixosFuturos = 0;
     let tagSum = {};
-    let nomesSum = {}; // Novo: Agrupa por NOME (ex: Uber, iFood)
+    let nomesSum = {}; 
+    const diaAtualHoje = new Date().getDate(); // Lê o dia exato de hoje
 
     // Recolhe entradas do mês atual
     salsiData.entradas.forEach(e => {
@@ -3462,7 +3463,7 @@ function gerarRespostaAssistente(pergunta, chat) {
 
     // VARREDURA TEMPORAL DE GASTOS
     salsiData.transacoes.forEach(t => {
-        if (t.eDeTerceiro) return; // Ignora terceiros nas análises
+        if (t.eDeTerceiro) return; 
 
         const d = new Date(t.dataCompra + "T00:00:00");
         let mesRef = d.getMonth() + (t.delayPagamento || 0);
@@ -3483,15 +3484,21 @@ function gerarRespostaAssistente(pergunta, chat) {
                 totalGastos += val;
                 tagSum[t.categoria] = (tagSum[t.categoria] || 0) + val;
                 
-                // Agrupa por NOME específico (Limpa nomes parecidos)
-                let nomeLimpo = t.nome.toUpperCase().trim().split(' ')[0]; // Pega a primeira palavra (ex: "UBER *TRIP" vira "UBER")
+                let nomeLimpo = t.nome.toUpperCase().trim().split(' ')[0]; 
                 if(nomeLimpo.length > 2) nomesSum[nomeLimpo] = (nomesSum[nomeLimpo] || 0) + val;
             }
         }
 
         // 2. DADOS DO MÊS PASSADO
         if (diffPassado >= 0 && diffPassado < t.parcelas) {
-            if (t.tipo !== 'fixo' || t.pago) gastosPassado += val;
+            if (t.tipo !== 'fixo' || t.pago) {
+                gastosPassado += val; // Soma do mês passado INTEIRO
+                
+                // 👇 CÁLCULO DE RITMO: Soma apenas o que foi comprado ATÉ o dia de hoje no mês passado
+                if (d.getDate() <= diaAtualHoje) {
+                    gastosPassadoAteHoje += val;
+                }
+            }
         }
 
         // 3. DADOS DO FUTURO (Próximo mês)
@@ -3501,7 +3508,7 @@ function gerarRespostaAssistente(pergunta, chat) {
         }
     });
 
-    // 🧠 LÓGICA 1: Onde gasto mais (Categorias)?
+    // 🧠 LÓGICA 1: Onde gasto mais?
     if (p.includes("gasto") || p.includes("categoria") || p.includes("onde") || p.includes("maior")) {
         const catOrdenadas = Object.entries(tagSum).sort((x, y) => y[1] - x[1]);
         if (catOrdenadas.length > 0) {
@@ -3511,7 +3518,7 @@ function gerarRespostaAssistente(pergunta, chat) {
             resposta = "Você ainda não tem gastos registrados para este mês! O seu bolso agradece. 💸";
         }
     } 
-    // 🧠 LÓGICA 2: Resumo do Mês Atual
+    // 🧠 LÓGICA 2: Resumo do Mês
     else if (p.includes("resumo") || p.includes("balanço") || p.includes("saldo") || p.includes("atual")) {
         let saldo = totalEntradas - totalGastos;
         resposta = `Panorama do mês atual:<br><br>🟢 <strong>Entradas:</strong> R$ ${totalEntradas.toFixed(2)}<br>🔴 <strong>Saídas:</strong> R$ ${totalGastos.toFixed(2)}<br><br>`;
@@ -3524,22 +3531,52 @@ function gerarRespostaAssistente(pergunta, chat) {
         if (faturasCartao > 0) resposta = `A soma de todas as suas faturas de crédito (incluindo fixos) está em <strong>R$ ${faturasCartao.toFixed(2)}</strong> este mês.`;
         else resposta = `Ótimas notícias! Nenhuma fatura de crédito para pagar este mês.`;
     }
-    // 🧠 LÓGICA 4: Comparação Passado vs Presente
+    // 🧠 LÓGICA 4: Comparação Passado vs Presente (TOTALMENTE REFORMULADA)
     else if (p.includes("comparar") || p.includes("passado") || p.includes("anterior")) {
-        let diferenca = totalGastos - gastosPassado;
-        resposta = `No mês passado você gastou um total de <strong>R$ ${gastosPassado.toFixed(2)}</strong>.<br><br>`;
-        
-        if (diferenca > 0) {
-            resposta += `📈 Este mês você já gastou <strong>R$ ${diferenca.toFixed(2)} a mais</strong> do que no mês passado inteiro. Cuidado para não estourar o orçamento!`;
-        } else if (diferenca < 0) {
-            resposta += `📉 Parabéns! Você economizou <strong>R$ ${Math.abs(diferenca).toFixed(2)}</strong> em comparação ao mês passado. Continue assim!`;
+        const hoje = new Date();
+        const isMesAtual = (m === hoje.getMonth() && a === hoje.getFullYear());
+
+        // Se o usuário estiver a analisar o mês corrente, usamos a inteligência do dia a dia
+        if (isMesAtual) {
+            let diferencaPeriodo = totalGastos - gastosPassadoAteHoje;
+            
+            resposta = `Analisando o seu ritmo de gastos... 🕵️‍♂️<br><br>`;
+            resposta += `Neste exato dia no mês passado (dia ${diaAtualHoje}), você já havia gastado <strong>R$ ${gastosPassadoAteHoje.toFixed(2)}</strong>.<br><em>(No fim desse mês, o total foi de R$ ${gastosPassado.toFixed(2)}).</em><br><br>`;
+            resposta += `Até agora, neste mês, você gastou <strong>R$ ${totalGastos.toFixed(2)}</strong>.<br><br>`;
+
+            if (diferencaPeriodo > 0) {
+                resposta += `🚨 <strong>ALERTA:</strong> Você gastou <strong>R$ ${diferencaPeriodo.toFixed(2)} a mais</strong> do que nesse mesmo período do mês anterior!<br><br>`;
+                resposta += `💡 <strongDica da Guget:</strong> `;
+                
+                if (totalGastos >= gastosPassado) {
+                    resposta += `Você já bateu o recorde do mês passado inteiro e o mês nem acabou! Pise no freio agora mesmo. Esconda os cartões e congele compras não essenciais.`;
+                } else {
+                    resposta += `Seu ritmo de gastos está agressivo. Se continuar assim, sua fatura vai estourar. Tente segurar os pedidos de comida e as compras por impulso nesta reta final.`;
+                }
+            } else if (diferencaPeriodo < 0) {
+                resposta += `🌟 <strong>EXCELENTE!</strong> Você gastou <strong>R$ ${Math.abs(diferencaPeriodo).toFixed(2)} a menos</strong> do que nesse mesmo período do mês passado!<br><br>`;
+                resposta += `💡 <strong>Dica da nano banana:</strong> Seu ritmo de economia está perfeito. Mantenha o controle, não caia na armadilha do "já que sobrou, vou comprar", e foque em direcionar este saldo para as suas Metas!`;
+            } else {
+                resposta += `⚖️ Você está gastando rigorosamente a mesma quantia. Consistência é bom, mas vamos tentar fechar o mês economizando um pouco mais?`;
+            }
+            
         } else {
-            resposta += `Seus gastos estão exatamente iguais ao mês passado. Muita consistência!`;
+            // Se ele estiver a ver o histórico de um mês já fechado (ex: ver Dezembro)
+            let diferenca = totalGastos - gastosPassado;
+            resposta = `No mês anterior a este, você gastou um total de <strong>R$ ${gastosPassado.toFixed(2)}</strong>.<br><br>`;
+            
+            if (diferenca > 0) {
+                resposta += `📈 Neste mês selecionado, você gastou <strong>R$ ${diferenca.toFixed(2)} a mais</strong> do que no anterior.`;
+            } else if (diferenca < 0) {
+                resposta += `📉 Você economizou <strong>R$ ${Math.abs(diferenca).toFixed(2)}</strong> em comparação ao mês anterior.`;
+            } else {
+                resposta += `Seus gastos foram exatamente iguais.`;
+            }
         }
     }
-    // 🧠 LÓGICA 5: Previsão do Próximo Mês (Futuro)
+    // 🧠 LÓGICA 5: Previsão do Próximo Mês
     else if (p.includes("previsão") || p.includes("próximo") || p.includes("futuro")) {
-        let despesaGarantida = faturaFutura + fixosFuturos; // Dívidas que já existem
+        let despesaGarantida = faturaFutura + fixosFuturos; 
         resposta = `🔮 Olhando para o futuro (próximo mês), você já tem <strong>R$ ${despesaGarantida.toFixed(2)}</strong> comprometidos.<br><br>`;
         resposta += `Deste valor:<br>💳 <strong>R$ ${faturaFutura.toFixed(2)}</strong> são de faturas de cartão (parcelas e fixos).<br>📌 <strong>R$ ${fixosFuturos.toFixed(2)}</strong> são de contas fixas.<br><br>`;
         
@@ -3549,7 +3586,7 @@ function gerarRespostaAssistente(pergunta, chat) {
             resposta += `Isso significa que você começará o próximo mês já devendo esse valor. Planeje-se!`;
         }
     }
-    // 🧠 LÓGICA 6: Vícios e Hábitos (Agrupamento Específico)
+    // 🧠 LÓGICA 6: Vícios e Hábitos 
     else if (p.includes("vício") || p.includes("hábito") || p.includes("específico") || p.includes("ifood") || p.includes("uber")) {
         const nomesOrdenados = Object.entries(nomesSum).sort((x, y) => y[1] - x[1]);
         if (nomesOrdenados.length > 0) {
