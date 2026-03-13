@@ -765,7 +765,13 @@
 	            </label>
 	        </div>
 			
-			<label class="input-label">Nome de Exibição</label>
+			<label class="input-label">Ciclo da Assistente (Guget)</label>
+            <select id="perfil-modo-ia" style="width: 100%; margin-bottom: 20px; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-weight: 600; outline: none;">
+                <option value="calendario">Mês Calendário (Padrão)</option>
+                <option value="fatura">Mês Seguinte (Foco no Vencimento)</option>
+            </select>
+			
+            <label class="input-label">Nome de Exibição</label>
             <input type="text" id="perfil-nome" placeholder="Seu nome" style="width: 100%; margin-bottom: 15px;">
 			
             <label class="input-label">E-mail</label>
@@ -1077,6 +1083,7 @@
 </body>
 
 </html>
+
 
 
 
