@@ -2468,6 +2468,12 @@ function abrirModalPerfil() {
         document.getElementById('perfil-nome').value = user.displayName || '';
         document.getElementById('perfil-email').value = user.email || '';
         document.getElementById('perfil-senha').value = ''; // Sempre limpo por segurança
+        
+        // 👇 NOVO: Carrega a preferência da IA 👇
+        const modoIA = (salsiData.config && salsiData.config.modoIA) ? salsiData.config.modoIA : 'calendario';
+        const selectModo = document.getElementById('perfil-modo-ia');
+        if (selectModo) selectModo.value = modoIA;
+
         document.getElementById('modal-perfil').showModal();
         
         // Fecha o menu cascata
@@ -2508,6 +2514,16 @@ async function salvarPerfil() {
             if (novaSenha.length < 6) throw new Error("A senha deve ter pelo menos 6 caracteres.");
             await window.updatePassword(user, novaSenha);
             atualizouAlgo = true;
+        }
+
+        // 👇 NOVO: Salva a preferência da IA 👇
+        const novoModoIA = document.getElementById('perfil-modo-ia').value;
+        if (!salsiData.config) salsiData.config = {};
+        if (salsiData.config.modoIA !== novoModoIA) {
+            salsiData.config.modoIA = novoModoIA;
+            atualizouAlgo = true;
+            localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+            if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
         }
 
         if (atualizouAlgo) {
@@ -3388,7 +3404,7 @@ function abrirAssistente() {
     // Zera o chat e dá as boas vindas sempre que abrir
     chat.innerHTML = `
         <div style="align-self: flex-start; background: var(--sidebar-bg); padding: 12px 16px; border-radius: 12px 12px 12px 0; border: 1px solid var(--border); max-width: 85%; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-            <p style="margin: 0; font-size: 13px; color: var(--text-main); line-height: 1.5;">Au au! Olá! Eu sou a <strong>Guget</strong> 🐕.<br>Posso analisar os seus dados em tempo real. Escolha uma das opções abaixo ou digite a sua pergunta!</p>
+            <p style="margin: 0; font-size: 13px; color: var(--text-main); line-height: 1.5;">Au au! Olá! Eu sou a <strong>Guget</strong> <img src="https://cdn-icons-png.flaticon.com/512/10118/10118932.png" style="width: 16px; vertical-align: middle; margin-bottom: 2px;">.<br>Posso analisar os seus dados em tempo real. Escolha uma das opções abaixo ou digite a sua pergunta!</p>
         </div>
     `;
     
@@ -3534,7 +3550,22 @@ function gerarRespostaAssistente(pergunta, chat) {
     // 🧠 LÓGICA 4: Comparação Passado vs Presente (TOTALMENTE REFORMULADA)
     else if (p.includes("comparar") || p.includes("passado") || p.includes("anterior")) {
         const hoje = new Date();
-        const isMesAtual = (m === hoje.getMonth() && a === hoje.getFullYear());
+        const modoIA = salsiData.config?.modoIA || 'calendario';
+        
+        let mesAlvo = hoje.getMonth();
+        let anoAlvo = hoje.getFullYear();
+        
+        // Se o usuário foca no vencimento, o "mês atual" dele é sempre o mês que vem!
+        if (modoIA === 'fatura') {
+            mesAlvo += 1;
+            if (mesAlvo > 11) {
+                mesAlvo = 0;
+                anoAlvo += 1;
+            }
+        }
+
+        // A IA agora sabe exatamente qual mês o usuário considera como o "Atual"
+        const isMesAtual = (m === mesAlvo && a === anoAlvo);
 
         // Se o usuário estiver a analisar o mês corrente, usamos a inteligência do dia a dia
         if (isMesAtual) {
@@ -3612,6 +3643,7 @@ function gerarRespostaAssistente(pergunta, chat) {
     `;
     chat.scrollTop = chat.scrollHeight;
 }
+
 
 
 
