@@ -1433,12 +1433,34 @@ function selecionarFiltroGrafico(valor, texto, event) {
     atualizarGraficoAnual();
 }
 
-// 1. Abre/Fecha o menu cascata
+// 1. Abre/Fecha o menu cascata do Mobile
 function toggleMenuOpcoes(event) {
     event.stopPropagation();
-    const menu = document.getElementById('menu-dropdown');
-    menu.classList.toggle('active');
+    document.getElementById('menu-dropdown').classList.toggle('active');
 }
+
+// NOVA: Abre/Fecha o menu cascata do PC
+function toggleMenuOpcoesPC(event) {
+    event.stopPropagation();
+    document.getElementById('menu-dropdown-pc').classList.toggle('active');
+}
+
+// 2. Lógica global para fechar os menus ao clicar em qualquer lugar da tela
+document.addEventListener('click', function(event) {
+    // Verifica e fecha o do Mobile
+    const menuMob = document.getElementById('menu-dropdown');
+    const contMob = document.getElementById('container-opcoes');
+    if (menuMob && menuMob.classList.contains('active') && contMob && !contMob.contains(event.target)) {
+        menuMob.classList.remove('active');
+    }
+    
+    // Verifica e fecha o do PC
+    const menuPC = document.getElementById('menu-dropdown-pc');
+    const contPC = document.getElementById('container-opcoes-pc');
+    if (menuPC && menuPC.classList.contains('active') && contPC && !contPC.contains(event.target)) {
+        menuPC.classList.remove('active');
+    }
+});
 
 // 2. Lógica para fechar ao clicar em qualquer lugar da tela
 document.addEventListener('click', function(event) {
