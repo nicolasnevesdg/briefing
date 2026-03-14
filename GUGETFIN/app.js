@@ -2445,59 +2445,40 @@ function togglePassword(inputId, btn) {
 function atualizarSaudacao(nomeCompleto) {
     if (!nomeCompleto) return;
     
-    // Pega só o primeiro nome
     const primeiroNome = nomeCompleto.split(' ')[0];
     const hora = new Date().getHours();
-    
-    // 1. Define a saudação inicial baseada no tempo
-    let saudacaoBase = 'Boa noite';
-    if (hora >= 5 && hora < 12) saudacaoBase = 'Bom dia';
-    else if (hora >= 12 && hora < 18) saudacaoBase = 'Boa tarde';
+    let saudacaoRandom = "";
 
-    // 2. Mistura com saudações mais informais para não ficar repetitivo
-    const variacoes = ["Olá", "Eaí", "Fala", "Opa", saudacaoBase];
-    const saudacaoRandom = variacoes[Math.floor(Math.random() * variacoes.length)];
-
-    // 3. Banco de Frases da "Personalidade" (Mistura horário + Dicas)
-    let frases = [];
     if (hora >= 5 && hora < 12) {
-        frases = ["Começando o dia com controle?", "Hora de planejar o dia financeiro!", "Manhã boa para checar as metas."];
+        const opcoes = ["Bom dia", "Ótima manhã", "Eaí"];
+        saudacaoRandom = opcoes[Math.floor(Math.random() * opcoes.length)];
     } else if (hora >= 12 && hora < 18) {
-        frases = ["Metade do dia! Dá tempo de organizar.", "Não esqueceu de lançar o café da tarde, né?", "Como estão os gastos hoje?"];
+        const opcoes = ["Boa tarde", "Eaí", "Olá"];
+        saudacaoRandom = opcoes[Math.floor(Math.random() * opcoes.length)];
     } else {
-        frases = ["Dia produtivo nas finanças?", "Hora de registrar os gastos do dia.", "Dando aquela olhada final antes de dormir?"];
+        const opcoes = ["Boa noite", "Eaí", "Olá"];
+        saudacaoRandom = opcoes[Math.floor(Math.random() * opcoes.length)];
     }
 
-    const dicas = [
-        "Tente guardar 10% do que ganha este mês.",
-        "Cartão de crédito não é extensão do salário.",
-        "Evite compras por impulso.",
-        "Vamos construir seu patrimônio juntos.",
-        "Acompanhando seu progresso de perto."
-    ];
-
-    const superBanco = [...frases, ...dicas];
-    const fraseEscolhida = superBanco[Math.floor(Math.random() * superBanco.length)];
-
-    // 4. Monta a base da saudação (Texto PC com IA lado a lado)
+    // 4. Monta a base da saudação (Texto PC com IA lado a lado - GIGANTE)
     const htmlBasePC = `
-        <div class="greeting-title-wrapper" style="display: flex; align-items: center; gap: 15px;">
-            <div>
-                <span class="greet-light">${saudacaoRandom},</span> 
-                <span class="greet-bold">${primeiroNome}!</span>
+        <div class="greeting-title-wrapper" style="display: flex; align-items: center; gap: 20px; white-space: nowrap;">
+            <div style="line-height: 1;">
+                <span class="greet-light" style="font-size: 42px !important; font-weight: 400; color: var(--text-main); letter-spacing: -0.03em;">${saudacaoRandom},</span> 
+                <span class="greet-bold" style="font-size: 42px !important; font-weight: 800; color: var(--dark-green); letter-spacing: -0.04em;">${primeiroNome}!</span>
             </div>
-            <div class="ai-trigger desktop-only" onclick="abrirAssistente()" style="display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(52, 211, 153, 0.2)'" onmouseout="this.style.background='rgba(52, 211, 153, 0.1)'">
-                <img src="https://cdn-icons-png.flaticon.com/512/10118/10118932.png" style="width: 16px;">
-                <span style="font-weight: 700; color: var(--dark-green); font-size: 12px;">Me pergunte algo...</span>
+            <div class="ai-trigger desktop-only" onclick="abrirAssistente()" style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 30px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(52, 211, 153, 0.2)'" onmouseout="this.style.background='rgba(52, 211, 153, 0.1)'">
+                <span style="font-size: 16px;">✨</span>
+                <span style="font-weight: 700; color: var(--dark-green); font-size: 13px;">Me pergunte algo...</span>
             </div>
         </div>
     `;
 
-    // 5. Botão separado apenas para o Mobile (mantém o design que vc gostou)
+    // 5. Botão original para o Mobile com a estrelinha
     const btnIAMobile = `
         <div class="mobile-only" onclick="abrirAssistente()" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer;">
-            <img src="https://cdn-icons-png.flaticon.com/512/10118/10118932.png" style="width: 14px;">
-            <span style="font-size: 11px; font-weight: 600; color: var(--dark-green);">Me pergunte algo...</span>
+            <span style="font-size: 14px;">✨</span>
+            <span style="font-size: 12px; font-weight: 600; color: var(--dark-green);">Me pergunte algo...</span>
         </div>
     `;
 
@@ -2511,15 +2492,14 @@ function atualizarSaudacao(nomeCompleto) {
     const containerMobile = document.getElementById('greeting-mobile');
     if (containerMobile) {
         containerMobile.innerHTML = `
-            <div class="greeting-title-wrapper">
-                <span class="greet-light">${saudacaoRandom},</span> 
-                <span class="greet-bold">${primeiroNome}!</span>
+            <div class="greeting-title-wrapper" style="margin-bottom: 2px;">
+                <span class="greet-light" style="font-size: 28px;">${saudacaoRandom},</span> 
+                <span class="greet-bold" style="font-size: 28px;">${primeiroNome}!</span>
             </div>
             ${btnIAMobile}
         `;
     }
 }
-
 // --- FUNÇÕES DO PERFIL ---
 function abrirModalPerfil() {
     const user = window.auth.currentUser;
