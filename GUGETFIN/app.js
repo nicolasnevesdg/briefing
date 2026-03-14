@@ -180,6 +180,29 @@ function renderizar() {
         mobCurr.innerText = `${mesesNomes[m]} ${a}`; 
         mobNext.innerText = mesesNomes[nextM].substring(0, 3);
     }
+
+	// --- ATUALIZA A TIMELINE DE 5 MESES E DATA NO PC ---
+    if (window.innerWidth > 1024) {
+        let m2 = m - 2; let a2 = a; if (m2 < 0) { m2 += 12; a2--; }
+        let m1 = m - 1; let a1 = a; if (m1 < 0) { m1 += 12; a1--; }
+        let p1 = m + 1; let ap1 = a; if (p1 > 11) { p1 -= 12; ap1++; }
+        let p2 = m + 2; let ap2 = a; if (p2 > 11) { p2 -= 12; ap2++; }
+
+        const getNome = (mesIdx) => mesesNomes[mesIdx].substring(0, 3);
+        
+        const elM2 = document.getElementById('tl-m2'); if(elM2) elM2.innerText = getNome(m2);
+        const elM1 = document.getElementById('tl-m1'); if(elM1) elM1.innerText = getNome(m1);
+        const elP1 = document.getElementById('tl-p1'); if(elP1) elP1.innerText = getNome(p1);
+        const elP2 = document.getElementById('tl-p2'); if(elP2) elP2.innerText = getNome(p2);
+
+        // Atualiza a pílula de data diária (Ex: Sáb, 26 Ago)
+        const dataHojeStr = new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', '');
+        const dataFormatada = dataHojeStr.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        
+        const headerData = document.getElementById('header-current-date');
+        if (headerData) headerData.innerText = dataFormatada;
+    }
+    // -----------------------------------------------------------
     // ---------------------------------------------
 
     // 1. Entradas (Sidebar + Aba Mobile)
@@ -2434,30 +2457,44 @@ function atualizarSaudacao(nomeCompleto) {
     const superBanco = [...frases, ...dicas];
     const fraseEscolhida = superBanco[Math.floor(Math.random() * superBanco.length)];
 
-    // 4. Monta a nova estética com o BOTÃO DO ASSISTENTE
-    const htmlContent = `
-        <div class="greeting-title-wrapper">
-            <span class="greet-light">${saudacaoRandom},</span> 
-            <span class="greet-bold">${primeiroNome}!</span>
+    // 4. Monta a base da saudação (Texto PC com IA lado a lado)
+    const htmlBasePC = `
+        <div class="greeting-title-wrapper" style="display: flex; align-items: center; gap: 15px;">
+            <div>
+                <span class="greet-light">${saudacaoRandom},</span> 
+                <span class="greet-bold">${primeiroNome}!</span>
+            </div>
+            <div class="ai-trigger desktop-only" onclick="abrirAssistente()" style="display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(52, 211, 153, 0.2)'" onmouseout="this.style.background='rgba(52, 211, 153, 0.1)'">
+                <img src="https://cdn-icons-png.flaticon.com/512/10118/10118932.png" style="width: 16px;">
+                <span style="font-weight: 700; color: var(--dark-green); font-size: 12px;">Me pergunte algo...</span>
+            </div>
         </div>
-        <div class="ai-trigger" onclick="abrirAssistente()" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(52, 211, 153, 0.2)'" onmouseout="this.style.background='rgba(52, 211, 153, 0.1)'">
-            <span style="font-size: 13px;">✨</span>
+    `;
+
+    // 5. Botão separado apenas para o Mobile (mantém o design que vc gostou)
+    const btnIAMobile = `
+        <div class="mobile-only" onclick="abrirAssistente()" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer;">
+            <img src="https://cdn-icons-png.flaticon.com/512/10118/10118932.png" style="width: 14px;">
             <span style="font-size: 11px; font-weight: 600; color: var(--dark-green);">Me pergunte algo...</span>
         </div>
     `;
 
-    // 1. Atualiza e mostra a saudação na Sidebar (PC)
+    // 6. Atualiza a DOM
     const containerPC = document.getElementById('greeting-pc');
     if (containerPC) {
-        containerPC.innerHTML = htmlContent;
+        containerPC.innerHTML = htmlBasePC;
         containerPC.style.display = 'block';
     }
 
-    // 2. Atualiza a saudação na Home (Mobile)
     const containerMobile = document.getElementById('greeting-mobile');
     if (containerMobile) {
-        containerMobile.innerHTML = htmlContent;
-        // O display do mobile é controlado automaticamente pela classe 'mobile-only' no CSS
+        containerMobile.innerHTML = `
+            <div class="greeting-title-wrapper">
+                <span class="greet-light">${saudacaoRandom},</span> 
+                <span class="greet-bold">${primeiroNome}!</span>
+            </div>
+            ${btnIAMobile}
+        `;
     }
 }
 
