@@ -3055,6 +3055,41 @@ body.dark-theme .select-grafico {
     border-color: var(--border);
 }
 
+/* ======================================================== */
+/* 🚀 CSS PREMIUM: DESKTOP DASHBOARD REDESIGN               */
+/* ======================================================== */
+@media (min-width: 1025px) {
+    /* 1. Estética dos botões rápidos da Sidebar */
+    .btn-quick-action:hover {
+        background: #96e6a1 !important;
+        border-color: #96e6a1 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(150, 230, 161, 0.3);
+    }
+    .btn-quick-action i { font-size: 16px; margin-top: 2px;}
+
+    /* 2. Timeline de 5 Meses */
+    .timeline-month {
+        color: #a0aec0; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; user-select: none;
+    }
+    .timeline-month:hover { color: var(--dark-green); transform: scale(1.1); }
+    .timeline-current { position: relative; }
+    .timeline-current::after {
+        content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 30px; height: 3px; background: var(--dark-green); border-radius: 3px;
+    }
+
+    /* 3. Hover da Pílula de Data/Perfil */
+    .date-profile-pill:hover { border-color: var(--acc-green) !important; transform: translateY(-1px); }
+    
+    /* 4. Hover do Menu General */
+    .general-menu .option-btn { font-size: 12px !important; padding: 10px 14px !important; }
+    .general-menu .option-btn i { font-size: 16px; }
+
+    /* Ajuste de Dark Mode Específico para esses itens novos */
+    body.dark-theme .date-profile-pill { background: #27272a !important; border-color: #3f3f46 !important; }
+    body.dark-theme .date-profile-pill img { border-color: #3f3f46 !important; }
+    body.dark-theme .btn-quick-action { background: #27272a !important; border-color: #3f3f46 !important; color: var(--dark-green) !important; }
+}
 
 
 
