@@ -93,13 +93,18 @@
 		<aside class="sidebar">
             <div class="brand"><h2 id="logo-guget">Guget Fin</h2></div>
             
-            <div class="sidebar-action-buttons desktop-only" style="display: flex; gap: 10px; margin-bottom: 32px;">
-                <button onclick="abrirModalEntrada()" class="btn-quick-action" style="flex: 1; background: #e8f5e9; color: var(--dark-green); border: 1px solid #c8e6c9; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;">
-                    <i class="fi fi-rr-arrow-down-left"></i> Entrada
-                </button>
-                <button onclick="abrirModalGasto()" class="btn-quick-action" style="flex: 1; background: #e8f5e9; color: var(--dark-green); border: 1px solid #c8e6c9; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;">
-                    <i class="fi fi-rr-arrow-up-right"></i> Saída
-                </button>
+            <div class="sidebar-action-buttons desktop-only" style="margin-bottom: 35px;">
+                <div class="btn-unified-container">
+                    <button onclick="abrirModalEntrada()" class="btn-unified-half">
+                        <i class="fi fi-rr-arrow-down-left"></i> Entrada
+                    </button>
+                    
+                    <div class="btn-unified-divider"></div>
+                    
+                    <button onclick="abrirModalGasto()" class="btn-unified-half">
+                        <i class="fi fi-rr-arrow-up-right"></i> Saída
+                    </button>
+                </div>
             </div>
 
             <button class="btn-novo-gasto mobile-only" onclick="abrirModalGasto()">+ Novo Lançamento</button>
@@ -109,7 +114,6 @@
                     <div class="section-header" style="justify-content: center; margin-bottom: 15px;">
                         <h3 style="text-align: center; font-size: 10px; letter-spacing: 0.15em;">ENTRADAS MENSAIS</h3>
                     </div>
-                    <button onclick="abrirModalEntrada()" class="btn-nova-entrada mobile-only">+ Nova Entrada</button>
                     
                     <div id="lista-entradas"></div>
                     
