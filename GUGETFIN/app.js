@@ -2472,11 +2472,11 @@ function atualizarSaudacao(nomeCompleto) {
         </div>
     `;
 
-    // 5. Botão BLINDADO para o Mobile com a estrelinha
+    // 5. Botão da IA para o Mobile (CÓPIA EXATA DA ESTÉTICA DO PC)
     const btnIAMobile = `
-        <div class="btn-ai-mobile mobile-only" onclick="abrirAssistente()">
-            <span class="ai-icon">✨</span>
-            <span class="ai-text">Me pergunte algo...</span>
+        <div class="mobile-only" onclick="abrirAssistente()" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer;">
+            <span style="font-size: 14px;">✨</span>
+            <span style="font-weight: 700; color: var(--dark-green); font-size: 12px;">Me pergunte algo...</span>
         </div>
     `;
 
@@ -2490,9 +2490,9 @@ function atualizarSaudacao(nomeCompleto) {
     const containerMobile = document.getElementById('greeting-mobile');
     if (containerMobile) {
         containerMobile.innerHTML = `
-            <div class="greeting-title-wrapper" style="margin-bottom: 4px;">
-                <span class="greet-light" style="font-size: 26px !important;">${saudacaoRandom},</span> 
-                <span class="greet-bold" style="font-size: 26px !important;">${primeiroNome}!</span>
+            <div class="greeting-title-wrapper" style="margin-bottom: 2px;">
+                <span class="greet-light" style="font-size: 26px;">${saudacaoRandom},</span> 
+                <span class="greet-bold" style="font-size: 26px;">${primeiroNome}!</span>
             </div>
             ${btnIAMobile}
         `;
