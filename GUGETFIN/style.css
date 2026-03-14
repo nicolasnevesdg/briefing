@@ -3381,3 +3381,44 @@ body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
     background: rgba(255, 255, 255, 0.15) !important;
     margin: 0 !important;
 }
+
+/* ======================================================== */
+/* 🚀 BOTÃO IA MOBILE (PÍLULA DA ESTRELINHA)                */
+/* ======================================================== */
+.btn-ai-mobile {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 6px 16px !important;
+    background: rgba(52, 211, 153, 0.1) !important;
+    border: 1px solid rgba(52, 211, 153, 0.3) !important;
+    border-radius: 30px !important;
+    margin-top: 5px !important;
+    cursor: pointer !important;
+    width: max-content !important;
+    box-shadow: none !important;
+}
+
+.btn-ai-mobile .ai-icon {
+    font-size: 14px !important;
+    line-height: 1 !important;
+}
+
+.btn-ai-mobile .ai-text {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: var(--dark-green) !important;
+    line-height: 1 !important;
+    margin-top: 1px !important;
+    text-transform: none !important;
+}
+
+/* Proteção do Modo Escuro */
+body.dark-theme .btn-ai-mobile {
+    background: rgba(52, 211, 153, 0.15) !important;
+    border-color: rgba(52, 211, 153, 0.2) !important;
+}
+body.dark-theme .btn-ai-mobile .ai-text {
+    color: var(--acc-green) !important;
+}
