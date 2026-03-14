@@ -3130,5 +3130,25 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
     }
 }
 
-
+/* --- Estética do Botão de Notificações (Fatura) --- */
+    .btn-notif-fatura {
+        background: var(--bg-app);
+        border: 1px solid var(--border);
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .btn-notif-fatura i { color: var(--text-sec); font-size: 18px; }
+    .btn-notif-fatura:hover { border-color: var(--dark-green); transform: translateY(-1px); }
+    .btn-notif-fatura:hover i { color: var(--dark-green); }
+    
+    body.dark-theme .btn-notif-fatura { background: #27272a; border-color: #3f3f46; }
+    body.dark-theme #notificacao-dot { border-color: #27272a !important; }
 
