@@ -2218,6 +2218,7 @@ window.addEventListener('click', () => {
 });
 
 window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
+window.addEventListener('load', injetarAssinatura);
 
 // Função de Login Real
 async function fazerLogin() {
@@ -3695,3 +3696,36 @@ document.addEventListener('click', function(event) {
         notifDrop.classList.remove('active');
     }
 });
+
+function injetarAssinatura() {
+    const segredo = "YXBwIHdlYiBjcmlhZG8gcG9yIDxhIGhyZWY9Imh0dHA6Ly93d3cubmljb2xhc25ldmVzLmNvbS5iciIgdGFyZ2V0PSJfYmxhbmsiPk7DrWNvbGFzIE5ldmVzPC9hPg==";
+    
+    const realizarInjecao = () => {
+        const conteudo = decodeURIComponent(escape(atob(segredo)));
+
+        // 1. Versão PC: Sidebar (Abaixo das opções)
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar && !document.querySelector('.pc-sig')) {
+            const elPC = document.createElement('div');
+            elPC.className = 'dev-signature pc-sig';
+            elPC.innerHTML = conteudo;
+            sidebar.appendChild(elPC);
+        }
+
+        // 2. Versão Mobile: Apenas na Aba de Planejamento
+        const abaPlan = document.getElementById('aba-planejamento');
+        if (abaPlan && !document.querySelector('.mobile-sig')) {
+            const elMob = document.createElement('div');
+            elMob.className = 'dev-signature mobile-sig mobile-only';
+            elMob.innerHTML = conteudo;
+            abaPlan.appendChild(elMob);
+        }
+    };
+
+    realizarInjecao();
+    // Reforço caso o carregamento demore
+    setTimeout(realizarInjecao, 500);
+}
+
+// Chame a função no final do seu app.js
+injetarAssinatura();
