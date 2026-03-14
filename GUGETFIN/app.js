@@ -623,7 +623,6 @@ function renderizar() {
     if (containerLembretesPC && containerLembretesPC.innerHTML === '') {
         containerLembretesPC.innerHTML = '<p style="font-size: 11px; color: var(--text-sec); text-align: center; padding: 10px;">Você não tem faturas para este mês.</p>';
     }
-    }
 
     // Renderiza Categorias (Tags)
     const htmlTags = Object.entries(tagSum).map(([k,v]) => renderLinhaOrcamento(k, v, false)).join('');
