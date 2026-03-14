@@ -2472,11 +2472,11 @@ function atualizarSaudacao(nomeCompleto) {
         </div>
     `;
 
-    // 5. Botão original para o Mobile com a estrelinha
+    // 5. Botão ORIGINAL e delicado para o Mobile com a estrelinha
     const btnIAMobile = `
-        <div class="mobile-only" onclick="abrirAssistente()" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer;">
-            <span style="font-size: 14px;">✨</span>
-            <span style="font-size: 12px; font-weight: 600; color: var(--dark-green);">Me pergunte algo...</span>
+        <div class="mobile-only" onclick="abrirAssistente()" style="margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer;">
+            <span style="font-size: 13px;">✨</span>
+            <span style="font-size: 11px; font-weight: 600; color: var(--dark-green);">Me pergunte algo...</span>
         </div>
     `;
 
@@ -2489,15 +2489,17 @@ function atualizarSaudacao(nomeCompleto) {
 
     const containerMobile = document.getElementById('greeting-mobile');
     if (containerMobile) {
+        // Removemos o font-size: 28px que estava esmagando a tela do celular!
         containerMobile.innerHTML = `
-            <div class="greeting-title-wrapper" style="margin-bottom: 2px;">
-                <span class="greet-light" style="font-size: 28px;">${saudacaoRandom},</span> 
-                <span class="greet-bold" style="font-size: 28px;">${primeiroNome}!</span>
+            <div class="greeting-title-wrapper">
+                <span class="greet-light">${saudacaoRandom},</span> 
+                <span class="greet-bold">${primeiroNome}!</span>
             </div>
             ${btnIAMobile}
         `;
     }
 }
+
 // --- FUNÇÕES DO PERFIL ---
 function abrirModalPerfil() {
     const user = window.auth.currentUser;
