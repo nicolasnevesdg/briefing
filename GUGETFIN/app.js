@@ -2472,11 +2472,11 @@ function atualizarSaudacao(nomeCompleto) {
         </div>
     `;
 
-    // 5. Botão da IA para o Mobile (CÓPIA EXATA DA ESTÉTICA DO PC)
+    // 5. Botão da IA para o Mobile (TRAVADO LADO A LADO IGUAL AO PC)
     const btnIAMobile = `
-        <div class="mobile-only" onclick="abrirAssistente()" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 20px; cursor: pointer;">
-            <span style="font-size: 14px;">✨</span>
-            <span style="font-weight: 700; color: var(--dark-green); font-size: 12px;">Me pergunte algo...</span>
+        <div class="mobile-only" onclick="abrirAssistente()" style="margin-top: 8px; display: inline-flex !important; flex-direction: row !important; align-items: center !important; justify-content: center !important; gap: 8px !important; padding: 8px 16px !important; background: rgba(52, 211, 153, 0.1) !important; border: 1px solid rgba(52, 211, 153, 0.3) !important; border-radius: 20px !important; cursor: pointer !important; white-space: nowrap !important; width: max-content !important;">
+            <span style="font-size: 14px !important; line-height: 1 !important; display: inline-block !important;">✨</span>
+            <span style="font-weight: 700 !important; color: var(--dark-green) !important; font-size: 12px !important; line-height: 1 !important; display: inline-block !important;">Me pergunte algo...</span>
         </div>
     `;
 
