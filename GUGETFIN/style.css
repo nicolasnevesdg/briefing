@@ -3285,3 +3285,36 @@ body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
     .card-resumo, .card-terceiros { padding: 15px !important; }
     .section-header h3 { font-size: 9px !important; }
 }
+
+/* ======================================================== */
+/* 🛡️ PROTEÇÃO CONTRA ESMAGAMENTO (Telas Médias)            */
+/* ======================================================== */
+@media (min-width: 1025px) and (max-width: 1350px) {
+    
+    /* 1. Faz o cabeçalho quebrar a linha se ficar sem espaço */
+    .month-nav {
+        flex-wrap: wrap !important;
+        gap: 15px !important;
+    }
+    .header-center.desktop-only {
+        order: 3; /* Joga a timeline de meses para a linha de baixo */
+        min-width: 100% !important;
+        margin-top: 10px;
+    }
+
+    /* 2. Força as caixas (Cards) a descerem em vez de esmagarem */
+    /* Procura qualquer div com display:flex que esteja segurando os cards */
+    main > div[style*="display: flex"], 
+    .tab-content > div[style*="display: flex"] {
+        flex-wrap: wrap !important; 
+    }
+
+    /* 3. Garante que os cartões não fiquem finos como um palito */
+    .card-resumo, 
+    .card-terceiros, 
+    .card-grafico {
+        min-width: 320px !important; /* Tamanho mínimo de respiro */
+        flex: 1 1 100% !important;   /* Se não couber, ocupa a linha inteira de baixo */
+        margin-bottom: 20px !important;
+    }
+}
