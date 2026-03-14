@@ -3329,52 +3329,55 @@ body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
 /* 🚀 BOTÃO UNIFICADO PREMIUM (ENTRADA / SAÍDA)             */
 /* ======================================================== */
 .btn-unified-container {
-    display: flex;
-    align-items: center;
-    background: var(--dark-green); /* O fundo elegante escuro */
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(27, 58, 50, 0.15);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    background: var(--dark-green) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(27, 58, 50, 0.15) !important;
+    width: 100% !important;
+    padding: 0 !important;
+    transition: transform 0.2s ease !important;
 }
 
 .btn-unified-container:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(27, 58, 50, 0.25);
+    transform: translateY(-2px) !important;
 }
 
 .btn-unified-half {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: white; /* Texto branco para contraste perfeito */
-    padding: 14px 10px;
-    font-size: 13px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    outline: none;
+    flex: 1 !important;
+    background: transparent !important; /* Mata o fundo branco antigo */
+    border: none !important;            /* Mata a borda antiga */
+    color: white !important;
+    padding: 14px 5px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    cursor: pointer !important;
+    outline: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
 }
 
-/* Efeito de brilho suave ao passar o mouse em um dos lados */
 .btn-unified-half:hover {
-    background: rgba(255, 255, 255, 0.1); 
+    background: rgba(255, 255, 255, 0.1) !important; 
 }
 
-/* Os ícones com a cor Verde Menta (A estética que você gosta) */
 .btn-unified-half i {
-    font-size: 15px;
-    color: var(--acc-green); 
-    margin-top: 2px;
+    font-size: 15px !important;
+    color: var(--acc-green) !important; 
+    margin-top: 2px !important;
 }
 
-/* A linha divisória sutil no meio */
 .btn-unified-divider {
-    width: 1px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.15);
+    width: 1px !important;
+    min-width: 1px !important;
+    height: 24px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    margin: 0 !important;
 }
