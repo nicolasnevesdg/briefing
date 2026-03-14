@@ -566,31 +566,63 @@ function renderizar() {
     const temBancos = salsiData.config.bancos && salsiData.config.bancos.length > 0;
     document.getElementById('resumo-bancos-lista').innerHTML = htmlBancos || (temBancos ? '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Nenhum gasto registrado.</p>' : '<p style="padding:15px 0; color:#a0aec0; font-size: 13px;">Você ainda não cadastrou cartões.</p>');
     
-    // Renderiza Lembretes (Mantido o código original)
+    // Renderiza Lembretes (Mobile e Novo Menu PC)
     const containerLembretes = document.getElementById('container-lembretes-fatura');
-    if (containerLembretes) {
-        containerLembretes.innerHTML = ''; 
-        salsiData.config.detalhesBancos?.forEach(ban => {
-            const valorFatura = bankSum[ban.nome] || 0;
-            if (valorFatura > 0) {
-                const hoje = new Date().getDate();
-                const vencimento = parseInt(ban.vencimento);
-                const diasFaltando = vencimento - hoje;
-                
-                let bgCor = '#f8faf9', borderCor = '#e2e8f0', statusTexto = `Vence dia ${vencimento}`;
-                if (diasFaltando <= 3 && diasFaltando >= 0) { bgCor = '#fff5f5'; borderCor = '#feb2b2'; statusTexto = `⚠️ Vence dia ${vencimento}!`; }
+    const containerLembretesPC = document.getElementById('lista-lembretes-pc');
+    const notifDot = document.getElementById('notificacao-dot');
+    let temAlertaUrgente = false;
 
-                containerLembretes.innerHTML += `
-                    <div style="background: ${bgCor}; border: 1px solid ${borderCor}; padding: 10px 15px; border-radius: 12px; min-width: 140px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${getCor(ban.nome)}"></div>
-                            <span style="font-size: 11px; font-weight: 700; color: #4a5568; text-transform: uppercase;">${ban.nome}</span>
-                        </div>
-                        <div style="font-size: 14px; font-weight: 800; color: #1a202c;">R$ ${valorFatura.toFixed(2)}</div>
-                        <div style="font-size: 10px; color: #718096; font-weight: 500;">${statusTexto}</div>
-                    </div>`;
+    if (containerLembretes) containerLembretes.innerHTML = ''; 
+    if (containerLembretesPC) containerLembretesPC.innerHTML = ''; 
+
+    salsiData.config.detalhesBancos?.forEach(ban => {
+        const valorFatura = bankSum[ban.nome] || 0;
+        if (valorFatura > 0) {
+            const hoje = new Date().getDate();
+            const vencimento = parseInt(ban.vencimento);
+            const diasFaltando = vencimento - hoje;
+            
+            let bgCor = '#f8faf9', borderCor = '#e2e8f0', statusTexto = `Vence dia ${vencimento}`;
+            let textColor = '#1a202c';
+            
+            // SE A FATURA VENCE EM ATÉ 3 DIAS: O card fica vermelho e acende a bolinha!
+            if (diasFaltando <= 3 && diasFaltando >= 0) { 
+                bgCor = '#fff5f5'; borderCor = '#feb2b2'; 
+                statusTexto = `⚠️ Vence dia ${vencimento}!`; 
+                textColor = '#991b1b';
+                temAlertaUrgente = true; 
             }
-        });
+
+            // A Mágica que extrai só a cor hexadecimal do seu gerador getCor()
+            const corBolinhaBanco = getCor(ban.nome).split(';')[0];
+
+            const cardHTML = `
+                <div style="background: ${bgCor}; border: 1px solid ${borderCor}; padding: 10px 15px; border-radius: 12px; min-width: 140px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${corBolinhaBanco}"></div>
+                            <span style="font-size: 11px; font-weight: 800; color: #4a5568; text-transform: uppercase;">${ban.nome}</span>
+                        </div>
+                        <span style="font-size: 10px; color: #718096; font-weight: 600;">${statusTexto}</span>
+                    </div>
+                    <div style="font-size: 14px; font-weight: 800; color: ${textColor}; margin-top: 2px;">R$ ${valorFatura.toFixed(2)}</div>
+                </div>`;
+
+            // Desenha na barra rolante do mobile e no menu cascata do PC
+            if (containerLembretes) containerLembretes.innerHTML += cardHTML;
+            if (containerLembretesPC) containerLembretesPC.innerHTML += cardHTML;
+        }
+    });
+
+    // Acende ou apaga a bolinha vermelha no PC
+    if (notifDot) {
+        notifDot.style.display = temAlertaUrgente ? 'block' : 'none';
+    }
+    
+    // Se não tiver faturas, avisa que está tudo limpo
+    if (containerLembretesPC && containerLembretesPC.innerHTML === '') {
+        containerLembretesPC.innerHTML = '<p style="font-size: 11px; color: var(--text-sec); text-align: center; padding: 10px;">Você não tem faturas para este mês.</p>';
+    }
     }
 
     // Renderiza Categorias (Tags)
@@ -3683,7 +3715,21 @@ function gerarRespostaAssistente(pergunta, chat) {
     chat.scrollTop = chat.scrollHeight;
 }
 
+// Abre/Fecha a central de Faturas no PC
+function toggleNotificacoesPC(event) {
+    event.stopPropagation();
+    document.getElementById('dropdown-notificacoes').classList.toggle('active');
+}
 
+// Atualiza o click global para fechar essa janelinha também
+document.addEventListener('click', function(event) {
+    // ... os outros menus ...
+    const notifDrop = document.getElementById('dropdown-notificacoes');
+    const notifCont = document.getElementById('container-notificacoes-pc');
+    if (notifDrop && notifDrop.classList.contains('active') && notifCont && !notifCont.contains(event.target)) {
+        notifDrop.classList.remove('active');
+    }
+});
 
 
 
