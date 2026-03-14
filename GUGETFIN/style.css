@@ -3129,6 +3129,11 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
     .header-center.desktop-only {
         flex: 1 !important; /* O centro com os meses precisa de menos espaço */
     }
+	/* Mantém o Logo grande apenas no PC */
+    #logo-guget {
+        font-size: 28px !important;
+        margin-bottom: 20px !important;
+    }
 }
 
 /* --- Estética do Botão de Notificações (Fatura) --- */
@@ -3284,12 +3289,6 @@ body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
     /* 5. Ajustes finos nos cards centrais para dar fôlego */
     .card-resumo, .card-terceiros { padding: 15px !important; }
     .section-header h3 { font-size: 9px !important; }
-	
-	/* Mantém o Logo grande apenas no PC */
-    #logo-guget {
-        font-size: 28px !important;
-        margin-bottom: 20px !important;
-    }
 }
 
 /* ======================================================== */
