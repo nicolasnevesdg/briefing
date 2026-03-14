@@ -3324,3 +3324,57 @@ body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
         margin-bottom: 20px !important;
     }
 }
+
+/* ======================================================== */
+/* 🚀 BOTÃO UNIFICADO PREMIUM (ENTRADA / SAÍDA)             */
+/* ======================================================== */
+.btn-unified-container {
+    display: flex;
+    align-items: center;
+    background: var(--dark-green); /* O fundo elegante escuro */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(27, 58, 50, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-unified-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(27, 58, 50, 0.25);
+}
+
+.btn-unified-half {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white; /* Texto branco para contraste perfeito */
+    padding: 14px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    outline: none;
+}
+
+/* Efeito de brilho suave ao passar o mouse em um dos lados */
+.btn-unified-half:hover {
+    background: rgba(255, 255, 255, 0.1); 
+}
+
+/* Os ícones com a cor Verde Menta (A estética que você gosta) */
+.btn-unified-half i {
+    font-size: 15px;
+    color: var(--acc-green); 
+    margin-top: 2px;
+}
+
+/* A linha divisória sutil no meio */
+.btn-unified-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.15);
+}
