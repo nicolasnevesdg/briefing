@@ -3133,6 +3133,7 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
     #logo-guget {
         font-size: 28px !important;
         margin-bottom: 20px !important;
+		text-align: center !important;
     }
 }
 
