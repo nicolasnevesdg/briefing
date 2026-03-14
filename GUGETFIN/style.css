@@ -3062,38 +3062,50 @@ body.dark-theme .select-grafico {
     /* 1. Estética dos botões rápidos da Sidebar */
     /* --- Menu General Premium (Sidebar PC) --- */
     .btn-sidebar-general {
-        background: transparent;
-        border: none;
-        width: 100%;
-        text-align: left;
-        padding: 10px 12px;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--text-sec); /* Cinza discreto e elegante */
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    width: 100% !important;
+    text-align: left !important;
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #a0aec0 !important; /* Cor cinza exata da sua imagem */
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
 
-    .btn-sidebar-general i {
-        font-size: 16px;
-        transition: transform 0.2s ease;
-    }
+.btn-sidebar-general i {
+    font-size: 16px !important;
+    transition: transform 0.2s ease !important;
+    color: #a0aec0 !important;
+}
 
-    /* Hover: Acende o botão de forma suave */
-    .btn-sidebar-general:hover {
-        background: var(--bg-app); 
-        color: var(--dark-green);
-    }
+/* Hover: Efeito de passar o mouse */
+.btn-sidebar-general:hover {
+    background: var(--bg-app) !important; 
+    color: var(--dark-green) !important;
+}
 
-    .btn-sidebar-general:hover i {
-        color: var(--dark-green);
-        transform: scale(1.1); /* Leve destaque no ícone */
-    }
+.btn-sidebar-general:hover i {
+    color: var(--dark-green) !important;
+    transform: scale(1.1) !important;
+}
 
+/* Hover específico do Logout (Vermelho suave) */
+.btn-sidebar-general.btn-logout:hover {
+    background: #fff1f1 !important;
+    color: #ef4444 !important;
+}
+.btn-sidebar-general.btn-logout:hover i { 
+    color: #ef4444 !important; 
+}
+	
     /* Botão de Logout ganha um alerta sutil no hover */
     .btn-logout:hover {
         background: #fff1f1 !important;
@@ -3102,12 +3114,11 @@ body.dark-theme .select-grafico {
     .btn-logout:hover i { color: #ef4444 !important; }
 
     /* Adaptação para o Modo Escuro */
-    body.dark-theme .btn-sidebar-general { color: #a1a1aa; }
-    body.dark-theme .btn-sidebar-general:hover {
-        background: #27272a;
-        color: var(--text-main);
-    }
-    body.dark-theme .btn-logout:hover { background: #3f1515 !important; }
+body.dark-theme .btn-sidebar-general { color: #a1a1aa !important; }
+body.dark-theme .btn-sidebar-general i { color: #a1a1aa !important; }
+body.dark-theme .btn-sidebar-general:hover { background: #27272a !important; color: var(--text-main) !important; }
+body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !important; }
+	
 }
 
 
