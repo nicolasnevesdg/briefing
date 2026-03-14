@@ -209,25 +209,27 @@
                 <span class="timeline-month" id="tl-p2" onclick="mudarMes(2)">Mai</span>
 			</div>
 
-            <div class="header-right desktop-only" style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 15px;">
+            <div class="header-right desktop-only" style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
                 
-                <div class="options-container" id="container-notificacoes-pc" style="position: relative;">
-                    <button class="btn-notif-fatura" onclick="toggleNotificacoesPC(event)">
-                        <i class="fi fi-rr-file-invoice-dollar"></i>
-                        <span id="notificacao-dot" style="display: none; position: absolute; top: 8px; right: 10px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid white;"></span>
-                    </button>
+                <div class="date-profile-pill" style="display: flex; align-items: center; background: var(--bg-app); border: 1px solid var(--border); padding: 6px 6px 6px 16px; border-radius: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
                     
-                    <div class="options-dropdown" id="dropdown-notificacoes" style="top: calc(100% + 15px); right: 0; left: auto; width: 280px; padding: 15px; z-index: 1000;">
-                        <h4 style="margin: 0 0 10px 0; font-size: 11px; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Faturas deste Mês</h4>
-                        <div id="lista-lembretes-pc" style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="options-container" id="container-notificacoes-pc" style="position: relative; display: flex; align-items: center;">
+                        <i class="fi fi-rr-file-invoice-dollar" onclick="toggleNotificacoesPC(event)" style="color: var(--text-sec); font-size: 16px; cursor: pointer; transition: 0.2s; position: relative;" onmouseover="this.style.color='var(--dark-green)'" onmouseout="this.style.color='var(--text-sec)'"></i>
+                        
+                        <span id="notificacao-dot" style="display: none; position: absolute; top: -4px; right: -6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid var(--bg-app);"></span>
+                        
+                        <div id="dropdown-notificacoes" class="notif-dropdown-premium">
+                            <div class="notif-header">
+                                <h4>Faturas deste Mês</h4>
                             </div>
+                            <div id="lista-lembretes-pc" class="notif-body">
+                                </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="date-profile-pill" onclick="abrirModalPerfil()" style="display: flex; align-items: center; background: var(--bg-app); border: 1px solid var(--border); padding: 6px 6px 6px 16px; border-radius: 30px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-                    <i class="fi fi-rr-calendar" style="color: var(--text-sec); font-size: 14px;"></i>
-                    <span id="header-current-date" style="margin: 0 12px; font-weight: 600; font-size: 12px; color: var(--text-main);">...</span>
-                    <img id="header-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: white; border: 1px solid var(--border);">
+                    <span id="header-current-date" style="margin: 0 15px; font-weight: 600; font-size: 12px; color: var(--text-main);">...</span>
+                    
+                    <img id="header-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onclick="abrirModalPerfil()" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: white; border: 1px solid var(--border); cursor: pointer; transition: 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                 </div>
             </div>
 
