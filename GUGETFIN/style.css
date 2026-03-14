@@ -3181,3 +3181,60 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
     visibility: visible;
     transform: translateY(0);
 }
+
+/* ======================================================== */
+/* 🚀 ESTÉTICA PREMIUM: CASCATA DE NOTIFICAÇÕES             */
+/* ======================================================== */
+
+.notif-dropdown-premium {
+    position: absolute !important;
+    top: calc(100% + 20px) !important;
+    right: -80px !important; /* Ajuste milimétrico para ficar centralizado sob a pílula */
+    width: 320px !important;
+    background: var(--bg-app) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08) !important;
+    z-index: 1000 !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    overflow: hidden; /* Para o cabeçalho respeitar os cantos arredondados */
+}
+
+.notif-dropdown-premium.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notif-header {
+    background: var(--sidebar-bg);
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.notif-header h4 {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sec);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.notif-body {
+    padding: 15px;
+    max-height: 380px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Scrollbar estilizada para as notificações (Só aparece se tiver muita fatura) */
+.notif-body::-webkit-scrollbar { width: 6px; }
+.notif-body::-webkit-scrollbar-track { background: transparent; }
+.notif-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
