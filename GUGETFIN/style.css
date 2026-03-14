@@ -3126,9 +3126,6 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
         flex: 1.7 !important; /* Dá o dobro de espaço para o texto gigante */
         min-width: max-content !important; /* Proíbe o navegador de espremer o botão */
     }
-    .header-center.desktop-only {
-        flex: 1 !important; /* O centro com os meses precisa de menos espaço */
-    }
 	/* Mantém o Logo grande apenas no PC */
     #logo-guget {
         font-size: 28px !important;
@@ -3389,4 +3386,46 @@ body.dark-theme .btn-ai-mobile {
 }
 body.dark-theme .btn-ai-mobile .ai-text {
     color: var(--acc-green) !important;
+}
+
+/* ======================================================== */
+/* 🚀 DESTAQUE DA TIMELINE DE MESES (CENTRO DO CABEÇALHO)   */
+/* ======================================================== */
+
+/* Os meses laterais (Jan, Fev, Abr, Mai) */
+.timeline-month {
+    font-size: 16px !important; /* Aumentamos o tamanho */
+    font-weight: 600 !important; /* Deixamos a fonte mais grossa e legível */
+    color: #94a3b8 !important; /* Um cinza azulado mais chique */
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    padding: 6px 12px !important;
+    border-radius: 12px !important;
+}
+
+/* Efeito Hover: O que acontece ao passar o mouse nos meses laterais */
+.timeline-month:hover {
+    color: var(--dark-green) !important;
+    background: #e8f5e9 !important; /* Fundo verdinho claro suave */
+    transform: scale(1.1) !important; /* Dá um leve pulinho */
+}
+
+/* O Mês Atual no centro (Ex: Março 2026) */
+.timeline-current {
+    font-size: 24px !important; /* Saltou de 20px para 24px (Gigante e imponente) */
+    font-weight: 800 !important;
+    color: var(--dark-green) !important;
+    transition: transform 0.2s ease !important;
+    margin: 0 10px !important; /* Dá mais espaço para ele respirar */
+}
+
+/* Proteção no Modo Escuro */
+body.dark-theme .timeline-month { color: #71717a !important; }
+body.dark-theme .timeline-month:hover { background: #27272a !important; color: white !important; }
+body.dark-theme .timeline-current { color: white !important; }
+
+/* Proteção para o Modo Notebook (Para não espremer em telas menores) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .timeline-month { font-size: 14px !important; padding: 4px 8px !important; }
+    .timeline-current { font-size: 20px !important; }
 }
