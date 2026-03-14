@@ -1285,39 +1285,6 @@ function importarDadosJS(event) {
     leitor.readAsText(event.target.files[0]); 
 }
 
-function injetarAssinatura() {
-    const segredo = "YXBwIHdlYiBjcmlhZG8gcG9yIDxhIGhyZWY9Imh0dHA6Ly93d3cubmljb2xhc25ldmVzLmNvbS5iciIgdGFyZ2V0PSJfYmxhbmsiPk7DrWNvbGFzIE5ldmVzPC9hPg==";
-    
-    const realizarInjecao = () => {
-        const conteudo = decodeURIComponent(escape(atob(segredo)));
-
-        // 1. Versão PC: Sidebar (Abaixo das opções)
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar && !document.querySelector('.pc-sig')) {
-            const elPC = document.createElement('div');
-            elPC.className = 'dev-signature pc-sig';
-            elPC.innerHTML = conteudo;
-            sidebar.appendChild(elPC);
-        }
-
-        // 2. Versão Mobile: Apenas na Aba de Planejamento
-        const abaPlan = document.getElementById('aba-planejamento');
-        if (abaPlan && !document.querySelector('.mobile-sig')) {
-            const elMob = document.createElement('div');
-            elMob.className = 'dev-signature mobile-sig mobile-only';
-            elMob.innerHTML = conteudo;
-            abaPlan.appendChild(elMob);
-        }
-    };
-
-    realizarInjecao();
-    // Reforço caso o carregamento demore
-    setTimeout(realizarInjecao, 500);
-}
-
-// Chame a função no final do seu app.js
-injetarAssinatura();
-
 function atualizarGraficoAnual() {
     const canvas = document.getElementById('graficoSalsi');
     if (!canvas) return;
@@ -2124,7 +2091,6 @@ function toggleSubCartao(alvo) {
     }
 }
 
-window.addEventListener('load', injetarAssinatura);
 window.onload = iniciar;
 
 // --- NOVA LÓGICA DE SWIPE GLOBAL E ANIMADA (TELA INTEIRA) ---
