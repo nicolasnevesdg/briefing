@@ -3122,7 +3122,7 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
 /* ======================================================== */
 @media (min-width: 1025px) {
     .header-left.desktop-only {
-        flex: 2 !important; /* Dá o dobro de espaço para o texto gigante */
+        flex: 1.7 !important; /* Dá o dobro de espaço para o texto gigante */
         min-width: max-content !important; /* Proíbe o navegador de espremer o botão */
     }
     .header-center.desktop-only {
@@ -3157,11 +3157,11 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
 /* ======================================================== */
 #dropdown-notificacoes {
     position: absolute !important;
-    top: calc(100% + 15px) !important;
-    right: 0 !important;
+    top: calc(100% + 30px) !important;
+    right: -160px !important;
     left: auto !important;
     width: 280px !important;
-    padding: 15px !important;
+    padding: 20px !important;
     z-index: 1000 !important;
     background: var(--bg-app) !important;
     border: 1px solid var(--border) !important;
@@ -3210,8 +3210,7 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
 }
 
 .notif-header {
-    background: var(--sidebar-bg);
-    padding: 15px 20px;
+    padding: 15px 0px 10px 0px;
     border-bottom: 1px solid var(--border);
 }
 
@@ -3225,7 +3224,7 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
 }
 
 .notif-body {
-    padding: 15px;
+    padding: 15px 0;
     max-height: 380px;
     overflow-y: auto;
     display: flex;
@@ -3238,3 +3237,50 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
 .notif-body::-webkit-scrollbar-track { background: transparent; }
 .notif-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
+
+/* ======================================================== */
+/* 💻 MODO NOTEBOOK COMPACTO (Telas de 1025px até 1440px)   */
+/* ======================================================== */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    
+    /* 1. Encolhe a Barra Lateral (Estava roubando muito espaço) */
+    .sidebar {
+        width: 230px !important; 
+        min-width: 230px !important;
+        padding: 20px 15px !important;
+    }
+    .brand h2 { font-size: 22px !important; margin-bottom: 20px !important; }
+
+    /* 2. Libera o espaço do Cabeçalho (O seu nome gigante) */
+    .greet-light, .greet-bold {
+        font-size: 26px !important; /* Diminui a fonte */
+    }
+    .header-left.desktop-only {
+        min-width: 220px !important; /* Tira a trava invisível que empurrava os meses */
+        flex: 1 !important;
+    }
+    .month-nav {
+        margin-bottom: 20px !important;
+    }
+    .timeline-month { font-size: 13px !important; }
+    .timeline-current { font-size: 16px !important; }
+
+    /* 3. Reduz o Banner de Indicação (Para parar de espremer o menu) */
+    .referral-banner {
+        padding: 15px !important;
+        margin-top: 15px !important;
+    }
+    .referral-banner h4 { font-size: 12px !important; margin-bottom: 2px !important; }
+    .referral-banner p { font-size: 10px !important; margin-bottom: 10px !important; line-height: 1.2 !important; }
+    .referral-banner button { padding: 8px !important; font-size: 11px !important; }
+
+    /* 4. Aproxima os Botões e Textos da Lateral */
+    .btn-split { padding: 10px 8px !important; font-size: 11px !important; }
+    .sidebar-action-buttons { margin-bottom: 20px !important; gap: 8px !important; }
+    .btn-sidebar-general { font-size: 12px !important; padding: 8px 10px !important; gap: 8px !important;}
+    .btn-sidebar-general i { font-size: 14px !important; }
+
+    /* 5. Ajustes finos nos cards centrais para dar fôlego */
+    .card-resumo, .card-terceiros { padding: 15px !important; }
+    .section-header h3 { font-size: 9px !important; }
+}
