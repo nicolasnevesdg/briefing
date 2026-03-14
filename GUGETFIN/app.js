@@ -2463,11 +2463,11 @@ function atualizarSaudacao(nomeCompleto) {
     // 4. Monta a base da saudação (Texto PC com IA lado a lado - GIGANTE)
     const htmlBasePC = `
         <div class="greeting-title-wrapper" style="display: flex; align-items: center; gap: 20px; white-space: nowrap;">
-            <div style="line-height: 1;">
-                <span class="greet-light" style="font-size: 42px !important; font-weight: 400; color: var(--text-main); letter-spacing: -0.03em;">${saudacaoRandom},</span> 
-                <span class="greet-bold" style="font-size: 42px !important; font-weight: 800; color: var(--dark-green); letter-spacing: -0.04em;">${primeiroNome}!</span>
+            <div style="line-height: 1;margin-right: 40px;">
+                <span class="greet-light" style="font-size: 35px !important; font-weight: 400; color: var(--text-main); letter-spacing: -0.03em;">${saudacaoRandom},</span> 
+                <span class="greet-bold" style="font-size: 35px !important; font-weight: 800; color: var(--dark-green); letter-spacing: -0.04em;">${primeiroNome}!</span>
             </div>
-            <div class="ai-trigger desktop-only" onclick="abrirAssistente()" style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 30px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(52, 211, 153, 0.2)'" onmouseout="this.style.background='rgba(52, 211, 153, 0.1)'">
+            <div class="ai-trigger desktop-only" onclick="abrirAssistente()" style="display: flex; align-items: center; gap: 8px; padding: 6px 25px; background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 30px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(52, 211, 153, 0.2)'" onmouseout="this.style.background='rgba(52, 211, 153, 0.1)'">
                 <span style="font-size: 16px;">✨</span>
                 <span style="font-weight: 700; color: var(--dark-green); font-size: 13px;">Me pergunte algo...</span>
             </div>
