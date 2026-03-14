@@ -3117,7 +3117,18 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
 	
 }
 
-
+/* ======================================================== */
+/* 🚀 CORREÇÃO DE ESPAÇAMENTO DO CABEÇALHO (PC)             */
+/* ======================================================== */
+@media (min-width: 1025px) {
+    .header-left.desktop-only {
+        flex: 2 !important; /* Dá o dobro de espaço para o texto gigante */
+        min-width: max-content !important; /* Proíbe o navegador de espremer o botão */
+    }
+    .header-center.desktop-only {
+        flex: 1 !important; /* O centro com os meses precisa de menos espaço */
+    }
+}
 
 
 
