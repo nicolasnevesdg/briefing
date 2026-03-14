@@ -131,6 +131,7 @@
                         </button>
                         <div class="options-dropdown" id="menu-dropdown">
                             <button class="dropdown-item option-btn" onclick="abrirModalPerfil()"><i class="fi fi-rr-settings"></i> Editar Perfil</button>
+                            <hr class="dropdown-divider">
                             <button class="dropdown-item option-btn" onclick="abrirModalCartoes()"><i class="fi fi-rr-credit-card"></i> Gerenciar Cartões</button>
                             <button class="dropdown-item option-btn" onclick="abrirModalCategorias()"><i class="fi fi-rr-tags"></i> Gerenciar Categorias</button>
                             <button onclick="solicitarPermissaoNotificacao()" class="dropdown-item option-btn"><i class="fi fi-rr-bell"></i> Ativar Lembretes</button>
@@ -146,12 +147,34 @@
                 </div>
 
                 <div class="desktop-only" style="margin-top: auto; padding-top: 20px;">
-                    <div class="system-header" style="margin-bottom: 10px; color: #a0aec0; font-size: 10px; font-weight: 800; letter-spacing: 0.1em;">GENERAL</div>
+                    <div class="system-header" style="margin-bottom: 10px; color: #a0aec0; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; padding-left: 12px;">GENERAL</div>
                     
-                    <div class="general-menu" style="display: flex; flex-direction: column; gap: 4px;">
-                        <button class="option-btn" onclick="abrirModalPerfil()"><i class="fi fi-rr-settings"></i> Settings</button>
-                        <button class="option-btn" onclick="abrirOnboarding()"><i class="fi fi-rr-interrogation"></i> Help</button>
-                        <button class="option-btn" onclick="sairDaConta()"><i class="fi fi-rr-sign-out-alt"></i> Logout</button>
+                    <div class="general-menu" style="display: flex; flex-direction: column; gap: 2px;">
+                        
+                        <div class="options-container" id="container-opcoes-pc" style="position: relative;">
+                            <button class="btn-sidebar-general" onclick="toggleMenuOpcoesPC(event)">
+                                <i class="fi fi-rr-settings"></i> Settings
+                            </button>
+                            
+                            <div class="options-dropdown" id="menu-dropdown-pc" style="bottom: 0; left: calc(100% + 15px); width: 240px;">
+                                <button class="dropdown-item option-btn" onclick="abrirModalCartoes()"><i class="fi fi-rr-credit-card"></i> Gerenciar Cartões</button>
+                                <button class="dropdown-item option-btn" onclick="abrirModalCategorias()"><i class="fi fi-rr-tags"></i> Gerenciar Categorias</button>
+                                <button onclick="solicitarPermissaoNotificacao()" class="dropdown-item option-btn"><i class="fi fi-rr-bell"></i> Ativar Lembretes</button>
+                                <hr class="dropdown-divider">
+                                <button class="dropdown-item option-btn" onclick="document.getElementById('input-import-extrato').click()"><i class="fi fi-rr-file-invoice-dollar"></i> Importar Extrato</button>
+                                <button class="dropdown-item option-btn" onclick="document.getElementById('input-import-js').click()"><i class="fi fi-rr-download"></i> Importar Backup</button>
+                                <button class="dropdown-item option-btn btn-save-inside" onclick="salvarAlteracoes()"><i class="fi fi-rr-disk"></i> Criar Backup</button>
+                                <hr class="dropdown-divider">
+                                <button class="dropdown-item option-btn btn-danger-text" onclick="limparTudo()"><i class="fi fi-rr-trash"></i> Resetar App</button>
+                            </div>
+                        </div>
+
+                        <button class="btn-sidebar-general" onclick="abrirOnboarding()">
+                            <i class="fi fi-rr-interrogation"></i> Help
+                        </button>
+                        <button class="btn-sidebar-general btn-logout" onclick="sairDaConta()">
+                            <i class="fi fi-rr-sign-out-alt"></i> Logout
+                        </button>
                     </div>
 
                     <div class="referral-banner" style="background: linear-gradient(135deg, #112a23, #1b3a32); padding: 20px; border-radius: 16px; margin-top: 25px; color: white; text-align: left; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(27,58,50,0.2);">
