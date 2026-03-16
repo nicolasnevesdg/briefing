@@ -88,7 +88,7 @@ function iniciar() {
 	
 	// 👇 NOVA VERIFICAÇÃO INTELIGENTE POR CONTA 👇
     // Só abre o tutorial se este usuário logado específico nunca tiver visto
-    if (salsiData && salsiData.config && !salsiData.config.tutorialVisto) {
+    if (window.auth && window.auth.currentUser && salsiData && salsiData.config && !salsiData.config.tutorialVisto) {
         setTimeout(abrirOnboarding, 1000);
     }
 }
@@ -2090,8 +2090,6 @@ function toggleSubCartao(alvo) {
         }
     }
 }
-
-window.onload = iniciar;
 
 // --- NOVA LÓGICA DE SWIPE GLOBAL E ANIMADA (TELA INTEIRA) ---
 let touchstartX = 0;
