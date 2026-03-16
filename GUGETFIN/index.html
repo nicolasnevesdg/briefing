@@ -182,11 +182,11 @@
                     <div class="referral-banner" style="background: linear-gradient(135deg, #112a23, #1b3a32); padding: 20px; border-radius: 16px; margin-top: 25px; color: white; text-align: left; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(27,58,50,0.2);">
                         <div style="position: absolute; top: -10px; right: -10px; opacity: 0.1; font-size: 60px;">🚀</div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; backdrop-filter: blur(4px);">0/3 Convites</div>
+                            <div id="contador-convites" style="background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; backdrop-filter: blur(4px);">0/3 Convites</div>
                         </div>
                         <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700;">Indique um Amigo</h4>
                         <p style="margin: 0 0 15px 0; font-size: 11px; color: #96e6a1; opacity: 0.9; line-height: 1.4;">Ajude alguém a organizar as finanças.</p>
-                        <button onclick="abrirModalConvite()" style="width: 100%; background: #10b981; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s;">Copiar Link</button>
+                        <button id="btn-gerar-convite" onclick="copiarLinkConvite()" style="width: 100%; background: #10b981; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s;">Copiar Link</button>
                     </div>
                 </div>
 
