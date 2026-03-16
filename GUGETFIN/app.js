@@ -2629,19 +2629,22 @@ async function salvarPerfil() {
 
 // --- FUNÇÃO PARA SAIR DA CONTA COM SEGURANÇA ---
 async function sairDaConta() {
-    try {
-        await window.signOut(window.auth);
-        
-        // 1. Limpa o cache do navegador
-        localStorage.removeItem('salsifin_cache');
-        
-        // 2. Esvazia a variável da memória
-        salsiData = null; 
-        
-        // 3. Força a página a recarregar limpa (F5)
-        location.reload(); 
-    } catch (error) {
-        console.error("Erro ao sair:", error);
+    // 👇 NOVA TRAVA DE SEGURANÇA 👇
+    if (confirm("Tem certeza que deseja sair da sua conta? 👋")) {
+        try {
+            await window.signOut(window.auth);
+            
+            // 1. Limpa o cache do navegador
+            localStorage.removeItem('salsifin_cache');
+            
+            // 2. Esvazia a variável da memória
+            salsiData = null; 
+            
+            // 3. Força a página a recarregar limpa (F5)
+            location.reload(); 
+        } catch (error) {
+            console.error("Erro ao sair:", error);
+        }
     }
 }
 
