@@ -2285,6 +2285,22 @@ async function fazerCadastro() {
         // Cria a conta e atualiza o nome
         const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, senha);
         await window.updateProfile(userCredential.user, { displayName: nome });
+		
+		// 👇 CÓDIGO NOVO: RECOMPENSA DA INDICAÇÃO FICA AQUI 👇
+        const amigoQueIndicou = sessionStorage.getItem('referral_uid');
+        if (amigoQueIndicou) {
+            const amigoRef = window.doc(window.db, 'usuarios', amigoQueIndicou);
+            window.getDoc(amigoRef).then(snap => {
+                if(snap.exists()) {
+                    let dadosAmigo = snap.data();
+                    // Garante que o número existe e soma 1
+                    let convitesUsados = (dadosAmigo.convitesUsados || 0) + 1;
+                    // Atualiza apenas o campo de convites sem apagar os outros dados
+                    window.setDoc(amigoRef, { convitesUsados: convitesUsados }, { merge: true });
+                }
+            });
+            sessionStorage.removeItem('referral_uid'); 
+        }
         
     } catch (error) {
         console.error("Erro no cadastro:", error);
@@ -2364,6 +2380,29 @@ window.iniciarVigia = function() {
             // Tudo seguro! Libera a tela
             if (splashLoader) splashLoader.style.display = 'none';
             iniciar(); 
+
+			const userRef = window.doc(window.db, 'usuarios', user.uid);
+            window.onSnapshot(userRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const dados = docSnap.data();
+                    let convitesUsados = dados.convitesUsados || 0;
+                    
+                    const badgeContador = document.getElementById('contador-convites');
+                    const btnConvite = document.getElementById('btn-gerar-convite');
+
+                    if (badgeContador) {
+                        let displayCount = convitesUsados > 3 ? 3 : convitesUsados;
+                        badgeContador.innerText = `${displayCount}/3 Convites`;
+                        
+                        if (convitesUsados >= 3 && btnConvite) {
+                            btnConvite.innerText = "Convites Esgotados 🎉";
+                            btnConvite.style.background = "#3f3f46";
+                            btnConvite.style.cursor = "default";
+                            btnConvite.onclick = null;
+                        }
+                    }
+                }
+            });
             
         } else {
             // --- SE NÃO TIVER LOGADO --- 
@@ -3695,6 +3734,35 @@ document.addEventListener('click', function(event) {
     const notifCont = document.getElementById('container-notificacoes-pc');
     if (notifDrop && notifDrop.classList.contains('active') && notifCont && !notifCont.contains(event.target)) {
         notifDrop.classList.remove('active');
+    }
+});
+
+// ==========================================
+// SISTEMA DE INDICAÇÃO (REFERRAL)
+// ==========================================
+
+function copiarLinkConvite() {
+    const user = window.auth.currentUser; // Ajustado para usar o seu window.auth
+    if (!user) return alert("Você precisa estar logado!");
+
+    const linkConvite = `${window.location.origin}${window.location.pathname}?invite=${user.uid}`;
+
+    navigator.clipboard.writeText(linkConvite).then(() => {
+        if (typeof mostrarToast === 'function') mostrarToast("Link copiado! Envie para seus amigos. 🚀");
+    }).catch(err => {
+        alert("Copie este link: " + linkConvite);
+    });
+}
+
+window.addEventListener('load', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const codigoConvite = urlParams.get('invite');
+
+    if (codigoConvite) {
+        sessionStorage.setItem('referral_uid', codigoConvite);
+        if(typeof mostrarFormulario === 'function') {
+            mostrarFormulario('register');
+        }
     }
 });
 
