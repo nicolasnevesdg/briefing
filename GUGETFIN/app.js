@@ -874,25 +874,45 @@ async function confirmarEntrada() {
     const dataStr = document.getElementById('e-data').value;
     const categoria = document.getElementById('e-categoria').value;
     
-// 🚀 NOVO: Lógica de upload para as Entradas
+// 🚀 NOVO: Lógica de upload para as Entradas COM IMGBB E COMPRESSOR
     const fileInput = document.getElementById('e-comprovante');
     let comprovanteUrl = indexEdit === -1 ? "" : (salsiData.entradas[indexEdit].comprovanteUrl || "");
 
     if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        const uid = window.auth.currentUser.uid;
-        const fileRef = window.refStorage(window.storage, `comprovantes/${uid}/entrada_${Date.now()}_${file.name}`);
         
         const btnSalvar = document.querySelector('#modal-entrada button[onclick="confirmarEntrada()"]');
         const textoOriginal = btnSalvar.innerText;
-        btnSalvar.innerText = "Subindo comprovante... ⏳";
+        btnSalvar.innerText = "A subir comprovante... ⏳";
         btnSalvar.disabled = true;
 
         try {
-            const snapshot = await window.uploadBytes(fileRef, file);
-            comprovanteUrl = await window.getDownloadURL(snapshot.ref);
+            const apiKey = '9ce95a3c98b6a4e35865fb7cf8b535db'; 
+            
+            // 1. Esmaga a imagem primeiro!
+            const arquivoLeve = await comprimirImagem(file);
+            
+            const formData = new FormData();
+            formData.append('image', arquivoLeve); 
+
+            // 2. Envia para o ImgBB
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                comprovanteUrl = data.data.url; 
+            } else {
+                throw new Error(data.error ? data.error.message : "Erro desconhecido na API");
+            }
+
         } catch (error) {
-            console.error("Erro no upload:", error);
+            console.error("Erro fatal no upload da entrada:", error);
+            alert("Erro ao enviar a imagem: " + error.message);
+            return; // 🛑 Para a função aqui em caso de erro!
         } finally {
             btnSalvar.innerText = textoOriginal;
             btnSalvar.disabled = false;
@@ -934,7 +954,8 @@ async function confirmarEntrada() {
                 projetoId: projetoId,
                 valorTotalProjeto: valorDigitado,
                 parcelaAtual: i + 1,
-                totalParcelas: parcelas
+                totalParcelas: parcelas,
+                comprovanteUrl: comprovanteUrl
             });
         }
     } 
