@@ -623,8 +623,20 @@
 				</div>
 				
 				<div class="input-group" style="margin-top: 10px; text-align: left;">
-					<label class="input-label" style="font-size: 11px; color: var(--text-sec);">Anexar Comprovante / Nota (Opcional)</label>
-					<input type="file" id="g-comprovante" accept="image/*" style="padding: 8px 0; background: transparent; border: none;">
+					<label class="input-label" style="font-size: 11px; color: var(--text-sec);">Comprovante / Nota (Opcional)</label>
+					
+					<input type="file" id="g-comprovante" accept="image/*" style="display: none;">
+					<input type="hidden" id="g-comprovante-apagado" value="false">
+					
+					<div style="display: flex; gap: 10px; margin-top: 5px;">
+						<button type="button" id="btn-custom-upload-g" onclick="document.getElementById('g-comprovante').click()" style="flex: 1; background: #e0f2fe; color: #0369a1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; transition: 0.2s;">
+							📎 Anexar Comprovante
+						</button>
+						
+						<button type="button" id="btn-custom-trash-g" onclick="removerAnexo('g')" style="width: 48px; background: #f3f4f6; color: #9ca3af; border: none; border-radius: 8px; cursor: not-allowed; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s;" disabled>
+							🗑️
+						</button>
+					</div>
 				</div>
                 
                 <button type="button" onclick="confirmarGasto()" style="width:100%; background:#6cc080; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Adicionar</button>
@@ -981,9 +993,21 @@
                     </select>
                 </div>
                 
-				<div class="input-group" style="margin-top: 10px; text-align: left;">
-					<label class="input-label" style="font-size: 11px; color: var(--text-sec);">Anexar Comprovante / Nota (Opcional)</label>
-					<input type="file" id="e-comprovante" accept="image/*" style="padding: 8px 0; background: transparent; border: none;">
+				<<div class="input-group" style="margin-top: 10px; text-align: left;">
+					<label class="input-label" style="font-size: 11px; color: var(--text-sec);">Comprovante / Nota (Opcional)</label>
+					
+					<input type="file" id="e-comprovante" accept="image/*" style="display: none;">
+					<input type="hidden" id="e-comprovante-apagado" value="false">
+					
+					<div style="display: flex; gap: 10px; margin-top: 5px;">
+						<button type="button" id="btn-custom-upload-e" onclick="document.getElementById('e-comprovante').click()" style="flex: 1; background: #e0f2fe; color: #0369a1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; transition: 0.2s;">
+							📎 Anexar Comprovante
+						</button>
+						
+						<button type="button" id="btn-custom-trash-e" onclick="removerAnexo('e')" style="width: 48px; background: #f3f4f6; color: #9ca3af; border: none; border-radius: 8px; cursor: not-allowed; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s;" disabled>
+							🗑️
+						</button>
+					</div>
 				</div>
 				
                 <button type="button" onclick="confirmarEntrada()" style="width:100%; background:#6cc080; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:20px;">Salvar Entrada</button>
