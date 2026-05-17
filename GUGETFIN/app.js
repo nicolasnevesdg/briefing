@@ -712,7 +712,7 @@ function ajustarCamposModal() {
     }
 }
 
-function confirmarGasto() {
+async function confirmarGasto() {
     let rawValue = document.getElementById('g-valor').value;
     const vTotal = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
     
@@ -725,6 +725,34 @@ function confirmarGasto() {
     // Lê o campo invisível para saber se estamos editando ou criando
     const indexEditEl = document.getElementById('g-index-edit');
     const indexEdit = indexEditEl ? parseInt(indexEditEl.value) : -1;
+	
+	// 🚀 NOVO: Captura o arquivo e gerencia o link
+		const fileInput = document.getElementById('g-comprovante');
+		let comprovanteUrl = indexEdit >= 0 ? (salsiData.transacoes[indexEdit].comprovanteUrl || "") : "";
+
+		if (fileInput && fileInput.files.length > 0) {
+			const file = fileInput.files[0];
+			const uid = window.auth.currentUser.uid;
+			// Salva na pasta do usuário usando uma ID única temporal
+			const fileRef = window.refStorage(window.storage, `comprovantes/${uid}/gasto_${Date.now()}_${file.name}`);
+			
+			// Feedback visual de carregamento
+			const btnSalvar = document.querySelector('#modal-gasto button[onclick="confirmarGasto()"]');
+			const textoOriginal = btnSalvar.innerText;
+			btnSalvar.innerText = "Subindo nota... ⏳";
+			btnSalvar.disabled = true;
+
+			try {
+				const snapshot = await window.uploadBytes(fileRef, file);
+				comprovanteUrl = await window.getDownloadURL(snapshot.ref);
+			} catch (error) {
+				console.error("Erro no upload do comprovante:", error);
+				alert("Não conseguimos salvar a foto, mas o gasto será registrado!");
+			} finally {
+				btnSalvar.innerText = textoOriginal;
+				btnSalvar.disabled = false;
+			}
+		}
 
     // Monta o pacote de dados com a sua estrutura exata
     const novosDados = {
@@ -740,8 +768,9 @@ function confirmarGasto() {
         delayPagamento: parseInt(document.getElementById('g-inicio-pagamento').value) || 0,
         eDeTerceiro: document.getElementById('g-terceiro').checked,
         nomeTerceiro: document.getElementById('g-nome-terceiro').value || "",
-        formaPagamento: (tipo === 'debito') ? formaPag : null
-    };
+        formaPagamento: (tipo === 'debito') ? formaPag : null,
+		comprovanteUrl: comprovanteUrl // 🚀 NOVO: Salva o link no objeto da transação
+		};
 
     if (indexEdit >= 0) {
         // --- MODO EDIÇÃO ---
@@ -816,7 +845,7 @@ function salvarAlteracoes() {
     a.click();
 }
 
-function confirmarEntrada() {
+async function confirmarEntrada() {
     let rawValue = document.getElementById('e-valor').value;
     const valorDigitado = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
     
@@ -831,6 +860,31 @@ function confirmarEntrada() {
     const dataStr = document.getElementById('e-data').value;
     const categoria = document.getElementById('e-categoria').value;
     
+// 🚀 NOVO: Lógica de upload para as Entradas
+    const fileInput = document.getElementById('e-comprovante');
+    let comprovanteUrl = indexEdit === -1 ? "" : (salsiData.entradas[indexEdit].comprovanteUrl || "");
+
+    if (fileInput && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const uid = window.auth.currentUser.uid;
+        const fileRef = window.refStorage(window.storage, `comprovantes/${uid}/entrada_${Date.now()}_${file.name}`);
+        
+        const btnSalvar = document.querySelector('#modal-entrada button[onclick="confirmarEntrada()"]');
+        const textoOriginal = btnSalvar.innerText;
+        btnSalvar.innerText = "Subindo comprovante... ⏳";
+        btnSalvar.disabled = true;
+
+        try {
+            const snapshot = await window.uploadBytes(fileRef, file);
+            comprovanteUrl = await window.getDownloadURL(snapshot.ref);
+        } catch (error) {
+            console.error("Erro no upload:", error);
+        } finally {
+            btnSalvar.innerText = textoOriginal;
+            btnSalvar.disabled = false;
+        }
+    }	
+
     let parcelas = 1;
     if (categoria === 'Projetos / Serviços') {
         parcelas = parseInt(document.getElementById('e-parcelas').value) || 1;
@@ -879,6 +933,7 @@ function confirmarEntrada() {
         entradaEditada.cliente = cliente;
         entradaEditada.categoria = categoria;
         entradaEditada.valor = valorDigitado; // Grava os 1250 que o cliente pagou
+		entradaEditada.comprovanteUrl = comprovanteUrl;
         
         if (dataStr) {
             entradaEditada.dataRecebimento = dataStr;
@@ -945,7 +1000,8 @@ function confirmarEntrada() {
                         projetoId: entradaEditada.projetoId,
                         valorTotalProjeto: entradaEditada.valorTotalProjeto,
                         parcelaAtual: entradaEditada.parcelaAtual + i + 1,
-                        totalParcelas: parcelas
+                        totalParcelas: parcelas,
+						comprovanteUrl: comprovanteUrl // 🚀 NOVO
                     });
                 }
             } else {
@@ -1057,6 +1113,7 @@ function limparFormularioEntrada() {
     document.getElementById('e-data').value = "";
     document.getElementById('e-categoria').value = "Projetos / Serviços";
     document.getElementById('e-parcelas').value = "1";
+	document.getElementById('e-comprovante').value = '';
     if (typeof ajustarCamposEntrada === 'function') ajustarCamposEntrada();
 }
 
@@ -1079,6 +1136,22 @@ function verDetalhesEntrada(index) {
     document.getElementById('det-ent-valor').innerText = `R$ ${e.valor.toFixed(2)}`;
     document.getElementById('det-ent-cliente').innerText = e.cliente || "-";
     document.getElementById('det-ent-categoria').innerText = e.categoria || "Entrada";
+
+// 🚀 NOVO: Controla a exibição do comprovante da entrada
+    const blocoComp = document.getElementById('bloco-comprovante-entrada');
+    const btnComp = document.getElementById('btn-ver-comprovante-entrada');
+
+    if (blocoComp && btnComp) {
+        if (e.comprovanteUrl) {
+            blocoComp.style.display = 'block';
+            btnComp.onclick = () => {
+                document.getElementById('img-comprovante-preview').src = e.comprovanteUrl;
+                document.getElementById('modal-ver-comprovante').showModal();
+            };
+        } else {
+            blocoComp.style.display = 'none';
+        }
+    }
 
     // Mostra o bloco de projeto só se for parcelado
     const blocoProj = document.getElementById('det-ent-bloco-projeto');
@@ -1128,6 +1201,7 @@ function abrirModalGasto() {
     document.getElementById('g-parcelas').value = 1;
     document.getElementById('g-tipo').value = 'cartao';
     document.getElementById('g-inicio-pagamento').value = '0';
+	document.getElementById('g-comprovante').value = '';
     
     const formaPag = document.getElementById('g-forma-pagamento');
     if(formaPag) formaPag.value = 'Débito';
@@ -1716,6 +1790,22 @@ function verDetalhes(index) {
     document.getElementById('det-data').innerText = new Date(t.dataCompra + "T00:00:00").toLocaleDateString('pt-BR');
     document.getElementById('det-valor-total').innerText = `R$ ${t.valorTotal.toFixed(2)}`;
     document.getElementById('det-categoria').innerText = t.categoria;
+
+// 🚀 NOVO: Controla a exibição do comprovante do gasto
+    const blocoComp = document.getElementById('bloco-comprovante-gasto');
+    const btnComp = document.getElementById('btn-ver-comprovante-gasto');
+
+    if (blocoComp && btnComp) {
+        if (t.comprovanteUrl) {
+            blocoComp.style.display = 'block';
+            btnComp.onclick = () => {
+                document.getElementById('img-comprovante-preview').src = t.comprovanteUrl;
+                document.getElementById('modal-ver-comprovante').showModal();
+            };
+        } else {
+            blocoComp.style.display = 'none';
+        }
+    }
 
     // --- NOVA LÓGICA: IDENTIDADE DE PAGAMENTO ---
     let textoPagamento = t.banco; // Fallback padrão

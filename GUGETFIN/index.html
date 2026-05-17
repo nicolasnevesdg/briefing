@@ -621,6 +621,11 @@
 				<div id="div-nome-terceiro" class="input-group" style="display: none; margin-top: 10px;">
 					<input type="text" id="g-nome-terceiro" placeholder="Nome da pessoa (ex: Patrícia)">
 				</div>
+				
+				<div class="input-group" style="margin-top: 10px; text-align: left;">
+					<label class="input-label" style="font-size: 11px; color: var(--text-sec);">Anexar Comprovante / Nota (Opcional)</label>
+					<input type="file" id="g-comprovante" accept="image/*" style="padding: 8px 0; background: transparent; border: none;">
+				</div>
                 
                 <button type="button" onclick="confirmarGasto()" style="width:100%; background:#6cc080; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Adicionar</button>
             </form>
@@ -643,6 +648,12 @@
             <div id="det-ent-bloco-projeto" style="background: #f4f7f6; border-radius: 8px; margin: 15px 0; padding: 10px; display: none;">
 				<div class="det-linha"><strong>Projeto (Total)</strong> <span id="det-ent-projeto-total"></span></div>
 				<div class="det-linha"><strong>Parcela Atual</strong> <span id="det-ent-parcela"></span></div>
+			</div>
+
+			<div id="bloco-comprovante-entrada" style="display: none; margin-bottom: 15px;">
+				<button type="button" id="btn-ver-comprovante-entrada" style="width: 100%; background: #e0f2fe; color: #0369a1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+					🧾 Ver Comprovante
+				</button>
 			</div>
 
 			<div id="container-botoes-detalhe-ent" style="display: flex; gap: 12px; margin-top: 25px;">
@@ -749,6 +760,12 @@
 
 			<div class="det-linha"><strong>Cartão/Banco</strong> <span id="det-banco"></span></div>
 			<div class="det-linha"><strong>Categoria</strong> <span id="det-categoria"></span></div>
+
+			<div id="bloco-comprovante-gasto" style="display: none; margin-bottom: 15px;">
+				<button type="button" id="btn-ver-comprovante-gasto" style="width: 100%; background: #e0f2fe; color: #0369a1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+					🧾 Ver Nota / Comprovante
+				</button>
+			</div>
 
 			<div id="container-botoes-detalhe" style="display: flex; gap: 12px; margin-top: 25px;">
                 <button type="button" id="btn-editar-dinamico" style="flex: 1; background-color: var(--dark-green, #1b3a32); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;">
@@ -964,6 +981,11 @@
                     </select>
                 </div>
                 
+				<div class="input-group" style="margin-top: 10px; text-align: left;">
+					<label class="input-label" style="font-size: 11px; color: var(--text-sec);">Anexar Comprovante / Nota (Opcional)</label>
+					<input type="file" id="e-comprovante" accept="image/*" style="padding: 8px 0; background: transparent; border: none;">
+				</div>
+				
                 <button type="button" onclick="confirmarEntrada()" style="width:100%; background:#6cc080; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:20px;">Salvar Entrada</button>
             </form>
         </div>
@@ -1040,6 +1062,16 @@
     </div>
 </dialog>
 	
+<dialog id="modal-ver-comprovante" class="modal-estilizado" style="max-width: 450px;">
+    <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
+        <h2 style="margin: 0; font-size: 16px;">Comprovante Anexado 🧾</h2>
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()" style="position: static;">×</button>
+    </div>
+    <div class="modal-body-detalhes" style="text-align: center; padding: 0 25px 25px 25px;">
+        <img id="img-comprovante-preview" src="" alt="Comprovante" style="width: 100%; max-height: 65vh; object-fit: contain; border-radius: 12px; border: 1px solid var(--border);">
+    </div>
+</dialog>
+	
 	<div id="toast-notificacao">
         <i class="fi fi-rr-check-circle"></i>
         <span id="toast-mensagem">Lançamento salvo!</span>
@@ -1057,6 +1089,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, updateEmail, updatePassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD1HyxzZ-YFMMbMSIwBDDKfNWdCWHb07AY",
@@ -1070,9 +1103,13 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
   window.auth = auth;
   window.db = db;
+  window.storage = storage;window.refStorage = ref;
+  window.uploadBytes = uploadBytes;
+  window.getDownloadURL = getDownloadURL;
   window.signInWithEmailAndPassword = signInWithEmailAndPassword;
   window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
   window.onAuthStateChanged = onAuthStateChanged;
