@@ -734,29 +734,37 @@ async function confirmarGasto() {
     // Se o usuário selecionou um arquivo novo
     if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        const uid = window.auth.currentUser.uid; // Pega o ID do usuário logado
-        const fileRef = window.refStorage(window.storage, `comprovantes/${uid}/gasto_${Date.now()}_${file.name}`);
+        const uid = window.auth.currentUser.uid; 
         
-        // Muda o texto do botão para dar feedback visual
+        // Muda o texto do botão PRIMEIRO
         const btnSalvar = document.querySelector('#modal-gasto button[onclick="confirmarGasto()"]');
         const textoOriginal = btnSalvar.innerText;
         btnSalvar.innerText = "Subindo nota... ⏳";
         btnSalvar.disabled = true;
 
         try {
-            // Manda pro Storage e pega o link curto da internet
-            const snapshot = await window.uploadBytes(fileRef, file);
-            comprovanteUrl = await window.getDownloadURL(snapshot.ref);
-        } catch (error) {
-            console.error("Erro no upload do comprovante:", error);
-            alert("Não conseguimos salvar a foto, mas o gasto será registrado!");
-        } finally {
-            // Restaura o botão
-            btnSalvar.innerText = textoOriginal;
-            btnSalvar.disabled = false;
-        }
-    }
-    // 👆 FIM DA MÁGICA DO UPLOAD 👆
+            // 👇 A NOVA MÁGICA DO IMGBB FICA AQUI 👇
+            // COLOQUE A SUA CHAVE ENTRE AS ASPAS ABAIXO:
+            const apiKey = '9ce95a3c98b6a4e35865fb7cf8b535db'; 
+            
+            const formData = new FormData();
+            formData.append('image', file);
+
+            // Faz o envio direto para o servidor deles
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Guarda o link da imagem que eles nos devolveram
+                comprovanteUrl = data.data.url; 
+            } else {
+                throw new Error("Erro devolvido pelo ImgBB");
+            }
+            // 👆 FIM DA MÁGICA DO IMGBB 👆
 
     // Monta o pacote de dados com a sua estrutura exata
     const novosDados = {
