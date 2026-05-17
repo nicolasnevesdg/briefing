@@ -722,51 +722,53 @@ async function confirmarGasto() {
     const campoForma = document.getElementById('g-forma-pagamento');
     const formaPag = campoForma ? campoForma.value : 'Débito';
 
-    // Lê o campo invisível para saber se estamos editando ou criando
     const indexEditEl = document.getElementById('g-index-edit');
     const indexEdit = indexEditEl ? parseInt(indexEditEl.value) : -1;
-	
-	// 👇 1. MÁGICA DO UPLOAD DO FIREBASE ACONTECE AQUI 👇
-    const fileInput = document.getElementById('g-comprovante');
-    // Se estiver editando e já tiver foto, mantém a foto antiga
+
+    // A variável TEM que existir fora do if
     let comprovanteUrl = indexEdit >= 0 && salsiData.transacoes[indexEdit].comprovanteUrl ? salsiData.transacoes[indexEdit].comprovanteUrl : "";
 
-    // Se o usuário selecionou um arquivo novo
+    const fileInput = document.getElementById('g-comprovante');
+
     if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        const uid = window.auth.currentUser.uid; 
         
-        // Muda o texto do botão PRIMEIRO
         const btnSalvar = document.querySelector('#modal-gasto button[onclick="confirmarGasto()"]');
         const textoOriginal = btnSalvar.innerText;
-        btnSalvar.innerText = "Subindo nota... ⏳";
+        btnSalvar.innerText = "A subir nota... ⏳";
         btnSalvar.disabled = true;
 
         try {
-            // 👇 A NOVA MÁGICA DO IMGBB FICA AQUI 👇
-            // COLOQUE A SUA CHAVE ENTRE AS ASPAS ABAIXO:
             const apiKey = '9ce95a3c98b6a4e35865fb7cf8b535db'; 
             
             const formData = new FormData();
             formData.append('image', file);
 
-            // Faz o envio direto para o servidor deles
             const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
                 method: 'POST',
                 body: formData
             });
             
             const data = await response.json();
+            console.log("Raio-X do ImgBB:", data); 
             
             if (data.success) {
-                // Guarda o link da imagem que eles nos devolveram
                 comprovanteUrl = data.data.url; 
             } else {
-                throw new Error("Erro devolvido pelo ImgBB");
+                throw new Error(data.error ? data.error.message : "Erro desconhecido na API");
             }
-            // 👆 FIM DA MÁGICA DO IMGBB 👆
 
-    // Monta o pacote de dados com a sua estrutura exata
+        } catch (error) {
+            console.error("Erro fatal no upload:", error);
+            alert("Erro ao enviar a imagem: " + error.message);
+            return; // 🛑 Para a função aqui em caso de erro!
+        } finally {
+            btnSalvar.innerText = textoOriginal;
+            btnSalvar.disabled = false;
+        }
+    }
+
+    // Monta o pacote de dados
     const novosDados = {
         nome: document.getElementById('g-nome').value,
         tipo: tipo,
@@ -781,19 +783,16 @@ async function confirmarGasto() {
         eDeTerceiro: document.getElementById('g-terceiro').checked,
         nomeTerceiro: document.getElementById('g-nome-terceiro').value || "",
         formaPagamento: (tipo === 'debito') ? formaPag : null,
-		comprovanteUrl: comprovanteUrl // 🚀 NOVO: Salva o link no objeto da transação
-		};
+        comprovanteUrl: comprovanteUrl // 🚀 Salva o link no objeto!
+    };
 
     if (indexEdit >= 0) {
-        // --- MODO EDIÇÃO ---
-        // Mantém o status original de "pago" (para não desmarcar se já foi pago)
         novosDados.pago = salsiData.transacoes[indexEdit].pago; 
         salsiData.transacoes[indexEdit] = novosDados;
-        mostrarToast("Lançamento atualizado com sucesso!");
+        if (typeof mostrarToast === 'function') mostrarToast("Lançamento atualizado com sucesso!");
     } else {
-        // --- MODO CRIAÇÃO ---
         salsiData.transacoes.push(novosDados);
-        mostrarToast("Lançamento salvo com sucesso! 💸");
+        if (typeof mostrarToast === 'function') mostrarToast("Lançamento salvo com sucesso! 💸");
     }
     
     renderizar(); 
