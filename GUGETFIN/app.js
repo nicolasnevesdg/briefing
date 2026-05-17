@@ -741,8 +741,12 @@ async function confirmarGasto() {
         try {
             const apiKey = '9ce95a3c98b6a4e35865fb7cf8b535db'; 
             
+            // 👇 1. A MÁGICA ACONTECE AQUI: Esmaga a imagem antes de enviar!
+            const arquivoLeve = await comprimirImagem(file);
+            
             const formData = new FormData();
-            formData.append('image', file);
+            // 👇 2. Envia o 'arquivoLeve' em vez do arquivo pesado original
+            formData.append('image', arquivoLeve); 
 
             const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
                 method: 'POST',
@@ -750,7 +754,6 @@ async function confirmarGasto() {
             });
             
             const data = await response.json();
-            console.log("Raio-X do ImgBB:", data); 
             
             if (data.success) {
                 comprovanteUrl = data.data.url; 
@@ -3903,3 +3906,47 @@ function injetarAssinatura() {
 
 // Chame a função no final do seu app.js
 injetarAssinatura();
+
+// ==========================================
+// COMPRESSOR DE IMAGENS AUTOMÁTICO
+// ==========================================
+function comprimirImagem(file, maxLargura = 1200, qualidade = 0.7) {
+    return new Promise((resolve) => {
+        // Se não for imagem (ex: PDF), devolve o arquivo original
+        if (!file.type.startsWith('image/')) {
+            resolve(file);
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                // Redimensiona se for muito grande
+                if (width > maxLargura) {
+                    height = Math.round((height * maxLargura) / width);
+                    width = maxLargura;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Converte de volta para arquivo, bem mais leve (JPEG)
+                canvas.toBlob((blob) => {
+                    resolve(new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), { 
+                        type: 'image/jpeg', 
+                        lastModified: Date.now() 
+                    }));
+                }, 'image/jpeg', qualidade);
+            };
+        };
+    });
+}
