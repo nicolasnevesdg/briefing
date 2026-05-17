@@ -2173,7 +2173,10 @@ function preencherFiltrosDropdown() {
                 e.stopPropagation();
                 const val = el.getAttribute('data-val');
                 container.setAttribute('data-value', val);
-                triggerText.innerText = val === 'Todos' ? textoPadrao : val;
+                
+                // 👇 A CORREÇÃO ESTÁ AQUI: Puxa o 'span' atualizado na tela em tempo real
+                container.querySelector('.dropdown-trigger span').innerText = val === 'Todos' ? textoPadrao : val;
+                
                 container.classList.remove('active');
                 
                 items.forEach(i => i.classList.remove('selected'));

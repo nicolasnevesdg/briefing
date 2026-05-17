@@ -1847,6 +1847,14 @@ tr[style*="opacity: 0.7"] td {
 
 .custom-dropdown { position: relative; display: inline-block; }
 
+/* O texto dentro da pílula */
+.dropdown-trigger span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px; /* Impede que o botão estique infinitamente */
+}
+
 /* O Botão Pílula */
 .dropdown-trigger {
     background: unset; border: 1px solid var(--border); border-radius: 20px;
