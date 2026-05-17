@@ -728,6 +728,11 @@ async function confirmarGasto() {
     // A variável TEM que existir fora do if
     let comprovanteUrl = indexEdit >= 0 && salsiData.transacoes[indexEdit].comprovanteUrl ? salsiData.transacoes[indexEdit].comprovanteUrl : "";
 
+// 👇 ADICIONE ESTAS 3 LINHAS EXATAMENTE AQUI 👇
+    if (document.getElementById('g-comprovante-apagado').value === "true") {
+        comprovanteUrl = ""; 
+    }
+
     const fileInput = document.getElementById('g-comprovante');
 
     if (fileInput && fileInput.files.length > 0) {
@@ -877,6 +882,11 @@ async function confirmarEntrada() {
 // 🚀 NOVO: Lógica de upload para as Entradas COM IMGBB E COMPRESSOR
     const fileInput = document.getElementById('e-comprovante');
     let comprovanteUrl = indexEdit === -1 ? "" : (salsiData.entradas[indexEdit].comprovanteUrl || "");
+
+// 👇 A MÁGICA DA LIXEIRA AQUI 👇
+    if (document.getElementById('e-comprovante-apagado').value === "true") {
+        comprovanteUrl = ""; 
+    }
 
     if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
@@ -1124,6 +1134,10 @@ function editarEntrada(index) {
     if (entrada.projetoId && entrada.totalParcelas) {
         selectParcelas.value = entrada.totalParcelas.toString();
     }
+	
+	// 👇 A MÁGICA DOS BOTÕES NA EDIÇÃO AQUI 👇
+    const entradaAtual = salsiData.entradas[index];
+    setComprovanteUI('e', !!(entradaAtual.comprovanteUrl && entradaAtual.comprovanteUrl !== ""));
 
     document.getElementById('modal-entrada').showModal();
 }
@@ -1149,6 +1163,10 @@ function limparFormularioEntrada() {
     document.getElementById('e-categoria').value = "Projetos / Serviços";
     document.getElementById('e-parcelas').value = "1";
 	document.getElementById('e-comprovante').value = '';
+	
+	// 👇 ADICIONE A LINHA EXATAMENTE AQUI 👇
+    setComprovanteUI('e', false);
+	
     if (typeof ajustarCamposEntrada === 'function') ajustarCamposEntrada();
 }
 
@@ -1237,6 +1255,8 @@ function abrirModalGasto() {
     document.getElementById('g-tipo').value = 'cartao';
     document.getElementById('g-inicio-pagamento').value = '0';
 	document.getElementById('g-comprovante').value = '';
+	
+	setComprovanteUI('g', false);
     
     const formaPag = document.getElementById('g-forma-pagamento');
     if(formaPag) formaPag.value = 'Débito';
@@ -1305,6 +1325,9 @@ function editarGasto(index) {
     if (t.categoria) {
          document.getElementById('g-categoria').value = t.categoria;
     }
+	
+	// 👇 COLE A LINHA DOS BOTÕES AQUI 👇
+    setComprovanteUI('g', !!(t.comprovanteUrl && t.comprovanteUrl !== ""));
 
     document.getElementById('modal-gasto').showModal();
 }
@@ -3970,4 +3993,56 @@ function comprimirImagem(file, maxLargura = 1200, qualidade = 0.7) {
             };
         };
     });
+}
+
+// ==========================================
+// INTERFACE DE UPLOAD DE COMPROVANTES
+// ==========================================
+function setComprovanteUI(tipo, temAnexo) {
+    const btnUpload = document.getElementById(`btn-custom-upload-${tipo}`);
+    const btnTrash = document.getElementById(`btn-custom-trash-${tipo}`);
+    const inputApagado = document.getElementById(`${tipo}-comprovante-apagado`);
+    
+    if (!btnUpload || !btnTrash) return;
+
+    if (temAnexo) {
+        // Estado: Com Arquivo
+        btnUpload.innerHTML = '✓ Comprovante Anexado';
+        btnUpload.style.background = '#d1fae5'; // Verde claro
+        btnUpload.style.color = '#059669'; // Verde escuro
+        
+        btnTrash.style.background = '#fee2e2'; // Vermelho claro
+        btnTrash.style.color = '#dc2626'; // Vermelho escuro
+        btnTrash.disabled = false;
+        btnTrash.style.cursor = 'pointer';
+        
+        if (inputApagado) inputApagado.value = 'false';
+    } else {
+        // Estado: Vazio
+        btnUpload.innerHTML = '📎 Anexar Comprovante';
+        btnUpload.style.background = '#e0f2fe'; // Azul claro
+        btnUpload.style.color = '#0369a1'; // Azul escuro
+        
+        btnTrash.style.background = '#f3f4f6'; // Cinza
+        btnTrash.style.color = '#9ca3af'; // Cinza escuro
+        btnTrash.disabled = true;
+        btnTrash.style.cursor = 'not-allowed';
+    }
+}
+
+// Escuta quando o usuário escolhe um arquivo do celular/pc
+document.getElementById('g-comprovante')?.addEventListener('change', function() {
+    if (this.files.length > 0) setComprovanteUI('g', true);
+});
+document.getElementById('e-comprovante')?.addEventListener('change', function() {
+    if (this.files.length > 0) setComprovanteUI('e', true);
+});
+
+// A função da Lixeira
+window.removerAnexo = function(tipo) {
+    if (confirm("Tem certeza que deseja apagar o comprovante deste lançamento?")) {
+        document.getElementById(`${tipo}-comprovante`).value = ""; // Limpa o input invisível
+        document.getElementById(`${tipo}-comprovante-apagado`).value = "true"; // Avisa o sistema para apagar do banco
+        setComprovanteUI(tipo, false); // Volta os botões pra azul e cinza
+    }
 }
