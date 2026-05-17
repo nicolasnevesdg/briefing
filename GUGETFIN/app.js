@@ -726,33 +726,37 @@ async function confirmarGasto() {
     const indexEditEl = document.getElementById('g-index-edit');
     const indexEdit = indexEditEl ? parseInt(indexEditEl.value) : -1;
 	
-	// 🚀 NOVO: Captura o arquivo e gerencia o link
-		const fileInput = document.getElementById('g-comprovante');
-		let comprovanteUrl = indexEdit >= 0 ? (salsiData.transacoes[indexEdit].comprovanteUrl || "") : "";
+	// 👇 1. MÁGICA DO UPLOAD DO FIREBASE ACONTECE AQUI 👇
+    const fileInput = document.getElementById('g-comprovante');
+    // Se estiver editando e já tiver foto, mantém a foto antiga
+    let comprovanteUrl = indexEdit >= 0 && salsiData.transacoes[indexEdit].comprovanteUrl ? salsiData.transacoes[indexEdit].comprovanteUrl : "";
 
-		if (fileInput && fileInput.files.length > 0) {
-			const file = fileInput.files[0];
-			const uid = window.auth.currentUser.uid;
-			// Salva na pasta do usuário usando uma ID única temporal
-			const fileRef = window.refStorage(window.storage, `comprovantes/${uid}/gasto_${Date.now()}_${file.name}`);
-			
-			// Feedback visual de carregamento
-			const btnSalvar = document.querySelector('#modal-gasto button[onclick="confirmarGasto()"]');
-			const textoOriginal = btnSalvar.innerText;
-			btnSalvar.innerText = "Subindo nota... ⏳";
-			btnSalvar.disabled = true;
+    // Se o usuário selecionou um arquivo novo
+    if (fileInput && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const uid = window.auth.currentUser.uid; // Pega o ID do usuário logado
+        const fileRef = window.refStorage(window.storage, `comprovantes/${uid}/gasto_${Date.now()}_${file.name}`);
+        
+        // Muda o texto do botão para dar feedback visual
+        const btnSalvar = document.querySelector('#modal-gasto button[onclick="confirmarGasto()"]');
+        const textoOriginal = btnSalvar.innerText;
+        btnSalvar.innerText = "Subindo nota... ⏳";
+        btnSalvar.disabled = true;
 
-			try {
-				const snapshot = await window.uploadBytes(fileRef, file);
-				comprovanteUrl = await window.getDownloadURL(snapshot.ref);
-			} catch (error) {
-				console.error("Erro no upload do comprovante:", error);
-				alert("Não conseguimos salvar a foto, mas o gasto será registrado!");
-			} finally {
-				btnSalvar.innerText = textoOriginal;
-				btnSalvar.disabled = false;
-			}
-		}
+        try {
+            // Manda pro Storage e pega o link curto da internet
+            const snapshot = await window.uploadBytes(fileRef, file);
+            comprovanteUrl = await window.getDownloadURL(snapshot.ref);
+        } catch (error) {
+            console.error("Erro no upload do comprovante:", error);
+            alert("Não conseguimos salvar a foto, mas o gasto será registrado!");
+        } finally {
+            // Restaura o botão
+            btnSalvar.innerText = textoOriginal;
+            btnSalvar.disabled = false;
+        }
+    }
+    // 👆 FIM DA MÁGICA DO UPLOAD 👆
 
     // Monta o pacote de dados com a sua estrutura exata
     const novosDados = {
