@@ -330,11 +330,21 @@ function renderizar() {
                     ? `<span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>`
                     : `<span class="badge-tag">DÉBITO</span>`;
 
-                const statusChecked = t.pago ? 'checked' : '';
+                // 👇 NOVA LÓGICA DE PARCELA INDIVIDUAL 👇
+                const parcelaIndex = diff; // Sabe exatamente qual mês estamos olhando
+                let estaParcelaPaga = false;
+                
+                if (t.pagamentosParcelas && t.pagamentosParcelas[parcelaIndex] !== undefined) {
+                    estaParcelaPaga = t.pagamentosParcelas[parcelaIndex];
+                } else {
+                    estaParcelaPaga = !!t.pago; // Fallback para gastos antigos
+                }
+
+                const statusChecked = estaParcelaPaga ? 'checked' : '';
 
                 if(tTable) {
-                    // 👇 Visual da linha e Checkbox IGUAIS ao de Fixos 👇
-                    const estiloPCTerceiro = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
+                    // Visual da linha e Checkbox
+                    const estiloPCTerceiro = estaParcelaPaga ? '' : 'style="opacity: 0.5; font-style: italic;"';
                     tTable.innerHTML += `
                         <tr class="desktop-only-row" ${estiloPCTerceiro}>
                             <td>${dataSutil}</td>
@@ -343,15 +353,15 @@ function renderizar() {
                             <td style="text-align: center;">${tagTipoPC}</td>
                             <td style="text-align: center;">${diff + 1}/${t.parcelas}</td>
                             <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
-                            <td style="text-align: center;"><input type="checkbox" ${statusChecked} onchange="alternarStatusPago(${idx})"></td>
+                            <td style="text-align: center;"><input type="checkbox" ${statusChecked} onchange="alternarStatusPago(${idx}, ${parcelaIndex})"></td>
                             <td><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
                         </tr>`;
                 }
 
                 if (mTerceiros) {
-                    // 👇 Lógica de opacidade e Tags EXATAMENTE iguais as de Fixos 👇
-                    const opacidadeMob = t.pago ? '1' : '0.6'; 
-                    const tagStatus = t.pago 
+                    // Lógica de opacidade e Tags
+                    const opacidadeMob = estaParcelaPaga ? '1' : '0.6'; 
+                    const tagStatus = estaParcelaPaga 
                         ? `<span class="badge" style="background: #21c25e; font-size: 9px;">PAGO</span>`
                         : `<span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 9px;">PENDENTE</span>`;
 
@@ -363,7 +373,7 @@ function renderizar() {
                                     <span class="cartao-parcela-tag">${diff + 1}/${t.parcelas}</span>
                                 </div>
                                 <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-                                    <input type="checkbox" ${statusChecked} onclick="event.stopPropagation()" onchange="alternarStatusPago(${idx})" style="transform: scale(1.3); cursor: pointer; accent-color: #21c25e;">
+                                    <input type="checkbox" ${statusChecked} onclick="event.stopPropagation()" onchange="alternarStatusPago(${idx}, ${parcelaIndex})" style="transform: scale(1.3); cursor: pointer; accent-color: #21c25e;">
                                     ${tagStatus}
                                     <span style="font-size: 10px; color: #a0aec0; margin-left: 4px;">${t.nomeTerceiro} • ${t.banco}</span>
                                 </div>
@@ -807,37 +817,53 @@ async function confirmarGasto() {
     document.getElementById('modal-gasto').close();
 }
 
-function alternarStatusPago(index) {
+function alternarStatusPago(index, parcelaIndex = null) {
     const gasto = salsiData.transacoes[index];
-    gasto.pago = !gasto.pago; // Alterna o status atual
-
-    // Lógica de Automação para o Mês Seguinte
-    if (gasto.pago && gasto.tipo === 'fixo') {
-        const dataAtual = new Date(gasto.dataCompra + "T00:00:00");
+    
+    // Se for um gasto parcelado (ex: de terceiro) e a função enviou o index da parcela
+    if (parcelaIndex !== null && gasto.parcelas > 1) {
+        // Cria a gaveta de pagamentos individuais se ela não existir
+        if (!gasto.pagamentosParcelas) {
+            gasto.pagamentosParcelas = {};
+        }
         
-        // Cria a data do mês seguinte
-        const novaData = new Date(dataAtual);
-        novaData.setMonth(novaData.getMonth() + 1);
+        // Lê o status atual dessa parcela (se não tiver, herda o antigo "pago" geral)
+        let statusAtual = gasto.pagamentosParcelas[parcelaIndex];
+        if (statusAtual === undefined) {
+            statusAtual = !!gasto.pago; 
+        }
+        
+        // Inverte APENAS o status desta parcela!
+        gasto.pagamentosParcelas[parcelaIndex] = !statusAtual;
+        
+    } else {
+        // Comportamento normal para Gastos Fixos (Não parcelados)
+        gasto.pago = !gasto.pago; 
 
-        // Formata para YYYY-MM-DD
-        const dataFormatada = novaData.toISOString().split('T')[0];
+        // Lógica de Automação para o Mês Seguinte
+        if (gasto.pago && gasto.tipo === 'fixo') {
+            const dataAtual = new Date(gasto.dataCompra + "T00:00:00");
+            
+            const novaData = new Date(dataAtual);
+            novaData.setMonth(novaData.getMonth() + 1);
 
-        // Verifica se já existe esse gasto no mês seguinte para não duplicar
-        const jaExiste = salsiData.transacoes.some(t => 
-            t.nome === gasto.nome && 
-            t.dataCompra === dataFormatada && 
-            t.tipo === 'fixo'
-        );
+            const dataFormatada = novaData.toISOString().split('T')[0];
 
-        if (!jaExiste) {
-            // Cria a cópia para o mês seguinte (sempre começando como NÃO PAGO)
-            const novoGastoFixo = {
-                ...gasto,
-                dataCompra: dataFormatada,
-                pago: false
-            };
-            salsiData.transacoes.push(novoGastoFixo);
-            console.log(`Agendado: ${gasto.nome} para o mês seguinte.`);
+            const jaExiste = salsiData.transacoes.some(t => 
+                t.nome === gasto.nome && 
+                t.dataCompra === dataFormatada && 
+                t.tipo === 'fixo'
+            );
+
+            if (!jaExiste) {
+                const novoGastoFixo = {
+                    ...gasto,
+                    dataCompra: dataFormatada,
+                    pago: false
+                };
+                salsiData.transacoes.push(novoGastoFixo);
+                console.log(`Agendado: ${gasto.nome} para o mês seguinte.`);
+            }
         }
     }
 
