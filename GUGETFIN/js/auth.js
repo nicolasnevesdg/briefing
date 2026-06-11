@@ -275,30 +275,34 @@ function atualizarSaudacao(nomeCompleto) {
         saudacaoRandom = opcoes[Math.floor(Math.random() * opcoes.length)];
     }
 
-    // 4. Monta a base da saudação (Texto PC com IA lado a lado - GIGANTE)
     const htmlBasePC = `
-    <div class="greeting-desktop-wrapper">
-        <div class="greeting-desktop-title">
+        <div class="greeting-desktop-wrapper">
+            <div class="greeting-desktop-title">
+                <span class="greet-light">${saudacaoRandom},</span>
+                <span class="greet-bold">${primeiroNome}!</span>
+            </div>
+
+            <button type="button" class="guget-ai-trigger guget-ai-trigger-desktop desktop-only" onclick="abrirAssistente()">
+                <span class="guget-ai-icon">✨</span>
+                <span class="guget-ai-text">Me pergunte algo...</span>
+            </button>
+        </div>
+    `;
+
+    const htmlBaseMobile = `
+    <div class="greeting-mobile-wrapper">
+        <div class="greeting-title-wrapper-mobile">
             <span class="greet-light">${saudacaoRandom},</span>
             <span class="greet-bold">${primeiroNome}!</span>
         </div>
 
-        <button type="button" class="guget-ai-trigger desktop-only" onclick="abrirAssistente()">
+        <button type="button" class="guget-ai-trigger guget-ai-trigger-mobile mobile-only" onclick="abrirAssistente()">
             <span class="guget-ai-icon">✨</span>
             <span class="guget-ai-text">Me pergunte algo...</span>
         </button>
     </div>
 `;
 
-    // 5. Botão da IA para o Mobile (TRAVADO LADO A LADO IGUAL AO PC)
-    const btnIAMobile = `
-    <button type="button" class="guget-ai-trigger guget-ai-trigger-mobile mobile-only" onclick="abrirAssistente()">
-        <span class="guget-ai-icon">✨</span>
-        <span class="guget-ai-text">Me pergunte algo...</span>
-    </button>
-`;
-
-    // 6. Atualiza a DOM
     const containerPC = document.getElementById('greeting-pc');
     if (containerPC) {
         containerPC.innerHTML = htmlBasePC;
@@ -307,13 +311,7 @@ function atualizarSaudacao(nomeCompleto) {
 
     const containerMobile = document.getElementById('greeting-mobile');
     if (containerMobile) {
-        containerMobile.innerHTML = `
-    <div class="greeting-title-wrapper-mobile">
-        <span class="greet-light">${saudacaoRandom},</span>
-        <span class="greet-bold">${primeiroNome}!</span>
-    </div>
-    ${btnIAMobile}
-`;
+        containerMobile.innerHTML = htmlBaseMobile;
     }
 }
 

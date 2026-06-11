@@ -179,6 +179,12 @@
     gap: 24px;
 }
 
+@media (max-width: 1024px) {
+    .card-stack {
+        gap: 0 !important;
+    }
+}
+
 .resumo-central-item small {
     font-size: 10px;
     font-weight: 800;
@@ -338,19 +344,6 @@ tr[style*="opacity: 0.7"] td {
     color: #ff9999; /* O vermelho pastel da sua paleta */
     transform: scale(1.2);
     opacity: 1;
-}
-
-/* 2. Abas de Cartões (Crédito e Débito) -> Borda super suave quase invisível */
-.cartoes-toggle button.active,
-#aba-debito > .mobile-tabs-toggle button.active,
-#aba-cartao > .mobile-tabs-toggle button.active {
-    border: 1px solid var(--border)!important; /* Cinza clarinho padrão App */
-    border-bottom: 2px solid #ffffff !important; /* Combina com o card branco */
-}
-
-/* 3. Evita que o botão inativo "pule" ao ser clicado */
-.mobile-tabs-toggle button {
-    border: 1px solid transparent !important;
 }
 
 /* --- FILTROS DUPLOS PREMIUM --- */
@@ -838,66 +831,6 @@ body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
 }
 
 /* ========================================================= */
-/* COMPONENTES MIGRADOS DO INDEX                             */
-/* ========================================================= */
-
-.date-profile-pill {
-    display: flex;
-    align-items: center;
-    background: var(--bg-app);
-    border: 1px solid var(--border);
-    padding: 6px 6px 6px 16px;
-    border-radius: 30px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-}
-
-.notificacao-icon {
-    color: var(--text-sec);
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
-    position: relative;
-}
-
-.notificacao-icon:hover {
-    color: var(--dark-green);
-}
-
-.notificacao-dot {
-    display: none;
-    position: absolute;
-    top: -4px;
-    right: -6px;
-    width: 8px;
-    height: 8px;
-    background: #ef4444;
-    border-radius: 50%;
-    border: 2px solid var(--bg-app);
-}
-
-.header-current-date {
-    margin: 0 15px;
-    font-weight: 600;
-    font-size: 12px;
-    color: var(--text-main);
-}
-
-.header-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: var(--bg-app);
-    border: 1px solid var(--border);
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.header-avatar:hover {
-    transform: scale(1.05);
-}
-
-/* ========================================================= */
 /* HEADER / PERFIL / NOTIFICAÇÕES                            */
 /* ========================================================= */
 
@@ -958,7 +891,7 @@ body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
 }
 
 /* ========================================================= */
-/* SAUDAÇÃO DESKTOP + BOTÃO IA                               */
+/* SAUDAÇÃO + BOTÃO IA                                       */
 /* ========================================================= */
 
 #greeting-pc {
@@ -1024,19 +957,33 @@ button.guget-ai-trigger:hover {
     transform: translateY(-1px);
 }
 
+.guget-ai-icon,
+.guget-ai-text {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    line-height: 1;
+    flex: 0 0 auto;
+}
+
 .guget-ai-icon {
     font-size: 14px;
-    line-height: 1;
 }
 
 .guget-ai-text {
     color: var(--dark-green);
     font-size: 13px;
     font-weight: 800;
-    line-height: 1;
 }
 
-/* Mobile */
+.greeting-mobile-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 10px;
+}
+
 .greeting-title-wrapper-mobile {
     display: flex;
     align-items: baseline;
@@ -1045,26 +992,215 @@ button.guget-ai-trigger:hover {
 }
 
 @media (max-width: 1024px) {
-    button.guget-ai-trigger.desktop-only {
-        display: none !important;
-    }
-
-    button.guget-ai-trigger-mobile {
-        display: inline-flex;
-        height: 32px;
-        padding: 0 18px;
-        margin-top: 10px;
-        font-size: 12px;
-    }
-
     .greeting-title-wrapper-mobile .greet-light,
     .greeting-title-wrapper-mobile .greet-bold {
         font-size: 26px;
     }
+
+    button.guget-ai-trigger-desktop {
+        display: none;
+    }
+
+    button.guget-ai-trigger-mobile {
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-self: flex-start;
+        width: auto;
+        min-width: 170px;
+        max-width: max-content;
+        height: 34px;
+        padding: 0 18px;
+        margin: 0;
+        white-space: nowrap;
+        font-size: 12px;
+    }
+
+    button.guget-ai-trigger-mobile .guget-ai-text {
+        font-size: 12px;
+    }
 }
 
 @media (min-width: 1025px) {
-    button.guget-ai-trigger.mobile-only {
-        display: none !important;
+    button.guget-ai-trigger-mobile {
+        display: none;
+    }
+}
+
+/* ========================================================= */
+/* MENU DE OPÇÕES MOBILE                                     */
+/* ========================================================= */
+
+@media (max-width: 1024px) {
+    .sidebar {
+        overflow: visible;
+        z-index: 3000;
+    }
+
+    #container-opcoes {
+        position: relative;
+        z-index: 3001;
+    }
+
+    #container-opcoes .options-trigger {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        min-height: 38px;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--bg-app);
+        border: 1px solid var(--border);
+        color: var(--dark-green);
+        box-shadow: 0 4px 14px rgba(27, 58, 50, 0.10);
+    }
+
+    #container-opcoes .system-icon,
+    #container-opcoes .btn-text-mobile {
+        display: none;
+    }
+
+    #container-opcoes .user-profile-icon {
+        display: block;
+        width: 18px;
+        height: 18px;
+        color: var(--dark-green);
+    }
+
+    #menu-dropdown {
+        position: fixed;
+        top: 75px;
+        right: 20px;
+        left: auto;
+        bottom: auto;
+        width: 240px;
+        padding: 14px;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 18px 45px rgba(27, 58, 50, 0.16);
+        z-index: 5000;
+        display: none;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    #menu-dropdown.active {
+        display: flex;
+    }
+
+    #menu-dropdown .dropdown-item,
+    #menu-dropdown .option-btn {
+        width: 100%;
+        min-height: 38px;
+        padding: 9px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        border-radius: 9px;
+        background: transparent;
+        color: var(--text-main);
+        font-size: 13px;
+        font-weight: 600;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    #menu-dropdown .dropdown-item:hover,
+    #menu-dropdown .option-btn:hover {
+        background: var(--bg-app);
+        color: var(--dark-green);
+    }
+
+    #menu-dropdown .dropdown-divider {
+        width: 100%;
+        margin: 8px 0;
+        border: 0;
+        border-top: 1px solid var(--border);
+    }
+
+    #menu-dropdown .btn-danger-text {
+        color: #ef4444;
+    }
+
+    #menu-dropdown .btn-danger-text:hover {
+        background: #fff1f1;
+        color: #dc2626;
+    }
+}
+
+@media (max-width: 1024px) {
+    .greeting-mobile-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .greeting-title-wrapper-mobile {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+        line-height: 1;
+    }
+
+    button.guget-ai-trigger-desktop {
+        display: none;
+    }
+
+    button.guget-ai-trigger-mobile {
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+
+        width: auto;
+        min-width: 170px;
+        max-width: none;
+
+        height: 34px;
+        padding: 0 18px;
+        margin: 0;
+
+        align-self: flex-start;
+
+        white-space: nowrap;
+        line-height: 1;
+    }
+
+    button.guget-ai-trigger-mobile .guget-ai-icon,
+    button.guget-ai-trigger-mobile .guget-ai-text {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        line-height: 1;
+    }
+
+    button.guget-ai-trigger-mobile .guget-ai-icon {
+        font-size: 14px;
+    }
+
+    button.guget-ai-trigger-mobile .guget-ai-text {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 1024px) {
+    #greeting-mobile button.guget-ai-trigger-mobile {
+        display: inline-flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        white-space: nowrap !important;
+        width: auto !important;
+        min-width: 170px !important;
+        max-width: max-content !important;
     }
 }

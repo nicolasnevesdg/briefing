@@ -186,29 +186,14 @@ body.dark-theme #det-observacao {
     color: var(--text-main) !important;
 }
 
+/* ========================================================= */
+/* COMPONENTES MIGRADOS - DARK                               */
+/* ========================================================= */
+
 body.dark-theme .referral-banner {
     background: linear-gradient(135deg, #17211f, #12382c);
     box-shadow: 0 10px 24px rgba(0,0,0,0.28);
 }
-
-body.dark-theme .date-profile-pill {
-    background: #171a20;
-    border-color: var(--border);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
-}
-
-body.dark-theme .header-avatar {
-    background: #11161c;
-    border-color: var(--border);
-}
-
-body.dark-theme .notificacao-dot {
-    border-color: #171a20;
-}
-
-/* ========================================================= */
-/* HEADER / PERFIL / NOTIFICAÇÕES - DARK                     */
-/* ========================================================= */
 
 body.dark-theme .date-profile-pill {
     background: #171a20;
@@ -233,17 +218,13 @@ body.dark-theme .header-avatar {
     border-color: var(--border);
 }
 
-/* ========================================================= */
-/* SAUDAÇÃO + BOTÃO IA - DARK                                */
-/* ========================================================= */
-
-body.dark-theme .guget-ai-trigger {
+body.dark-theme button.guget-ai-trigger {
     background: rgba(95, 211, 162, 0.10);
     border-color: rgba(95, 211, 162, 0.35);
     color: var(--dark-green);
 }
 
-body.dark-theme .guget-ai-trigger:hover {
+body.dark-theme button.guget-ai-trigger:hover {
     background: rgba(95, 211, 162, 0.18);
     border-color: rgba(95, 211, 162, 0.50);
 }
@@ -253,59 +234,294 @@ body.dark-theme .guget-ai-text {
 }
 
 /* ========================================================= */
-/* MODAL DE DETALHES DO GASTO - DARK                         */
+/* MODAIS DE DETALHES - DARK                                 */
 /* ========================================================= */
 
-body.dark-theme #modal-detalhes.modal-estilizado {
-    background: #171a20;
-    border: 1px solid var(--border);
+body.dark-theme #modal-detalhes,
+body.dark-theme #modal-detalhes-entrada,
+body.dark-theme .modal-estilizado {
+    background: #171a20 !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-main) !important;
 }
 
-body.dark-theme #modal-detalhes .detalhe-header {
-    background: #171a20;
-    border-bottom-color: var(--border);
+body.dark-theme #modal-detalhes .modal-header,
+body.dark-theme #modal-detalhes-entrada .modal-header,
+body.dark-theme .modal-estilizado .modal-header {
+    background: #171a20 !important;
+    border-bottom: 1px solid var(--border) !important;
 }
 
-body.dark-theme #modal-detalhes .detalhe-titulo {
-    color: var(--text-main);
+body.dark-theme #det-nome,
+body.dark-theme #det-ent-nome {
+    color: var(--dark-green) !important;
 }
 
-body.dark-theme #modal-detalhes .modal-body-detalhes {
-    background: #171a20;
+body.dark-theme .modal-body-detalhes {
+    background: #171a20 !important;
+    color: var(--text-main) !important;
 }
 
-body.dark-theme #modal-detalhes .det-linha {
-    border-bottom-color: #2b3039;
+body.dark-theme .det-linha {
+    border-bottom-color: #2b3039 !important;
 }
 
-body.dark-theme #modal-detalhes .det-linha strong {
-    color: var(--text-sec);
+body.dark-theme .det-linha strong {
+    color: #f3f6f8 !important;
 }
 
-body.dark-theme #modal-detalhes .det-linha span {
-    color: var(--text-main);
+body.dark-theme .det-linha span {
+    color: #d8dee6 !important;
 }
 
-body.dark-theme #modal-detalhes #det-bloco-parcelas,
-body.dark-theme #modal-detalhes #det-bloco-observacao {
-    background: #11161c;
-    border-color: var(--border);
+body.dark-theme #det-bloco-parcelas,
+body.dark-theme #det-bloco-observacao,
+body.dark-theme #det-ent-bloco-projeto,
+body.dark-theme #det-ent-bloco-observacao {
+    background: #11161c !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text-main) !important;
 }
 
-body.dark-theme #modal-detalhes #det-observacao {
-    color: var(--text-main);
+body.dark-theme #det-observacao,
+body.dark-theme #det-ent-observacao {
+    color: var(--text-main) !important;
 }
 
+body.dark-theme #btn-ver-comprovante-gasto,
+body.dark-theme #btn-ver-comprovante-entrada,
 body.dark-theme .btn-ver-comprovante {
-    background: rgba(59, 130, 246, 0.14);
-    color: #bfdbfe;
+    background: rgba(59, 130, 246, 0.14) !important;
+    color: #bfdbfe !important;
+    border: 1px solid rgba(59, 130, 246, 0.22) !important;
 }
 
-body.dark-theme .btn-ver-comprovante:hover {
-    background: rgba(59, 130, 246, 0.20);
-}
-
+body.dark-theme #btn-editar-dinamico,
+body.dark-theme #btn-editar-entrada-dinamico,
 body.dark-theme .btn-detalhe-editar {
-    background: linear-gradient(135deg, #129c6d 0%, #18a874 100%);
-    color: #ffffff;
+    background: linear-gradient(135deg, #129c6d 0%, #18a874 100%) !important;
+    color: #ffffff !important;
+}
+
+body.dark-theme #btn-excluir-entrada-dinamico {
+    background: rgba(239, 68, 68, 0.14) !important;
+    color: #f87171 !important;
+}
+
+/* ========================================================= */
+/* MOBILE DARK - CONSISTÊNCIA                                */
+/* ========================================================= */
+
+@media (max-width: 1024px) {
+    body.dark-theme,
+    body.dark-theme main,
+    body.dark-theme .sidebar {
+        background: #0f1115;
+    }
+
+    body.dark-theme .card,
+    body.dark-theme .stat-card,
+    body.dark-theme .mobile-total-card,
+    body.dark-theme .cartao-item-mobile,
+    body.dark-theme .entrada-card-hover,
+    body.dark-theme .meta-item-card {
+        background: #171a20 !important;
+        border-color: var(--border) !important;
+        color: var(--text-main) !important;
+    }
+
+    body.dark-theme .stat-card:first-child {
+        background: linear-gradient(135deg, #123d31 0%, #176a4d 100%) !important;
+        border: 1px solid rgba(95, 211, 162, 0.14) !important;
+    }
+
+    body.dark-theme .stat-card small,
+    body.dark-theme .card small,
+    body.dark-theme th,
+    body.dark-theme .input-label {
+        color: var(--text-sec) !important;
+    }
+
+    body.dark-theme .stat-card h2,
+    body.dark-theme .card h3,
+    body.dark-theme td,
+    body.dark-theme .bank-row span {
+        color: var(--text-main) !important;
+    }
+
+    body.dark-theme .bank-row {
+        border-bottom-color: #2b3039 !important;
+    }
+
+    body.dark-theme .bank-row span:first-child {
+        color: var(--text-sec) !important;
+    }
+
+    body.dark-theme .bank-row span:last-child {
+        color: var(--dark-green) !important;
+    }
+
+    body.dark-theme .mobile-tabs-toggle,
+    body.dark-theme .cartoes-toggle {
+        background: transparent !important;
+    }
+
+    body.dark-theme .mobile-tabs-toggle button,
+    body.dark-theme .cartoes-toggle button {
+        color: var(--text-sec) !important;
+        background: transparent !important;
+        border-color: transparent !important;
+        border-bottom-color: var(--border) !important;
+    }
+
+    body.dark-theme .mobile-tabs-toggle button.active,
+    body.dark-theme .cartoes-toggle button.active {
+        background: #171a20 !important;
+        color: var(--dark-green) !important;
+        border: 1px solid var(--border) !important;
+        border-bottom: 2px solid #171a20 !important;
+    }
+
+    body.dark-theme #sub-card-credito,
+    body.dark-theme #sub-card-debito,
+    body.dark-theme #card-resumo-conteudo,
+    body.dark-theme .resumo-mensal,
+    body.dark-theme .resumo-central-item {
+        background: #171a20 !important;
+        border-color: var(--border) !important;
+    }
+
+    body.dark-theme #resumo-bancos-lista,
+    body.dark-theme #resumo-tags-lista,
+    body.dark-theme #resumo-entradas-lista {
+        background: transparent !important;
+        color: var(--text-main) !important;
+    }
+
+    body.dark-theme #lista-cartao-mobile > *,
+    body.dark-theme #lista-debito-mobile > *,
+    body.dark-theme #lista-fixos-mobile > *,
+    body.dark-theme #lista-entradas-mobile > *,
+    body.dark-theme #lista-terceiros-mobile > * {
+        background: #11161c !important;
+        border-color: var(--border) !important;
+        color: var(--text-main) !important;
+    }
+
+    body.dark-theme #container-opcoes .options-trigger {
+        background: #171a20 !important;
+        border-color: var(--border) !important;
+        color: var(--dark-green) !important;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.28) !important;
+    }
+
+    body.dark-theme #container-opcoes .user-profile-icon {
+        color: var(--dark-green) !important;
+    }
+
+    body.dark-theme #menu-dropdown {
+        background: #171a20 !important;
+        border: 1px solid var(--border) !important;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.45) !important;
+    }
+
+    body.dark-theme #menu-dropdown .dropdown-item,
+    body.dark-theme #menu-dropdown .option-btn {
+        background: transparent !important;
+        color: var(--text-main) !important;
+    }
+
+    body.dark-theme #menu-dropdown .dropdown-item i,
+    body.dark-theme #menu-dropdown .option-btn i {
+        color: var(--text-sec) !important;
+    }
+
+    body.dark-theme #menu-dropdown .dropdown-item:hover,
+    body.dark-theme #menu-dropdown .option-btn:hover {
+        background: #20252d !important;
+        color: var(--dark-green) !important;
+    }
+
+    body.dark-theme #menu-dropdown .dropdown-item:hover i,
+    body.dark-theme #menu-dropdown .option-btn:hover i {
+        color: var(--dark-green) !important;
+    }
+
+    body.dark-theme #menu-dropdown .dropdown-divider {
+        border: 0 !important;
+        border-top: 1px solid var(--border) !important;
+        background: transparent !important;
+    }
+
+    body.dark-theme #menu-dropdown .btn-danger-text,
+    body.dark-theme #menu-dropdown .btn-danger-text i {
+        color: #f87171 !important;
+    }
+
+    body.dark-theme #menu-dropdown .btn-danger-text:hover {
+        background: rgba(239, 68, 68, 0.12) !important;
+        color: #f87171 !important;
+    }
+
+    body.dark-theme .btn-del {
+        color: #6b7280 !important;
+    }
+
+    body.dark-theme .btn-del:hover {
+        color: #f87171 !important;
+    }
+}
+
+/* ========================================================= */
+/* FIX FINAL - ABAS MOBILE DARK                              */
+/* ========================================================= */
+
+@media (max-width: 1024px) {
+
+    /* Home: Resumo / Terceiros */
+    body.dark-theme .home-toggle button.active,
+    body.dark-theme .home-toggle .tab-pasta.active {
+        background: #171a20 !important;
+        color: var(--dark-green) !important;
+        border-color: var(--border) !important;
+        border-bottom-color: #171a20 !important;
+    }
+
+    body.dark-theme .home-toggle button.active::after,
+    body.dark-theme .home-toggle .tab-pasta.active::after {
+        background: #171a20 !important;
+    }
+
+    body.dark-theme #card-resumo-conteudo,
+    body.dark-theme .card.resumo-mensal,
+    body.dark-theme #card-terceiros,
+    body.dark-theme .card.card-terceiros {
+        background: #171a20 !important;
+        border-color: var(--border) !important;
+    }
+
+    /* Cartões: Crédito / Débito */
+    body.dark-theme .cartoes-toggle button {
+        background: transparent !important;
+        color: var(--text-sec) !important;
+        border-color: transparent !important;
+        border-bottom-color: var(--border) !important;
+    }
+
+    body.dark-theme .cartoes-toggle button.active {
+        background: #171a20 !important;
+        color: var(--dark-green) !important;
+        border-color: var(--border) !important;
+        border-bottom-color: #171a20 !important;
+    }
+
+    body.dark-theme .cartoes-toggle button.active::after {
+        background: #171a20 !important;
+    }
+
+    body.dark-theme #sub-card-credito,
+    body.dark-theme #sub-card-debito {
+        background: #171a20 !important;
+        border-color: var(--border) !important;
+    }
 }
