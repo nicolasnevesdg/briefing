@@ -1,0 +1,1038 @@
+/* --- Modais --- */
+dialog { border: none; border-radius: 20px; padding: 0; width: 400px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2); }
+dialog::backdrop {
+    background: rgba(27, 58, 50, 0.2); /* Verde floresta bem transparente */
+    backdrop-filter: blur(8px); /* O "pulo do gato" para o efeito de vidro */
+}
+.modal-content { padding: 32px; position: relative; }
+dialog input, dialog select, dialog textarea { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 10px; font-family: inherit; font-size: 13px; box-sizing: border-box; }
+
+/* --- Ajuste Específico para o Modal de Cartões Lado a Lado --- */
+#modal-cartoes {
+    width: fit-content; /* Aumentamos para caber as duas colunas confortavelmente */
+    max-width: 95vw;
+}
+
+#modal-cartoes .modal-content {
+    padding: 32px;
+}
+
+/* Classe para forçar modais a ficarem largos (Split View) */
+.modal-largo {
+    width: fit-content !important; /* O !important garante que ele ignore os 400px do dialog */
+    max-width: 95vw;
+}
+
+/* Ajuste para o conteúdo interno respirar nessas janelas maiores */
+.modal-largo .modal-content {
+    padding: 30px;
+}
+
+
+/* --- Layout Split para Modal de Cartões --- */
+.modal-split-container {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    min-height: 320px;
+}
+
+.modal-side {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.modal-divider {
+    width: 1px;
+    background: var(--border);
+    margin: 10px 0;
+}
+
+.column-mini-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sec);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+}
+
+/* Lista de Cartões Estilizada */
+.config-list-scroll {
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.cartao-item-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.cartao-item-card:hover { border-color: var(--acc-green); transform: translateX(4px); }
+
+/* Inputs do Modal */
+.input-group { margin-bottom: 15px; }
+.input-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark-green);
+    margin-bottom: 6px;
+}
+
+/* --- Botão de Fechar Modal Estilizado --- */
+.btn-close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    background: var(--bg-app); /* Mesmo fundo mentolado suave */
+    border: 1px solid var(--border);
+    border-radius: 8px; /* Arredondamento suave como os cards */
+    color: var(--text-sec);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.btn-close-modal:hover {
+    background: #fee2e2; /* Vermelho bem clarinho no hover */
+    color: #ef4444;      /* X fica vermelho ao passar o mouse */
+    border-color: #fecaca;
+    transform: rotate(90deg); /* Efeito sutil de giro ao interagir */
+}
+
+.detalhe-item strong {
+    color: var(--dark-green); /* Use a cor verde escura do seu card de saldo */
+}
+
+#modal-detalhes {
+    width: 90%;
+    max-width: 400px;
+}
+
+.modal-estilizado {
+    border: none;
+    border-radius: 20px;
+    padding: 0; /* O respiro vem do body interno */
+    box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 380px;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+}
+
+.modal-body-detalhes {
+    padding: 10px 25px 30px 25px;
+}
+
+.det-linha {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f2f2f2;
+    font-size: 0.95rem;
+}
+
+.det-linha strong {
+    color: #1b3a32; /* O verde escuro do seu Saldo Mensal */
+    font-weight: 600;
+}
+
+
+	/* --- ESTÉTICA PERFEITA DOS MODAIS (Mobile) --- */
+@media (max-width: 1024px) {
+    /* 1. Trava a Janela e o Container */
+    dialog#modal-cartoes, dialog#modal-categorias, .modal-largo {
+        width: 90vw !important;
+        max-width: 400px !important;
+        margin: auto !important;
+        padding: 0 !important;
+        border-radius: 20px !important;
+    }
+
+    .modal-content {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 30px 20px 25px 20px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        position: relative !important; /* Ancora o X perfeitamente aqui */
+    }
+
+    /* 2. Força o Botão "X" a ficar padronizado e flutuando no canto direito */
+    .modal-content .btn-close-modal,
+    .modal-content .btn-close-x,
+    dialog .btn-close-modal {
+        position: absolute !important;
+        top: 15px !important;
+        right: 15px !important;
+        margin: 0 !important;
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 8px !important;
+        background: #f0f2f1 !important; /* Mantém cinza limpo estilo Nubank */
+        color: #7a8b87 !important;
+        border: none !important;
+        font-size: 18px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 99 !important;
+    }
+
+    /* 3. Títulos sempre centralizados com espaço para o X respirar */
+    .modal-content h3 {
+        text-align: center !important;
+        margin-top: 10px !important;
+        margin-bottom: 25px !important;
+        width: 100% !important;
+        font-size: 16px !important;
+    }
+
+    /* 4. Colunas Empilhadas perfeitamente */
+    .modal-split-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0 !important;
+        width: 100% !important;
+    }
+    .modal-side {
+        width: 100% !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .column-mini-title {
+        text-align: center !important;
+        margin-bottom: 15px !important;
+        font-size: 11px !important;
+    }
+
+    /* 5. A Linha Divisória Horizontal visível */
+    .modal-divider {
+        display: block !important;
+        width: 100% !important;
+        height: 1px !important;
+        background-color: var(--border) !important;
+        margin: 25px 0 !important;
+    }
+
+    /* 6. Lista com Rolagem e afastamento da scrollbar para não sobrepor o cartão */
+    .config-list-scroll {
+        max-height: 200px !important;
+        overflow-y: auto !important;
+        padding-right: 14px !important; /* Dá distância segura pro scroll */
+        width: 100% !important;
+        box-sizing: border-box !important;
+        
+        /* Força scrollbar padronizada e fina (Firefox) */
+        scrollbar-width: thin !important;
+        scrollbar-color: #cbd5e0 transparent !important;
+    }
+
+    /* Customização WebKit da Scrollbar (Chrome/Android/iOS) */
+    .config-list-scroll::-webkit-scrollbar { width: 4px !important; }
+    .config-list-scroll::-webkit-scrollbar-track { background: transparent !important; }
+    .config-list-scroll::-webkit-scrollbar-thumb { 
+        background: #cbd5e0 !important; 
+        border-radius: 10px !important; 
+    }
+}
+
+
+/* =======================================
+   ESTÉTICA PREMIUM - MODAL DE IMPORTAÇÃO
+========================================== */
+
+/* Card do Banco de Origem */
+.seletor-banco-premium {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 18px 24px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+.seletor-banco-texto { display: flex; flex-direction: column; gap: 4px; }
+.seletor-banco-texto strong { color: var(--text-main); font-size: 15px; display: flex; align-items: center; gap: 8px;}
+.seletor-banco-texto span { color: #64748b; font-size: 13px; }
+
+/* Caixinha de Select Elegante */
+.select-premium { 
+    padding: 12px 18px; border-radius: 8px; border: 1px solid #cbd5e1; 
+    font-weight: 600; color: var(--text-main); outline: none; background: white; 
+    min-width: 180px; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: 0.2s;
+}
+.select-premium:hover { border-color: #94a3b8; }
+
+/* Lista de Itens com Respiro */
+.lista-importacao-premium {
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.lista-importacao-premium::-webkit-scrollbar { width: 8px; }
+.lista-importacao-premium::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+.mes-header-importacao {
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 15px;
+}
+
+/* Cards de cada Gasto (com margens separadas ao invés de linhas grudadas) */
+.item-importacao {
+    background: white; border: 1px solid #e2e8f0; border-radius: 12px; 
+    padding: 16px 20px; display: flex; justify-content: space-between; 
+    align-items: center; font-size: 14px; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+.item-importacao:hover { border-color: #cbd5e1; transform: translateX(4px); }
+.item-importacao.entrada { border-left: 6px solid #10b981; }
+.item-importacao.saida { border-left: 6px solid #ef4444; }
+
+/* Botões do Footer */
+.btn-cancelar-premium {
+    background: white; border: 1px solid #cbd5e1; color: #64748b; 
+    padding: 14px 28px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+.btn-cancelar-premium:hover { background: #f1f5f9; color: var(--text-main); }
+
+.btn-salvar-premium {
+    background: #10b981; color: white; border: none; padding: 14px 28px; 
+    border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; 
+    transition: 0.2s; display: flex; align-items: center; gap: 8px; 
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+.btn-salvar-premium:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3); }
+
+/* Estilo Base para PC (Largo e elegante) */
+#modal-importacao {
+    width: 800px;
+    max-width: 95vw;
+}
+
+/* =======================================
+   AJUSTES MOBILE - MODAL DE IMPORTAÇÃO
+========================================== */
+@media (max-width: 600px) {
+    #modal-importacao .modal-content {
+        padding: 15px !important; 
+    }
+    
+    #modal-importacao .modal-header h2 {
+        font-size: 18px !important;
+    }
+
+    /* Empilha o Seletor de Banco (Texto em cima, Caixinha embaixo) */
+    .seletor-banco-premium {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 15px;
+    }
+    
+    .select-premium {
+        width: 100%; /* Caixinha ocupa a tela toda */
+    }
+
+    /* Ajusta os Gastos (Nome em cima, Valor embaixo) */
+    .item-importacao {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    /* Joga o Valor e o botão "X" para a linha de baixo organizados */
+    .item-importacao > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* Empilha os botões do final (Confirmar em cima, Cancelar embaixo) */
+    #modal-importacao .modal-footer {
+        flex-direction: column-reverse;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .btn-cancelar-premium, .btn-salvar-premium {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ========================================================= */
+/* MODAIS DE TRANSAÇÃO - NOVO GASTO E NOVA ENTRADA           */
+/* ========================================================= */
+
+/* Estrutura geral dos dois modais */
+#modal-gasto,
+#modal-entrada {
+    width: 400px;
+    max-width: 92vw;
+    border-radius: 22px;
+}
+
+#modal-gasto .modal-content,
+#modal-entrada .modal-content {
+    padding: 30px;
+}
+
+#modal-gasto h3,
+#modal-entrada h3 {
+    margin: 0 0 18px 0;
+    font-size: 15px;
+    color: var(--text-main);
+}
+
+/* Formulários */
+.form-gasto,
+.form-transacao {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-gasto-coluna,
+.form-transacao-coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Inputs comuns dos modais de transação.
+   Importante: checkbox, file e hidden ficam fora para não quebrar o layout. */
+#modal-gasto input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]),
+#modal-gasto select,
+#modal-gasto textarea,
+#modal-entrada input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]),
+#modal-entrada select,
+#modal-entrada textarea {
+    width: 100%;
+    min-height: 44px;
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #ffffff;
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+#modal-gasto input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]):focus,
+#modal-gasto select:focus,
+#modal-gasto textarea:focus,
+#modal-entrada input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]):focus,
+#modal-entrada select:focus,
+#modal-entrada textarea:focus {
+    border-color: var(--acc-green);
+    box-shadow: 0 0 0 4px rgba(150, 230, 161, 0.18);
+}
+
+#modal-gasto .input-group,
+#modal-entrada .input-group {
+    margin: 0;
+}
+
+#modal-gasto .input-label,
+#modal-gasto .input-group label,
+#modal-entrada .input-label,
+#modal-entrada .input-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sec);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Campos que começam ocultos e são controlados pelo JS */
+#div-forma-pagamento,
+#div-nome-terceiro {
+    display: none;
+}
+
+/* Cartão: parcelas + banco */
+.grupo-cartao-campos {
+    display: grid;
+    grid-template-columns: 0.6fr 1.4fr;
+    gap: 10px;
+}
+
+/* Observações */
+#modal-gasto #g-observacao,
+#modal-entrada #e-observacao {
+    background: #f8faf9;
+    line-height: 1.45;
+    resize: none;
+}
+
+#modal-gasto #g-observacao {
+    min-height: 112px;
+    height: 112px;
+}
+
+#modal-entrada #e-observacao {
+    min-height: 138px;
+    height: 138px;
+}
+
+/* ========================================================= */
+/* BLOCOS SECUNDÁRIOS: TERCEIROS E COMPROVANTE               */
+/* ========================================================= */
+
+.bloco-secundario {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bloco-secundario-topo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bloco-secundario-titulo {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sec);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.bloco-secundario-desc {
+    font-size: 12px;
+    line-height: 1.35;
+    color: #7a8a85;
+}
+
+/* Checkbox em formato de card */
+.checkbox-card {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #f8fbfa;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.checkbox-card:hover {
+    border-color: #cddad4;
+    background: #fbfdfc;
+}
+
+.checkbox-card-esquerda {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+#modal-gasto .checkbox-card input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    padding: 0;
+    margin: 2px 0 0 0;
+    border-radius: 4px;
+    accent-color: var(--dark-green);
+    flex-shrink: 0;
+}
+
+.checkbox-card-textos {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.checkbox-card-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.2;
+}
+
+.checkbox-card-subtitulo {
+    font-size: 11px;
+    line-height: 1.35;
+    color: var(--text-sec);
+}
+
+/* Upload de comprovante */
+.input-file-hidden {
+    display: none;
+}
+
+.upload-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #f8fbfa;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.upload-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.upload-card-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.upload-card-subtitulo {
+    font-size: 11px;
+    color: var(--text-sec);
+    line-height: 1.35;
+}
+
+.grupo-botoes-comprovante {
+    display: grid;
+    grid-template-columns: 1fr 46px;
+    gap: 10px;
+}
+
+.btn-upload-comprovante,
+.btn-trash-comprovante {
+    height: 44px;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-upload-comprovante {
+    background: #dff0fb;
+    color: #0f5f97;
+}
+
+.btn-upload-comprovante:hover {
+    background: #d3e9f8;
+}
+
+.btn-trash-comprovante {
+    background: #f3f1f6;
+    color: #9c96ad;
+}
+
+.btn-trash-comprovante:hover:enabled {
+    background: #ebe7f2;
+}
+
+.btn-trash-comprovante:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Botões finais */
+.btn-submit-gasto,
+.btn-submit-transacao {
+    width: 100%;
+    height: 44px;
+    background: #6cc080;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+    margin-top: 4px;
+}
+
+/* ========================================================= */
+/* PREVIEW DE FATURA NO MODAL DE GASTO                       */
+/* ========================================================= */
+
+.alerta-fatura-cartao,
+#alerta-fatura-cartao {
+    margin-top: 14px;
+}
+
+.fatura-preview-card {
+    background: #f8fbfa;
+    border: 1px solid #dbe7e2;
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.fatura-preview-topo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5eeea;
+}
+
+.fatura-preview-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.fatura-preview-meta span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-sec);
+}
+
+.fatura-preview-meta strong {
+    font-size: 13px;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+.fatura-preview-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-main);
+    background: #ffffff;
+    border: 1px solid #e8efeb;
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.fatura-preview-status-icon {
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.9;
+}
+
+.fatura-preview-status strong {
+    font-weight: 800;
+    color: var(--dark-green);
+}
+
+.fatura-preview-alerta {
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.45;
+    border: 1px solid transparent;
+}
+
+.fatura-preview-alerta strong {
+    font-weight: 800;
+}
+
+.fatura-preview-alerta.is-warning {
+    background: #fff8e6;
+    border-color: #f3d27a;
+    color: #6f5300;
+}
+
+.fatura-preview-alerta.is-success {
+    background: #ebfbf1;
+    border-color: #9ad9ae;
+    color: #166534;
+}
+
+.fatura-preview-alerta.is-info {
+    background: #eef6ff;
+    border-color: #b8d7ff;
+    color: #1d4ed8;
+}
+
+/* ========================================================= */
+/* RESPONSIVO DOS MODAIS DE TRANSAÇÃO                        */
+/* ========================================================= */
+
+@media (min-width: 1025px) {
+    #modal-gasto,
+    #modal-entrada {
+        width: 900px;
+        max-width: 92vw;
+    }
+
+    #modal-gasto .modal-content,
+    #modal-entrada .modal-content {
+        padding: 30px 34px;
+        max-height: 95vh;
+        overflow-y: auto;
+    }
+
+    .form-gasto,
+    .form-transacao {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 18px;
+        row-gap: 14px;
+        align-items: start;
+    }
+
+    .btn-submit-gasto,
+    .btn-submit-transacao {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 1024px) {
+    #modal-gasto,
+    #modal-entrada {
+        width: 90vw;
+        max-width: 400px;
+    }
+
+    #modal-gasto .modal-content,
+    #modal-entrada .modal-content {
+        padding: 30px 20px 25px 20px;
+    }
+
+    .grupo-cartao-campos {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    #modal-entrada #e-observacao {
+        min-height: 110px;
+        height: 110px;
+    }
+}
+
+/* ========================================================= */
+/* DARK THEME DOS BLOCOS NOVOS                               */
+/* ========================================================= */
+
+body.dark-theme .fatura-preview-card,
+body.dark-theme .checkbox-card,
+body.dark-theme .upload-card,
+body.dark-theme #modal-gasto #g-observacao,
+body.dark-theme #modal-entrada #e-observacao {
+    background: #232b28;
+    border-color: #313c38;
+}
+
+body.dark-theme .fatura-preview-topo {
+    border-bottom-color: #313c38;
+}
+
+body.dark-theme .fatura-preview-status {
+    background: #232b28;
+    border-color: #313c38;
+    color: #f3f4f6;
+}
+
+body.dark-theme .fatura-preview-meta strong,
+body.dark-theme .upload-card-titulo,
+body.dark-theme .checkbox-card-titulo {
+    color: #f3f4f6;
+}
+
+body.dark-theme .bloco-secundario-desc,
+body.dark-theme .checkbox-card-subtitulo,
+body.dark-theme .upload-card-subtitulo {
+    color: #a6b2ad;
+}
+
+body.dark-theme .checkbox-card:hover {
+    background: #27302d;
+}
+
+body.dark-theme .btn-upload-comprovante {
+    background: rgba(59, 130, 246, 0.14);
+    color: #bfdbfe;
+}
+
+body.dark-theme .btn-trash-comprovante {
+    background: rgba(255,255,255,0.06);
+    color: #d1d5db;
+}
+
+body.dark-theme .fatura-preview-alerta.is-warning {
+    background: rgba(234, 179, 8, 0.12);
+    border-color: rgba(234, 179, 8, 0.35);
+    color: #f8e7a1;
+}
+
+body.dark-theme .fatura-preview-alerta.is-success {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.35);
+    color: #a7f3c0;
+}
+
+body.dark-theme .fatura-preview-alerta.is-info {
+    background: rgba(59, 130, 246, 0.12);
+    border-color: rgba(59, 130, 246, 0.35);
+    color: #bfdbfe;
+}
+
+#modal-gasto #alerta-fatura-cartao {
+    width: 100%;
+    margin-top: 2px;
+}
+
+#modal-gasto .fatura-preview-card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#modal-gasto .fatura-preview-card {
+    padding: 12px;
+    gap: 10px;
+}
+
+#modal-gasto .fatura-preview-status,
+#modal-gasto .fatura-preview-alerta {
+    padding: 9px 11px;
+    font-size: 11.5px;
+}
+
+.referral-banner {
+    background: linear-gradient(135deg, #112a23, #1b3a32);
+    padding: 20px;
+    border-radius: 16px;
+    margin-top: 25px;
+    color: white;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(27,58,50,0.2);
+}
+
+/* ========================================================= */
+/* MODAL DE DETALHES DO GASTO                                */
+/* ========================================================= */
+
+#modal-detalhes.modal-estilizado {
+    width: 90%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#modal-detalhes .detalhe-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--border);
+    padding: 20px 25px;
+}
+
+#modal-detalhes .detalhe-titulo {
+    margin: 0;
+    color: var(--dark-green);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+#modal-detalhes .modal-body-detalhes {
+    background: #ffffff;
+    padding: 10px 25px 30px 25px;
+}
+
+#modal-detalhes .det-linha {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+#modal-detalhes .det-linha strong {
+    color: var(--text-sec);
+    font-weight: 800;
+}
+
+#modal-detalhes .det-linha span {
+    color: var(--text-main);
+    font-weight: 600;
+    text-align: right;
+}
+
+#modal-detalhes #det-bloco-parcelas,
+#modal-detalhes #det-bloco-observacao {
+    background: #f8fbfa;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: 12px 0;
+    padding: 10px 14px;
+}
+
+#modal-detalhes #det-bloco-parcelas .det-linha:last-child {
+    border-bottom: none;
+}
+
+.btn-ver-comprovante {
+    width: 100%;
+    min-height: 42px;
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+}
+
+.btn-detalhe-editar {
+    flex: 1;
+    background-color: var(--dark-green);
+    color: white;
+    padding: 13px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+}

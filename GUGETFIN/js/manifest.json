@@ -1,0 +1,40 @@
+{
+  "origem": "app.js",
+  "observacao": "Os trechos foram copiados sem reescrita. A função injetarAssinatura foi colocada em ui.js junto do listener que a referencia, para evitar erro entre scripts separados.",
+  "ordem_scripts": [
+    "core.js",
+    "transacoes.js",
+    "ui.js",
+    "auth.js",
+    "modulos.js"
+  ],
+  "ranges_linhas_originais": {
+    "core.js": [
+      "1-679"
+    ],
+    "transacoes.js": [
+      "680-1445"
+    ],
+    "ui.js": [
+      "1446-2397",
+      "3947-3979"
+    ],
+    "auth.js": [
+      "2398-2918",
+      "3569-3591"
+    ],
+    "modulos.js": [
+      "2919-3568",
+      "3592-3946",
+      "3980-4074"
+    ]
+  },
+  "sha256_app_original": "f69fb3e8d84e9d4ae2b2a31fd4d31fd02cc04ee812dc7e5e51a8f4ba6987832e",
+  "sha256_arquivos": {
+    "core.js": "82014f294036f7fee30e9fdf416fa0e74d65e43875520dabb04b565c33a9c579",
+    "transacoes.js": "596ed7c35b17bba1a0b21ee597222734b0ed7fee3cf0fb6af0016e4477002fb8",
+    "ui.js": "89bfba5b8c340683140111d47487d13ebe85334716dd9ed94b10df8fef6e6e6f",
+    "auth.js": "d41548c2e185f04b6d86bdaee966a644c58edf502cb4c7db5e0cd94320a8d12e",
+    "modulos.js": "151d20ed3dbb39615cb08ad9f82495bc095426680a6648c3c5c108ed7c3b0771"
+  }
+}

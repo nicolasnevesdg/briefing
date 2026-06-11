@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Guget Fin | Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="manifest" href="manifest.json">
@@ -179,7 +179,7 @@
                         </button>
                     </div>
 
-                    <div class="referral-banner" style="background: linear-gradient(135deg, #112a23, #1b3a32); padding: 20px; border-radius: 16px; margin-top: 25px; color: white; text-align: left; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(27,58,50,0.2);">
+                    <div class="referral-banner">
                         <div style="position: absolute; top: -10px; right: -10px; opacity: 0.1; font-size: 60px;">🚀</div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                             <div id="contador-convites" style="background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; backdrop-filter: blur(4px);">0/3 Convites</div>
@@ -212,11 +212,11 @@
 			</div>
 
             <div class="header-right desktop-only" style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
-                <div class="date-profile-pill" style="display: flex; align-items: center; background: var(--bg-app); border: 1px solid var(--border); padding: 6px 6px 6px 16px; border-radius: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <div class="date-profile-pill">
                     
                     <div class="options-container" id="container-notificacoes-pc" style="position: relative; display: flex; align-items: center;">
-                        <i class="fi fi-rr-file-invoice-dollar" onclick="toggleNotificacoesPC(event)" style="color: var(--text-sec); font-size: 16px; cursor: pointer; transition: 0.2s; position: relative;" onmouseover="this.style.color='var(--dark-green)'" onmouseout="this.style.color='var(--text-sec)'"></i>
-                        <span id="notificacao-dot" style="display: none; position: absolute; top: -4px; right: -6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 2px solid var(--bg-app);"></span>
+                        <i class="fi fi-rr-file-invoice-dollar notificacao-icon" onclick="toggleNotificacoesPC(event)"></i>
+                        <span id="notificacao-dot" class="notificacao-dot"></span>
                         
                         <div id="dropdown-notificacoes" class="notif-dropdown-premium">
                             <div class="notif-header">
@@ -227,9 +227,9 @@
                         </div>
                     </div>
 
-                    <span id="header-current-date" style="margin: 0 15px; font-weight: 600; font-size: 12px; color: var(--text-main);">...</span>
+                    <span id="header-current-date" class="header-current-date">...</span>
                     
-                    <img id="header-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onclick="abrirModalPerfil()" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: var(--bg-app); border: 1px solid var(--border); cursor: pointer; transition: 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <img id="header-avatar-img" class="header-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onclick="abrirModalPerfil()">
                 </div>
             </div>
 
@@ -570,79 +570,144 @@
     </button>
 </nav>
 
-    <dialog id="modal-gasto">
-        <div class="modal-content">
-            <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
-            <h3>Novo Gasto 💸</h3>
-			<input type="hidden" id="g-index-edit" value="-1">
-            <form method="dialog">
-                <input type="text" id="g-nome" placeholder="Descrição" required>
-                <input type="text" id="g-valor" placeholder="Valor Total R$" onblur="formatarMoeda(this)">
-                <input type="date" id="g-data">
-                
-				<div class="input-group">
-					<label>Início do Pagamento</label>
-					<select id="g-inicio-pagamento">
-						<option value="0">Mesmo mês da compra</option>
-						<option value="1">Mês seguinte (+1)</option>
-						<option value="2">Daqui a 2 meses (+2)</option>
-					</select>
-				</div>
-				
-                <select id="g-tipo" onchange="ajustarCamposModal()">
-                    <option value="cartao">Cartão de Crédito</option>
-                    <option value="fixo">Gasto Fixo</option>
-                    <option value="debito">Débito / PIX</option>
-                </select>
-				
-				<div id="div-forma-pagamento" class="input-group" style="display: none; margin-top: 10px;">
-					<label>Forma de Pagamento</label>
-					<select id="g-forma-pagamento" class="input-padrao" onchange="ajustarCamposModal()">
-						<option value="PIX">PIX</option>
-						<option value="Débito">Cartão de Débito</option>
-						<option value="Dinheiro">Dinheiro</option>
-					</select>
-				</div>
+    <dialog id="modal-gasto" class="modal-gasto-dialog">
+    <div class="modal-content modal-gasto-content">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+        <h3 id="modal-titulo">Novo Gasto 💸</h3>
 
-                <div id="div-cartao-campos">
-                    <input type="number" id="g-parcelas" value="1" min="1" placeholder="Número de parcelas">
-                    <select id="g-banco"></select>
+        <input type="hidden" id="g-index-edit" value="-1">
+
+        <form method="dialog" class="form-gasto">
+            
+            <div class="form-gasto-coluna">
+
+    <div class="input-group">
+        <label class="input-label">Nome do gasto</label>
+        <input type="text" id="g-nome" placeholder="Ex: Fone Bluetooth, Uber, Mercado..." required>
+    </div>
+
+    <div class="input-group">
+        <label class="input-label">Valor total</label>
+        <input type="text" id="g-valor" placeholder="Valor Total R$" onblur="formatarMoeda(this)">
+    </div>
+
+    <div class="input-group">
+        <label class="input-label">Data da compra</label>
+        <input type="date" id="g-data">
+    </div>
+
+    <div class="input-group campo-inicio-pagamento">
+        <label class="input-label">Competência da fatura</label>
+		<select id="g-inicio-pagamento" onchange="atualizarAlertaFatura()">
+			<option value="0">Automático / mês da compra</option>
+			<option value="1">Forçar para o mês seguinte</option>
+			<option value="2">Forçar para daqui a 2 meses</option>
+		</select>
+    </div>
+
+    <div class="input-group">
+        <label class="input-label">Tipo de gasto</label>
+        <select id="g-tipo" onchange="ajustarCamposModal()">
+            <option value="cartao">Cartão de Crédito</option>
+            <option value="fixo">Gasto Fixo</option>
+            <option value="debito">Débito / PIX</option>
+        </select>
+    </div>
+
+    <div id="div-forma-pagamento" class="input-group campo-forma-pagamento">
+        <label class="input-label">Forma de pagamento</label>
+        <select id="g-forma-pagamento" class="input-padrao" onchange="ajustarCamposModal()">
+            <option value="PIX">PIX</option>
+            <option value="Débito">Cartão de Débito</option>
+            <option value="Dinheiro">Dinheiro</option>
+        </select>
+    </div>
+
+    <div id="div-cartao-campos" class="grupo-cartao-campos">
+    <div id="campo-parcelas" class="input-group">
+        <label class="input-label">Parcelas</label>
+        <input type="number" id="g-parcelas" value="1" min="1" placeholder="Ex: 1">
+    </div>
+
+    <div id="campo-banco" class="input-group">
+        <label class="input-label">Cartão / banco</label>
+        <select id="g-banco"></select>
+    </div>
+</div>
+
+<div id="alerta-fatura-cartao" class="alerta-fatura-cartao" style="display: none;"></div>
+
+    <div class="input-group">
+        <label class="input-label">Categoria</label>
+        <select id="g-categoria"></select>
+    </div>
+
+</div>
+
+            <div class="form-gasto-coluna">
+                <div class="input-group campo-observacao">
+                    <label class="input-label">Descrição detalhada / Observação (Opcional)</label>
+                    <textarea 
+                        id="g-observacao"
+                        rows="4"
+                        placeholder="Informe o motivo da compra, detalhes do gasto, prazo de garantia ou qualquer informação que achar relevante para lembrar depois."
+                    ></textarea>
                 </div>
 
-                <select id="g-categoria"></select>
-				
-				<div class="input-group-checkbox">
-					<label for="g-terceiro" class="checkbox-container">
-						<input type="checkbox" id="g-terceiro" onchange="toggleCampoNomeTerceiro()">
-						<span class="checkbox-text">Esse gasto não é meu</span>
-					</label>
-				</div>
+                <div class="bloco-secundario bloco-terceiro">
+    <div class="bloco-secundario-topo">
+        <span class="bloco-secundario-titulo">Responsável pelo gasto</span>
+        <span class="bloco-secundario-desc">Marque se esta compra foi feita para outra pessoa.</span>
+    </div>
 
-				<div id="div-nome-terceiro" class="input-group" style="display: none; margin-top: 10px;">
-					<input type="text" id="g-nome-terceiro" placeholder="Nome da pessoa (ex: Patrícia)">
-				</div>
-				
-				<div class="input-group" style="margin-top: 10px; text-align: left;">
-					<label class="input-label" style="font-size: 11px; color: var(--text-sec);">Comprovante / Nota (Opcional)</label>
-					
-					<input type="file" id="g-comprovante" accept="image/*" style="display: none;">
-					<input type="hidden" id="g-comprovante-apagado" value="false">
-					
-					<div style="display: flex; gap: 10px; margin-top: 5px;">
-						<button type="button" id="btn-custom-upload-g" onclick="document.getElementById('g-comprovante').click()" style="flex: 1; background: #e0f2fe; color: #0369a1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; transition: 0.2s;">
-							📎 Anexar Comprovante
-						</button>
-						
-						<button type="button" id="btn-custom-trash-g" onclick="removerAnexo('g')" style="width: 48px; background: #f3f4f6; color: #9ca3af; border: none; border-radius: 8px; cursor: not-allowed; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s;" disabled>
-							🗑️
-						</button>
-					</div>
-				</div>
-                
-                <button type="button" onclick="confirmarGasto()" style="width:100%; background:#6cc080; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:10px;">Adicionar</button>
-            </form>
+    <label for="g-terceiro" class="checkbox-card">
+        <div class="checkbox-card-esquerda">
+            <input type="checkbox" id="g-terceiro" onchange="toggleCampoNomeTerceiro()">
+            <div class="checkbox-card-textos">
+                <span class="checkbox-card-titulo">Esse gasto não é meu</span>
+                <small class="checkbox-card-subtitulo">Usar para compras de terceiros, reembolsos ou gastos compartilhados.</small>
+            </div>
         </div>
-    </dialog>
+    </label>
+</div>
+
+<div id="div-nome-terceiro" class="input-group campo-nome-terceiro">
+    <label class="input-label">Nome da pessoa</label>
+    <input type="text" id="g-nome-terceiro" placeholder="Ex: Patrícia">
+</div>
+
+<div class="bloco-secundario bloco-comprovante">
+    <div class="bloco-secundario-topo">
+        <span class="bloco-secundario-titulo">Comprovante / Nota</span>
+        <span class="bloco-secundario-desc">Anexe uma imagem do comprovante, nota ou recibo.</span>
+    </div>
+
+    <input type="file" id="g-comprovante" accept="image/*" class="input-file-hidden">
+    <input type="hidden" id="g-comprovante-apagado" value="false">
+
+    <div class="upload-card">
+        <div class="upload-card-info">
+            <span class="upload-card-titulo">Nenhum comprovante anexado</span>
+            <small class="upload-card-subtitulo">PNG, JPG ou imagem da galeria</small>
+        </div>
+
+        <div class="grupo-botoes-comprovante">
+            <button type="button" id="btn-custom-upload-g" class="btn-upload-comprovante" onclick="document.getElementById('g-comprovante').click()">
+                Anexar comprovante
+            </button>
+
+            <button type="button" id="btn-custom-trash-g" class="btn-trash-comprovante" onclick="removerAnexo('g')" disabled>
+                ✕
+            </button>
+        </div>
+    </div>
+</div>
+            </div>
+
+            <button type="button" class="btn-submit-gasto" onclick="confirmarGasto()">Adicionar</button>
+        </form>
+    </div>
+</dialog>
 
 <dialog id="modal-detalhes-entrada" class="modal-estilizado">
 		<div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
@@ -656,6 +721,13 @@
 			
             <div class="det-linha"><strong>Cliente / Origem</strong> <span id="det-ent-cliente"></span></div>
 			<div class="det-linha"><strong>Categoria</strong> <span id="det-ent-categoria"></span></div>
+
+			<div id="det-ent-bloco-observacao" style="display: none; background: #f4f7f6; border: 1px solid var(--border); border-radius: 12px; margin: 15px 0; padding: 14px;">
+				<strong style="display: block; color: var(--dark-green); font-size: 12px; margin-bottom: 8px;">
+					Observação
+				</strong>
+				<p id="det-ent-observacao" style="margin: 0; color: var(--text-main); font-size: 13px; line-height: 1.5; white-space: pre-wrap;"></p>
+			</div>
 
             <div id="det-ent-bloco-projeto" style="background: #f4f7f6; border-radius: 8px; margin: 15px 0; padding: 10px; display: none;">
 				<div class="det-linha"><strong>Projeto (Total)</strong> <span id="det-ent-projeto-total"></span></div>
@@ -756,10 +828,10 @@
 	</dialog>
 
 	<dialog id="modal-detalhes" class="modal-estilizado">
-		<div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
-			<h2 id="det-nome" style="margin: 0;">Detalhes</h2>
-			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
-		</div>
+		<div class="modal-header detalhe-header">
+    <h2 id="det-nome" class="detalhe-titulo">Detalhes</h2>
+    <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+</div>
 		
 		<div class="modal-body-detalhes">
 			<div class="det-linha"><strong>Data de Compra</strong> <span id="det-data"></span></div>
@@ -773,16 +845,23 @@
 			<div class="det-linha"><strong>Cartão/Banco</strong> <span id="det-banco"></span></div>
 			<div class="det-linha"><strong>Categoria</strong> <span id="det-categoria"></span></div>
 
+			<div id="det-bloco-observacao" style="display: none; background: #f4f7f6; border: 1px solid var(--border); border-radius: 12px; margin: 15px 0; padding: 14px;">
+				<strong style="display: block; color: var(--dark-green); font-size: 12px; margin-bottom: 8px;">
+					Observação
+				</strong>
+				<p id="det-observacao" style="margin: 0; color: var(--text-main); font-size: 13px; line-height: 1.5; white-space: pre-wrap;"></p>
+			</div>
+
 			<div id="bloco-comprovante-gasto" style="display: none; margin-bottom: 15px;">
 				<button type="button" id="btn-ver-comprovante-gasto" style="width: 100%; background: #e0f2fe; color: #0369a1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-					🧾 Ver Nota / Comprovante
-				</button>
+    🧾 Ver Nota / Comprovante
+</button>
 			</div>
 
 			<div id="container-botoes-detalhe" style="display: flex; gap: 12px; margin-top: 25px;">
                 <button type="button" id="btn-editar-dinamico" style="flex: 1; background-color: var(--dark-green, #1b3a32); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;">
-				    Editar Gasto
-				</button>
+    Editar Gasto
+</button>
             </div>
 		</div>
 	</dialog>
@@ -945,43 +1024,54 @@
     </div>
 </dialog>
 
-<dialog id="modal-entrada">
-        <div class="modal-content">
-            <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
-            <h3 id="modal-titulo-entrada">Nova Entrada</h3>
-            
-            <input type="hidden" id="e-index-edit" value="-1">
-            <input type="hidden" id="e-projeto-id" value="">
+<dialog id="modal-entrada" class="modal-transacao-dialog">
+    <div class="modal-content modal-transacao-content">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+        <h3 id="modal-titulo-entrada">Nova Entrada</h3>
 
-            <form method="dialog">
-                <div id="div-valor-total-projeto" class="input-group" style="display: none; margin-bottom: 10px;">
-                    <label style="font-size: 12px; color: var(--text-sec); margin-bottom: 5px; display: block;">Valor Total do Projeto (Orçamento Global)</label>
+        <input type="hidden" id="e-index-edit" value="-1">
+        <input type="hidden" id="e-projeto-id" value="">
+
+        <form method="dialog" class="form-transacao form-entrada">
+
+            <div class="form-transacao-coluna">
+
+                <div id="div-valor-total-projeto" class="input-group" style="display: none;">
+                    <label class="input-label">Valor total do projeto</label>
                     <input type="text" id="e-valor-total-projeto" placeholder="Ex: 3000,00" onblur="formatarMoeda(this)">
                 </div>
 
                 <div class="input-group">
+                    <label class="input-label">Valor recebido</label>
                     <input type="text" id="e-valor" placeholder="Valor Total R$" onblur="formatarMoeda(this)">
                 </div>
+
                 <div class="input-group">
-                    <input type="text" id="e-nome" placeholder="Serviço (ex: Identidade Visual)">
+                    <label class="input-label">Serviço / Origem</label>
+                    <input type="text" id="e-nome" placeholder="Ex: Identidade Visual">
                 </div>
-                <div class="input-group" style="margin-top: 10px;">
-                    <input type="text" id="e-cliente" placeholder="Cliente / Pagador">
+
+                <div class="input-group">
+                    <label class="input-label">Cliente / Pagador</label>
+                    <input type="text" id="e-cliente" placeholder="Ex: Cliente, empresa ou origem do pagamento">
                 </div>
-                <div class="input-group" style="margin-top: 10px;">
-                    <label style="font-size: 12px; color: var(--text-sec); margin-bottom: 5px; display: block;">Data de Recebimento</label>
+
+                <div class="input-group">
+                    <label class="input-label">Data de recebimento</label>
                     <input type="date" id="e-data">
                 </div>
-                <div class="input-group" style="margin-top: 10px;">
-                    <label style="font-size: 12px; color: var(--text-sec); margin-bottom: 5px; display: block;">Categoria de Renda</label>
+
+                <div class="input-group">
+                    <label class="input-label">Categoria de renda</label>
                     <select id="e-categoria" onchange="ajustarCamposEntrada()">
                         <option value="Projetos / Serviços">Projetos / Serviços</option>
                         <option value="Fixo / Contrato">Fixo / Contrato</option>
                         <option value="Renda Extra">Renda Extra</option>
                     </select>
                 </div>
-                <div id="div-entrada-parcelas" class="input-group" style="margin-top: 10px; display: none;">
-                    <label style="font-size: 12px; color: var(--text-sec); margin-bottom: 5px; display: block;">Parcelamento</label>
+
+                <div id="div-entrada-parcelas" class="input-group" style="display: none;">
+                    <label class="input-label">Parcelamento</label>
                     <select id="e-parcelas">
                         <option value="1">Pagamento Único (1x)</option>
                         <option value="2">Parcelado em 2x</option>
@@ -992,28 +1082,55 @@
                         <option value="12">Parcelado em 12x</option>
                     </select>
                 </div>
-                
-				<<div class="input-group" style="margin-top: 10px; text-align: left;">
-					<label class="input-label" style="font-size: 11px; color: var(--text-sec);">Comprovante / Nota (Opcional)</label>
-					
-					<input type="file" id="e-comprovante" accept="image/*" style="display: none;">
-					<input type="hidden" id="e-comprovante-apagado" value="false">
-					
-					<div style="display: flex; gap: 10px; margin-top: 5px;">
-						<button type="button" id="btn-custom-upload-e" onclick="document.getElementById('e-comprovante').click()" style="flex: 1; background: #e0f2fe; color: #0369a1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; transition: 0.2s;">
-							📎 Anexar Comprovante
-						</button>
-						
-						<button type="button" id="btn-custom-trash-e" onclick="removerAnexo('e')" style="width: 48px; background: #f3f4f6; color: #9ca3af; border: none; border-radius: 8px; cursor: not-allowed; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s;" disabled>
-							🗑️
-						</button>
-					</div>
-				</div>
-				
-                <button type="button" onclick="confirmarEntrada()" style="width:100%; background:#6cc080; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:600; margin-top:20px;">Salvar Entrada</button>
-            </form>
-        </div>
-    </dialog>
+
+            </div>
+
+            <div class="form-transacao-coluna">
+
+                <div class="input-group campo-observacao-entrada">
+                    <label class="input-label">Descrição detalhada / Observação (Opcional)</label>
+                    <textarea 
+                        id="e-observacao"
+                        rows="4"
+                        placeholder="Ex: Entrada referente ao projeto de identidade visual. Cliente pagou a primeira parcela via Pix."
+                    ></textarea>
+                </div>
+
+                <div class="bloco-secundario bloco-comprovante entrada-comprovante">
+                    <div class="bloco-secundario-topo">
+                        <span class="bloco-secundario-titulo">Comprovante / Nota</span>
+                        <span class="bloco-secundario-desc">Anexe uma imagem do comprovante, nota ou recibo dessa entrada.</span>
+                    </div>
+
+                    <input type="file" id="e-comprovante" accept="image/*" class="input-file-hidden">
+                    <input type="hidden" id="e-comprovante-apagado" value="false">
+
+                    <div class="upload-card">
+                        <div class="upload-card-info">
+                            <span class="upload-card-titulo" id="upload-status-e">Nenhum comprovante anexado</span>
+                            <small class="upload-card-subtitulo" id="upload-status-sub-e">PNG, JPG ou imagem da galeria</small>
+                        </div>
+
+                        <div class="grupo-botoes-comprovante">
+                            <button type="button" id="btn-custom-upload-e" class="btn-upload-comprovante" onclick="document.getElementById('e-comprovante').click()">
+                                Anexar comprovante
+                            </button>
+
+                            <button type="button" id="btn-custom-trash-e" class="btn-trash-comprovante" onclick="removerAnexo('e')" disabled>
+                                ×
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="button" class="btn-submit-transacao btn-submit-entrada" onclick="confirmarEntrada()">
+                Salvar Entrada
+            </button>
+        </form>
+    </div>
+</dialog>
 
 	<dialog id="modal-importacao" class="modal-padrao">
     <div class="modal-content" style="padding: 30px; border-radius: 16px;">
@@ -1159,13 +1276,13 @@
     }
 </script>
 	
-<script src="app.js"></script>
-
+	<script src="js/core.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/transacoes.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/modulos.js"></script>
 </body>
-
 </html>
-
-
 
 
 

@@ -1,0 +1,1070 @@
+/* --- Mascote Salsi (Mascot Widget) --- */
+.mascot-container {
+    background: var(--bg-app);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 32px;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+.mascot-emoji { font-size: 40px; margin-bottom: 8px; transition: transform 0.3s ease; }
+.mascot-text { font-size: 11.5px; font-weight: 600; color: var(--dark-green); font-style: italic; margin: 0; line-height: 1.4; }
+
+@keyframes jump {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+.mascot-jump { animation: jump 0.5s ease; }
+
+/* Botões de Ação Mini */
+.add-mini {
+    background: transparent !important; border: none !important;
+    color: var(--text-sec); font-size: 20px; cursor: pointer; padding: 2px 8px; border-radius: 6px;
+}
+.add-mini:hover { color: var(--dark-green); background: var(--acc-green) !important; }
+
+.sidebar-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+.sidebar-value { font-weight: 700; color: var(--dark-green); display: flex; align-items: center; gap: 8px; }
+
+
+/* --- Elementos de UI --- */
+.badge { 
+    color: white !important; /* Força o texto branco para destacar na cor do banco */
+    padding: 4px 10px; 
+    border-radius: 8px; 
+    font-size: 9.5px; 
+    font-weight: 700; 
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra leve para dar profundidade */
+}
+
+@media (max-width: 1024px) {
+.badge { 
+    width: fit-content !important;
+}
+}
+
+.btn-del { background: unset; border: none; color: #cbd5e0; cursor: pointer; font-size: 18px; }
+.btn-del:hover { color: var(--acc-red); }
+
+.pago-checkbox { appearance: none; width: 19px; height: 19px; border: 2px solid var(--acc-green); border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.pago-checkbox:checked { background-color: var(--acc-green); }
+.pago-checkbox:checked::after { content: '✔'; color: var(--dark-green); font-size: 11px; font-weight: bold; }
+
+/* --- Novo Rodapé e Menu Dropdown --- */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 24px;
+}
+
+.system-header {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sec);
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+    padding-left: 8px;
+}
+
+.options-container { position: relative; }
+
+.options-trigger {
+    width: 100%;
+    background: var(--bg-app);
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--dark-green);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.options-trigger:hover { border-color: var(--acc-green); background: #fff; }
+
+.options-dropdown {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    width: 220px;
+    background: white;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 25px rgba(27, 58, 50, 0.15);
+    padding: 8px;
+    z-index: 100;
+    flex-direction: column;
+}
+
+.options-dropdown.active { display: flex; }
+
+.dropdown-item {
+    width: auto;
+    background: transparent;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dropdown-item:hover { background: var(--bg-app); }
+.dropdown-divider { border: 0; border-top: 1px solid var(--border); margin: 6px 0; }
+.btn-save-inside { color: var(--dark-green); font-weight: 700; }
+.btn-save-inside:hover { background: var(--acc-green) !important; }
+.btn-danger-text { color: #ef4444; }
+
+/* --- ASSINATURAS (PC e Mobile) --- */
+
+/* Estilo Geral */
+.dev-signature {
+    font-size: 10px;
+    color: #a0aec0;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+	gap: 5px !important;
+}
+
+.dev-signature a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.dev-signature:hover {
+    opacity: 1;
+}
+
+/* Versão Sidebar (PC) */
+.pc-sig {
+    margin: auto;
+    padding-top: 20px;
+    text-align: left;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Versão Mobile (Final do Scroll) */
+.mobile-sig {
+    text-align: center;
+    padding: 40px 0 120px 0; /* Espaço para não bater na barra flutuante */
+}
+
+/* Esconder a assinatura da sidebar quando for mobile */
+@media (max-width: 1024px) {
+    .pc-sig {
+        display: none !important;
+    }
+}
+
+
+/* Mantenha o seu :root e estilos de base da paleta Mint & Dark Forest */
+
+.card-stack {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.resumo-central-item small {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sec);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.bank-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--bg-app);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.bank-row span:first-child {
+    color: var(--text-sec);
+    font-weight: 500;
+}
+
+.bank-row span:last-child {
+    color: var(--dark-green);
+    font-variant-numeric: tabular-nums; /* Mantém os números alinhados */
+}
+
+/* Mantenha os outros estilos (sidebar, stats-grid, chart, etc.) */
+
+.cartao-info strong { font-size: 13px; color: var(--dark-green); }
+.cartao-info span { font-size: 10px; color: var(--text-sec); font-weight: 600; }
+
+.input-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark-green);
+    display: block;
+    margin-bottom: 6px;
+}
+
+/* Ajuste na lista de cartões para combinar com o seu Dashboard */
+.cartao-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    transition: 0.2s;
+}
+
+.cartao-item:hover {
+    border-color: var(--acc-green);
+    transform: translateX(5px);
+}
+
+
+/* Espaçamento extra no topo do gráfico para os valores não cortarem */
+.chart-container {
+    padding-top: 20px;
+}
+
+/* Gastos fixos não pagos ficam mais discretos na tabela */
+.pago-checkbox:not(:checked) {
+    filter: grayscale(1);
+    opacity: 0.5;
+}
+
+/* Estilo para a linha do gasto não pago */
+tr[style*="opacity: 0.7"] td {
+    color: var(--text-sec);
+}
+
+/* Ajuste na tabela de Cartão de Crédito */
+#tabela-cartao th, 
+#tabela-cartao td {
+    padding: 12px 8px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* Definindo larguras para alinhar as colunas */
+#tabela-cartao th:nth-child(1), #tabela-cartao td:nth-child(1) { width: 10%; } /* Item */
+#tabela-cartao th:nth-child(2), #tabela-cartao td:nth-child(2) { width: 40%; text-align: left; } /* Parc. */
+#tabela-cartao th:nth-child(3), #tabela-cartao td:nth-child(3) { width: 10%; text-align: center; } /* Banco */
+#tabela-cartao th:nth-child(4), #tabela-cartao td:nth-child(4) { width: 25%; text-align: center; }  /* Valor */
+#tabela-cartao th:nth-child(5), #tabela-cartao td:nth-child(5) { width: 15%; text-align: center; }  /* Delete */
+
+/* Ajuste no Badge para ele não flutuar */
+#tabela-cartao .badge {
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+/* No seu CSS ou direto na Tag */
+#card-terceiros {
+    background-color: #e8f5e9; /* Verde bem clarinho e elegante */
+    border: 1px solid #c8e6c9; /* Uma borda leve para definir o card */
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Ajuste do título para combinar */
+#card-terceiros h3 {
+    color: var(--dark-green); /* Um verde mais sóbrio para o título */
+}
+
+.input-group-checkbox {
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center; /* Centraliza verticalmente o ícone e o texto */
+    gap: 12px;           /* Espaço elegante entre o check e o texto */
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--dark-green); /* Usa o verde do seu dashboard */
+}
+
+.checkbox-text {
+    font-size: 0.95rem;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.btn-del-meta {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: unset;
+    border: none;
+    color: #cbd5e0; /* Um cinza claro elegante */
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 5px;
+    line-height: 1;
+}
+
+.btn-del-meta:hover {
+    color: #ff9999; /* O vermelho pastel da sua paleta */
+    transform: scale(1.2);
+    opacity: 1;
+}
+
+/* 2. Abas de Cartões (Crédito e Débito) -> Borda super suave quase invisível */
+.cartoes-toggle button.active,
+#aba-debito > .mobile-tabs-toggle button.active,
+#aba-cartao > .mobile-tabs-toggle button.active {
+    border: 1px solid var(--border)!important; /* Cinza clarinho padrão App */
+    border-bottom: 2px solid #ffffff !important; /* Combina com o card branco */
+}
+
+/* 3. Evita que o botão inativo "pule" ao ser clicado */
+.mobile-tabs-toggle button {
+    border: 1px solid transparent !important;
+}
+
+/* --- FILTROS DUPLOS PREMIUM --- */
+.header-com-filtro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filtros-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+/* --- DROPDOWNS CUSTOMIZADOS PREMIUM --- */
+.header-com-filtro {
+    display: flex; justify-content: space-between; align-items: center; 
+    margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+}
+.filtros-wrapper { display: flex; gap: 10px; }
+
+.custom-dropdown { position: relative; display: inline-block; }
+
+/* O texto dentro da pílula */
+.dropdown-trigger span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px; /* Impede que o botão estique infinitamente */
+}
+
+/* O Botão Pílula */
+.dropdown-trigger {
+    background: unset; border: 1px solid var(--border); border-radius: 20px;
+    padding: 8px 16px; font-size: 11px; font-weight: 700; color: var(--dark-green);
+    cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    transition: 0.2s; user-select: none;
+}
+.dropdown-trigger:hover { border-color: var(--acc-green); }
+
+/* A Caixinha que abre com os itens */
+.dropdown-menu {
+    position: absolute; top: calc(100% + 5px); right: 0; background: #fff;
+    border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(27,58,50,0.15);
+    padding: 8px; min-width: 150px; z-index: 1000;
+    display: flex; flex-direction: column; opacity: 0; visibility: hidden;
+    transform: translateY(-10px); transition: all 0.2s ease;
+}
+.custom-dropdown.active .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* Os Itens da Lista */
+.dropdown-item {
+    padding: 10px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    color: var(--text-main); cursor: pointer; transition: 0.2s; text-align: left;
+}
+.dropdown-item:hover { background: var(--bg-app); color: var(--dark-green); }
+.dropdown-item.selected { background: #e8f5e9; color: var(--dark-green); }
+
+/* A Setinha animada */
+.dropdown-trigger .chevron {
+    border: solid var(--text-sec); border-width: 0 2px 2px 0; display: inline-block;
+    padding: 3px; transform: rotate(45deg); margin-bottom: 2px; transition: 0.2s;
+}
+.custom-dropdown.active .dropdown-trigger .chevron { 
+    transform: rotate(-135deg); margin-bottom: -2px; border-color: var(--dark-green);
+}
+
+.dropdown-trigger > .chevron {
+    width: 2px; height: 2px;
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+    .header-com-filtro { justify-content: center; padding-top: 5px; margin-bottom: 15px; }
+    .filtros-wrapper { width: 100%; justify-content: center; }
+    .custom-dropdown { flex: 1; max-width: 160px; }
+    .dropdown-trigger { width: 100%; box-sizing: border-box; background: unset; border: none;}
+    .dropdown-menu { left: 0; right: auto; width: 100%; } 
+	.dropdown-trigger > .chevron { border-width: 0 1px 1px 0; }
+}
+	
+
+/* --- REDESIGN PREMIUM DO MENU DE OPÇÕES --- */
+.option-btn {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: left;
+}
+
+/* Efeito de passar o mouse */
+.option-btn:hover {
+    background: var(--bg-app);
+    color: var(--dark-green);
+}
+
+/* O Segredo: Estilo dos ícones minimalistas */
+.option-btn svg {
+    width: 18px;
+    height: 18px;
+    color: var(--text-sec);
+    transition: 0.2s;
+}
+
+.option-btn:hover svg {
+    color: var(--dark-green);
+    transform: scale(1.05); /* Leve pulinho no ícone */
+}
+
+/* Cores Especiais para Botões de Ação Específicos */
+.option-btn.btn-save-inside { color: var(--dark-green); }
+.option-btn.btn-save-inside svg { color: var(--dark-green); }
+
+/* Área de Perigo (Resetar) */
+.option-btn.btn-danger-text { color: #ef4444 !important; }
+.option-btn.btn-danger-text svg { color: #ef4444 !important; }
+.option-btn.btn-danger-text:hover { background: #fff1f1 !important; }
+
+
+/* --- Toast Notification (Aviso Flutuante) --- */
+#toast-notificacao {
+    position: fixed;
+    z-index: 9999;
+    background: var(--dark-green);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 0px; /* Estética arredondada em formato de pílula */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 14px;
+    box-shadow: 0 10px 25px rgba(27, 58, 50, 0.2);
+    pointer-events: none; /* Para não bloquear cliques na tela */
+    opacity: 0;
+    visibility: hidden;
+    /* A animação tem uma curva "cubic-bezier" para dar um leve efeito de mola */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+#toast-notificacao i {
+    color: var(--acc-green);
+    font-size: 18px;
+}
+
+/* Posição no PC (Canto inferior direito) */
+@media (min-width: 1025px) {
+    #toast-notificacao {
+        bottom: 30px;
+        right: 30px;
+        transform: translateY(15px); /* Começa um pouco para baixo */
+    }
+    #toast-notificacao.mostrar {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0); /* Sobe para a posição normal */
+    }
+}
+
+/* Posição no Mobile (Centralizado acima da barra de navegação) */
+@media (max-width: 1024px) {
+    #toast-notificacao {
+        bottom: 105px; /* Espaço suficiente para não cobrir o menu inferior */
+        left: 50%;
+        transform: translate(-50%, 20px);
+        width: max-content;
+        max-width: 90%;
+    }
+    #toast-notificacao.mostrar {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* --- Animações Premium de Swipe (Troca de Mês) --- */
+
+/* Suaviza as trocas de cor que já existem no seu .month-item */
+#mobile-month-nav {
+    transition: all 0.3s ease-in-out;
+}
+
+/* As classes que o JavaScript injeta ao arrastar */
+.anim-slide-left {
+    animation: deslizarEsquerda 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.anim-slide-right {
+    animation: deslizarDireita 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* O movimento físico com o "Fade" (Aparecimento gradual) */
+@keyframes deslizarEsquerda {
+    0% { transform: translateX(40px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes deslizarDireita {
+    0% { transform: translateX(-40px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+
+/* ======================================================== */
+/* 🚀 REDESIGN PREMIUM DOS MENUS CASCATA (SELECTS NATIVOS)  */
+/* ======================================================== */
+
+dialog select {
+    /* 1. Mata o visual "velho" padrão do navegador */
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    /* 2. Cria a nossa própria setinha combinando com os filtros */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231b3a32' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center; 
+    background-size: 14px;
+    
+    /* 3. Estética Premium */
+    background-color: #ffffff;
+    padding-right: 40px !important; /* Espaço para a seta não esmagar o texto */
+    cursor: pointer;
+    font-weight: 600 !important;
+    color: var(--dark-green) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Efeito ao passar o mouse */
+dialog select:hover {
+    border-color: var(--acc-green);
+    background-color: #fafffb; /* Um verde muuuito clarinho de fundo */
+    box-shadow: 0 4px 12px rgba(150, 230, 161, 0.15);
+}
+
+/* Efeito quando está aberto (focado) */
+dialog select:focus {
+    outline: none !important;
+    border-color: var(--dark-green) !important;
+    box-shadow: 0 0 0 3px rgba(27, 58, 50, 0.1) !important;
+}
+
+/* Melhora as opções dentro da lista (Aplicável mais no PC) */
+dialog select option {
+    font-weight: 600;
+    color: var(--text-main);
+    padding: 10px;
+}
+
+/* --- HOVER NAS ENTRADAS --- */
+/* PC: Apenas o nome fica interativo */
+.nome-entrada-hover {
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+}
+.nome-entrada-hover:hover {
+    color: #10b981; /* Verde menta brilhante */
+    transform: translateX(3px); /* Um micro-deslize charmoso */
+}
+
+/* MOBILE: O card inteiro reage ao toque */
+.entrada-card-hover {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.entrada-card-hover:active {
+    background-color: #f0f4f3; /* Fica ligeiramente escuro ao tocar */
+}
+
+/* --- Novo Botão de Entradas (Sidebar PC) --- */
+.btn-nova-entrada {
+    width: 100%;
+    background: #e8f5e9;
+    color: #15803d;
+    border: 1px dashed #c8e6c9;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Efeito de brilho quando passa o mouse */
+.btn-nova-entrada:hover {
+    background: #6cc080;
+    color: white;
+    border-style: solid;
+    border-color: #6cc080;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgb(108 192 128 / 20%);
+}
+
+.btn-nova-entrada i {
+    font-size: 14px;
+    line-height: 0;
+}
+
+/* --- Botão de Importar na Sidebar --- */
+.btn-importar-extrato {
+    width: 100%;
+    background: transparent;
+    color: var(--text-sec);
+    border: 1px solid #cbd5e1;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-importar-extrato:hover {
+    background: #f8fafc;
+    color: var(--dark-green);
+    border-color: var(--dark-green);
+}
+
+
+/* 🚀 ESTÉTICA DO DROPDOWN DE NOTIFICAÇÕES (FATURAS)        */
+/* ======================================================== */
+#dropdown-notificacoes {
+    position: absolute !important;
+    top: calc(100% + 30px) !important;
+    right: -160px !important;
+    left: auto !important;
+    width: 280px !important;
+    padding: 20px !important;
+    z-index: 1000 !important;
+    background: var(--bg-app) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+    
+    /* Faz a caixa ficar invisível até clicar */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+}
+
+/* Quando clicar, ela aparece flutuando suavemente */
+#dropdown-notificacoes.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* ======================================================== */
+/* 🚀 ESTÉTICA PREMIUM: CASCATA DE NOTIFICAÇÕES             */
+/* ======================================================== */
+
+.notif-dropdown-premium {
+    position: absolute !important;
+    top: calc(100% + 20px) !important;
+    right: -80px !important; /* Ajuste milimétrico para ficar centralizado sob a pílula */
+    width: 320px !important;
+    background: var(--bg-app) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08) !important;
+    z-index: 1000 !important;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    overflow: hidden; /* Para o cabeçalho respeitar os cantos arredondados */
+}
+
+.notif-dropdown-premium.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.notif-header {
+    padding: 15px 0px 10px 0px;
+    border-bottom: 1px solid var(--border);
+}
+
+.notif-header h4 {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sec);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.notif-body {
+    padding: 15px 0;
+    max-height: 380px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Scrollbar estilizada para as notificações (Só aparece se tiver muita fatura) */
+.notif-body::-webkit-scrollbar { width: 6px; }
+.notif-body::-webkit-scrollbar-track { background: transparent; }
+.notif-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
+
+
+/* 🚀 BOTÃO UNIFICADO PREMIUM (ENTRADA / SAÍDA)             */
+/* ======================================================== */
+.btn-unified-container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    background: var(--dark-green) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(27, 58, 50, 0.15) !important;
+    width: 100% !important;
+    padding: 0 !important;
+    transition: transform 0.2s ease !important;
+}
+
+.btn-unified-container:hover {
+    transform: translateY(-2px) !important;
+}
+
+.btn-unified-half {
+    flex: 1 !important;
+    background: transparent !important; /* Mata o fundo branco antigo */
+    border: none !important;            /* Mata a borda antiga */
+    color: white !important;
+    padding: 14px 5px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    cursor: pointer !important;
+    outline: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+.btn-unified-half:hover {
+    background: rgba(255, 255, 255, 0.1) !important; 
+}
+
+.btn-unified-half i {
+    font-size: 15px !important;
+    color: var(--acc-green) !important; 
+    margin-top: 2px !important;
+}
+
+.btn-unified-divider {
+    width: 1px !important;
+    min-width: 1px !important;
+    height: 24px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    margin: 0 !important;
+}
+
+/* ========================================================= */
+/* COMPONENTES MIGRADOS DO INDEX                             */
+/* ========================================================= */
+
+.date-profile-pill {
+    display: flex;
+    align-items: center;
+    background: var(--bg-app);
+    border: 1px solid var(--border);
+    padding: 6px 6px 6px 16px;
+    border-radius: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.notificacao-icon {
+    color: var(--text-sec);
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+}
+
+.notificacao-icon:hover {
+    color: var(--dark-green);
+}
+
+.notificacao-dot {
+    display: none;
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid var(--bg-app);
+}
+
+.header-current-date {
+    margin: 0 15px;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-main);
+}
+
+.header-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg-app);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.header-avatar:hover {
+    transform: scale(1.05);
+}
+
+/* ========================================================= */
+/* HEADER / PERFIL / NOTIFICAÇÕES                            */
+/* ========================================================= */
+
+.date-profile-pill {
+    display: flex;
+    align-items: center;
+    background: var(--bg-app);
+    border: 1px solid var(--border);
+    padding: 6px 6px 6px 16px;
+    border-radius: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.notificacao-icon {
+    color: var(--text-sec);
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+}
+
+.notificacao-icon:hover {
+    color: var(--dark-green);
+}
+
+.notificacao-dot {
+    display: none;
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid var(--bg-app);
+}
+
+.header-current-date {
+    margin: 0 15px;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-main);
+}
+
+.header-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg-app);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.header-avatar:hover {
+    transform: scale(1.05);
+}
+
+/* ========================================================= */
+/* SAUDAÇÃO DESKTOP + BOTÃO IA                               */
+/* ========================================================= */
+
+#greeting-pc {
+    width: 100%;
+}
+
+.greeting-desktop-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.greeting-desktop-title {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    line-height: 1;
+    flex: 0 0 auto;
+}
+
+.greet-light {
+    font-size: 35px;
+    font-weight: 400;
+    color: var(--text-main);
+    letter-spacing: -0.03em;
+}
+
+.greet-bold {
+    font-size: 35px;
+    font-weight: 800;
+    color: var(--dark-green);
+    letter-spacing: -0.04em;
+}
+
+button.guget-ai-trigger {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    height: 34px;
+    padding: 0 26px;
+    background: rgba(108, 192, 128, 0.12);
+    border: 1px solid rgba(108, 192, 128, 0.35);
+    border-radius: 999px;
+    color: var(--dark-green);
+    cursor: pointer;
+    transition: 0.2s ease;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    line-height: 1;
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+button.guget-ai-trigger:hover {
+    background: rgba(108, 192, 128, 0.20);
+    border-color: rgba(108, 192, 128, 0.55);
+    transform: translateY(-1px);
+}
+
+.guget-ai-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.guget-ai-text {
+    color: var(--dark-green);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* Mobile */
+.greeting-title-wrapper-mobile {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    line-height: 1;
+}
+
+@media (max-width: 1024px) {
+    button.guget-ai-trigger.desktop-only {
+        display: none !important;
+    }
+
+    button.guget-ai-trigger-mobile {
+        display: inline-flex;
+        height: 32px;
+        padding: 0 18px;
+        margin-top: 10px;
+        font-size: 12px;
+    }
+
+    .greeting-title-wrapper-mobile .greet-light,
+    .greeting-title-wrapper-mobile .greet-bold {
+        font-size: 26px;
+    }
+}
+
+@media (min-width: 1025px) {
+    button.guget-ai-trigger.mobile-only {
+        display: none !important;
+    }
+}

@@ -1,0 +1,1677 @@
+/* --- Sidebar --- */
+.sidebar { 
+    width: 280px; 
+    height: 100vh; 
+    background: var(--sidebar-bg); 
+    border-right: 1px solid var(--border); 
+    display: flex; 
+    flex-direction: column; 
+    padding: 32px 24px; 
+    box-sizing: border-box; 
+}
+
+.brand h2 { 
+    font-size: 20px; 
+    font-weight: 800; 
+    letter-spacing: -0.025em; 
+    color: var(--dark-green);
+    margin: 0 0 32px 0; 
+}
+
+.btn-novo-gasto { 
+    width: 100%; 
+    padding: 12px; 
+    background: var(--dark-green); 
+    color: var(--acc-green); 
+    border: none; 
+    border-radius: 12px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    margin-bottom: 32px; 
+    transition: 0.3s ease; 
+    font-size: 13px;
+}
+.btn-novo-gasto:hover { 
+    filter: brightness(1.2); 
+    transform: translateY(-1px); 
+}
+
+.sidebar-middle { flex: 1; overflow-y: auto;}
+
+/* Seções e Cabeçalhos */
+.sidebar-section { margin-bottom: 48px; } 
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.section-header h3 { 
+    font-size: 10px; 
+    text-transform: uppercase; 
+    letter-spacing: 0.1em; 
+    color: var(--text-sec); 
+    font-weight: 700;
+    margin: 0;
+}
+
+
+/* --- Main Content --- */
+main { flex: 1; padding: 40px 56px; overflow-y: auto; }
+
+.month-nav { display: flex; align-items: center; gap: 20px; margin-bottom: 32px; }
+.month-nav h1 { font-size: 26px; font-weight: 800; color: var(--dark-green); margin: 0; }
+.month-nav button { 
+    border: 1px solid var(--border); 
+    background: #fff; 
+    border-radius: 50%; 
+    width: 36px; height: 36px; 
+    cursor: pointer; 
+    color: var(--dark-green);
+}
+
+/* --- Cards de Resumo --- */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+.stat-card { 
+    background: #fff; 
+    padding: 24px; 
+    border-radius: var(--radius); 
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+/* Card de Saldo em Destaque (Dark Mode) */
+.stat-card:first-child {
+    background: var(--dark-green);
+    color: white;
+}
+.stat-card:first-child small { color: var(--acc-green); }
+.stat-card:first-child h2 { color: white; }
+
+.stat-card small { font-size: 10px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; display: block; margin-bottom: 8px; }
+.stat-card h2 { margin: 0; font-size: 24px; font-weight: 800; color: var(--dark-green); }
+
+/* --- Tabelas Notebook Lado a Lado --- */
+.tables-row { display: flex; gap: 20px; align-items: flex-start; }
+.tables-row .card { 
+    flex: 1; 
+    background: #fff; 
+    padding: 20px!important; 
+    border-radius: var(--radius)!important; 
+    border: 1px solid var(--border)!important;
+}
+.card h3 { font-size: 15px; font-weight: 700; color: var(--dark-green); margin-bottom: 20px; }
+
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 10.5px; text-transform: uppercase; color: var(--text-sec); padding-bottom: 12px; border-bottom: 2px solid var(--bg-app); }
+td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-weight: 500; }
+
+
+/* --- Novo Layout do Gráfico Retrátil --- */
+.chart-card { border: 1px solid var(--border); transition: 0.3s; margin-bottom: 25px;}
+
+.card-header { 
+    padding: 20px 24px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    cursor: pointer;
+}
+
+.header-title-group { display: flex; align-items: center; gap: 12px; }
+
+.header-title-group h3 { 
+    font-size: 14px; 
+    font-weight: 700; 
+    color: var(--dark-green); 
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.chart-content-wrapper {
+    display: flex;
+    gap: 32px;
+    max-height: 0; /* Começa fechado */
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.3s ease, padding 0.3s ease;
+    padding: 0 24px;
+}
+
+/* Seta minimalista em CSS */
+.chevron {
+    width: 8px; height: 8px;
+    border-right: 2px solid var(--text-sec);
+    border-bottom: 2px solid var(--text-sec);
+    transform: rotate(45deg); /* Aponta para baixo por padrão */
+    transition: 0.3s;
+    margin-bottom: 4px;
+}
+.chart-card:not(.expanded) .chevron { transform: rotate(-135deg); margin-bottom: -4px; }
+
+.chart-year-badge {
+    font-size: 11px; font-weight: 800; color: var(--text-sec);
+    margin-bottom: 10px;
+}
+
+/* Quando estiver aberto (classe .expanded será via JS) */
+.chart-card.expanded .chart-content-wrapper {
+    max-height: 2000px; /* Um limite grande o suficiente para a transição ser fluída */
+    opacity: 1;
+    padding: 24px;
+    transition: max-height 0.8s ease-in-out, opacity 0.5s ease-in-out, padding 0.5s ease-in-out;
+}
+
+.chart-main { flex: 2; min-width: 0; }
+.chart-annual-summary { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between;
+    border-left: 1px solid var(--border);
+    padding-left: 32px;
+}
+
+.ann-item small { font-size: 9px; font-weight: 800; color: var(--text-sec); letter-spacing: 0.05em; }
+.ann-item h4 { margin: 4px 0 12px 0; font-size: 16px; font-weight: 800; color: var(--dark-green); }
+
+.txt-green { color: #10b981; }
+.txt-red { color: #ef4444; }
+
+
+/* Navegação de Ano no Gráfico */
+.chart-year-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sec);
+}
+
+.chart-year-control button {
+    background: unset;
+    border: none;
+    color: var(--text-sec);
+    cursor: pointer;
+    font-size: 10px;
+    padding: 4px;
+    transition: 0.2s;
+}
+
+.chart-year-control button:hover {
+    color: var(--dark-green);
+    transform: scale(1.2);
+}
+
+
+/* 1. ESCONDER POR PADRÃO (DESKTOP) */
+.mobile-tab-bar, #aba-entradas {
+    display: none; /* Garante que não apareça no PC */
+}
+
+.sidebar-footer { border-top: none !important; padding: 0 !important; margin: 0 !important; }
+
+.options-trigger svg {
+    display: none !important;
+}
+
+/* Estilo Base dos Cards de Meta (Desktop) */
+#grid-metas {
+    display: flex; /* No PC usamos flex para eles ficarem um ao lado do outro */
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.meta-item-card {
+    box-sizing: border-box; /* Impede que o padding "estoure" o tamanho */
+    width: 240px;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px 15px;
+    position: relative;
+    text-align: center;
+    border: 1px solid #f0f2f1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.meta-titulo {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    color: var(--dark-green);
+    font-weight: 600;
+}
+
+.meta-chart-wrapper {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto;
+}
+
+.meta-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--dark-green);
+}
+
+.meta-info-valores {
+    margin-top: 20px;
+    font-size: 0.95rem;
+}
+
+.v-atual { font-weight: 800; color: #1b3a32; }
+.v-de { color: #cbd5e0; font-weight: 400; margin: 0 4px; }
+.v-total { color: #718096; font-weight: 600; }
+
+.btn-editar-meta-simples {
+    margin-top: 15px;
+    background: #f8faf9;
+    border: 1px solid #e2e8f0;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: #718096;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* O X no Desktop */
+.btn-del-meta {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: unset;
+    border: none;
+    color: #cbd5e0;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* --- RESPONSIVIDADE TOTAL --- */
+@media (max-width: 1024px) {
+    body { flex-direction: column; overflow-y: auto; height: auto; }
+    
+    /* Sidebar vira um cabeçalho fixo compacto */
+    .sidebar {
+        width: 100%;
+		height: 60px !important; /* Altura fixa para o header */
+		padding: 10px 20px;
+        flex-direction: row !important;
+		justify-content: space-between;
+		align-items: center;
+        position: sticky;
+		top: 0;
+		z-index: 1000;
+        border-right: none;
+		border-bottom: 1px solid var(--border);
+    }
+
+    /* Esconde elementos secundários no mobile para ganhar tela */
+    .mascot-container, .sidebar-middle, .sidebar > .btn-novo-gasto { display: none !important; }
+    .brand h2 { margin: 0; font-size: 18px; }
+    .options-container { width: auto; margin: 0; padding: 0; font-size: 11px; }
+
+	/* Transforma o container de opções em um botão circular minimalista */
+    .options-trigger {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 38px !important;
+        height: 38px !important;
+        padding: 0 !important;
+        border-radius: 50% !important; /* Círculo perfeito */
+        background: #f0f2f1 !important; /* Cor de fundo discreta */
+		color: var(--dark-green) !important; /* Cor do ícone */
+        border: 1px solid var(--border) !important;
+        font-size: 16px !important;
+		cursor: pointer;
+		box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+	
+	/* O ícone SVG propriamente dito */
+    .user-profile-icon {
+        width: 20px;
+        height: 20px;
+    }
+	
+	/* Garante que o texto "Opções" não aparece de forma alguma */
+    .options-trigger span, #container-lembretes-fatura {
+        display: none !important;
+    }
+	
+	.options-trigger svg {
+    display: block !important;
+}
+	
+	/* Esconde o texto "Opções" se ele ainda estiver no HTML, mantendo só o ícone */
+    .options-trigger span:not(.system-icon), 
+    .options-trigger {
+        font-size: 0; /* Remove texto residual */
+    }
+	
+	.options-trigger span:not(.system-icon) {
+        display: none !important;
+    }
+	
+	.system-icon {
+        font-size: 18px !important;
+        margin: 0 !important; /* Remove margens que desalinhariam o ícone no círculo */
+    }
+	
+	/* Remove qualquer margem ou padding da div pai (sidebar-footer) */
+    .sidebar-footer {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    /* Garante que o dropdown de opções abra no lugar certo no mobile */
+    .options-dropdown {
+        right: 0;
+        left: auto;
+        bottom: auto;
+        top: 50px; /* Abre abaixo do ícone circular */
+    }
+
+    /* Main ocupa a largura total */
+    main { padding: 15px; width: 100%; box-sizing: border-box; }
+    .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+    .tables-row { flex-direction: column; gap: 0px; }
+    .card-stack, .tables-row .card { width: 100% !important; max-width: 100%; gap: 0;}
+
+    /* Tabelas viram blocos de leitura vertical (Cards) */
+    table, thead, tbody, th, td, tr { display: block; }
+    thead tr { position: absolute; top: -9999px; left: -9999px; }
+    tr { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; padding: 12px; background: white; }
+    td { border: none; display: flex; justify-content: space-between; align-items: center; padding: 8px 0; width: 100%; }
+    td::before { content: attr(data-label); font-weight: 800; font-size: 10px; color: var(--text-sec); text-transform: uppercase; }
+	
+	.chart-card {
+		margin-bottom: 15px;
+	}
+	
+	/* A barra em si */
+.mobile-tab-bar {
+    position: fixed;
+    bottom: 20px; /* Descola do fundo da tela */
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza perfeitamente */
+    width: calc(100% - 30px); /* Dá uma margem de respiro nas laterais */
+    max-width: 80%; /* Fica bonito até em celulares gigantões */
+    background-color: #ffffffe0;
+    border-radius: 50px; /* Arredonda como uma pílula */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Sombra suave para "flutuar" */
+    z-index: 1000;
+    border-top: none; /* Tira aquela linha dura velha */
+}
+
+/* O formato padrão de TODOS os botões (círculos) */
+.tab-btn, .fab-btn {
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* O fundo transparente para as abas inativas */
+.tab-btn {
+    width: 46px;  
+    height: 46px; 
+    background-color: transparent; 
+    color: #a0aec0; /* Ícone cinza claro para não roubar a atenção */
+}
+
+/* Quando a aba estiver ativa, o ícone ganha destaque premium */
+.tab-btn.active {
+    background-color: #e8f5e9; /* Fundo verdinho suave da sua paleta */
+    color: #1b3a32; /* Ícone verde escuro principal */
+    transform: scale(1.05); /* Leve pulinho de destaque */
+}
+
+/* O botão principal (+) em destaque dentro da barra */
+.fab-btn {
+    width: 56px;  /* O botão + é visivelmente maior */
+    height: 56px;
+    background-color: #1a362d; /* O verde "quase preto" da sua referência */
+    color: #96e6a1; /* O verdinho claro do ícone de + */
+    box-shadow: 0 4px 15px rgba(26, 54, 45, 0.25);
+    margin-left: 5px; /* Um espacinho extra antes dele */
+}
+
+.mobile-tab-bar .fi {
+    font-size: 18px !important;  /* Tamanho dos ícones normais */
+    line-height: 1 !important;   /* Remove espaços extras verticais */
+    display: flex !important;    /* Garante centralização */
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;      /* Ocupa o botão todo */
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.fab-btn:active {
+    transform: scale(0.92);
+}
+
+/* Mira no botão de + para ele ser maior ainda */
+.fab-btn .fi {
+    font-size: 18px !important; /* Tamanho do ícone de + */
+}
+
+/* Ajuste fino para os ícones do Flaticon */
+.fi {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+    /* Controle de Visibilidade das Seções */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+	
+	/* 1. Inverte a ordem do conteúdo no container HOME */
+    #aba-home {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* O container dos números agora vai para o final */
+    .stats-grid {
+        order: 2; /* Joga para baixo das tabelas/gráfico */
+        grid-template-columns: 1fr; /* Um card por linha para não apertar */
+        gap: 15px;
+        margin: 20px 0; /* Espaço para a linha superior respirar */
+    }
+
+    /* O container do gráfico e tabelas vai para o topo */
+    .chart-card, .tables-row {
+        order: 1;
+    }
+
+    /* 2. Estilização dos Cards de Resumo para não ficarem apertados */
+    .stat-card {
+        display: flex;
+        justify-content: space-between; /* Texto na esquerda, valor na direita */
+        align-items: center;
+        padding: 20px 24px;
+        min-height: 35px;
+    }
+
+    .stat-card small {
+        margin-bottom: 0; /* Alinha horizontalmente com o valor */
+        font-size: 11px;
+    }
+
+    .stat-card h2 {
+        font-size: 20px;
+    }
+
+/* 2. Força todos os cards a esticarem até o limite do main */
+    .tab-content, .card, .meta-item-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 3. Ajuste específico para a aba HOME respirar no final */
+    main {
+        padding-bottom: 120px !important; /* Garante que a Tab Bar não cubra o último número */
+    }
+	/* 1. Configura o wrapper como coluna para permitir a inversão */
+    .chart-content-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+
+    /* 2. O Resumo Anual (Entradas, Saídas...) SOBE */
+    .chart-annual-summary {
+        order: 1 !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr; /* Coloca os itens em duas colunas para poupar altura */
+        gap: 15px !important;
+        padding-left: 0 !important;
+        border-left: none !important; /* Remove a linha vertical lateral do PC */
+        border-bottom: 1px solid var(--border); /* Adiciona a linha divisória horizontal */
+        padding-bottom: 20px !important;
+    }
+	
+	.chart-card.expanded .chart-content-wrapper {
+		padding-top: 0px;
+	}
+	
+    /* 3. O Gráfico de Linha DESCE */
+    .chart-main {
+        order: 2 !important;
+        width: 100% !important;
+    }
+
+    /* 4. Ajuste dos itens do resumo para o novo layout */
+    .ann-item h4 {
+        font-size: 14px !important;
+        margin-bottom: 5px !important;
+    }
+	
+	/* 1. Força as duas colunas no container pai */
+    #grid-metas {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important; /* As 2 colunas */
+        gap: 12px !important;
+        padding: 10px !important;
+    }
+
+    /* 2. Reseta o card para ser flexível */
+    .meta-item-card {
+        width: 100% !important; /* Ocupa metade do grid */
+        margin: 0 !important;
+        background: #ffffff !important; /* Card branco estilo App */
+        border-radius: 18px !important;
+        padding: 15px 5px !important;
+        border: 1px solid #f0f2f1 !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+
+    /* 3. Diminui o círculo do gráfico */
+    .meta-chart-wrapper {
+        width: 85px !important;
+        height: 85px !important;
+    }
+
+    .meta-percentage {
+        font-size: 0.95rem !important;
+    }
+
+    /* 4. Ajusta os textos financeiros */
+    .meta-titulo {
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        color: var(--dark-green) !important;
+        margin: 0 0 12px 0 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+
+	/* X Estilizado e fácil de clicar no Mobile */
+    .btn-del-meta {
+        top: 8px !important;
+        right: 8px !important;
+        background: #fff1f1 !important;
+        color: #ff5c5c !important;
+        width: 22px !important;
+        height: 22px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        opacity: 1 !important;
+    }
+
+    .meta-info-valores {
+        display: flex;
+        flex-direction: column; /* Empilha os valores */
+        font-size: 11px !important;
+        margin-top: 10px !important;
+    }
+
+    .v-de { display: none; } /* Esconde o "de" para ganhar espaço vertical */
+	
+	.v-atual {
+        font-size: 13px !important;
+        font-weight: 800 !important;
+        color: #1b3a32 !important;
+    }
+
+    .v-total {
+        font-size: 10px !important;
+        color: #a0aec0 !important;
+        font-weight: 500 !important;
+    }
+
+    /* BOTÃO EDITAR ESTILIZADO (Adeus cinza bruto) */
+    .btn-editar-meta-simples {
+        margin-top: 12px !important;
+        background: #f8faf9 !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #718096 !important;
+        padding: 6px 12px !important;
+        border-radius: 12px !important;
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        transition: 0.2s;
+    }
+	
+	/* Estilo para o contêiner que envolve o botão (se houver um no seu JS) */
+    .meta-header-mobile {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 10px 0 20px 0;
+    }
+
+    /* O botão em si, agora com cara de botão de app premium */
+    .btn-novo-gasto[onclick*="modal-meta"] { 
+        width: 70% !important;
+        margin: 15px auto 15px auto !important;
+        display: block !important;
+        float: none !important; /* Mata o float right se houver */
+        background: var(--dark-green) !important;
+        color: var(--acc-green) !important;
+        border-radius: 12px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 10px !important;
+        box-shadow: 0 4px 15px rgba(27, 58, 50, 0.15);
+    }
+	
+	/* 1. O container HOME precisa ser um bloco limpo */
+    #aba-home {
+        display: block !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* 2. O Card de Resumo deve ocupar quase a largura toda da tela */
+    #resumo-bancos-container, 
+    .resumo-card,
+    div[class*="resumo"] {
+        max-width: none;
+        margin: 20px auto !important; /* Centraliza horizontalmente */
+        padding: 25px 20px !important;
+        float: none !important;
+        display: block !important;
+        background: #ffffff !important;
+        border-radius: var(--radius)!important;
+        box-sizing: border-box !important;
+		border: 1px solid #c8e6c9;
+    }
+
+    /* 3. Ajuste das linhas para esticarem de ponta a ponta dentro do card */
+    .resumo-item, .row-resumo {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 12px 0 !important;
+        border-bottom: 1px solid #f1f5f3 !important;
+    }
+	
+	/* Garante que o nome não empurre o valor para fora */
+    .resumo-item span:first-child {
+        flex: 1;
+        text-align: left;
+    }
+	
+}
+
+/* --- BLINDAGEM DESKTOP (PC) --- */
+@media (min-width: 1025px) {
+    /* Força a Home a estar sempre visível */
+    #aba-home.tab-content {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Esconde as seções que são duplicadas apenas para o menu mobile */
+    .mobile-only-section, #aba-entradas, #aba-pagamentos {
+        display: none !important;
+    }
+
+    /* Restaura o layout de colunas das tabelas */
+    .tables-row {
+        display: flex !important;
+        width: 100% !important; /* Garante que a linha use o total da tela */
+        justify-content: space-between; /* Distribui o espaço entre as colunas */
+    }
+	
+	/* Força as colunas (card-stack e seções) a crescerem igualmente */
+    .tables-row > .card-stack, 
+    .tables-row > .tab-content {
+        flex: 1 !important; 
+        min-width: 0; /* Evita que tabelas largas quebrem o flex */
+    }
+}
+
+/* --- REGRAS MOBILE --- */
+@media (max-width: 1024px) {
+    .tab-content { display: none; }
+    .tab-content.active { display: block !important; }
+    
+    /* No mobile, não precisamos das tabelas dentro da Home se elas tiverem abas próprias */
+    .desktop-only-card { display: none !important; }
+	
+	/* Se a section não tiver a classe active, ela NÃO PODE aparecer, não importa o quê */
+    section.tab-content:not(.active) {
+        display: none !important;
+    }
+    
+    /* Força o main a aceitar que os filhos sumam */
+    main {
+        display: block !important; 
+        overflow-y: auto !important;
+    }
+	
+	/* Container do Card de Entradas */
+    #aba-entradas .card {
+        background: #ffffff;
+        border-radius: var(--radius);
+        padding: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin: 10px;
+    }
+
+    /* Estilo de cada linha de entrada */
+    .entrada-item-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .entrada-item-mobile:last-child {
+        border-bottom: none;
+    }
+
+    .ent-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .ent-info strong {
+        font-size: 14px;
+        color: var(--text-main);
+    }
+
+    .ent-info span {
+        font-size: 11px;
+        color: var(--text-sec);
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .ent-valor-box {
+        text-align: right;
+    }
+
+    .ent-valor {
+        font-size: 15px;
+        font-weight: 700;
+        color: #10b981; /* Verde Sucesso */
+        display: block;
+    }
+	
+	/* Garante que o botão de ADD dentro da aba entradas siga o padrão das metas */
+    #aba-entradas .btn-novo-gasto {
+        width: 50% !important;
+        margin: 0 !important; /* Remove margens automáticas que centralizam */
+        display: block !important;
+        background: var(--dark-green) !important;
+        color: var(--acc-green) !important;
+        border-radius: 12px !important;
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 10px !important;
+        box-shadow: 0 4px 15px rgba(27, 58, 50, 0.15);
+    }
+	
+	/* Container para alinhar o botão à direita */
+.header-alinhado-direita {
+    display: flex;
+    justify-content: flex-end; /* Empurra o conteúdo para a direita */
+    padding: 0px 0;
+    width: 100%;
+}
+
+/* Transforma o corpo da tabela em um container flexível */
+    #tabela-cartao tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 10px 0;
+    }
+
+    .cartao-info-principal {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .cartao-nome-grupo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cartao-nome-grupo strong {
+        font-size: 14px;
+        color: var(--dark-green);
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .cartao-parcela-tag {
+        font-size: 10px;
+        background: #eef1f0;
+        color: #7a8b87;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 700;
+    }
+
+    .cartao-valor-grupo {
+        text-align: right;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .cartao-valor {
+        font-weight: 800;
+        font-size: 15px;
+        color: var(--dark-green);
+    }
+
+    /* Esconde o cabeçalho original da tabela no mobile para não poluir */
+    #tabela-cartao thead {
+        display: none;
+    }
+	
+}
+
+/* No corpo geral do CSS */
+.mobile-only { display: none; }
+.desktop-only { display: table; width: 100%; }
+
+/* --- DENTRO DA MEDIA QUERY (max-width: 1024px) --- */
+@media (max-width: 1024px) {
+    .desktop-only, .desktop-only-row, #tabela-cartao, #tabela-debito { display: none !important; }
+    .mobile-only { display: flex; flex-direction: column; gap: 10px; }
+	
+	/* Força o container dos cards mobile a aparecer */
+    .mobile-only, #lista-cartao-mobile, #lista-debito-mobile {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px;
+        width: 100% !important;
+		padding: 10px 0;
+    }
+	
+	/* Estilo do Card (Aquele visual de extrato que você curtiu) */
+    .cartao-item-mobile {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #ffffff;
+        padding: 16px;
+        border-radius: 16px;
+        border: 1px solid #f0f2f1;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        padding: 14px 0;
+		padding-left: 15px;
+		padding-right: 10px;
+    }
+	
+	.cartao-item-mobile:active {
+        background-color: #f0f2f1; /* Escurece levemente ao tocar */
+        transform: scale(0.98);    /* Dá uma leve encolhida */
+        transition: 0.1s;
+    }
+    
+    .cartao-nome-grupo strong {
+        font-size: 14px;
+        color: var(--dark-green);
+    }
+    
+    .cartao-parcela-tag {
+        font-size: 10px;
+        color: var(--text-sec);
+        margin-left: 5px;
+    }
+}
+
+
+/* PADRÃO PC: Esconde os botões de troca */
+.mobile-tabs-toggle {
+    display: none;
+}
+
+/* --- VERSÃO MOBILE --- */
+@media (max-width: 1024px) {
+    .mobile-tabs-toggle {
+        display: flex;
+        padding: 0;
+        gap: 4px;
+        margin: 0;
+		margin-bottom: -1px;
+        z-index: 1;
+        position: relative;
+    }
+
+    .mobile-tabs-toggle button {
+        flex: 1;
+        padding: 15px 10px;
+        border: none;
+        border-radius: var(--radius) var(--radius) 0 0;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #7a8b87;
+        background: transparent;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .mobile-tabs-toggle button.active {
+        background: #e8f5e9 !important;
+        color: var(--dark-green) !important;
+        border: 1px solid var(--border) !important;
+        border-bottom: 2px solid #e8f5e9 !important;
+        position: relative;
+        z-index: 10;
+        margin-bottom: -1px;
+		
+		/* 1. Remove o flash colorido ao tocar (comum no Android/iOS) */
+        -webkit-tap-highlight-color: transparent !important;
+        -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+
+        /* 2. Remove a borda de foco do sistema */
+        outline: none !important;
+        box-shadow: none !important;
+
+        /* 3. Impede que o navegador mostre o menu de "selecionar texto" ao segurar o botão */
+        -webkit-touch-callout: none !important;
+        user-select: none !important;
+    }
+
+    /* Ajuste da tabela de terceiros para não quebrar a largura */
+    #tabela-terceiros {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    /* Forçar o card de resumo a respeitar o estado inicial no mobile */
+    #card-resumo-conteudo {
+        display: block;
+    }
+	.card.resumo-mensal {
+        margin: 0 !important;
+        border-top-left-radius: 0 !important;
+		max-width: none !important;
+		padding-top: 0 !important;
+		background: #e8f5e9 !important;
+    }
+	
+	.card.resumo-mensal h3, .card.card-terceiros h3 {
+		display: none;
+    }
+
+    /* O elemento que vai 'apagar' a linha do card */
+    .tab-pasta.active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px; /* Desce para cobrir a linha do card abaixo */
+        left: 0;
+        right: 0;
+        height: 3px; /* Altura suficiente para garantir a cobertura */
+        background: #ffffff; /* Cor branca idêntica ao fundo do card */
+        z-index: 11;
+    }
+}
+
+@media (max-width: 1024px) {
+    /* Garante que o card de resumo respeite o JS e não o 'display: block' do PC */
+    #card-resumo-conteudo {
+        display: block!important;
+		border: 1px solid #c8e6c9;
+    }
+
+    #card-terceiros {
+		padding: 20px;
+        border-top-right-radius: 0 !important;
+	}
+	
+}
+
+@media (max-width: 1024px) {
+	
+	/* --- CORREÇÃO DA ANIMAÇÃO DA ABA DE CRÉDITO --- */
+
+/* Aplica a animação na aba inteira quando ela for exibida */
+#aba-cartao {
+    animation: subirSuave 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Garante que os cartõezinhos dentro dela também acompanhem o movimento de forma fluida */
+#lista-cartao-mobile .cartao-item-mobile, #lista-debito-mobile .cartao-item-mobile, #card-resumo-conteudo .resumo-central-item, #lista-terceiros-mobile  .cartao-item-mobile {
+    animation: subirSuave 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* O "motor" da animação (caso o seu CSS original use outro nome, este aqui é à prova de falhas) */
+@keyframes subirSuave {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+	
+    /* Faz as duas sections parecerem uma só no mobile */
+    #aba-debito, #aba-cartao {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+	
+	/* Só mostra o botão se uma das abas de cartões estiver ativa no sistema de navegação */
+    #aba-debito.active .cartoes-toggle, 
+    #aba-cartao.active .cartoes-toggle {
+        display: flex !important;
+    }
+	
+    /* Os botões de sub-aba */
+    .mobile-tabs-toggle {
+        display: flex;
+        margin-bottom: -1px;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Conexão branca para os cartões */
+    #aba-debito > .mobile-tabs-toggle button.active {
+        background: #ffffff !important;
+        border-bottom: 2px solid #ffffff !important;
+        position: relative;
+    }
+	
+	/* --- ESPECIFICAÇÕES ÚNICAS: ABA CARTÕES --- */
+    .cartoes-toggle {
+        /* Aqui você faz as alterações que não afetam o resumo */
+        margin-top: 0 !important;  /* Exemplo: os botões de cartão precisam de mais espaço no topo */
+        gap: 0px; /* Exemplo: botões de cartão mais afastados um do outro */
+		display: flex !important;
+        width: 100% !important;
+        margin-bottom: -1px !important;
+    }
+
+    .cartoes-toggle button {
+        /* Exemplo: borda mais arredondada ou fonte menor */
+		flex: 1 !important; /* Faz cada botão ocupar metade da tela */
+        border-bottom: none !important;
+        border-radius: 12px 12px 0 0 !important;
+    }
+
+    .cartoes-toggle button.active {
+        background: #ffffff !important;
+        border-bottom: 2px solid #ffffff !important;
+    }
+	
+	/* O SEGREDO PARA NÃO SUMIR: Quando estivermos na aba de crédito, 
+       forçamos a section de débito (que contém os botões) a ficar visível também, 
+       mas escondemos apenas o card de débito lá dentro. */
+    #aba-debito.mostrar-botoes-apenas {
+        display: block !important;
+    }
+    
+    #aba-debito.mostrar-botoes-apenas #sub-card-debito {
+        display: none !important;
+    }
+	
+	/* 2. Só aparece quando a aba de cartões ou débito estiver ativa */
+    #aba-cartao.active .cartoes-toggle, 
+    #aba-debito.active .cartoes-toggle {
+        display: flex !important;
+    }
+	
+	.mobile-tabs-toggle button:focus,
+    .mobile-tabs-toggle button:active {
+        outline: none !important;
+        box-shadow: none !important; /* Caso tenha algum shadow sobrando */
+    }
+	
+	.cartoes-toggle button:active,
+    .cartoes-toggle button:focus,
+    .cartoes-toggle button:hover {
+        outline: none !important;
+        box-shadow: none !important;
+        background-color: inherit; /* Mantém a cor que você definiu no active */
+    }
+	
+	#sub-card-credito {
+    border-top-left-radius: 0 !important;
+}
+	
+	#sub-card-debito {
+    border-top-right-radius: 0 !important;
+}
+
+	#sub-card-credito h3, #sub-card-debito h3 {
+    display: none !important;
+}
+	
+}
+
+#g-forma-pagamento, #g-inicio-pagamento {
+	margin-bottom: 0;
+}
+
+/* Esconde a navegação mobile no PC */
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    /* Esconde as setas velhas no Mobile */
+    .desktop-only { display: none !important; }
+
+    /* Força o header a colocar os lembretes embaixo da navegação se faltar espaço */
+    .month-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+		margin-bottom: 20px;
+    }
+    
+    /* A nova barra Mobile */
+    #mobile-month-nav {
+        display: flex !important;
+        flex-direction: row !important; /* Força ficar um do lado do outro */
+        flex-wrap: nowrap !important; /* Impede que eles caiam para a linha de baixo */
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 5px 0;
+    }
+
+    /* Estilo dos meses nas laterais */
+    .month-item {
+        font-size: 14px;
+        font-weight: 400;
+        color: #a0aec0;
+        cursor: pointer;
+        user-select: none;
+        flex: 1; /* Faz eles dividirem o espaço igualmente */
+        white-space: nowrap; /* Impede que o texto amasse e quebre linha */
+        transition: 0.2s;
+    }
+
+    .prev-month { text-align: center; }
+    .next-month { text-align: center; }
+
+    /* Mês Atual (Centro em Destaque) */
+    .current-month {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--dark-green);
+        text-align: center;
+        flex: 2; /* Ganha o dobro de espaço no centro para caber "Fevereiro 2026" */
+        position: relative;
+    }
+
+    /* Tracinho de ênfase embaixo do mês atual */
+    .current-month::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 2px;
+        background-color: var(--dark-green);
+        border-radius: 2px;
+    }
+}
+
+/* Card de Total no Mobile */
+.mobile-total-card {
+    background: #f4f6f5; /* Fundo cinza premium */
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px dashed #cbd5e0; /* Bordinha tracejada de recibo */
+	width: initial!important;
+}
+
+.mobile-total-card span:first-child {
+    font-size: 14px;
+    font-weight: 600;
+    color: #718096;
+}
+
+.mobile-total-card span:last-child {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+/* --- CORREÇÃO DEFINITIVA DAS BORDAS DAS ABAS --- */
+
+/* 1. Abas Principais (Resumo e Terceiros) -> Borda Verde Clarinho */
+.mobile-tabs-toggle button.active {
+    border: 1px solid #c8e6c9 !important; /* Combina perfeitamente com o card verde */
+    border-bottom: 2px solid #e8f5e9 !important; /* Esconde a linha que divide a aba do card */
+}
+
+/* --- CORREÇÃO DEFINITIVA DO ALINHAMENTO DAS FATURAS NO PC --- */
+@media (min-width: 1025px) {
+    /* 1. O VILÃO: Impede que o título roube a linha toda pra ele */
+    .nav-pc.desktop-only {
+        width: auto !important;
+    }
+
+    /* 2. Proíbe o cabeçalho de quebrar as coisas em duas linhas */
+    .month-nav {
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+    }
+
+    /* 3. Limpa qualquer sobra de margem nas faturas */
+    #container-lembretes-fatura {
+        align-items: center !important;
+        padding-bottom: 0 !important;
+        margin: 0 !important;
+		display: none !important;
+    }
+}
+
+
+/* --- LAYOUT ACORDEÃO HORIZONTAL SUAVE (APENAS PC) --- */
+@media (min-width: 1025px) {
+    #aba-planejamento {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        margin-bottom: 25px;
+    }
+
+    #aba-planejamento > .chart-card {
+        flex: 1; /* Todos dividem o espaço igualmente (33%) */
+        margin-bottom: 0 !important;
+        min-width: 0; /* Impede vazamento de layout */
+        transition: flex 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Animação macia de encolher/esticar */
+    }
+
+    #aba-planejamento > .chart-card.expanded {
+        flex: 2.5; /* O card clicado cresce, espremendo os outros de forma suave */
+    }
+
+    /* O SEGREDO ANTI-PULO: Trava o texto para não quebrar linha nem "pular" */
+    #aba-planejamento .card-header {
+        white-space: nowrap; 
+        overflow: hidden; 
+    }
+}
+
+/* --- REMÉDIO PARA O CHOQUE INICIAL VERTICAL --- */
+.chart-card .chart-content-wrapper {
+    /* Essa curva (cubic-bezier) faz o movimento da 'cortina' começar leve e frear no final */
+    transition: max-height 0.7s cubic-bezier(0.25, 1, 0.5, 1), padding 0.5s ease, opacity 0.5s ease !important;
+}
+
+/* --- ESTILO PARA O TOTAL PREVISTO (Subtítulo) --- */
+.texto-previsto {
+    font-size: 14px !important;
+    color: #718096 !important;
+    font-weight: 600 !important;
+    margin-left: 1px;
+    display: inline-block;
+}
+
+/* Evita quebra de linha em telas muito finas */
+.mobile-total-card span:last-child {
+    white-space: nowrap; 
+}
+
+
+/* ======================================================== */
+/* 🚀 CSS PREMIUM: DESKTOP DASHBOARD REDESIGN               */
+/* ======================================================== */
+@media (min-width: 1025px) {
+    /* 1. Estética dos botões rápidos da Sidebar */
+    /* --- Menu General Premium (Sidebar PC) --- */
+    .btn-sidebar-general {
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sec);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-sidebar-general i {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.btn-sidebar-general:hover {
+    background: var(--bg-app); 
+    color: var(--dark-green);
+}
+
+.btn-sidebar-general:hover i {
+    color: var(--dark-green);
+    transform: scale(1.1);
+}
+
+/* Hover específico do Logout (Vermelho suave) */
+.btn-sidebar-general.btn-logout:hover {
+    background: #fff1f1 !important;
+    color: #ef4444 !important;
+}
+.btn-sidebar-general.btn-logout:hover i { 
+    color: #ef4444 !important; 
+}
+	
+    /* Botão de Logout ganha um alerta sutil no hover */
+    .btn-logout:hover {
+    background: #fff1f1 !important;
+    color: #ef4444 !important;
+}
+.btn-logout:hover i { color: #ef4444 !important; }
+
+    /* Adaptação para o Modo Escuro */
+body.dark-theme .btn-sidebar-general { color: #a1a1aa !important; }
+body.dark-theme .btn-sidebar-general i { color: #a1a1aa !important; }
+body.dark-theme .btn-sidebar-general:hover { background: #27272a !important; color: var(--text-main) !important; }
+body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !important; }
+	
+}
+
+/* ======================================================== */
+/* 🚀 CORREÇÃO DE ESPAÇAMENTO DO CABEÇALHO (PC)             */
+/* ======================================================== */
+@media (min-width: 1025px) {
+    .header-left.desktop-only {
+        flex: 1.7 !important; /* Dá o dobro de espaço para o texto gigante */
+        min-width: max-content !important; /* Proíbe o navegador de espremer o botão */
+    }
+	/* Mantém o Logo grande apenas no PC */
+    #logo-guget {
+        font-size: 28px !important;
+        margin-bottom: 20px !important;
+		text-align: center !important;
+    }
+}
+
+/* --- Estética do Botão de Notificações (Fatura) --- */
+    .btn-notif-fatura {
+        background: var(--bg-app);
+        border: 1px solid var(--border);
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .btn-notif-fatura i { color: var(--text-sec); font-size: 18px; }
+    .btn-notif-fatura:hover { border-color: var(--dark-green); transform: translateY(-1px); }
+    .btn-notif-fatura:hover i { color: var(--dark-green); }
+    
+    body.dark-theme .btn-notif-fatura { background: #27272a; border-color: #3f3f46; }
+    body.dark-theme #notificacao-dot { border-color: #27272a !important; }
+
+/* ======================================================== */
+
+/* ======================================================== */
+/* 💻 MODO NOTEBOOK COMPACTO (Telas de 1025px até 1440px)   */
+/* ======================================================== */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    
+    /* 1. Encolhe a Barra Lateral (Estava roubando muito espaço) */
+    .sidebar {
+        width: 230px !important; 
+        min-width: 230px !important;
+        padding: 20px 15px !important;
+    }
+    .brand h2 { font-size: 22px !important; margin-bottom: 20px !important; }
+
+    /* 2. Libera o espaço do Cabeçalho (O seu nome gigante) */
+    .greet-light, .greet-bold {
+        font-size: 26px !important; /* Diminui a fonte */
+    }
+    .header-left.desktop-only {
+        min-width: 220px !important; /* Tira a trava invisível que empurrava os meses */
+        flex: 1 !important;
+    }
+    .month-nav {
+        margin-bottom: 20px !important;
+    }
+    .timeline-month { font-size: 13px !important; }
+    .timeline-current { font-size: 16px !important; }
+
+    /* 3. Reduz o Banner de Indicação (Para parar de espremer o menu) */
+    .referral-banner {
+        padding: 15px !important;
+        margin-top: 15px !important;
+    }
+    .referral-banner h4 { font-size: 12px !important; margin-bottom: 2px !important; }
+    .referral-banner p { font-size: 10px !important; margin-bottom: 10px !important; line-height: 1.2 !important; }
+    .referral-banner button { padding: 8px !important; font-size: 11px !important; }
+
+    /* 4. Aproxima os Botões e Textos da Lateral */
+    .btn-split { padding: 10px 8px !important; font-size: 11px !important; }
+    .sidebar-action-buttons { margin-bottom: 20px !important; gap: 8px !important; }
+    .btn-sidebar-general { font-size: 12px !important; padding: 8px 10px !important; gap: 8px !important;}
+    .btn-sidebar-general i { font-size: 14px !important; }
+
+    /* 5. Ajustes finos nos cards centrais para dar fôlego */
+    .card-resumo, .card-terceiros { padding: 15px !important; }
+    .section-header h3 { font-size: 9px !important; }
+}
+
+/* ======================================================== */
+/* 🛡️ PROTEÇÃO CONTRA ESMAGAMENTO (Telas Médias)            */
+/* ======================================================== */
+@media (min-width: 1025px) and (max-width: 1350px) {
+    
+    /* 1. Faz o cabeçalho quebrar a linha se ficar sem espaço */
+    .month-nav {
+        flex-wrap: wrap !important;
+        gap: 15px !important;
+    }
+    .header-center.desktop-only {
+        order: 3; /* Joga a timeline de meses para a linha de baixo */
+        min-width: 100% !important;
+        margin-top: 10px;
+    }
+
+    /* 2. Força as caixas (Cards) a descerem em vez de esmagarem */
+    /* Procura qualquer div com display:flex que esteja segurando os cards */
+    main > div[style*="display: flex"], 
+    .tab-content > div[style*="display: flex"] {
+        flex-wrap: wrap !important; 
+    }
+
+    /* 3. Garante que os cartões não fiquem finos como um palito */
+    .card-resumo, 
+    .card-terceiros, 
+    .card-grafico {
+        min-width: 320px !important; /* Tamanho mínimo de respiro */
+        flex: 1 1 100% !important;   /* Se não couber, ocupa a linha inteira de baixo */
+        margin-bottom: 20px !important;
+    }
+}
+
+/* ======================================================== */
+
+/* ======================================================== */
+/* 🚀 DESTAQUE DA TIMELINE DE MESES (CENTRO DO CABEÇALHO)   */
+/* ======================================================== */
+
+/* Os meses laterais (Jan, Fev, Abr, Mai) */
+.timeline-month {
+    font-size: 16px !important; /* Aumentamos o tamanho */
+    font-weight: 600 !important; /* Deixamos a fonte mais grossa e legível */
+    color: #94a3b8 !important; /* Um cinza azulado mais chique */
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    padding: 6px 12px !important;
+    border-radius: 12px !important;
+}
+
+/* Efeito Hover: O que acontece ao passar o mouse nos meses laterais */
+.timeline-month:hover {
+    color: var(--dark-green) !important;
+    background: #e8f5e9 !important; /* Fundo verdinho claro suave */
+    transform: scale(1.1) !important; /* Dá um leve pulinho */
+}
+
+/* O Mês Atual no centro (Ex: Março 2026) */
+.timeline-current {
+    font-size: 24px !important; /* Saltou de 20px para 24px (Gigante e imponente) */
+    font-weight: 800 !important;
+    color: var(--dark-green) !important;
+    transition: transform 0.2s ease !important;
+    margin: 0 10px !important; /* Dá mais espaço para ele respirar */
+}
+
+
+/* Proteção para o Modo Notebook (Para não espremer em telas menores) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    .timeline-month { font-size: 14px !important; padding: 4px 8px !important; }
+    .timeline-current { font-size: 20px !important; }
+}
+
+/* ========================================================= */
+/* ESCALA DESKTOP 80% - CORREÇÃO FINAL DE SCROLL             */
+/* ========================================================= */
+
+@media (min-width: 1025px) and (max-width: 1600px) {
+    html {
+        width: 100%;
+        height: 100%;
+        overflow: hidden !important;
+    }
+
+    body {
+        zoom: 0.8;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        /* 100 / 0.8 = 125 */
+        height: 125vh !important;
+        min-height: 125vh !important;
+
+        overflow: hidden !important;
+    }
+
+    .sidebar {
+        height: 125vh !important;
+        min-height: 125vh !important;
+    }
+
+    main {
+        height: 125vh !important;
+        max-height: none !important;
+
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        padding-right: 40px !important;
+        padding-bottom: 0 !important;
+
+        box-sizing: border-box !important;
+    }
+
+    /* NÃO deixe a linha das colunas cortar conteúdo */
+    .tables-row {
+        overflow: visible !important;
+        max-width: 100% !important;
+    }
+
+    /* Espaçador real no fim do conteúdo.
+       Isso resolve o corte do último card no scroll. */
+    main::after {
+        content: "";
+        display: block;
+        height: 150px;
+        width: 100%;
+        flex: 0 0 auto;
+    }
+}
+
+@media (min-width: 1601px) {
+    html {
+        width: 100%;
+        height: 100%;
+        overflow: hidden !important;
+    }
+
+    body {
+        zoom: 0.9;
+
+        /* Compensação horizontal: 100 / 0.9 */
+        width: 100% !important;
+        max-width: 100% !important;
+
+        /* Compensação vertical: 100 / 0.9 */
+        height: 111.111vh !important;
+        min-height: 111.111vh !important;
+
+        overflow: hidden !important;
+    }
+
+    .sidebar {
+        height: 111.111vh !important;
+        min-height: 111.111vh !important;
+    }
+
+    main {
+        height: 111.111vh !important;
+        min-height: 111.111vh !important;
+
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        box-sizing: border-box !important;
+    }
+
+    main::after {
+        content: "";
+        display: block;
+        height: 120px;
+        width: 100%;
+    }
+}

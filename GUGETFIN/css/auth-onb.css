@@ -1,0 +1,446 @@
+/* --- TELA DE LOGIN PREMIUM (COM AJUSTE MOBILE) --- */
+.auth-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(244, 247, 246, 0.98); /* Fundo quase sólido para esconder o app atrás */
+    backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 99999; 
+    padding: 20px; /* Garante que a caixa não cole no vidro do telemóvel */
+    box-sizing: border-box;
+}
+
+.auth-box {
+    background: #ffffff; 
+    padding: 40px 30px; 
+    border-radius: 28px;
+    box-shadow: 0 20px 50px rgba(27, 58, 50, 0.15);
+    width: 100%; 
+    max-width: 400px; /* Largura máxima para tablets/PC */
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Ajustes específicos para ecrãs pequenos */
+@media (max-width: 480px) {
+    .auth-box {
+        padding: 30px 20px; /* Menos padding interno no telemóvel */
+        border-radius: 24px;
+    }
+    
+    .auth-box h2 {
+        font-size: 22px !important;
+    }
+    
+    .auth-input {
+        padding: 16px !important; /* Inputs maiores para facilitar o toque */
+        font-size: 16px !important; /* Evita que o iOS dê zoom automático ao focar */
+    }
+    
+    .btn-auth-primary {
+        padding: 16px !important;
+        font-size: 16px !important;
+    }
+}
+
+.auth-input {
+    width: 100%; padding: 14px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--bg-app);
+    margin-bottom: 12px; font-family: 'Inter', sans-serif;
+    box-sizing: border-box; outline: none; transition: 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.auth-input:focus { 
+    border-color: var(--acc-green); 
+    box-shadow: 0 0 0 4px rgba(150, 230, 161, 0.2); 
+}
+
+.btn-auth-primary {
+    width: 100%; padding: 14px; border-radius: 12px; border: none;
+    background: var(--dark-green); color: white; font-weight: 700;
+    cursor: pointer; transition: 0.2s; margin-top: 10px;
+}
+
+.auth-switch { margin-top: 25px; font-size: 14px; color: var(--text-sec); }
+.auth-switch a { color: var(--dark-green); font-weight: 700; text-decoration: none; padding: 5px; }
+
+/* Spinner */
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- Olhinho da Senha --- */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.btn-eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: unset;
+    border: none;
+    color: var(--text-sec);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-eye:hover { color: var(--dark-green); }
+
+/* --- Saudação Premium --- */
+.greeting-box {
+    margin-bottom: 20px;
+    padding-left: 5px !important;
+    animation: fadeIn 0.6s ease;
+    padding: 0;
+}
+
+#greeting-mobile {
+    display: none !important;
+}
+
+/* Nova Estética: Fina e Elegante */
+.greeting-title-wrapper {
+    margin-bottom: 4px;
+    line-height: 1.1;
+}
+
+.greet-light {
+    font-size: 26px;
+    font-weight: 300; /* O texto fino da referência */
+    color: var(--dark-green);
+    letter-spacing: -0.02em;
+}
+
+.greet-bold {
+    font-size: 26px;
+    font-weight: 800; /* O nome em destaque */
+    color: var(--dark-green);
+    letter-spacing: -0.03em;
+}
+
+.greet-subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-sec);
+    line-height: 1.4;
+}
+
+/* Ajustes apenas para o Mobile */
+@media (max-width: 1024px) {
+    #greeting-pc {
+        display: none !important;
+    }
+    
+    #greeting-mobile {
+        display: block !important;
+    }
+    
+    .greeting-box {
+        padding-left: 15px;
+    }
+
+    /* Deixa levemente maior no celular para impactar mais */
+    .greet-light, .greet-bold {
+        font-size: 28px;
+    }
+}
+
+
+/* --- TELA DE LOGIN PREMIUM (SPLIT SCREEN E SLIDER) --- */
+
+/* Padrão PC (Lado a lado com fundo verde na direita) */
+@media (min-width: 1025px) {
+    .auth-box {
+        display: flex !important;
+        max-width: 950px !important; 
+        padding: 15px !important; 
+        gap: 20px;
+    }
+    
+    .auth-left {
+        flex: 1;
+        padding: 30px 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .auth-right {
+        flex: 1.2; 
+        background: var(--dark-green); /* Fundo verde do slide no PC */
+        border-radius: 24px;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* Adapta as cores dos textos para o fundo escuro no PC */
+    #auth-showcase h3 { color: white !important; }
+    #auth-showcase p { color: #a0aec0 !important; }
+    .slider-dots .dot { background: rgba(255,255,255,0.2) !important; }
+    .slider-dots .dot.active { background: white !important; }
+    .slide-img-placeholder { background: rgba(255,255,255,0.05) !important; color: white !important; border: 1px dashed rgba(255,255,255,0.2); }
+    
+    /* Esconde os botões de Get Started do mobile no PC */
+    .mobile-btn-only { display: none !important; }
+}
+
+/* Padrão Mobile (Tela única, um por vez) */
+@media (max-width: 1024px) {
+    .auth-left, .auth-right {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .auth-right {
+        padding-top: 20px;
+    }
+    .mobile-btn-only { display: block; }
+}
+
+/* --- Motor e Visual do Carrossel (Serve para ambos) --- */
+.showcase-slider { width: 100%; margin-bottom: 30px; overflow: hidden; position: relative; }
+.slides-container {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+    scroll-behavior: smooth; scrollbar-width: none; 
+}
+.slides-container::-webkit-scrollbar { display: none; }
+.slide-item { flex: 0 0 100%; scroll-snap-align: start; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+.slide-img-placeholder { width: 100%; height: 220px; background: #e8f5e9; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: var(--acc-green); font-weight: 800; font-size: 24px; margin-bottom: 24px; }
+
+.slide-item h3 { font-size: 20px; color: var(--dark-green); margin: 0 0 10px 0; letter-spacing: -0.02em; }
+.slide-item p { font-size: 13px; color: var(--text-sec); margin: 0; line-height: 1.5; padding: 0 10px; }
+
+.slider-dots { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+.slider-dots .dot { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; transition: 0.3s; }
+.slider-dots .dot.active { background: var(--dark-green); width: 20px; border-radius: 10px; }
+
+.btn-get-started { font-size: 16px; padding: 16px !important; background: #10b981; }
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* ======================================================== */
+/* 🚀 TELA CHEIA IMERSIVA (CORREÇÃO DEFINITIVA)             */
+/* ======================================================== */
+
+/* 1. Mata o espaçamento do fundo da tela (O grande vilão) */
+#auth-screen.auth-overlay {
+    padding: 0 !important;
+    background: #ffffff !important;
+}
+
+/* 2. Força a caixa a ocupar tudo, sem bordas redondas e sem vão no meio */
+#auth-screen .auth-box {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important; /* Remove o espaço entre o lado branco e o verde */
+    display: flex !important;
+}
+
+/* --- AJUSTES ESPECÍFICOS PARA PC TELA CHEIA --- */
+@media (min-width: 1025px) {
+    .auth-left {
+        /* Usa a medida 'vw' (viewport width) para dar um respiro lateral adaptável */
+        padding: 80px 10vw !important; 
+        justify-content: center !important;
+        background: #ffffff !important;
+    }
+
+    .auth-right {
+        border-radius: 0 !important; /* Fim dos cantos arredondados do lado verde */
+        padding: 80px 8vw !important;
+        justify-content: center !important;
+    }
+}
+
+/* --- AJUSTES ESPECÍFICOS PARA MOBILE TELA CHEIA --- */
+@media (max-width: 1024px) {
+    .auth-left, .auth-right {
+        padding: 40px 30px !important;
+        min-height: 100vh !important;
+        justify-content: center !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Garante que a vitrine de fundo branco no mobile acompanhe */
+    .auth-right#auth-showcase {
+        background: #ffffff !important;
+    }
+}
+
+/* --- ONBOARDING FULLSCREEN (TELA CHEIA) --- */
+#modal-onboarding {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: var(--bg-app); /* Usa a cor de fundo oficial do app */
+}
+
+/* Garante que o fundo nativo do modal não escureça a tela, já que ele próprio é a tela */
+#modal-onboarding::backdrop {
+    background: var(--bg-app);
+}
+
+.onb-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: 20px 20px 40px 20px;
+}
+
+/* Barrinha no topo */
+.onb-progress {
+    display: flex;
+    gap: 8px;
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.onb-dot {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.onb-dot.active {
+    background: var(--acc-green);
+}
+
+/* Slides */
+.onb-slide {
+    flex: 1;
+    display: none; /* Fica escondido até o JS colocar a classe .active */
+    flex-direction: column;
+}
+
+/* O Segredo: Quando o slide ganha a classe active, ele vira flex */
+.onb-slide.active {
+    display: flex;
+}
+
+/* Container para centralizar perfeitamente o título e texto no meio da tela */
+.onb-content-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+/* Textos Maiores e Limpos */
+.onb-title {
+    color: var(--dark-green);
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    opacity: 0; /* Começa invisível para a animação */
+}
+
+.onb-text {
+    color: var(--text-sec);
+    font-size: 18px;
+    line-height: 1.4;
+    opacity: 0;
+}
+
+.onb-dica {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    font-size: 15px;
+    margin-top: 30px;
+    opacity: 0;
+}
+
+/* Botãozão Gigante no final da tela */
+.onb-actions {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+}
+
+.btn-onb-proximo {
+    background: var(--dark-green);
+    color: white;
+    border: none;
+    padding: 20px;
+    border-radius: 16px; /* Botão mais gordinho */
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 8px 20px rgba(27, 58, 50, 0.15);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn-onb-proximo:active {
+    transform: scale(0.98);
+}
+
+.btn-onb-pular {
+    background: transparent;
+    color: var(--text-sec);
+    border: none;
+    padding: 15px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* --- O EFEITO DE CONTAÇÃO DE HISTÓRIA (CASCATA) --- */
+@keyframes subirFade {
+    0% { opacity: 0; transform: translateY(40px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Cada elemento sobe com um pequeno atraso em relação ao anterior */
+.onb-slide.active .onb-title {
+    animation: subirFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+.onb-slide.active .onb-text {
+    animation: subirFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+.onb-slide.active .onb-dica {
+    animation: subirFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+}
+.onb-slide.active .onb-actions {
+    animation: subirFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+}
+
+@media (max-width: 768px) {
+    .onb-title { font-size: 30px; }
+    .onb-text { font-size: 16px; }
+}
