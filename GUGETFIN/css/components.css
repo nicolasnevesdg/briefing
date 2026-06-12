@@ -1204,3 +1204,58 @@ button.guget-ai-trigger:hover {
         max-width: max-content !important;
     }
 }
+
+/* ========================================================= */
+/* TAG TEMPORÁRIA - GASTO RECÉM ADICIONADO                   */
+/* ========================================================= */
+
+.tag-novo-lancamento {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.gasto-recem-adicionado {
+    position: relative;
+    background: rgba(220, 252, 231, 0.55) !important;
+    border-color: #86efac !important;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.12), 0 8px 20px rgba(34, 197, 94, 0.10) !important;
+    animation: destaqueNovoGasto 1.2s ease;
+}
+
+@keyframes destaqueNovoGasto {
+    0% {
+        transform: scale(0.985);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.35);
+    }
+
+    60% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.08);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Tabela desktop */
+tr.gasto-recem-adicionado td {
+    background: rgba(220, 252, 231, 0.45) !important;
+}
+
+/* Mobile */
+.cartao-item-mobile.gasto-recem-adicionado {
+    background: rgba(220, 252, 231, 0.70) !important;
+}
