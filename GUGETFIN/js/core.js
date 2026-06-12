@@ -151,6 +151,52 @@ function atualizarHumorSalsicha(saldo) {
     }
 }
 
+function criarDataCompetencia(dataBase, mesesParaSomar = 0) {
+    return new Date(
+        dataBase.getFullYear(),
+        dataBase.getMonth() + mesesParaSomar,
+        1
+    );
+}
+
+function calcularCompetenciaInicialGasto(t) {
+    const dataCompra = new Date(t.dataCompra + "T12:00:00");
+    const delayManual = parseInt(t.delayPagamento) || 0;
+
+    /*
+        Se o usuário forçou mês seguinte ou daqui a 2 meses,
+        essa escolha manda mais que o fechamento do cartão.
+    */
+    if (delayManual > 0) {
+        return criarDataCompetencia(dataCompra, delayManual);
+    }
+
+    /*
+        Débito, Pix, dinheiro e fixos seguem o mês da data da compra,
+        salvo se tiver delay manual.
+    */
+    if (t.tipo !== 'cartao') {
+        return criarDataCompetencia(dataCompra, 0);
+    }
+
+    const detalhesBanco = salsiData.config.detalhesBancos?.find(b => b.nome === t.banco);
+
+    if (!detalhesBanco || detalhesBanco.isDebitoOnly || !detalhesBanco.fechamento) {
+        return criarDataCompetencia(dataCompra, 0);
+    }
+
+    const fechamento = parseInt(detalhesBanco.fechamento);
+    const diaCompra = dataCompra.getDate();
+
+    /*
+        Compra depois do fechamento entra na fatura do mês seguinte.
+        Ex: compra 31/05, fechamento dia 5 => fatura de junho.
+    */
+    const mesesParaSomar = diaCompra > fechamento ? 1 : 0;
+
+    return criarDataCompetencia(dataCompra, mesesParaSomar);
+}
+
 function renderizar() {
 
 	if (typeof garantirOrdemCronologica === 'function') garantirOrdemCronologica();
@@ -272,12 +318,12 @@ function renderizar() {
 
     salsiData.transacoes.forEach(t => {
         const d = new Date(t.dataCompra + "T00:00:00");
-        let mesRef = d.getMonth() + (t.delayPagamento || 0);
-        let anoRef = d.getFullYear();
 
-        if (mesRef > 11) { mesRef -= 12; anoRef++; }
+const competenciaInicial = calcularCompetenciaInicialGasto(t);
+const mesRef = competenciaInicial.getMonth();
+const anoRef = competenciaInicial.getFullYear();
 
-        const diff = (a - anoRef) * 12 + (m - mesRef);
+const diff = (a - anoRef) * 12 + (m - mesRef);
 
         if (diff >= 0 && diff < t.parcelas) {
             const val = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
