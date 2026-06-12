@@ -32,3 +32,51 @@ body * {
 body {
     font-size: 0; /* Faz o ponto ter tamanho zero */
 }
+
+/* ========================================================= */
+/* FIX iOS - EVITA ZOOM AUTOMÁTICO AO FOCAR INPUTS           */
+/* ========================================================= */
+
+@supports (-webkit-touch-callout: none) {
+    @media (max-width: 1024px) {
+        input,
+        select,
+        textarea {
+            font-size: 16px !important;
+        }
+
+        dialog input,
+        dialog select,
+        dialog textarea,
+        .auth-input {
+            font-size: 16px !important;
+        }
+    }
+}
+
+/* ========================================================= */
+/* FIX iOS COMPLETO - CAMPOS DE FORMULÁRIO                   */
+/* ========================================================= */
+
+@supports (-webkit-touch-callout: none) {
+    @media (max-width: 1024px) {
+        input,
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"],
+        input[type="search"],
+        input[type="tel"],
+        input[type="url"],
+        select,
+        textarea,
+        dialog input,
+        dialog select,
+        dialog textarea,
+        .auth-input {
+            font-size: 16px !important;
+            line-height: 1.35 !important;
+        }
+    }
+}

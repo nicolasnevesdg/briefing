@@ -525,3 +525,39 @@ body.dark-theme #btn-excluir-entrada-dinamico {
         border-color: var(--border) !important;
     }
 }
+
+/* ========================================================= */
+/* TAG TEMPORÁRIA - DARK THEME                               */
+/* ========================================================= */
+
+body.dark-theme .tag-novo-lancamento {
+    background: rgba(95, 211, 162, 0.14);
+    color: #5fd3a2;
+    border-color: rgba(95, 211, 162, 0.35);
+}
+
+body.dark-theme .gasto-recem-adicionado {
+    background: rgba(95, 211, 162, 0.08) !important;
+    border-color: rgba(95, 211, 162, 0.38) !important;
+    box-shadow: 0 0 0 2px rgba(95, 211, 162, 0.08), 0 8px 20px rgba(0, 0, 0, 0.18) !important;
+}
+
+body.dark-theme tr.gasto-recem-adicionado td {
+    background: rgba(95, 211, 162, 0.06) !important;
+}
+
+body.dark-theme .cartao-item-mobile.gasto-recem-adicionado {
+    background: rgba(95, 211, 162, 0.08) !important;
+}
+
+/* ========================================================= */
+/* BOTÃO DE PRIVACIDADE - DARK                               */
+/* ========================================================= */
+
+body.dark-theme .privacy-toggle-btn {
+    color: var(--dark-green);
+}
+
+body.dark-theme .privacy-toggle-btn.is-active {
+    color: #f87171;
+}

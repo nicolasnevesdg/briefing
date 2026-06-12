@@ -1259,3 +1259,99 @@ tr.gasto-recem-adicionado td {
 .cartao-item-mobile.gasto-recem-adicionado {
     background: rgba(220, 252, 231, 0.70) !important;
 }
+
+/* ========================================================= */
+/* BOTÃO DE PRIVACIDADE DOS VALORES - VERSÃO MINIMALISTA     */
+/* ========================================================= */
+
+.privacy-toggle-btn {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--dark-green);
+    transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease;
+    opacity: 0.92;
+    line-height: 1;
+}
+
+.privacy-toggle-btn:hover {
+    transform: translateY(-1px) scale(1.05);
+    opacity: 1;
+}
+
+.privacy-toggle-btn i {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.privacy-toggle-btn.is-active {
+    color: #ef4444;
+    opacity: 1;
+}
+
+/* Desktop */
+.privacy-toggle-desktop {
+    margin: 0 2px 0 2px;
+}
+
+/* Mobile */
+.privacy-toggle-mobile {
+    margin-left: 8px;
+}
+
+.privacy-toggle-mobile i {
+    font-size: 18px;
+}
+
+.greeting-desktop-wrapper {
+    gap: 18px;
+}
+
+.privacy-toggle-btn {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--dark-green);
+    transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease;
+    opacity: 0.9;
+    line-height: 1;
+}
+
+.privacy-toggle-btn:hover {
+    transform: translateY(-1px) scale(1.08);
+    opacity: 1;
+}
+
+.privacy-toggle-btn i {
+    font-size: 21px;
+    line-height: 1;
+}
+
+@media (max-width: 1024px) {
+    .privacy-toggle-mobile {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        margin-left: 6px;
+    }
+
+    .privacy-toggle-mobile i {
+        font-size: 14px;
+    }
+
+    .greeting-title-wrapper-mobile {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+}
+
+/* Opcional: desfoca gráficos em canvas quando privacidade estiver ligada */
+body.valores-ocultos canvas {
+    filter: blur(7px);
+    opacity: 0.35;
+}
