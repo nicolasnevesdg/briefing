@@ -1126,3 +1126,35 @@ function alternarPrivacidadeValores() {
 document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(aplicarPrivacidadeValores);
 });
+
+// ==========================================
+// ⌨️ ATALHOS DE TECLADO (SHORTCUTS)
+// ==========================================
+
+document.addEventListener('keydown', function(event) {
+    // 1. Trava de Segurança: Ignorar se o utilizador estiver a digitar dentro de um formulário
+    const tagAtiva = document.activeElement.tagName;
+    const aDigitar = tagAtiva === 'INPUT' || tagAtiva === 'TEXTAREA' || tagAtiva === 'SELECT';
+
+    if (aDigitar) return; // Se estiver a escrever, não faz nada!
+
+    // 2. Verifica se o Ctrl (Windows) ou Cmd (Mac) está a ser pressionado
+    if (event.ctrlKey || event.metaKey) {
+        
+        // 🟢 CTRL + E (Nova Entrada)
+        if (event.key.toLowerCase() === 'e') {
+            event.preventDefault(); // Bloqueia a ação padrão do navegador!
+            if (typeof abrirModalEntrada === 'function') {
+                abrirModalEntrada();
+            }
+        }
+        
+        // 🔴 CTRL + G (Novo Gasto)
+        if (event.key.toLowerCase() === 'g') {
+            event.preventDefault(); // Bloqueia a ação padrão do navegador!
+            if (typeof abrirModalGasto === 'function') {
+                abrirModalGasto();
+            }
+        }
+    }
+});
