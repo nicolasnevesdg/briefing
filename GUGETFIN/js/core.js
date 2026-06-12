@@ -752,5 +752,9 @@ ${tagNovo}
     }
 	
     atualizarGraficoMeta();
+
+    if (typeof aplicarPrivacidadeValores === 'function') {
+    requestAnimationFrame(aplicarPrivacidadeValores);
+}
 }
 

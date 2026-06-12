@@ -276,24 +276,44 @@ function atualizarSaudacao(nomeCompleto) {
     }
 
     const htmlBasePC = `
-        <div class="greeting-desktop-wrapper">
-            <div class="greeting-desktop-title">
-                <span class="greet-light">${saudacaoRandom},</span>
-                <span class="greet-bold">${primeiroNome}!</span>
-            </div>
-
-            <button type="button" class="guget-ai-trigger guget-ai-trigger-desktop desktop-only" onclick="abrirAssistente()">
-                <span class="guget-ai-icon">✨</span>
-                <span class="guget-ai-text">Me pergunte algo...</span>
-            </button>
+    <div class="greeting-desktop-wrapper">
+        <div class="greeting-desktop-title">
+            <span class="greet-light">${saudacaoRandom},</span>
+            <span class="greet-bold">${primeiroNome}!</span>
         </div>
-    `;
+
+        <button 
+            type="button" 
+            class="privacy-toggle-btn privacy-toggle-desktop" 
+            onclick="alternarPrivacidadeValores()" 
+            title="Ocultar valores"
+            aria-label="Ocultar valores"
+        >
+            <i class="fi fi-rr-eye"></i>
+        </button>
+
+        <button type="button" class="guget-ai-trigger guget-ai-trigger-desktop desktop-only" onclick="abrirAssistente()">
+            <span class="guget-ai-icon">✨</span>
+            <span class="guget-ai-text">Me pergunte algo...</span>
+        </button>
+    </div>
+`;
 
     const htmlBaseMobile = `
     <div class="greeting-mobile-wrapper">
         <div class="greeting-title-wrapper-mobile">
             <span class="greet-light">${saudacaoRandom},</span>
             <span class="greet-bold">${primeiroNome}!</span>
+
+            <button 
+                type="button" 
+                class="privacy-toggle-btn privacy-toggle-mobile" 
+                onclick="alternarPrivacidadeValores()" 
+                title="Ocultar valores"
+                aria-label="Ocultar valores"
+            >
+                <i class="fi fi-rr-eye"></i>
+            </button>
         </div>
 
         <button type="button" class="guget-ai-trigger guget-ai-trigger-mobile mobile-only" onclick="abrirAssistente()">

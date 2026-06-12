@@ -996,34 +996,133 @@ function injetarAssinatura() {
 // Chame a função no final do seu app.js
 injetarAssinatura();
 
-// ==========================================
-// ⌨️ ATALHOS DE TECLADO (SHORTCUTS)
-// ==========================================
+/* ========================================================= */
+/* MODO PRIVACIDADE - OCULTAR VALORES                        */
+/* ========================================================= */
 
-document.addEventListener('keydown', function(event) {
-    // 1. Trava de Segurança: Ignorar se o utilizador estiver a digitar dentro de um formulário
-    const tagAtiva = document.activeElement.tagName;
-    const aDigitar = tagAtiva === 'INPUT' || tagAtiva === 'TEXTAREA' || tagAtiva === 'SELECT';
+let textosPrivacidadeOriginais = new Map();
 
-    if (aDigitar) return; // Se estiver a escrever, não faz nada!
+function privacidadeAtiva() {
+    return localStorage.getItem('guget_privacidade_valores') === 'true';
+}
 
-    // 2. Verifica se o Ctrl (Windows) ou Cmd (Mac) está a ser pressionado
-    if (event.ctrlKey || event.metaKey) {
-        
-        // 🟢 CTRL + E (Nova Entrada)
-        if (event.key.toLowerCase() === 'e') {
-            event.preventDefault(); // Bloqueia a ação padrão do navegador!
-            if (typeof abrirModalEntrada === 'function') {
-                abrirModalEntrada();
+function mascararValoresTexto(texto) {
+    if (!texto || typeof texto !== 'string') return texto;
+
+    return texto
+        // Valores em real: R$ 1.707,15 / R$ 1707.15 / R$ -1541.94
+        .replace(/R\$\s*-?\d[\d.,]*/g, 'R$ ••••')
+
+        // Percentuais: 350.9% / 62,6%
+        .replace(/-?\d+(?:[.,]\d+)?\s?%/g, '••••%');
+}
+
+function deveIgnorarNoModoPrivacidade(node) {
+    const parent = node.parentElement;
+    if (!parent) return true;
+
+    return !!parent.closest(`
+        script,
+        style,
+        noscript,
+        input,
+        textarea,
+        select,
+        option,
+        canvas,
+        svg,
+        .privacy-toggle-btn,
+        .auth-overlay
+    `);
+}
+
+function atualizarBotaoPrivacidadeValores() {
+    const ocultar = privacidadeAtiva();
+
+    document.querySelectorAll('.privacy-toggle-btn').forEach(btn => {
+        const icone = btn.querySelector('i');
+
+        btn.classList.toggle('is-active', ocultar);
+        btn.title = ocultar ? 'Mostrar valores' : 'Ocultar valores';
+        btn.setAttribute('aria-label', ocultar ? 'Mostrar valores' : 'Ocultar valores');
+
+        if (icone) {
+            icone.className = ocultar ? 'fi fi-rr-eye-crossed' : 'fi fi-rr-eye';
+        }
+    });
+}
+
+function restaurarValoresPrivacidade() {
+    textosPrivacidadeOriginais.forEach((textoOriginal, textNode) => {
+        if (textNode && textNode.isConnected) {
+            textNode.textContent = textoOriginal;
+        }
+    });
+
+    textosPrivacidadeOriginais.clear();
+}
+
+function ocultarValoresPrivacidade() {
+    const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        {
+            acceptNode(node) {
+                if (deveIgnorarNoModoPrivacidade(node)) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+
+                const texto = node.textContent || "";
+
+                const temValor =
+                    /R\$\s*-?\d[\d.,]*/.test(texto) ||
+                    /-?\d+(?:[.,]\d+)?\s?%/.test(texto);
+
+                return temValor
+                    ? NodeFilter.FILTER_ACCEPT
+                    : NodeFilter.FILTER_REJECT;
             }
         }
-        
-        // 🔴 CTRL + G (Novo Gasto)
-        if (event.key.toLowerCase() === 'g') {
-            event.preventDefault(); // Bloqueia a ação padrão do navegador!
-            if (typeof abrirModalGasto === 'function') {
-                abrirModalGasto();
-            }
-        }
+    );
+
+    const nodes = [];
+    let node;
+
+    while ((node = walker.nextNode())) {
+        nodes.push(node);
     }
+
+    nodes.forEach(textNode => {
+        // Só salva o original uma vez
+        if (!textosPrivacidadeOriginais.has(textNode)) {
+            textosPrivacidadeOriginais.set(textNode, textNode.textContent);
+        }
+
+        textNode.textContent = mascararValoresTexto(textosPrivacidadeOriginais.get(textNode));
+    });
+}
+
+function aplicarPrivacidadeValores() {
+    const ocultar = privacidadeAtiva();
+
+    document.body.classList.toggle('valores-ocultos', ocultar);
+
+    if (ocultar) {
+        ocultarValoresPrivacidade();
+    } else {
+        restaurarValoresPrivacidade();
+    }
+
+    atualizarBotaoPrivacidadeValores();
+}
+
+function alternarPrivacidadeValores() {
+    const novoEstado = !privacidadeAtiva();
+
+    localStorage.setItem('guget_privacidade_valores', String(novoEstado));
+    aplicarPrivacidadeValores();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    requestAnimationFrame(aplicarPrivacidadeValores);
 });
