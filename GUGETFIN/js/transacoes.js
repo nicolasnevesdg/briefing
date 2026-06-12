@@ -818,17 +818,31 @@ function atualizarAlertaFatura() {
     const vencimento = parseInt(detalhesBanco.vencimento);
 
     const dataCompra = new Date(dataInput + "T12:00:00");
-    const diaCompra = dataCompra.getDate();
+const diaCompra = dataCompra.getDate();
 
-    let mesAlvoDate = new Date(dataCompra);
-    let tipoAviso = "mes-atual";
-    let motivoAviso = "";
+/*
+    IMPORTANTE:
+    Não usamos new Date(dataCompra) + setMonth direto,
+    porque 31/05 + 1 mês vira 01/07 no JavaScript.
+    Então criamos a data sempre no dia 1.
+*/
+function criarMesAlvo(dataBase, mesesParaSomar = 0) {
+    return new Date(
+        dataBase.getFullYear(),
+        dataBase.getMonth() + mesesParaSomar,
+        1
+    );
+}
+
+let mesAlvoDate = criarMesAlvo(dataCompra, 0);
+let tipoAviso = "mes-atual";
+let motivoAviso = "";
 
     // 1. Se o usuário forçou o pagamento para outro mês,
     // essa escolha manda mais do que o fechamento do cartão.
     if (inicioPagamento > 0) {
-        mesAlvoDate.setMonth(mesAlvoDate.getMonth() + inicioPagamento);
-        tipoAviso = "forcado";
+    mesAlvoDate = criarMesAlvo(dataCompra, inicioPagamento);
+    tipoAviso = "forcado";
 
         if (inicioPagamento === 1) {
             motivoAviso = "porque você definiu a competência para o mês seguinte.";
@@ -839,11 +853,11 @@ function atualizarAlertaFatura() {
 
     // 2. Se estiver no automático, aí sim usamos o fechamento do cartão.
     else {
-        if (diaCompra >= fechamento) {
-            mesAlvoDate.setMonth(mesAlvoDate.getMonth() + 1);
-            tipoAviso = "virou-fatura";
-            motivoAviso = `porque a compra foi feita no dia ${diaCompra}, dentro da virada da fatura.`;
-        } else {
+        if (diaCompra > fechamento) {
+    mesAlvoDate = criarMesAlvo(dataCompra, 1);
+    tipoAviso = "virou-fatura";
+    motivoAviso = `porque a compra foi feita no dia ${diaCompra}, depois do fechamento do cartão.`;
+} else {
             tipoAviso = "mes-atual";
             motivoAviso = "porque a compra entra automaticamente no mês da compra.";
         }
