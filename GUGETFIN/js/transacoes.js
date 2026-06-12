@@ -93,24 +93,30 @@ async function confirmarGasto() {
         }
     }
 
+const agoraCadastro = Date.now();
+const tempoDestaqueNovo = 5 * 60 * 1000; // 5 minutos
+
     // Monta o pacote de dados
     const novosDados = {
-        nome: document.getElementById('g-nome').value,
-        tipo: tipo,
-        valorTotal: vTotal,
-        valorParcela: vTotal / nParc,
-        parcelas: nParc,
-        dataCompra: document.getElementById('g-data').value,
-        banco: document.getElementById('g-banco').value,
-        categoria: document.getElementById('g-categoria').value,
-        observacao: document.getElementById('g-observacao') ? document.getElementById('g-observacao').value.trim() : "",
-        pago: false,
-        delayPagamento: parseInt(document.getElementById('g-inicio-pagamento').value) || 0,
-        eDeTerceiro: document.getElementById('g-terceiro').checked,
-        nomeTerceiro: document.getElementById('g-nome-terceiro').value || "",
-        formaPagamento: (tipo === 'debito') ? formaPag : null,
-        comprovanteUrl: comprovanteUrl // 🚀 Salva o link no objeto!
-    };
+    nome: document.getElementById('g-nome').value,
+    tipo: tipo,
+    valorTotal: vTotal,
+    valorParcela: vTotal / nParc,
+    parcelas: nParc,
+    dataCompra: document.getElementById('g-data').value,
+    banco: document.getElementById('g-banco').value,
+    categoria: document.getElementById('g-categoria').value,
+    observacao: document.getElementById('g-observacao') ? document.getElementById('g-observacao').value.trim() : "",
+    pago: false,
+    delayPagamento: parseInt(document.getElementById('g-inicio-pagamento').value) || 0,
+    eDeTerceiro: document.getElementById('g-terceiro').checked,
+    nomeTerceiro: document.getElementById('g-nome-terceiro').value || "",
+    formaPagamento: (tipo === 'debito') ? formaPag : null,
+    comprovanteUrl: comprovanteUrl,
+
+    criadoEm: indexEdit >= 0 ? (salsiData.transacoes[indexEdit].criadoEm || null) : agoraCadastro,
+    destaqueAte: indexEdit >= 0 ? (salsiData.transacoes[indexEdit].destaqueAte || 0) : agoraCadastro + tempoDestaqueNovo
+};
 
     if (indexEdit >= 0) {
         novosDados.pago = salsiData.transacoes[indexEdit].pago; 

@@ -197,7 +197,30 @@ function calcularCompetenciaInicialGasto(t) {
     return criarDataCompetencia(dataCompra, mesesParaSomar);
 }
 
+function gastoEstaNovo(t) {
+    return t && t.destaqueAte && Date.now() < t.destaqueAte;
+}
+
+function limparDestaquesExpirados() {
+    if (!salsiData || !Array.isArray(salsiData.transacoes)) return;
+
+    let alterou = false;
+    const agora = Date.now();
+
+    salsiData.transacoes.forEach(t => {
+        if (t.destaqueAte && agora >= t.destaqueAte) {
+            delete t.destaqueAte;
+            alterou = true;
+        }
+    });
+
+    if (alterou) {
+        localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+    }
+}
+
 function renderizar() {
+    limparDestaquesExpirados();
 
 	if (typeof garantirOrdemCronologica === 'function') garantirOrdemCronologica();
 	
@@ -328,6 +351,10 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
         if (diff >= 0 && diff < t.parcelas) {
             const val = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
             const idx = salsiData.transacoes.indexOf(t);
+            
+            const isNovo = gastoEstaNovo(t);
+            const classeNovo = isNovo ? ' gasto-recem-adicionado' : '';
+            const tagNovo = isNovo ? '<span class="tag-novo-lancamento">NOVO</span>' : '';
 
 			// Formata a data (Ex: 05/12) para usar nos cartões mobile
             const dFmt = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -394,7 +421,7 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
                     tTable.innerHTML += `
                         <tr class="desktop-only-row" ${estiloPCTerceiro}>
                             <td>${dataSutil}</td>
-                            <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                            <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome} ${tagNovo}</td>
                             <td><span class="badge-tag">${t.nomeTerceiro}</span></td>
                             <td style="text-align: center;">${tagTipoPC}</td>
                             <td style="text-align: center;">${diff + 1}/${t.parcelas}</td>
@@ -412,10 +439,11 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
                         : `<span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 9px;">PENDENTE</span>`;
 
                     mTerceiros.innerHTML += `
-                        <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
+                        <div class="cartao-item-mobile${classeNovo}" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
                             <div class="cartao-info-principal">
                                 <div class="cartao-nome-grupo">
                                     <strong>${t.nome}</strong>
+${tagNovo}
                                     <span class="cartao-parcela-tag">${diff + 1}/${t.parcelas}</span>
                                 </div>
                                 <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
@@ -459,7 +487,7 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
                     if(fTable) {
                         fTable.innerHTML += `
                             <tr ${estiloPC} class="desktop-only-row">
-                                <td style="cursor: pointer; font-weight: 500; width: 50%;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                                <td style="cursor: pointer; font-weight: 500; width: 50%;" onclick="verDetalhes(${idx})">${t.nome} ${tagNovo}</td>
                                 <td style="width: 25%;">R$ ${val.toFixed(2)}</td>
                                 <td style="text-align: center; width: 15%;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
                                 <td style="width: 10%;"><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
@@ -473,10 +501,11 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
                             : `<span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 9px;">PENDENTE</span>`;
 
                         fMobile.innerHTML += `
-                            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
+                            <div class="cartao-item-mobile${classeNovo}" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
                                 <div class="cartao-info-principal">
                                     <div class="cartao-nome-grupo">
                                         <strong>${t.nome}</strong>
+${tagNovo}
                                     </div>
                                     <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
                                         <input type="checkbox" ${t.pago ? 'checked' : ''} onclick="event.stopPropagation()" onchange="alternarStatusPago(${idx})" style="transform: scale(1.3); cursor: pointer; accent-color: #21c25e;">
@@ -499,10 +528,10 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
                     
                     if(dTable) {
                         dTable.innerHTML += `
-                            <tr class="desktop-only-row">
+                            <tr class="desktop-only-row${classeNovo}">
                                 <td>${dataSutil}</td>
                                 <td style="cursor:pointer; line-height: 1.4;" onclick="verDetalhes(${idx})">
-                                    <div style="font-weight: 600; color: var(--text-main);">${t.nome}</div>
+                                    <div style="font-weight: 600; color: var(--text-main);">${t.nome} ${tagNovo}</div>
                                     <div style="font-size: 11px; color: #7a8b87; margin-top: 2px;">${t.categoria}</div>
                                 </td>
                                 <td style="text-align: center; vertical-align: middle;">
@@ -515,10 +544,11 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
 
                     if (dMobile) {
                         dMobile.innerHTML += `
-                            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
+                            <div class="cartao-item-mobile${classeNovo}" onclick="verDetalhes(${idx})" style="cursor: pointer;">
                                 <div class="cartao-info-principal">
                                     <div class="cartao-nome-grupo">
                                         <strong>${t.nome}</strong>
+${tagNovo}
                                     </div>
                                     <div style="display: flex; gap: 6px; align-items: center; margin-top: 4px;">
                                         <span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 10px;">${t.categoria}</span>
@@ -537,9 +567,9 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
 
                     if(cTable) {
                         cTable.innerHTML += `
-                            <tr class="desktop-only-row">
+                            <tr class="desktop-only-row${classeNovo}">
                                 <td>${dataSutil}</td>
-                                <td style="font-weight: 500; cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome}</td>
+                                <td style="font-weight: 500; cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome} ${tagNovo}</td>
                                 <td style="color: var(--text-sec); font-size: 11px; text-align: center;">${diff + 1}/${t.parcelas}</td>
                                 <td style="text-align: center;"><span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span></td>
                                 <td style="text-align: right; font-weight: 600;">R$ ${val.toFixed(2)}</td>
@@ -549,10 +579,11 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
 
                     if (cMobile) {
                         cMobile.innerHTML += `
-                            <div class="cartao-item-mobile" onclick="verDetalhes(${idx})" style="cursor: pointer;">
+                            <div class="cartao-item-mobile${classeNovo}" onclick="verDetalhes(${idx})" style="cursor: pointer;">
                                 <div class="cartao-info-principal">
                                     <div class="cartao-nome-grupo">
                                         <strong>${t.nome}</strong>
+${tagNovo}
                                         <span class="cartao-parcela-tag">${diff + 1}/${t.parcelas}</span>
                                     </div>
                                     <span class="badge" style="background:${getCor(t.banco)}">${t.banco}</span>
