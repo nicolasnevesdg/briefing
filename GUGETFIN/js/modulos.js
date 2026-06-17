@@ -1098,3 +1098,199 @@ window.removerAnexo = function(tipo) {
         setComprovanteUI(tipo, false); // Volta os botões pra azul e cinza
     }
 }
+
+/* ========================================================= */
+/* CALENDÁRIO FINANCEIRO - DESKTOP                           */
+/* ========================================================= */
+
+function abrirCalendarioFinanceiro() {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    main.classList.add('calendar-mode');
+
+    const mes = typeof m !== 'undefined' ? m : new Date().getMonth();
+    const ano = typeof a !== 'undefined' ? a : new Date().getFullYear();
+
+    renderizarCalendarioFinanceiro(mes, ano);
+}
+
+function abrirDashboardFinanceira() {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    main.classList.remove('calendar-mode');
+}
+
+function formatarMoedaCalendario(valor) {
+    return (valor || 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function criarDataLocalCalendario(dataString) {
+    if (!dataString) return null;
+    return new Date(dataString + 'T12:00:00');
+}
+
+function obterGastosDoMesCalendario(mes, ano) {
+    if (!salsiData || !Array.isArray(salsiData.transacoes)) return [];
+
+    return salsiData.transacoes
+        .map((t, index) => {
+            const data = criarDataLocalCalendario(t.dataCompra);
+            if (!data) return null;
+
+            if (data.getMonth() !== mes || data.getFullYear() !== ano) return null;
+
+            return {
+                index,
+                nome: t.nome || 'Gasto sem nome',
+                valor: Number(t.valorParcela || t.valorTotal || 0),
+                banco: t.banco || '',
+                categoria: t.categoria || '',
+                data,
+                dia: data.getDate(),
+                tipo: t.tipo || 'gasto'
+            };
+        })
+        .filter(Boolean);
+}
+
+function renderizarCalendarioFinanceiro(mes, ano) {
+    const grid = document.getElementById('financial-calendar-grid');
+    if (!grid) return;
+
+    const nomesMeses = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+
+    const title = document.getElementById('calendar-title');
+    if (title) {
+        title.textContent = `Calendário financeiro — ${nomesMeses[mes]} ${ano}`;
+    }
+
+    const primeiroDia = new Date(ano, mes, 1);
+    const ultimoDia = new Date(ano, mes + 1, 0);
+    const totalDias = ultimoDia.getDate();
+    const inicioSemana = primeiroDia.getDay();
+
+    const gastos = obterGastosDoMesCalendario(mes, ano);
+
+    const gastosPorDia = {};
+    gastos.forEach(gasto => {
+        if (!gastosPorDia[gasto.dia]) gastosPorDia[gasto.dia] = [];
+        gastosPorDia[gasto.dia].push(gasto);
+    });
+
+    const totalMes = gastos.reduce((acc, item) => acc + item.valor, 0);
+    const diasComMovimento = Object.keys(gastosPorDia).length;
+
+    const totalEl = document.getElementById('calendar-total-gastos');
+    const diasEl = document.getElementById('calendar-dias-movimento');
+
+    if (totalEl) totalEl.textContent = formatarMoedaCalendario(totalMes);
+    if (diasEl) diasEl.textContent = diasComMovimento;
+
+    const hoje = new Date();
+    const isMesAtual = hoje.getMonth() === mes && hoje.getFullYear() === ano;
+
+    let html = '';
+
+    for (let i = 0; i < inicioSemana; i++) {
+        html += `<div class="calendar-day is-empty"></div>`;
+    }
+
+    for (let dia = 1; dia <= totalDias; dia++) {
+        const itens = gastosPorDia[dia] || [];
+        const totalDia = itens.reduce((acc, item) => acc + item.valor, 0);
+        const isToday = isMesAtual && hoje.getDate() === dia;
+
+        const restante = itens.length > 3 ? itens.length - 3 : 0;
+
+html += `
+    <div 
+        class="calendar-day ${isToday ? 'is-today' : ''} ${itens.length > 3 ? 'has-hidden-items' : ''}"
+        onclick="alternarDiaCalendario(event, this)"
+        onmouseleave="programarFechamentoDiaCalendario(this)"
+        onmouseenter="cancelarFechamentoDiaCalendario()"
+    >
+        <div class="calendar-day-header">
+            <span class="calendar-day-number">${dia}</span>
+            ${totalDia > 0 ? `<span class="calendar-day-total">${formatarMoedaCalendario(totalDia)}</span>` : ''}
+        </div>
+
+        <div class="calendar-items">
+            ${itens.map((item, itemIndex) => `
+                <div 
+                    class="calendar-item ${itemIndex >= 3 ? 'calendar-item-extra' : ''}" 
+                    onclick="event.stopPropagation(); verDetalhes(${item.index})" 
+                    title="${item.nome}"
+                >
+                    <span class="calendar-item-name">${item.nome}</span>
+                    <span class="calendar-item-value">${formatarMoedaCalendario(item.valor)}</span>
+                </div>
+            `).join('')}
+
+            ${restante > 0 ? `<button type="button" class="calendar-more" onclick="event.stopPropagation(); alternarDiaCalendario(event, this.closest('.calendar-day'))">+${restante} gasto${restante > 1 ? 's' : ''}</button>` : ''}
+        </div>
+    </div>
+`;
+    }
+
+    grid.innerHTML = html;
+}
+
+/* ========================================================= */
+/* CALENDÁRIO - EXPANDIR DIA                                 */
+/* ========================================================= */
+
+let timerFecharDiaCalendario = null;
+
+function fecharDiaCalendario() {
+    document.querySelectorAll('.calendar-day.is-expanded').forEach(day => {
+        day.classList.remove('is-expanded');
+    });
+}
+
+function alternarDiaCalendario(event, dayElement) {
+    if (!dayElement || !dayElement.classList.contains('calendar-day')) return;
+
+    const temItensOcultos = dayElement.classList.contains('has-hidden-items');
+    if (!temItensOcultos) return;
+
+    const jaAberto = dayElement.classList.contains('is-expanded');
+
+    fecharDiaCalendario();
+
+    if (!jaAberto) {
+        dayElement.classList.add('is-expanded');
+    }
+}
+
+function programarFechamentoDiaCalendario(dayElement) {
+    if (!dayElement || !dayElement.classList.contains('is-expanded')) return;
+
+    cancelarFechamentoDiaCalendario();
+
+    timerFecharDiaCalendario = setTimeout(() => {
+        dayElement.classList.remove('is-expanded');
+    }, 5000);
+}
+
+function cancelarFechamentoDiaCalendario() {
+    if (timerFecharDiaCalendario) {
+        clearTimeout(timerFecharDiaCalendario);
+        timerFecharDiaCalendario = null;
+    }
+}
+
+document.addEventListener('click', function(event) {
+    const clicouEmDia = event.target.closest('.calendar-day');
+
+    if (!clicouEmDia) {
+        fecharDiaCalendario();
+    }
+});

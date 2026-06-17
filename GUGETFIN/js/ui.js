@@ -281,10 +281,55 @@ function escaparHtmlCarteira(texto) {
         .replaceAll("'", "&#039;");
 }
 
+function obterCartoesCarteira() {
+    const detalhes = salsiData?.config?.detalhesBancos || [];
+    const vistos = new Set();
+    const resultado = [];
+
+    detalhes.forEach((cartao, originalIndex) => {
+        if (!cartao) return;
+
+        let nome = cartao.nome || cartao.banco || cartao.titulo || '';
+        nome = String(nome)
+            .replace(/\s*\(Débito\)\s*$/i, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        if (!nome) return;
+
+        const nomeNormalizado = nome.toLowerCase();
+
+        // Ignora placeholders antigos
+        const nomesInvalidos = [
+            'cadastre seus cartões!',
+            'cadastre seus cartoes!',
+            'novo cartão',
+            'novo cartao',
+            'cartão',
+            'cartao'
+        ];
+
+        if (nomesInvalidos.includes(nomeNormalizado)) return;
+
+        // Remove duplicados por nome limpo
+        if (vistos.has(nomeNormalizado)) return;
+
+        vistos.add(nomeNormalizado);
+
+        resultado.push({
+            ...cartao,
+            nome,
+            _originalIndex: originalIndex
+        });
+    });
+
+    return resultado;
+}
+
 function abrirModalCartoes() {
     const lista = document.getElementById('lista-cartoes-config');
     const contador = document.getElementById('contador-cartoes-config');
-    const cartoes = salsiData.config.detalhesBancos || [];
+    const cartoes = obterCartoesCarteira();
 
     if (contador) {
         contador.textContent = `${cartoes.length} cartão${cartoes.length === 1 ? '' : 'ões'}`;
@@ -334,7 +379,7 @@ function abrirModalCartoes() {
             <button 
                 type="button" 
                 class="wallet-card-delete" 
-                onclick="excluirCartaoConfig(${index})" 
+                onclick="excluirCartaoConfig(${c._originalIndex})" 
                 title="Excluir cartão"
             >
                 ×
@@ -373,9 +418,7 @@ function abrirModalCartoes() {
 
 const navHtml = cartoes.length > 1 ? `
     <div class="wallet-carousel-nav">
-        <button type="button" class="wallet-carousel-arrow" onclick="moverCarteira(-1)">↑</button>
         <div class="wallet-carousel-dots" id="wallet-carousel-dots"></div>
-        <button type="button" class="wallet-carousel-arrow" onclick="moverCarteira(1)">↓</button>
     </div>
 ` : "";
 
@@ -1295,14 +1338,19 @@ function atualizarCarouselCarteira() {
 
         const isMobileCarteira = window.innerWidth <= 720;
 
-const y = diff * (isMobileCarteira ? 76 : 118);
-const z = -absDiff * (isMobileCarteira ? 120 : 170);
-const rotateX = diff * (isMobileCarteira ? -7 : -10);
+const y = diff * (isMobileCarteira ? 34 : 38);
+const z = -absDiff * (isMobileCarteira ? 92 : 126);
+const rotateX = diff * (isMobileCarteira ? -3.5 : -5);
+
 const scale = index === carteiraIndexAtual
     ? 1
-    : Math.max(isMobileCarteira ? 0.78 : 0.72, (isMobileCarteira ? 0.90 : 0.88) - absDiff * 0.06);
-        const opacity = absDiff > 3 ? 0 : Math.max(0.18, 1 - absDiff * 0.24);
-        const blur = absDiff === 0 ? 0 : Math.min(absDiff * 1.1, 3.4);
+    : Math.max(
+        isMobileCarteira ? 0.82 : 0.76,
+        (isMobileCarteira ? 0.92 : 0.90) - absDiff * 0.045
+    );
+
+const opacity = absDiff > 3 ? 0 : Math.max(0.13, 1 - absDiff * 0.27);
+const blur = absDiff === 0 ? 0 : Math.min(absDiff * 1.35, 4.2);
 
         card.classList.toggle('is-active', index === carteiraIndexAtual);
         card.classList.toggle('is-hidden', absDiff > 3);

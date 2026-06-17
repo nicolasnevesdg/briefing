@@ -278,16 +278,59 @@ function renderizar() {
     const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
 
     // RENDER PC (Sidebar - Apenas o X estiloso)
-    document.getElementById('lista-entradas').innerHTML = entMes.map(e => {
-        const idx = salsiData.entradas.indexOf(e);
-        return `<div class="sidebar-list-item">
-            <span class="nome-entrada-hover" onclick="verDetalhesEntrada(${idx})" title="Ver Detalhes">${e.nome}</span>
-            <div class="sidebar-value">
-                R$ ${e.valor.toFixed(2)}
-                <button class="btn-del" onclick="excluirEntrada(${idx})" title="Apagar">×</button>
+    const listaEntradasSidebar = document.getElementById('lista-entradas');
+const extraEntradasSidebar = document.getElementById('sidebar-entradas-extra');
+const btnVerMaisEntradas = document.getElementById('btn-ver-mais-entradas');
+const cardEntradasSidebar = document.getElementById('sidebar-entradas-card');
+
+if (listaEntradasSidebar) {
+    const entradasOrdenadas = [...entMes].sort((a, b) => {
+        const dataA = a.dataRecebimento ? new Date(a.dataRecebimento + "T12:00:00") : new Date(a.ano, a.mes, 1);
+        const dataB = b.dataRecebimento ? new Date(b.dataRecebimento + "T12:00:00") : new Date(b.ano, b.mes, 1);
+
+        return dataB - dataA;
+    });
+
+    const entradasOcultas = Math.max(0, entradasOrdenadas.length - 3);
+
+listaEntradasSidebar.innerHTML = entradasOrdenadas.map((e, itemIndex) => {
+    const idx = salsiData.entradas.indexOf(e);
+    const classeExtra = itemIndex >= 3 ? ' sidebar-entrada-extra-item' : '';
+
+    return `
+        <div class="sidebar-entrada-item${classeExtra}">
+            <span class="sidebar-entrada-nome" onclick="verDetalhesEntrada(${idx})" title="Ver detalhes">
+                ${e.nome}
+            </span>
+
+            <div class="sidebar-entrada-valor">
+                <strong>R$ ${e.valor.toFixed(2)}</strong>
+                <button class="btn-del sidebar-entrada-del" onclick="excluirEntrada(${idx})" title="Apagar">×</button>
             </div>
-        </div>`;
-    }).join('');
+        </div>
+    `;
+}).join('') || `
+    <div class="sidebar-entradas-vazio">
+        Nenhuma entrada neste mês.
+    </div>
+`;
+
+    if (extraEntradasSidebar) {
+        extraEntradasSidebar.textContent =
+            !sidebarEntradasExpandida && entradasOcultas > 0
+                ? `+ ${entradasOcultas} entrada${entradasOcultas === 1 ? '' : 's'}`
+                : '';
+    }
+
+    if (btnVerMaisEntradas) {
+        btnVerMaisEntradas.style.display = entradasOrdenadas.length > 3 ? 'block' : 'none';
+        btnVerMaisEntradas.textContent = sidebarEntradasExpandida ? 'Ver menos' : 'Ver mais';
+    }
+
+    if (cardEntradasSidebar) {
+        cardEntradasSidebar.classList.toggle('is-expanded', sidebarEntradasExpandida);
+    }
+}
 
     // RENDER MOBILE (Aba dedicada - Fica um card limpo e totalmente clicável)
     const listaMob = document.getElementById('lista-entradas-mobile');
@@ -710,6 +753,11 @@ ${tagNovo}
         containerLembretesPC.innerHTML = '<p style="font-size: 11px; color: var(--text-sec); text-align: center; padding: 10px;">Você não tem faturas para este mês.</p>';
     }
 
+    // Renderiza gráfico de categorias
+if (typeof renderizarGraficoCategorias === 'function') {
+    renderizarGraficoCategorias(tagSum);
+}
+
     // Renderiza Categorias (Tags)
     const htmlTags = Object.entries(tagSum).map(([k,v]) => renderLinhaOrcamento(k, v, false)).join('');
     const temTags = salsiData.config.categorias && salsiData.config.categorias.length > 0;
@@ -755,5 +803,149 @@ ${tagNovo}
     if (typeof aplicarPrivacidadeValores === 'function') {
     requestAnimationFrame(aplicarPrivacidadeValores);
 }
+
+const main = document.querySelector('main');
+
+if (main && main.classList.contains('calendar-mode')) {
+    renderizarCalendarioFinanceiro(m, a);
+}
 }
 
+/* ========================================================= */
+/* SIDEBAR - NAVEGAÇÃO DASHBOARD / CALENDÁRIO                */
+/* ========================================================= */
+
+let sidebarEntradasExpandida = false;
+
+function marcarViewSidebar(view) {
+    document.querySelectorAll('.sidebar-view-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    const btn = document.getElementById(
+        view === 'calendario' ? 'btn-view-calendario' : 'btn-view-dashboard'
+    );
+
+    if (btn) btn.classList.add('active');
+}
+
+function irParaDashboard() {
+    if (typeof abrirDashboardFinanceira === 'function') {
+        abrirDashboardFinanceira();
+    }
+
+    marcarViewSidebar('dashboard');
+}
+
+function irParaCalendario() {
+    if (typeof abrirCalendarioFinanceiro === 'function') {
+        abrirCalendarioFinanceiro();
+    }
+
+    marcarViewSidebar('calendario');
+}
+
+function toggleEntradasSidebar() {
+    sidebarEntradasExpandida = !sidebarEntradasExpandida;
+
+    const card = document.getElementById('sidebar-entradas-card');
+    const btn = document.getElementById('btn-ver-mais-entradas');
+
+    if (card) {
+        card.classList.toggle('is-expanded', sidebarEntradasExpandida);
+    }
+
+    if (btn) {
+        btn.textContent = sidebarEntradasExpandida ? 'Ver menos' : 'Ver mais';
+    }
+}
+
+function renderizarGraficoCategorias(tagSum) {
+    const chart = document.getElementById('grafico-categorias');
+    const legenda = document.getElementById('grafico-categorias-legenda');
+    const totalEl = document.getElementById('grafico-categorias-total');
+    const totalCentroEl = document.getElementById('grafico-categorias-total-centro');
+    const qtdEl = document.getElementById('grafico-categorias-qtd');
+
+    if (!chart || !legenda || !totalEl || !totalCentroEl || !qtdEl) return;
+
+    const cores = [
+        '#6CC080', // verde principal
+        '#1B4D3E', // verde escuro
+        '#8FD5B0', // verde claro
+        '#F4C95D', // dourado suave
+        '#7AA6A1', // verde acinzentado
+        '#B7C9A8', // sálvia
+        '#F29C6B', // laranja suave
+        '#A9B8C8'  // cinza azulado
+    ];
+
+    const entries = Object.entries(tagSum || {})
+        .filter(([, valor]) => valor > 0)
+        .sort((a, b) => b[1] - a[1]);
+
+    const total = entries.reduce((acc, [, valor]) => acc + valor, 0);
+    const topCategorias = entries.slice(0, 6);
+
+    totalEl.textContent = total.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+
+    totalCentroEl.textContent = total.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+
+    qtdEl.textContent = String(entries.length);
+
+    if (!entries.length || total <= 0) {
+        chart.style.background = 'conic-gradient(#dfe7e2 0deg 360deg)';
+        legenda.innerHTML = `<div class="cat-chart-empty">Sem gastos por categoria neste mês.</div>`;
+        return;
+    }
+
+    let currentAngle = 0;
+    const gap = 2.2; 
+    const segments = [];
+
+    topCategorias.forEach(([nome, valor], index) => {
+        const cor = cores[index % cores.length];
+        const fatia = (valor / total) * 360;
+        const inicio = currentAngle;
+        const fim = currentAngle + fatia;
+
+        const fimComGap = Math.max(inicio, fim - gap);
+
+        segments.push(`${cor} ${inicio}deg ${fimComGap}deg`);
+        segments.push(`rgba(255,255,255,0) ${fimComGap}deg ${fim}deg`);
+
+        currentAngle = fim;
+    });
+
+    if (currentAngle < 360) {
+        segments.push(`#E5ECE7 ${currentAngle}deg 360deg`);
+    }
+
+    chart.style.background = `conic-gradient(${segments.join(', ')})`;
+
+    legenda.innerHTML = topCategorias.map(([nome, valor], index) => {
+        const cor = cores[index % cores.length];
+        const percentual = ((valor / total) * 100).toFixed(0);
+
+        return `
+            <div class="cat-chart-legend-item">
+                <span class="cat-chart-legend-color" style="background:${cor};"></span>
+                <span class="cat-chart-legend-name">${nome}</span>
+                <span class="cat-chart-legend-value">
+                    ${valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </span>
+                <span class="cat-chart-legend-percent">${percentual}%</span>
+            </div>
+        `;
+    }).join('');
+
+    if (typeof aplicarPrivacidadeValores === 'function') {
+        requestAnimationFrame(aplicarPrivacidadeValores);
+    }
+}
