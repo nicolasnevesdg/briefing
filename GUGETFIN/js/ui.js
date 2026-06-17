@@ -223,29 +223,169 @@ function toggleGrafico() {
 }
 
 // 1. Abre o modal e lista os cartões atuais
+function limparNomeCartaoCarteira(nome) {
+    return (nome || "").replace(/\s*\(Débito\)\s*$/i, "").trim();
+}
+
+function normalizarHexCarteira(hex) {
+    if (!hex) return "#64748b";
+
+    let cor = String(hex).split(";")[0].trim();
+
+    if (!cor.startsWith("#")) return "#64748b";
+
+    cor = cor.replace("#", "");
+
+    if (cor.length === 3) {
+        cor = cor.split("").map(c => c + c).join("");
+    }
+
+    if (cor.length !== 6) return "#64748b";
+
+    return "#" + cor;
+}
+
+function hexToRgbCarteira(hex) {
+    const cor = normalizarHexCarteira(hex).replace("#", "");
+
+    return {
+        r: parseInt(cor.substring(0, 2), 16),
+        g: parseInt(cor.substring(2, 4), 16),
+        b: parseInt(cor.substring(4, 6), 16)
+    };
+}
+
+function rgbToHexCarteira(r, g, b) {
+    return "#" + [r, g, b]
+        .map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0"))
+        .join("");
+}
+
+function misturarCorCarteira(hexBase, hexAlvo, pesoAlvo) {
+    const base = hexToRgbCarteira(hexBase);
+    const alvo = hexToRgbCarteira(hexAlvo);
+
+    return rgbToHexCarteira(
+        base.r * (1 - pesoAlvo) + alvo.r * pesoAlvo,
+        base.g * (1 - pesoAlvo) + alvo.g * pesoAlvo,
+        base.b * (1 - pesoAlvo) + alvo.b * pesoAlvo
+    );
+}
+
+function escaparHtmlCarteira(texto) {
+    return String(texto || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
 function abrirModalCartoes() {
     const lista = document.getElementById('lista-cartoes-config');
+    const contador = document.getElementById('contador-cartoes-config');
     const cartoes = salsiData.config.detalhesBancos || [];
 
-    lista.innerHTML = cartoes.length > 0 ? cartoes.map((c, index) => {
-        // MÁGICA VISUAL: Substitui o "null" por uma etiqueta elegante ou por um traço
-        const infoDatas = c.isDebitoOnly 
-            ? `<span style="font-size: 10px; color: var(--text-sec); font-weight: 600;">Cartão de Débito</span>` 
-            : `Fecha: ${c.fechamento || '--'} | Vence: ${c.vencimento || '--'}`;
+    if (contador) {
+        contador.textContent = `${cartoes.length} cartão${cartoes.length === 1 ? '' : 'ões'}`;
+    }
 
-        return `
-        <div class="cartao-item-card">
-            <div>
-                <span class="badge" style="background: ${getCor(c.nome)}; margin-bottom: 6px; display: inline-block;">${c.nome}</span>
-                <div style="font-size: 10px; color: var(--text-sec); font-weight: 600;">
-                    ${infoDatas}
+    if (!lista) return;
+
+    const cardsHtml = cartoes.length > 0 ? cartoes.map((c, index) => {
+    const nomeVisual = limparNomeCartaoCarteira(c.nome);
+    const nomeSeguro = escaparHtmlCarteira(nomeVisual);
+
+    const corBase = normalizarHexCarteira(getCor(c.nome));
+    const corClara = misturarCorCarteira(corBase, "#ffffff", 0.22);
+    const corEscura = misturarCorCarteira(corBase, "#000000", 0.30);
+
+    const tipoCartao = c.isDebitoOnly ? "DÉBITO" : "CRÉDITO";
+
+    const detalhesCartao = c.isDebitoOnly ? `
+        <div class="wallet-card-info wallet-card-info-wide">
+            <span>Tipo</span>
+            <strong>Apenas débito</strong>
+        </div>
+    ` : `
+        <div class="wallet-card-info">
+            <span>Fechamento</span>
+            <strong>Dia ${c.fechamento || '--'}</strong>
+        </div>
+
+        <div class="wallet-card-info">
+            <span>Vencimento</span>
+            <strong>Dia ${c.vencimento || '--'}</strong>
+        </div>
+    `;
+
+    return `
+        <article 
+            class="wallet-card ${c.isDebitoOnly ? 'is-debito' : 'is-credito'}"
+            data-wallet-index="${index}"
+            style="
+                --wallet-color: ${corBase};
+                --wallet-light: ${corClara};
+                --wallet-dark: ${corEscura};
+            "
+        >
+            <div class="wallet-card-glow"></div>
+
+            <button 
+                type="button" 
+                class="wallet-card-delete" 
+                onclick="excluirCartaoConfig(${index})" 
+                title="Excluir cartão"
+            >
+                ×
+            </button>
+
+            <div class="wallet-card-top">
+                <div>
+                    <span class="wallet-card-label">Guget Wallet</span>
+                    <h5>${nomeSeguro}</h5>
+                </div>
+
+                <span class="wallet-card-type">${tipoCartao}</span>
+            </div>
+
+            <div class="wallet-card-middle">
+                <div class="wallet-chip"></div>
+                <div class="wallet-contactless">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             </div>
-            <button class="btn-del" onclick="excluirCartaoConfig(${index})">×</button>
-        </div>
-    `}).join('') : "<p style='font-size:12px; opacity:0.5'>Nenhum cartão.</p>";
+
+            <div class="wallet-card-bottom">
+                ${detalhesCartao}
+            </div>
+        </article>
+    `;
+}).join('') : `
+    <div class="wallet-empty">
+        <div class="wallet-empty-icon">💳</div>
+        <strong>Nenhum cartão cadastrado</strong>
+        <span>Adicione seu primeiro cartão para começar a organizar sua carteira.</span>
+    </div>
+`;
+
+const navHtml = cartoes.length > 1 ? `
+    <div class="wallet-carousel-nav">
+        <button type="button" class="wallet-carousel-arrow" onclick="moverCarteira(-1)">↑</button>
+        <div class="wallet-carousel-dots" id="wallet-carousel-dots"></div>
+        <button type="button" class="wallet-carousel-arrow" onclick="moverCarteira(1)">↓</button>
+    </div>
+` : "";
+
+lista.innerHTML = cardsHtml + navHtml;
 
     document.getElementById('modal-cartoes').showModal();
+
+requestAnimationFrame(() => {
+    iniciarCarouselCarteira();
+});
 }
 
 // 2. Adiciona um novo cartão ao banco de dados
@@ -257,11 +397,6 @@ function adicionarNovoCartao() {
     if (!nome) {
         alert("Preencha o nome do cartão!");
         return;
-    }
-
-    // 1. Mágica do Nome: Adiciona o sufixo automaticamente se for só débito
-    if (isDebito) {
-        nome += " (Débito)";
     }
 
     // 2. Mágica das Datas: Ignora as datas se for débito
@@ -655,58 +790,6 @@ function toggleMetas() {
     } else {
         seta.style.transform = 'rotate(-135deg)';
     }
-}
-
-function verificarLembreteBackup() {
-    const ultimoBackup = localStorage.getItem('salsifin_ultimo_backup');
-    const agora = new Date().getTime();
-    const tresDias = 3 * 24 * 60 * 60 * 1000; // Milissegundos em 3 dias
-
-    // Se nunca fez backup ou se passaram 3 dias
-    if (!ultimoBackup || (agora - ultimoBackup) > tresDias) {
-        exibirBannerBackup();
-    }
-}
-
-function exibirBannerBackup() {
-    // Evita duplicar o banner
-    if (document.getElementById('banner-backup')) return;
-
-    const main = document.querySelector('main');
-    const banner = document.createElement('div');
-    banner.id = 'banner-backup';
-    banner.style = `
-        background: #fff4e5; 
-        border: 1px solid #ffe2b3; 
-        padding: 15px; 
-        margin-bottom: 20px; 
-        border-radius: 12px; 
-        display: flex; 
-        flex-direction: column; 
-        gap: 8px;
-        animation: fadeIn 0.5s ease;
-    `;
-
-    banner.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <strong style="color: #856404; font-size: 13px;">SEGURANÇA DOS DADOS</strong>
-            <button onclick="fecharBannerBackup()" style="background:none; border:none; cursor:pointer; color:#856404;">×</button>
-        </div>
-        <p style="font-size: 12px; color: #856404; margin: 0; line-height: 1.4;">
-            Como o sistema é local, seus dados ficam salvos apenas no cache deste navegador. 
-            Se você limpar o histórico, perderá sua organização. 
-            Vá em <strong>SISTEMA > OPÇÕES</strong> e exporte seus dados para garantir seu backup.
-        </p>
-    `;
-    
-    main.prepend(banner);
-}
-
-function fecharBannerBackup() {
-    // Ao fechar, o sistema entende que você "fez" o backup (ou foi avisado) e renova o prazo de 3 dias
-    localStorage.setItem('salsifin_ultimo_backup', new Date().getTime());
-    const banner = document.getElementById('banner-backup');
-    if (banner) banner.remove();
 }
 
 function navegar(abaId) {
@@ -1158,3 +1241,161 @@ document.addEventListener('keydown', function(event) {
         }
     }
 });
+
+function ativarScrollCarteira() {
+    const carousel = document.getElementById('lista-cartoes-config');
+    if (!carousel || carousel.dataset.scrollCarteiraAtivo === "true") return;
+
+    carousel.dataset.scrollCarteiraAtivo = "true";
+
+    carousel.addEventListener('wheel', function(event) {
+        const cards = carousel.querySelectorAll('.wallet-card');
+        if (!cards.length) return;
+
+        event.preventDefault();
+
+        const direcao = event.deltaY > 0 ? 1 : -1;
+        const passo = 98; // distância visual entre cartões sobrepostos
+
+        carousel.scrollBy({
+            top: direcao * passo,
+            behavior: 'smooth'
+        });
+    }, { passive: false });
+}
+
+/* ========================================================= */
+/* MINHA CARTEIRA - CARROSSEL 3D VERTICAL                    */
+/* ========================================================= */
+
+let carteiraIndexAtual = 0;
+let carteiraWheelTravado = false;
+let carteiraTouchStartY = 0;
+
+function limitarCarteiraIndex(index, total) {
+    if (total <= 0) return 0;
+    return Math.max(0, Math.min(index, total - 1));
+}
+
+function atualizarCarouselCarteira() {
+    const carousel = document.getElementById('lista-cartoes-config');
+    if (!carousel) return;
+
+    const cards = Array.from(carousel.querySelectorAll('.wallet-card'));
+    const dotsContainer = document.getElementById('wallet-carousel-dots');
+
+    const total = cards.length;
+    if (!total) return;
+
+    carteiraIndexAtual = limitarCarteiraIndex(carteiraIndexAtual, total);
+
+    cards.forEach((card, index) => {
+        const diff = index - carteiraIndexAtual;
+        const absDiff = Math.abs(diff);
+
+        const isMobileCarteira = window.innerWidth <= 720;
+
+const y = diff * (isMobileCarteira ? 76 : 118);
+const z = -absDiff * (isMobileCarteira ? 120 : 170);
+const rotateX = diff * (isMobileCarteira ? -7 : -10);
+const scale = index === carteiraIndexAtual
+    ? 1
+    : Math.max(isMobileCarteira ? 0.78 : 0.72, (isMobileCarteira ? 0.90 : 0.88) - absDiff * 0.06);
+        const opacity = absDiff > 3 ? 0 : Math.max(0.18, 1 - absDiff * 0.24);
+        const blur = absDiff === 0 ? 0 : Math.min(absDiff * 1.1, 3.4);
+
+        card.classList.toggle('is-active', index === carteiraIndexAtual);
+        card.classList.toggle('is-hidden', absDiff > 3);
+
+        card.style.zIndex = String(100 - absDiff);
+        card.style.opacity = opacity;
+        card.style.filter = `blur(${blur}px)`;
+        card.style.transform = `
+            translate(-50%, -50%)
+            translateY(${y}px)
+            translateZ(${z}px)
+            rotateX(${rotateX}deg)
+            scale(${scale})
+        `;
+    });
+
+    if (dotsContainer) {
+        dotsContainer.innerHTML = cards.map((_, index) => `
+            <button 
+                type="button" 
+                class="wallet-carousel-dot ${index === carteiraIndexAtual ? 'active' : ''}" 
+                onclick="irParaCarteira(${index})"
+                aria-label="Ir para cartão ${index + 1}"
+            ></button>
+        `).join('');
+    }
+}
+
+function irParaCarteira(index) {
+    const total = document.querySelectorAll('#lista-cartoes-config .wallet-card').length;
+    carteiraIndexAtual = limitarCarteiraIndex(index, total);
+    atualizarCarouselCarteira();
+}
+
+function moverCarteira(direcao) {
+    irParaCarteira(carteiraIndexAtual + direcao);
+}
+
+function iniciarCarouselCarteira() {
+    const carousel = document.getElementById('lista-cartoes-config');
+    if (!carousel) return;
+
+    const cards = carousel.querySelectorAll('.wallet-card');
+    if (!cards.length) return;
+
+    carteiraIndexAtual = limitarCarteiraIndex(carteiraIndexAtual, cards.length);
+
+    if (carousel.dataset.carouselCarteiraAtivo !== "true") {
+        carousel.dataset.carouselCarteiraAtivo = "true";
+
+        carousel.addEventListener('wheel', (event) => {
+            event.preventDefault();
+
+            if (carteiraWheelTravado) return;
+
+            carteiraWheelTravado = true;
+
+            const direcao = event.deltaY > 0 ? 1 : -1;
+            moverCarteira(direcao);
+
+            setTimeout(() => {
+                carteiraWheelTravado = false;
+            }, 520);
+        }, { passive: false });
+
+        carousel.addEventListener('touchstart', (event) => {
+            carteiraTouchStartY = event.touches[0].clientY;
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', (event) => {
+            const endY = event.changedTouches[0].clientY;
+            const diffY = carteiraTouchStartY - endY;
+
+            if (Math.abs(diffY) < 35) return;
+
+            moverCarteira(diffY > 0 ? 1 : -1);
+        }, { passive: true });
+    }
+
+    atualizarCarouselCarteira();
+}
+
+function focarCampoInicialModal(selector) {
+    setTimeout(() => {
+        const campo = document.querySelector(selector);
+
+        if (!campo) return;
+
+        campo.focus({ preventScroll: true });
+
+        // Se já tiver texto, seleciona para facilitar substituir
+        if (campo.value && typeof campo.select === "function") {
+            campo.select();
+        }
+    }, 80);
+}

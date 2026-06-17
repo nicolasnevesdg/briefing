@@ -649,6 +649,7 @@ function abrirModalGasto() {
     if (typeof toggleCampoNomeTerceiro === 'function') toggleCampoNomeTerceiro();
     
     document.getElementById('modal-gasto').showModal();
+    focarCampoInicialModal('#g-nome');
 }
 
 // 2. NOVA FUNÇÃO: Puxa os dados para o formulário e abre como Edição
@@ -715,6 +716,7 @@ function abrirModalEntrada() {
         limparFormularioEntrada();
     }
     document.getElementById('modal-entrada').showModal();
+    focarCampoInicialModal('#e-valor');
 }
 
 // O Cérebro do Contraste: Define a cor do banco e o contraste legível da letra

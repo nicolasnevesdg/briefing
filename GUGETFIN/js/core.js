@@ -83,8 +83,7 @@ function iniciar() {
 
     carregarTemaPreferido(); 
     popularSelects(); 
-    renderizar(); 
-    verificarLembreteBackup();
+    renderizar();
 	
 	// 👇 NOVA VERIFICAÇÃO INTELIGENTE POR CONTA 👇
     // Só abre o tutorial se este usuário logado específico nunca tiver visto
