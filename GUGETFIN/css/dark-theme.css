@@ -561,3 +561,200 @@ body.dark-theme .privacy-toggle-btn {
 body.dark-theme .privacy-toggle-btn.is-active {
     color: #f87171;
 }
+
+/* ========================================================= */
+/* MINHA CARTEIRA - DARK THEME                               */
+/* ========================================================= */
+
+body.dark-theme #modal-cartoes .modal-carteira-pill {
+    background: #11161c !important;
+    border-color: var(--border) !important;
+    color: var(--text-sec) !important;
+}
+
+body.dark-theme #modal-cartoes .wallet-form-panel {
+    background: linear-gradient(180deg, #171a20, #141820) !important;
+    border-color: var(--border) !important;
+}
+
+body.dark-theme #modal-cartoes .wallet-debit-toggle {
+    background: #11161c !important;
+    border-color: var(--border) !important;
+}
+
+body.dark-theme #modal-cartoes .wallet-form input[type="text"],
+body.dark-theme #modal-cartoes .wallet-form input[type="number"] {
+    background: #11161c !important;
+    border-color: var(--border) !important;
+    color: var(--text-main) !important;
+}
+
+body.dark-theme #modal-cartoes .wallet-empty {
+    background: #11161c !important;
+    border-color: var(--border) !important;
+}
+
+body.dark-theme #modal-cartoes .wallet-panel-hint {
+    color: var(--text-sec) !important;
+}
+
+/* ========================================================= */
+/* CALENDÁRIO FINANCEIRO - DARK                              */
+/* ========================================================= */
+
+body.dark-theme .calendar-summary > div,
+body.dark-theme .calendar-day {
+    background: #171a20;
+    border-color: var(--border);
+}
+
+body.dark-theme .calendar-day.is-empty {
+    background: transparent;
+}
+
+body.dark-theme .calendar-item {
+    background: #11161c;
+    border-color: var(--border);
+}
+
+body.dark-theme .calendar-day.is-today {
+    box-shadow: 0 0 0 3px rgba(95, 211, 162, 0.08);
+}
+
+body.dark-theme .calendar-summary > div {
+    background: #171a20;
+    border-color: var(--border);
+}
+
+body.dark-theme .calendar-summary > div:first-child {
+    background: linear-gradient(135deg, #129c6d 0%, #18a874 100%);
+    border-color: rgba(255,255,255,0.04);
+}
+
+body.dark-theme .calendar-summary > div:first-child span,
+body.dark-theme .calendar-summary > div:first-child strong {
+    color: #ffffff;
+}
+
+body.dark-theme .calendar-day.has-hidden-items:hover {
+    border-color: rgba(95, 211, 162, 0.35);
+}
+
+body.dark-theme .calendar-day.is-expanded {
+    border-color: var(--dark-green);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
+}
+
+body.dark-theme .calendar-more:hover {
+    color: var(--dark-green);
+}
+
+/* ========================================================= */
+/* SIDEBAR - NAV E ENTRADAS DARK                             */
+/* ========================================================= */
+
+body.dark-theme .sidebar-view-btn {
+    color: var(--text-sec);
+}
+
+body.dark-theme .sidebar-view-btn:hover {
+    background: rgba(255,255,255,0.045);
+    color: var(--dark-green);
+}
+
+body.dark-theme .sidebar-view-btn.active {
+    background: rgba(95, 211, 162, 0.10);
+    color: var(--dark-green);
+    box-shadow: none;
+}
+
+body.dark-theme .sidebar-entradas-card {
+    background: #171a20;
+    border-color: var(--border);
+}
+
+body.dark-theme .sidebar-entradas-card.is-expanded {
+    box-shadow: 0 24px 50px rgba(0,0,0,0.34);
+}
+
+body.dark-theme .btn-ver-mais-entradas {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text-main);
+}
+
+body.dark-theme .btn-ver-mais-entradas:hover {
+    background: rgba(95, 211, 162, 0.10);
+    color: var(--dark-green);
+    border-color: rgba(95, 211, 162, 0.28);
+}
+
+body.dark-theme .sidebar-entrada-item {
+    border-bottom-color: var(--border);
+}
+
+body.dark-theme .sidebar-entrada-nome {
+    color: var(--text-main);
+}
+
+body.dark-theme .sidebar-entrada-nome:hover {
+    color: var(--dark-green);
+}
+
+body.dark-theme .resumo-categorias-chart-block {
+    background: #171a20;
+    border-color: var(--border);
+}
+
+body.dark-theme .grafico-categorias::before {
+    background: #11161c;
+    border-color: var(--border);
+}
+
+body.dark-theme .cat-chart-widget {
+    background: linear-gradient(180deg, #171a20 0%, #141920 100%);
+    border-color: var(--border);
+}
+
+body.dark-theme .cat-chart-period {
+    background: rgba(95, 211, 162, 0.10);
+    border-color: rgba(95, 211, 162, 0.18);
+    color: var(--dark-green);
+}
+
+body.dark-theme .cat-chart-top-item {
+    background: rgba(95, 211, 162, 0.10);
+    border-color: rgba(95, 211, 162, 0.14);
+}
+
+body.dark-theme .cat-chart-top-item-soft {
+    background: #11161c;
+    border-color: var(--border);
+}
+
+body.dark-theme .cat-chart-donut::before {
+    background: #11161c;
+    border-color: rgba(255,255,255,0.04);
+}
+
+body.dark-theme .cat-chart-legend-item {
+    background: #11161c;
+    border-color: var(--border);
+}
+
+body.dark-theme #modal-cartoes .wallet-form-panel {
+    background: linear-gradient(180deg, #171a20, #141820);
+    border-color: var(--border);
+}
+
+body.dark-theme #modal-cartoes .wallet-form input[type="text"],
+body.dark-theme #modal-cartoes .wallet-form input[type="number"] {
+    background: #11161c;
+    border-color: var(--border);
+    color: var(--text-main);
+}
+
+body.dark-theme #modal-cartoes .wallet-debit-toggle {
+    background: #11161c;
+    border-color: var(--border);
+}

@@ -1858,3 +1858,531 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
         display: none !important;
     }
 }
+
+/* ========================================================= */
+/* PÁGINA CALENDÁRIO FINANCEIRO - DESKTOP                    */
+/* ========================================================= */
+
+.calendar-view {
+    display: none;
+}
+
+main.calendar-mode > *:not(.month-nav):not(#calendar-view) {
+    display: none !important;
+}
+
+main.calendar-mode #calendar-view {
+    display: block;
+}
+
+.calendar-page-header {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 22px;
+}
+
+.calendar-kicker {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--dark-green);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.calendar-page-header h2 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+}
+
+.calendar-page-header p {
+    margin: 8px 0 0 0;
+    color: var(--text-sec);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.calendar-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    min-width: 390px;
+}
+
+.calendar-summary > div {
+    min-width: 0;
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--sidebar-bg);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.calendar-summary > div:first-child {
+    background: var(--dark-green);
+    border-color: var(--dark-green);
+    color: #ffffff;
+}
+
+.calendar-summary > div:first-child span {
+    color: var(--acc-green);
+}
+
+.calendar-summary > div:first-child strong {
+    color: #ffffff;
+}
+
+.calendar-summary span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.calendar-summary strong {
+    color: var(--dark-green);
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.calendar-weekdays span {
+    padding: 0 6px;
+    color: var(--text-sec);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.financial-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.calendar-day {
+    min-height: 138px;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 12px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.calendar-day.is-empty {
+    opacity: 0.35;
+    background: transparent;
+    border-style: dashed;
+}
+
+.calendar-day.is-today {
+    border-color: var(--dark-green);
+    box-shadow: 0 0 0 3px rgba(95, 211, 162, 0.10);
+}
+
+.calendar-day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.calendar-day-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.calendar-day.is-today .calendar-day-number {
+    background: var(--dark-green);
+    color: #ffffff;
+}
+
+.calendar-day-total {
+    color: var(--dark-green);
+    font-size: 11px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.calendar-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 0;
+}
+
+.calendar-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 7px 8px;
+    border-radius: 10px;
+    background: rgba(127,127,127,0.06);
+    border: 1px solid rgba(127,127,127,0.08);
+    cursor: pointer;
+}
+
+.calendar-item-name {
+    color: var(--text-main);
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.calendar-item-value {
+    color: var(--dark-green);
+    font-size: 11px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.calendar-more {
+    margin-top: 2px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+@media (max-width: 1024px) {
+    #calendar-view {
+        display: none !important;
+    }
+}
+
+/* ========================================================= */
+/* CALENDÁRIO - DIA EXPANDIDO                                */
+/* ========================================================= */
+
+.calendar-day {
+    transition: 
+        min-height 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.calendar-day.has-hidden-items {
+    cursor: pointer;
+}
+
+.calendar-day.has-hidden-items:hover {
+    border-color: rgba(27, 58, 50, 0.22);
+    transform: translateY(-1px);
+}
+
+.calendar-item-extra {
+    display: none;
+}
+
+.calendar-day.is-expanded {
+    min-height: auto;
+    height: auto;
+    z-index: 20;
+    transform: translateY(-2px);
+    border-color: var(--dark-green);
+    box-shadow: 0 18px 38px rgba(27, 58, 50, 0.12);
+    overflow: visible;
+}
+
+.calendar-day.is-expanded .calendar-item-extra {
+    display: grid;
+}
+
+.calendar-day.is-expanded .calendar-more {
+    display: none;
+}
+
+.calendar-more {
+    margin-top: 2px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-sec);
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    text-align: left;
+    cursor: pointer;
+}
+
+.calendar-more:hover {
+    color: var(--dark-green);
+}
+
+.calendar-day.is-expanded .calendar-items {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+}
+
+.calendar-day.is-expanded .calendar-items::-webkit-scrollbar {
+    width: 4px;
+}
+
+.calendar-day.is-expanded .calendar-items::-webkit-scrollbar-thumb {
+    background: rgba(127,127,127,0.28);
+    border-radius: 999px;
+}
+
+/* ========================================================= */
+/* SIDEBAR - NAV DASHBOARD / CALENDÁRIO                      */
+/* ========================================================= */
+
+.sidebar-view-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0 0 18px 0;
+}
+
+.sidebar-view-btn {
+    width: 100%;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text-sec);
+    border-radius: 10px;
+    padding: 0 10px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.sidebar-view-btn i {
+    width: 18px;
+    font-size: 15px;
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-view-btn:hover {
+    color: var(--dark-green);
+    background: rgba(127,127,127,0.055);
+}
+
+.sidebar-view-btn.active {
+    color: var(--dark-green);
+    background: rgba(108, 192, 128, 0.12);
+    box-shadow: none;
+}
+
+/* ========================================================= */
+/* SIDEBAR - CARD DE ENTRADAS COMPACTO                       */
+/* ========================================================= */
+
+.sidebar-middle {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: visible;
+}
+
+.sidebar-entradas-card {
+    position: relative;
+    z-index: 5;
+
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--sidebar-bg);
+    padding: 16px;
+    box-sizing: border-box;
+
+    transition:
+        box-shadow 0.25s ease,
+        transform 0.25s ease,
+        max-height 0.25s ease;
+}
+
+.sidebar-entradas-card.is-expanded {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 80;
+    max-height: calc(100vh - 330px);
+    overflow-y: auto;
+
+    box-shadow: 0 22px 46px rgba(27, 58, 50, 0.16);
+    transform: translateY(-2px);
+}
+
+.sidebar-entradas-header {
+    margin-bottom: 13px;
+}
+
+.sidebar-entradas-header h3 {
+    margin: 0;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.sidebar-entradas-lista {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-entrada-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar-entrada-item:last-child {
+    border-bottom: none;
+}
+
+.sidebar-entrada-nome {
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.22;
+    cursor: pointer;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.sidebar-entrada-nome:hover {
+    color: var(--dark-green);
+}
+
+.sidebar-entrada-valor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar-entrada-valor strong {
+    color: var(--dark-green);
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.sidebar-entrada-del {
+    font-size: 16px;
+    opacity: 0.55;
+}
+
+.sidebar-entradas-extra {
+    margin-top: 10px;
+    color: var(--text-sec);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.btn-ver-mais-entradas {
+    width: 100%;
+    height: 34px;
+    margin-top: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text-main);
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-ver-mais-entradas:hover {
+    background: rgba(108, 192, 128, 0.10);
+    color: var(--dark-green);
+    border-color: rgba(108, 192, 128, 0.35);
+}
+
+.sidebar-entradas-total {
+    margin-top: 14px;
+    padding-top: 13px;
+    border-top: 1px solid var(--border);
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-entradas-total small {
+    color: var(--text-sec);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.sidebar-entradas-total strong {
+    color: var(--dark-green);
+    font-size: 13px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.sidebar-entradas-vazio {
+    padding: 14px 0;
+    color: var(--text-sec);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.sidebar-entrada-extra-item {
+    display: none;
+}
+
+.sidebar-entradas-card.is-expanded .sidebar-entrada-extra-item {
+    display: grid;
+}
