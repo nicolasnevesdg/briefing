@@ -94,7 +94,7 @@
 		<aside class="sidebar">
             <div class="brand"><h2 id="logo-guget">Guget Fin</h2></div>
             
-            <div class="sidebar-action-buttons desktop-only" style="margin-bottom: 40px;">
+            <div class="sidebar-action-buttons desktop-only" style="margin-bottom: 30px;">
                 <div class="btn-unified-container">
                     <button onclick="abrirModalEntrada()" class="btn-unified-half">
                         <i class="fi fi-rr-arrow-down-left"></i> Entrada
@@ -108,20 +108,38 @@
                 </div>
             </div>
 
-            <div class="sidebar-middle">
-                <div class="sidebar-section">
-                    <div class="section-header" style="justify-content: center; margin-bottom: 15px;">
-                        <h3 style="text-align: center; font-size: 10px; letter-spacing: 0.15em;">ENTRADAS MENSAIS</h3>
-                    </div>
-                    
-                    <div id="lista-entradas"></div>
-                    
-                    <div id="total-entradas-sidebar" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                        <small style="font-size: 9px; font-weight: 800; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.05em;">Total Mensal</small>
-                        <strong id="sidebar-total-valor" style="font-size: 13px; color: var(--dark-green); font-weight: 800;">R$ 0,00</strong>
-                    </div>
-                </div>
-            </div>
+            <nav class="sidebar-view-nav desktop-only">
+    <button class="sidebar-view-btn active" id="btn-view-dashboard" onclick="irParaDashboard()">
+        <i class="fi fi-rr-apps"></i>
+        <span>Dashboard</span>
+    </button>
+
+    <button class="sidebar-view-btn" id="btn-view-calendario" onclick="irParaCalendario()">
+        <i class="fi fi-rr-calendar"></i>
+        <span>Calendário</span>
+    </button>
+</nav>
+
+<div class="sidebar-middle">
+    <div class="sidebar-entradas-card" id="sidebar-entradas-card">
+        <div class="sidebar-entradas-header">
+            <h3>Entradas mensais</h3>
+        </div>
+
+        <div id="lista-entradas" class="sidebar-entradas-lista"></div>
+
+        <div id="sidebar-entradas-extra" class="sidebar-entradas-extra"></div>
+
+        <button type="button" id="btn-ver-mais-entradas" class="btn-ver-mais-entradas" onclick="toggleEntradasSidebar()">
+            Ver mais
+        </button>
+
+        <div id="total-entradas-sidebar" class="sidebar-entradas-total">
+            <small>Total mensal</small>
+            <strong id="sidebar-total-valor">R$ 0,00</strong>
+        </div>
+    </div>
+</div>
 
             <div class="sidebar-footer">
                 
@@ -428,6 +446,45 @@
 							<small>POR CARTÃO / BANCO</small>
 							<div id="resumo-bancos-lista"></div>
 						</div>
+
+                        <div class="cat-chart-widget">
+    <!-- <div class="cat-chart-header">
+        <div>
+            <h4>Estatística</h4>
+            <p>Gastos por categoria</p>
+        </div>
+
+        <div class="cat-chart-period">
+            <span>Este mês</span>
+        </div>
+    </div>
+
+    <div class="cat-chart-topline">
+        <div class="cat-chart-top-item">
+            <span>Total</span>
+            <strong id="grafico-categorias-total">R$ 0,00</strong>
+        </div>
+
+        <div class="cat-chart-top-item cat-chart-top-item-soft">
+            <span>Categorias</span>
+            <strong id="grafico-categorias-qtd">0</strong>
+        </div>
+    </div>
+
+    <div class="cat-chart-body">
+        <div class="cat-chart-donut-wrap">
+            <div id="grafico-categorias" class="cat-chart-donut">
+                <div class="cat-chart-donut-center">
+                    <small>Total em categorias</small>
+                    <strong id="grafico-categorias-total-centro">R$ 0,00</strong>
+                </div>
+            </div>
+        </div>
+
+        <div id="grafico-categorias-legenda" class="cat-chart-legend"></div>
+    </div>
+</div>-->
+
 						<div class="resumo-central-item" style="margin-top: 24px;">
 							<small>POR CATEGORIA (TAGS)</small>
 							<div id="resumo-tags-lista"></div>
@@ -547,6 +604,39 @@
 			</div>
 		</section>
 		
+        <section id="calendar-view" class="calendar-view desktop-only">
+    <div class="calendar-page-header">
+        <div>
+            <span class="calendar-kicker">Visão mensal</span>
+            <h2 id="calendar-title">Calendário financeiro</h2>
+            <p>Veja seus gastos organizados por dia no mês selecionado.</p>
+        </div>
+
+        <div class="calendar-summary">
+            <div>
+                <span>Total de gastos</span>
+                <strong id="calendar-total-gastos">R$ 0,00</strong>
+            </div>
+            <div>
+                <span>Dias com movimento</span>
+                <strong id="calendar-dias-movimento">0</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="calendar-weekdays">
+        <span>Dom</span>
+        <span>Seg</span>
+        <span>Ter</span>
+        <span>Qua</span>
+        <span>Qui</span>
+        <span>Sex</span>
+        <span>Sáb</span>
+    </div>
+
+    <div id="financial-calendar-grid" class="financial-calendar-grid"></div>
+</section>
+
     </main>
 
 <nav class="mobile-tab-bar">
@@ -752,52 +842,73 @@
 		</div>
 	</dialog>
 	
-	<dialog id="modal-cartoes" class="modal-largo">
-		<div class="modal-content" style="width: 720px; max-width: 95vw;">
-			<button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
-			<h3 style="margin-bottom: 24px;">Gerenciar Cartões 💳</h3>
-			
-			<div class="modal-split-container">
-				
-				<div class="modal-side">
-					<h4 class="column-mini-title">Cartões Cadastrados</h4>
-					<div id="lista-cartoes-config" class="config-list-scroll">
-						</div>
-				</div>
+	<dialog id="modal-cartoes" class="modal-largo modal-carteira">
+    <div class="modal-content modal-carteira-content">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
 
-				<div class="modal-divider"></div>
+        <div class="modal-carteira-header">
+            <div>
+                <h3 class="modal-carteira-title">Minha Carteira</h3>
+                <p class="modal-carteira-subtitle">Gerencie seus cartões, fechamentos e vencimentos.</p>
+            </div>
 
-				<div class="modal-side">
-					<h4 class="column-mini-title">+ Adicionar Novo</h4>
-					<div class="novo-cartao-form-clean">
-						<div class="input-group">
-							<label>Nome do Cartão</label>
-							<input type="text" id="nc-nome" placeholder="Ex: Nubank, Inter...">
-						</div>
-						
-						<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px; margin-top: -5px;">
-							<input type="checkbox" id="banco-apenas-debito" onchange="toggleInputsDebito()" style="width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: #10b981; border-radius: 4px;">
-							<label for="banco-apenas-debito" style="color: var(--text-sec); font-size: 14px; cursor: pointer; margin: 0;">Este cartão é apenas Débito</label>
-						</div>
-						<div id="box-datas-cartao" style="display: flex; gap: 15px; transition: 0.3s;">
-							<div class="input-group" style="flex: 1;">
-								<label>Fechamento</label>
-								<input type="number" id="nc-fechamento" placeholder="Dia" min="1" max="31">
-							</div>
-							<div class="input-group" style="flex: 1;">
-								<label>Vencimento</label>
-								<input type="number" id="nc-vencimento" placeholder="Dia" min="1" max="31">
-							</div>
-						</div>
-						
-						<button type="button" class="btn-novo-gasto" onclick="adicionarNovoCartao()" style="margin-top: 20px; width: 100%;">
-							Confirmar Cadastro
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</dialog>
+            <span class="modal-carteira-pill" id="contador-cartoes-config">0 cartões</span>
+        </div>
+        
+        <div class="modal-carteira-grid">
+            
+            <section class="wallet-panel wallet-panel-left">
+                <div class="wallet-panel-header">
+                    <h4 class="column-mini-title">Cartões cadastrados</h4>
+                    <span class="wallet-panel-hint">Role para navegar</span>
+                </div>
+
+                <div id="lista-cartoes-config" class="wallet-carousel"></div>
+            </section>
+
+            <section class="wallet-panel wallet-panel-right">
+                <div class="wallet-form-panel">
+                    <div class="wallet-form-header">
+                        <span class="wallet-form-kicker">Novo cartão</span>
+                        <h4>Adicionar à carteira</h4>
+                        <p>Cadastre cartões de crédito ou contas usadas apenas no débito.</p>
+                    </div>
+
+                    <div class="novo-cartao-form-clean wallet-form">
+                        <div class="input-group">
+                            <label>Nome do cartão</label>
+                            <input type="text" id="nc-nome" placeholder="Ex: Nubank, Inter...">
+                        </div>
+                        
+                        <label class="wallet-debit-toggle" for="banco-apenas-debito">
+                            <input type="checkbox" id="banco-apenas-debito" onchange="toggleInputsDebito()">
+                            <span>
+                                <strong>Este cartão é apenas débito</strong>
+                                <small>Use quando não houver fechamento ou vencimento de fatura.</small>
+                            </span>
+                        </label>
+
+                        <div id="box-datas-cartao" class="wallet-date-grid">
+                            <div class="input-group">
+                                <label>Fechamento</label>
+                                <input type="number" id="nc-fechamento" placeholder="Dia" min="1" max="31">
+                            </div>
+                            <div class="input-group">
+                                <label>Vencimento</label>
+                                <input type="number" id="nc-vencimento" placeholder="Dia" min="1" max="31">
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn-novo-gasto btn-wallet-submit" onclick="adicionarNovoCartao()">
+                            Adicionar à Carteira
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</dialog>
 
 	<dialog id="modal-categorias" class="modal-largo">
 		<div class="modal-content" style="width: 700px; max-width: 95vw;">
