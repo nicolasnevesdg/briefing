@@ -1746,3 +1746,74 @@ body.dark-theme .fatura-preview-alerta.is-info {
     display: none;
 }
 
+/* ========================================================= */
+/* CAIXINHA - MODAL                                          */
+/* ========================================================= */
+
+.modal-caixinha {
+    width: min(560px, calc(100vw - 28px));
+    border-radius: 20px;
+}
+
+.modal-caixinha-content {
+    padding: 34px;
+}
+
+.modal-caixinha-header {
+    padding-right: 42px;
+    margin-bottom: 24px;
+}
+
+.modal-caixinha-header span {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--dark-green);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.modal-caixinha-header h3 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 28px;
+    line-height: 1.05;
+    font-weight: 950;
+    letter-spacing: -0.045em;
+}
+
+.modal-caixinha-header p {
+    margin: 10px 0 0 0;
+    color: var(--text-sec);
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 650;
+}
+
+.caixinha-comprovante {
+    margin-top: 16px;
+}
+
+.caixinha-file-status {
+    display: block;
+    margin-top: 10px;
+    color: var(--text-sec);
+    font-size: 11px;
+    font-weight: 750;
+}
+
+.btn-caixinha-save {
+    width: 100%;
+    margin-top: 20px;
+}
+
+@media (max-width: 720px) {
+    .modal-caixinha-content {
+        padding: 26px 22px;
+    }
+
+    .modal-caixinha-header h3 {
+        font-size: 24px;
+    }
+}

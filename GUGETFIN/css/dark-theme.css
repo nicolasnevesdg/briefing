@@ -218,6 +218,15 @@ body.dark-theme .header-avatar {
     border-color: var(--border);
 }
 
+body.dark-theme .header-profile-more {
+    color: var(--text-sec);
+}
+
+body.dark-theme .header-profile-more:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--dark-green);
+}
+
 body.dark-theme button.guget-ai-trigger {
     background: rgba(95, 211, 162, 0.10);
     border-color: rgba(95, 211, 162, 0.35);
@@ -650,6 +659,82 @@ body.dark-theme .calendar-more:hover {
 }
 
 /* ========================================================= */
+/* CONFIGURACOES - DARK                                      */
+/* ========================================================= */
+
+body.dark-theme .settings-user-card,
+body.dark-theme .settings-tabs,
+body.dark-theme .settings-content {
+    background: #171a20;
+    border-color: var(--border);
+}
+
+body.dark-theme .settings-user-card img,
+body.dark-theme .settings-field input,
+body.dark-theme .settings-field select,
+body.dark-theme .wallet-page-form input[type="text"],
+body.dark-theme .wallet-page-form input[type="number"],
+body.dark-theme .wallet-page-form .wallet-debit-toggle,
+body.dark-theme .settings-avatar-editor,
+body.dark-theme .settings-avatar-preview-wrap,
+body.dark-theme .settings-security-card,
+body.dark-theme .settings-wallet-card,
+body.dark-theme .settings-categories-card,
+body.dark-theme .wallet-page-form,
+body.dark-theme .subscription-invite-card,
+body.dark-theme .settings-toggle-row,
+body.dark-theme .settings-action-card,
+body.dark-theme .settings-google-status-row,
+body.dark-theme .google-card-logo {
+    background: #11161c;
+    border-color: var(--border);
+}
+
+body.dark-theme .auth-loader-mark {
+    background: #11161c;
+    border-color: var(--border);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+}
+
+body.dark-theme .wallet-page-carousel-wrap {
+    background: linear-gradient(180deg, rgba(95, 211, 162, 0.055), rgba(255,255,255,0.025));
+}
+
+body.dark-theme .settings-category-chip {
+    background: rgba(255,255,255,0.035);
+}
+
+body.dark-theme .settings-category-chip button {
+    background: rgba(255,255,255,0.06);
+}
+
+body.dark-theme .settings-category-empty {
+    border-color: var(--border);
+}
+
+body.dark-theme .modal-avatar-crop {
+    background: #171a20;
+    color: var(--text-main);
+}
+
+body.dark-theme .settings-field input,
+body.dark-theme .settings-field select {
+    color: var(--text-main);
+}
+
+body.dark-theme .settings-tab:hover,
+body.dark-theme .settings-tab.active,
+body.dark-theme .btn-sidebar-general.active {
+    background: rgba(95, 211, 162, 0.10);
+    color: var(--dark-green) !important;
+}
+
+body.dark-theme .settings-action-card:hover {
+    border-color: rgba(95, 211, 162, 0.28);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.24);
+}
+
+/* ========================================================= */
 /* SIDEBAR - NAV E ENTRADAS DARK                             */
 /* ========================================================= */
 
@@ -757,4 +842,52 @@ body.dark-theme #modal-cartoes .wallet-form input[type="number"] {
 body.dark-theme #modal-cartoes .wallet-debit-toggle {
     background: #11161c;
     border-color: var(--border);
+}
+
+/* ========================================================= */
+/* VISUALIZACOES - DARK MAIS LIMPO                           */
+/* ========================================================= */
+
+body.dark-theme .visual-summary > div,
+body.dark-theme .visual-tabs,
+body.dark-theme .visual-content,
+body.dark-theme .visual-card,
+body.dark-theme .visual-mini-btn,
+body.dark-theme .terceiro-suggestion-item {
+    background: #171a20;
+    border-color: var(--border);
+    box-shadow: none;
+}
+
+body.dark-theme .visual-card {
+    background: #171a20;
+}
+
+body.dark-theme .visual-mini-btn {
+    color: var(--text-main);
+}
+
+body.dark-theme .visual-mini-btn.primary {
+    background: var(--dark-green);
+    color: #0f1714;
+}
+
+body.dark-theme .visual-mini-btn.danger {
+    color: #fca5a5;
+}
+
+body.dark-theme .visual-empty,
+body.dark-theme .terceiro-suggestion-empty,
+body.dark-theme .terceiro-suggestion-selected {
+    background: #11161c;
+    border-color: var(--border);
+    box-shadow: none;
+}
+
+body.dark-theme .visual-progress {
+    background: rgba(255,255,255,0.08);
+}
+
+body.dark-theme .caixinha-balance-card {
+    box-shadow: none;
 }
