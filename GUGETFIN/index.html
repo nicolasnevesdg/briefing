@@ -14,69 +14,56 @@
 
 <body>
 
-<div id="auth-screen" class="auth-overlay">
+<div id="auth-screen" class="auth-overlay auth-v2">
     <div class="auth-box">
-        
-        <div class="auth-left">
-            <div class="brand"><h2>Guget Fin</h2></div>
-            <p class="auth-subtitle">Sua gestão financeira, agora na nuvem.</p>
-            
-            <div id="auth-splash-loader" style="text-align: center; margin: 20px 0; color: var(--text-sec);">
-                <i class="fi fi-rr-spinner" style="font-size: 24px; display: inline-block; animation: spin 1s linear infinite;"></i>
-                <p style="margin-top: 10px; font-size: 14px;">Conectando ao cofre...</p>
+        <section class="auth-showcase-panel auth-right" id="auth-showcase" style="display: none;">
+            <div class="auth-showcase-brand">
+                <h2>Guget Fin</h2>
             </div>
 
-            <div id="login-form" style="display: none;">
-			    <input type="email" id="login-email" placeholder="E-mail" class="auth-input">
-			    <input type="password" id="login-senha" placeholder="Senha" class="auth-input" style="margin-bottom: 8px;">
-			    
-			    <div style="text-align: right; margin-bottom: 15px;">
-			        <a href="#" onclick="recuperarSenha()" style="font-size: 12px; color: var(--text-sec); text-decoration: none; font-weight: 500;">Esqueceu a senha?</a>
-			    </div>
-			
-			    <button class="btn-auth-primary" onclick="fazerLogin()">Entrar</button>
-			    <p class="auth-switch">Não tem conta? <a href="#" onclick="toggleAuth(true)">Criar agora</a></p>
-			</div>
-
-            <div id="register-form" style="display: none;">
-                <input type="text" id="register-nome" placeholder="Seu nome (ex: Nícolas Neves)" class="auth-input">
-                <input type="email" id="register-email" placeholder="Seu melhor e-mail" class="auth-input">
-                
-                <div class="password-wrapper">
-                    <input type="password" id="register-senha" placeholder="Crie uma senha forte" class="auth-input" style="margin-bottom: 0;">
-                    <button type="button" class="btn-eye" onclick="togglePassword('register-senha', this)"><i class="fi fi-rr-eye"></i></button>
-                </div>
-                
-                <div class="password-wrapper" style="margin-top: 12px; margin-bottom: 12px;">
-                    <input type="password" id="register-senha-conf" placeholder="Confirme sua senha" class="auth-input" style="margin-bottom: 0;">
-                    <button type="button" class="btn-eye" onclick="togglePassword('register-senha-conf', this)"><i class="fi fi-rr-eye"></i></button>
-                </div>
-
-                <button class="btn-auth-primary" onclick="fazerCadastro()">Cadastrar</button>
-                <p class="auth-switch">Já tem conta? <a href="#" onclick="toggleAuth(false)">Fazer login</a></p>
-            </div>
-        </div>
-
-        <div class="auth-right" id="auth-showcase" style="display: none;">
             <div class="showcase-slider">
                 <div class="slides-container" id="slides-container">
                     <div class="slide-item">
-                        <div class="slide-img-placeholder">IMG 1</div>
-                        <h3>Seu dinheiro sob controle</h3>
-                        <p>Gráficos inteligentes que mostram para onde seu dinheiro está indo.</p>
+                        <div class="auth-feature-card">
+                            <div class="auth-feature-top">
+                                <span>Saldo do mês</span>
+                                <strong>R$ 4.820</strong>
+                            </div>
+                            <div class="auth-feature-bars">
+                                <i style="height: 54%;"></i>
+                                <i style="height: 72%;"></i>
+                                <i style="height: 42%;"></i>
+                                <i style="height: 86%;"></i>
+                                <i style="height: 60%;"></i>
+                            </div>
+                        </div>
+                        <h3>Dashboard que explica seu dinheiro</h3>
+                        <p>Entradas, gastos, cartões e metas em uma leitura limpa para decidir melhor.</p>
                     </div>
                     <div class="slide-item">
-                        <div class="slide-img-placeholder">IMG 2</div>
-                        <h3>Gastos de Terceiros</h3>
-                        <p>Controle os gastos da empresa ou amigos sem bagunçar seu bolso.</p>
+                        <div class="auth-feature-card auth-feature-stack">
+                            <div><b>@usuario</b><span>Aguardando aceite</span></div>
+                            <div><b>Despesa compartilhada</b><span>3x de R$ 42,90</span></div>
+                            <div><b>Dívidas</b><span>Aceitar, contestar ou pagar</span></div>
+                        </div>
+                        <h3>Gastos compartilhados sem confusão</h3>
+                        <p>Envie, aceite, conteste e acompanhe dívidas entre contas com histórico.</p>
                     </div>
                     <div class="slide-item">
-                        <div class="slide-img-placeholder">IMG 3</div>
-                        <h3>Alcance seus objetivos</h3>
-                        <p>Crie metas visuais, acompanhe seu progresso e realize seus sonhos.</p>
+                        <div class="auth-feature-card">
+                            <div class="auth-feature-top">
+                                <span>Caixinha</span>
+                                <strong>R$ 1.250</strong>
+                            </div>
+                            <div class="auth-feature-ring">
+                                <span>68%</span>
+                            </div>
+                        </div>
+                        <h3>Planejamento com cara de hábito</h3>
+                        <p>Visualize parcelados, reservas e metas sem abrir planilha nenhuma.</p>
                     </div>
                 </div>
-                
+
                 <div class="slider-dots">
                     <span class="dot active"></span>
                     <span class="dot"></span>
@@ -84,10 +71,109 @@
                 </div>
             </div>
 
-            <button class="btn-auth-primary btn-get-started mobile-btn-only" onclick="mostrarFormulario('register')">Bora organizar ↗</button>
-            <p class="auth-switch mobile-btn-only" style="margin-top: 20px;">Já possui cadastro? <a href="#" onclick="mostrarFormulario('login')">Sign in</a></p>
-        </div>
+            <button class="btn-auth-primary btn-get-started mobile-btn-only" onclick="mostrarFormulario('register')">Criar minha conta</button>
+            <p class="auth-switch mobile-btn-only">Já possui cadastro? <a href="#" onclick="mostrarFormulario('login')">Entrar</a></p>
+        </section>
 
+        <section class="auth-form-panel auth-left">
+            <div class="auth-mobile-brand">
+                <h2>Guget Fin</h2>
+            </div>
+
+            <div id="auth-splash-loader" class="auth-loader">
+                <div class="auth-loader-mark">
+                    <span></span>
+                </div>
+                <strong>Preparando sua conta</strong>
+                <p>Estamos sincronizando suas informações com segurança.</p>
+            </div>
+
+            <div id="login-form" class="auth-form-card" style="display: none;">
+                <span class="auth-kicker">Bem-vindo de volta</span>
+                <h1>Entre na sua conta</h1>
+                <p class="auth-subtitle">Sua gestão financeira, agora na nuvem.</p>
+
+                <button type="button" class="btn-auth-google" onclick="fazerLoginGoogle()">
+                    <span class="google-brand-mark" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path fill="#4285F4" d="M21.6 12.23c0-.76-.07-1.48-.19-2.18H12v4.13h5.38a4.6 4.6 0 0 1-1.99 3.02v2.51h3.23c1.89-1.74 2.98-4.3 2.98-7.48z"/>
+                            <path fill="#34A853" d="M12 22c2.7 0 4.96-.89 6.62-2.41l-3.23-2.51c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.75-5.59-4.11H3.07v2.59A10 10 0 0 0 12 22z"/>
+                            <path fill="#FBBC05" d="M6.41 13.93a6.01 6.01 0 0 1 0-3.86V7.48H3.07a10 10 0 0 0 0 9.04l3.34-2.59z"/>
+                            <path fill="#EA4335" d="M12 5.96c1.47 0 2.78.5 3.82 1.49l2.87-2.87C16.96 2.96 14.7 2 12 2a10 10 0 0 0-8.93 5.48l3.34 2.59C7.2 7.71 9.4 5.96 12 5.96z"/>
+                        </svg>
+                    </span>
+                    Entrar com Google
+                </button>
+
+                <div class="auth-divider"><span>ou entre com e-mail</span></div>
+
+                <label class="auth-field">
+                    <span>E-mail</span>
+                    <input type="email" id="login-email" placeholder="voce@email.com" class="auth-input">
+                </label>
+
+                <label class="auth-field">
+                    <span>Senha</span>
+                    <input type="password" id="login-senha" placeholder="Sua senha" class="auth-input">
+                </label>
+
+                <div class="auth-row-link">
+                    <a href="#" onclick="recuperarSenha()">Esqueceu a senha?</a>
+                </div>
+
+                <button class="btn-auth-primary" onclick="fazerLogin()">Entrar</button>
+                <p class="auth-switch">Não tem conta? <a href="#" onclick="toggleAuth(true)">Criar agora</a></p>
+            </div>
+
+            <div id="register-form" class="auth-form-card auth-register-card" style="display: none;">
+                <span class="auth-kicker">Comece agora</span>
+                <h1>Crie sua conta</h1>
+                <p class="auth-subtitle">Configure seu perfil e reserve seu @user único.</p>
+
+                <div class="auth-grid-2">
+                    <label class="auth-field">
+                        <span>Nome</span>
+                        <input type="text" id="register-nome" placeholder="Seu nome" class="auth-input">
+                    </label>
+                    <label class="auth-field">
+                        <span>Sobrenome</span>
+                        <input type="text" id="register-sobrenome" placeholder="Seu sobrenome" class="auth-input">
+                    </label>
+                </div>
+
+                <label class="auth-field">
+                    <span>User</span>
+                    <input type="text" id="register-username" placeholder="@seuuser" class="auth-input" autocapitalize="none" autocomplete="off" spellcheck="false" oninput="normalizarCampoUsernamePerfil(this)">
+                </label>
+
+                <div class="auth-grid-2">
+                    <label class="auth-field">
+                        <span>E-mail</span>
+                        <input type="email" id="register-email" placeholder="voce@email.com" class="auth-input">
+                    </label>
+                    <label class="auth-field">
+                        <span>Confirmar e-mail</span>
+                        <input type="email" id="register-email-conf" placeholder="repita o e-mail" class="auth-input">
+                    </label>
+                </div>
+
+                <div class="auth-grid-2">
+                    <label class="auth-field password-wrapper">
+                        <span>Senha</span>
+                        <input type="password" id="register-senha" placeholder="Mínimo 6 caracteres" class="auth-input">
+                        <button type="button" class="btn-eye" onclick="togglePassword('register-senha', this)"><i class="fi fi-rr-eye"></i></button>
+                    </label>
+                    <label class="auth-field password-wrapper">
+                        <span>Confirmar senha</span>
+                        <input type="password" id="register-senha-conf" placeholder="repita a senha" class="auth-input">
+                        <button type="button" class="btn-eye" onclick="togglePassword('register-senha-conf', this)"><i class="fi fi-rr-eye"></i></button>
+                    </label>
+                </div>
+
+                <button class="btn-auth-primary" onclick="fazerCadastro()">Cadastrar</button>
+                <p class="auth-switch">Já tem conta? <a href="#" onclick="toggleAuth(false)">Fazer login</a></p>
+            </div>
+        </section>
     </div>
 </div>
 
@@ -117,6 +203,11 @@
     <button class="sidebar-view-btn" id="btn-view-calendario" onclick="irParaCalendario()">
         <i class="fi fi-rr-calendar"></i>
         <span>Calendário</span>
+    </button>
+
+    <button class="sidebar-view-btn" id="btn-view-visualizacoes" onclick="irParaVisualizacoes('terceiros')">
+        <i class="fi fi-rr-chart-pie-alt"></i>
+        <span>Visualizações</span>
     </button>
 </nav>
 
@@ -151,10 +242,10 @@
                             <span class="btn-text-mobile">Opções</span> 
                         </button>
                         <div class="options-dropdown" id="menu-dropdown">
-                            <button class="dropdown-item option-btn" onclick="abrirModalPerfil()"><i class="fi fi-rr-settings"></i> Editar Perfil</button>
+                            <button class="dropdown-item option-btn" onclick="irParaConfiguracoes('perfil')"><i class="fi fi-rr-settings"></i> Editar Perfil</button>
                             <hr class="dropdown-divider">
-                            <button class="dropdown-item option-btn" onclick="abrirModalCartoes()"><i class="fi fi-rr-credit-card"></i> Gerenciar Cartões</button>
-                            <button class="dropdown-item option-btn" onclick="abrirModalCategorias()"><i class="fi fi-rr-tags"></i> Gerenciar Categorias</button>
+                            <button class="dropdown-item option-btn" onclick="irParaConfiguracoes('organizacao')"><i class="fi fi-rr-credit-card"></i> Minha Carteira</button>
+                            <button class="dropdown-item option-btn" onclick="irParaConfiguracoes('organizacao')"><i class="fi fi-rr-tags"></i> Categorias</button>
                             <button onclick="solicitarPermissaoNotificacao()" class="dropdown-item option-btn"><i class="fi fi-rr-bell"></i> Ativar Lembretes</button>
                             <button class="dropdown-item option-btn" onclick="abrirOnboarding()"><i class="fi fi-rr-interrogation"></i> Rever Tutorial</button>
                             <hr class="dropdown-divider">
@@ -172,23 +263,9 @@
                     
                     <div class="general-menu" style="display: flex; flex-direction: column; gap: 2px;">
                         
-                        <div class="options-container" id="container-opcoes-pc" style="position: relative;">
-                            <button class="btn-sidebar-general" onclick="toggleMenuOpcoesPC(event)">
-                                <i class="fi fi-rr-settings"></i> Settings
-                            </button>
-                            
-                            <div class="options-dropdown" id="menu-dropdown-pc" style="bottom: 50px; left: calc(100% + -230px); width: 240px;">
-                                <button class="dropdown-item option-btn" onclick="abrirModalCartoes()"><i class="fi fi-rr-credit-card"></i> Gerenciar Cartões</button>
-                                <button class="dropdown-item option-btn" onclick="abrirModalCategorias()"><i class="fi fi-rr-tags"></i> Gerenciar Categorias</button>
-                                <button onclick="solicitarPermissaoNotificacao()" class="dropdown-item option-btn"><i class="fi fi-rr-bell"></i> Ativar Lembretes</button>
-                                <hr class="dropdown-divider">
-                                <button class="dropdown-item option-btn" onclick="document.getElementById('input-import-extrato').click()"><i class="fi fi-rr-file-invoice-dollar"></i> Importar Extrato</button>
-                                <button class="dropdown-item option-btn" onclick="document.getElementById('input-import-js').click()"><i class="fi fi-rr-download"></i> Importar Backup</button>
-                                <button class="dropdown-item option-btn btn-save-inside" onclick="salvarAlteracoes()"><i class="fi fi-rr-disk"></i> Criar Backup</button>
-                                <hr class="dropdown-divider">
-                                <button class="dropdown-item option-btn btn-danger-text" onclick="limparTudo()"><i class="fi fi-rr-trash"></i> Resetar App</button>
-                            </div>
-                        </div>
+                        <button class="btn-sidebar-general" id="btn-view-settings" onclick="irParaConfiguracoes('perfil')">
+                            <i class="fi fi-rr-settings"></i> Settings
+                        </button>
 
                         <button class="btn-sidebar-general" onclick="mostrarToast('Página em desenvolvimento! Em breve teremos uma central de ajuda aqui. 🚧')">
 						    <i class="fi fi-rr-interrogation"></i> Ajuda
@@ -198,15 +275,6 @@
                         </button>
                     </div>
 
-                    <div class="referral-banner">
-                        <div style="position: absolute; top: -10px; right: -10px; opacity: 0.1; font-size: 60px;">🚀</div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div id="contador-convites" style="background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; backdrop-filter: blur(4px);">0/3 Convites</div>
-                        </div>
-                        <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700;">Indique um Amigo</h4>
-                        <p style="margin: 0 0 15px 0; font-size: 11px; color: #96e6a1; opacity: 0.9; line-height: 1.4;">Ajude alguém a organizar as finanças.</p>
-                        <button id="btn-gerar-convite" onclick="copiarLinkConvite()" style="width: 100%; background: #10b981; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s;">Copiar Link</button>
-                    </div>
                 </div>
 
                 <input type="file" id="input-import-extrato" accept=".ofx,.csv" style="display:none" onchange="processarArquivoExtrato(event)">
@@ -233,22 +301,20 @@
             <div class="header-right desktop-only" style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
                 <div class="date-profile-pill">
                     
-                    <div class="options-container" id="container-notificacoes-pc" style="position: relative; display: flex; align-items: center;">
-                        <i class="fi fi-rr-file-invoice-dollar notificacao-icon" onclick="toggleNotificacoesPC(event)"></i>
-                        <span id="notificacao-dot" class="notificacao-dot"></span>
-                        
-                        <div id="dropdown-notificacoes" class="notif-dropdown-premium">
-                            <div class="notif-header">
-                                <h4>Faturas deste Mês</h4>
-                            </div>
-                            <div id="lista-lembretes-pc" class="notif-body">
-                                </div>
-                        </div>
-                    </div>
-
                     <span id="header-current-date" class="header-current-date">...</span>
                     
-                    <img id="header-avatar-img" class="header-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onclick="abrirModalPerfil()">
+                    <img id="header-avatar-img" class="header-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
+                    <button type="button" class="header-theme-toggle" id="header-theme-toggle" aria-label="Alternar modo noturno" onclick="alternarTemaTopo()">
+                        <span class="theme-toggle-track" aria-hidden="true">
+                            <span class="theme-toggle-thumb"></span>
+                            <span class="theme-toggle-option theme-toggle-option-sun">
+                                <span class="theme-icon theme-icon-sun"></span>
+                            </span>
+                            <span class="theme-toggle-option theme-toggle-option-moon">
+                                <span class="theme-icon theme-icon-moon"></span>
+                            </span>
+                        </span>
+                    </button>
                 </div>
             </div>
 
@@ -435,7 +501,7 @@
 					
 					<div class="mobile-tabs-toggle home-toggle">
 						<button id="btn-show-resumo" class="active" onclick="toggleSubAba('resumo')">Resumo Mensal</button>
-						<button id="btn-show-terceiros" onclick="toggleSubAba('terceiros')">Gastos de Terceiros</button>
+						<button id="btn-show-terceiros" onclick="irParaVisualizacoes('terceiros')">Gastos de Terceiros</button>
 					</div>
 					
 					<div class="card-stack">
@@ -604,7 +670,7 @@
 			</div>
 		</section>
 		
-        <section id="calendar-view" class="calendar-view desktop-only">
+<section id="calendar-view" class="calendar-view desktop-only">
     <div class="calendar-page-header">
         <div>
             <span class="calendar-kicker">Visão mensal</span>
@@ -636,6 +702,499 @@
 
     <div id="financial-calendar-grid" class="financial-calendar-grid"></div>
 </section>
+
+        <section id="visualizacoes-view" class="visualizacoes-view">
+            <div class="visual-page-header">
+                <div>
+                    <span class="visual-kicker">Visualizações</span>
+                    <h2>Controle detalhado</h2>
+                    <p>Acompanhe gastos compartilhados, parcelas futuras e dinheiro guardado na caixinha.</p>
+                </div>
+
+                <div class="visual-summary">
+                    <div>
+                        <span>Terceiros pendentes</span>
+                        <strong id="visual-terceiros-pendentes">R$ 0,00</strong>
+                    </div>
+                    <div>
+                        <span>Dívidas pendentes</span>
+                        <strong id="visual-dividas-pendentes">R$ 0,00</strong>
+                    </div>
+                    <div>
+                        <span>Saldo da caixinha</span>
+                        <strong id="visual-caixinha-saldo">R$ 0,00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-tabs">
+                <button type="button" class="visual-tab active" data-visual-tab="terceiros" onclick="selecionarAbaVisualizacoes('terceiros')">
+                    <i class="fi fi-rr-users-alt"></i>
+                    <span>Terceiros</span>
+                </button>
+                <button type="button" class="visual-tab" data-visual-tab="dividas" onclick="selecionarAbaVisualizacoes('dividas')">
+                    <i class="fi fi-rr-hand-holding-usd"></i>
+                    <span>Dívidas</span>
+                </button>
+                <button type="button" class="visual-tab" data-visual-tab="parcelados" onclick="selecionarAbaVisualizacoes('parcelados')">
+                    <i class="fi fi-rr-calendar-clock"></i>
+                    <span>Parcelados</span>
+                </button>
+                <button type="button" class="visual-tab" data-visual-tab="caixinha" onclick="selecionarAbaVisualizacoes('caixinha')">
+                    <i class="fi fi-rr-piggy-bank"></i>
+                    <span>Caixinha</span>
+                </button>
+            </div>
+
+            <div class="visual-content">
+                <div class="visual-panel active" data-visual-panel="terceiros">
+                    <div class="visual-panel-head">
+                        <div>
+                            <span>Gastos compartilhados</span>
+                            <h3>Gastos de terceiros</h3>
+                            <p>Gastos manuais ficam só para sua organização. Gastos vinculados a um @user podem ser enviados para aceite.</p>
+                        </div>
+                        <button type="button" class="btn-settings-primary" onclick="abrirModalGasto()">Novo gasto</button>
+                    </div>
+
+                    <div class="visual-list" id="visual-lista-terceiros"></div>
+                </div>
+
+                <div class="visual-panel" data-visual-panel="dividas">
+                    <div class="visual-panel-head">
+                        <div>
+                            <span>Conta a pagar</span>
+                            <h3>Dívidas recebidas</h3>
+                            <p>Solicitações enviadas por outros usuários ficam aqui até você aceitar, contestar ou pagar.</p>
+                        </div>
+                    </div>
+
+                    <div class="visual-list" id="visual-lista-dividas"></div>
+                </div>
+
+                <div class="visual-panel" data-visual-panel="parcelados">
+                    <div class="visual-panel-head">
+                        <div>
+                            <span>Compromissos futuros</span>
+                            <h3>Gastos parcelados</h3>
+                            <p>Veja o que ainda falta pagar em compras parceladas.</p>
+                        </div>
+                    </div>
+
+                    <div class="visual-list" id="visual-lista-parcelados"></div>
+                </div>
+
+                <div class="visual-panel" data-visual-panel="caixinha">
+                    <div class="visual-panel-head">
+                        <div>
+                            <span>Reserva</span>
+                            <h3>Caixinha</h3>
+                            <p>Registre quando guardar ou retirar dinheiro. Entradas na caixinha reduzem o dinheiro disponível do mês.</p>
+                        </div>
+                        <div class="visual-actions">
+                            <button type="button" class="btn-settings-secondary" onclick="abrirModalCaixinha('entrada')">Adicionar</button>
+                            <button type="button" class="btn-settings-ghost" onclick="abrirModalCaixinha('saida')">Retirar</button>
+                        </div>
+                    </div>
+
+                    <div class="caixinha-balance-card">
+                        <span>Saldo guardado</span>
+                        <strong id="caixinha-saldo-principal">R$ 0,00</strong>
+                    </div>
+
+                    <div class="visual-list" id="visual-lista-caixinha"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="settings-view" class="settings-view">
+            <div class="settings-page-header">
+                <div>
+                    <span class="settings-kicker">Configurações</span>
+                    <h2>Perfil e ajustes do app</h2>
+                    <p>Organize seus dados, preferências, lembretes e backups em um só lugar.</p>
+                </div>
+
+                <div class="settings-user-card">
+                    <img id="settings-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
+                    <div>
+                        <strong id="settings-user-name">Usuário</strong>
+                        <span id="settings-user-email">email@exemplo.com</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-shell">
+                <aside class="settings-tabs" aria-label="Seções de configuração">
+                    <button type="button" class="settings-tab active" data-settings-tab="perfil" onclick="selecionarAbaConfiguracoes('perfil')">
+                        <i class="fi fi-rr-user"></i>
+                        <span>Perfil</span>
+                    </button>
+                    <button type="button" class="settings-tab" data-settings-tab="app" onclick="selecionarAbaConfiguracoes('app')">
+                        <i class="fi fi-rr-settings-sliders"></i>
+                        <span>App</span>
+                    </button>
+                    <button type="button" class="settings-tab" data-settings-tab="seguranca" onclick="selecionarAbaConfiguracoes('seguranca')">
+                        <i class="fi fi-rr-shield-check"></i>
+                        <span>Conta e segurança</span>
+                    </button>
+                    <button type="button" class="settings-tab" data-settings-tab="organizacao" onclick="selecionarAbaConfiguracoes('organizacao')">
+                        <i class="fi fi-rr-apps-sort"></i>
+                        <span>Organização</span>
+                    </button>
+                    <button type="button" class="settings-tab" data-settings-tab="lembretes" onclick="selecionarAbaConfiguracoes('lembretes')">
+                        <i class="fi fi-rr-bell"></i>
+                        <span>Lembretes</span>
+                    </button>
+                    <button type="button" class="settings-tab" data-settings-tab="assinatura" onclick="selecionarAbaConfiguracoes('assinatura')">
+                        <i class="fi fi-rr-crown"></i>
+                        <span>Assinatura</span>
+                    </button>
+                    <button type="button" class="settings-tab" data-settings-tab="dados" onclick="selecionarAbaConfiguracoes('dados')">
+                        <i class="fi fi-rr-database"></i>
+                        <span>Dados</span>
+                    </button>
+                </aside>
+
+                <div class="settings-content">
+                    <div class="settings-panel active" data-settings-panel="perfil">
+                        <div class="settings-panel-head">
+                            <span>Identidade</span>
+                            <h3>Perfil do usuário</h3>
+                            <p>Essas informações preparam a conta para recursos futuros, como usuários pesquisáveis e gastos compartilhados.</p>
+                        </div>
+
+                        <div class="settings-avatar-editor">
+                            <div class="settings-avatar-preview-wrap">
+                                <img id="settings-profile-avatar-preview" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do perfil">
+                            </div>
+
+                            <div class="settings-avatar-info">
+                                <strong>Foto de perfil</strong>
+                                <span>Escolha uma imagem e ajuste o enquadramento dentro do círculo.</span>
+                                <div class="settings-avatar-actions">
+                                    <button type="button" class="btn-settings-secondary" onclick="document.getElementById('settings-avatar-input').click()">Alterar foto</button>
+                                    <button type="button" class="btn-settings-ghost" onclick="removerFotoPerfil()">Remover</button>
+                                </div>
+                            </div>
+
+                            <input type="file" id="settings-avatar-input" accept="image/*" hidden>
+                        </div>
+
+                        <div class="settings-form-grid">
+                            <label class="settings-field">
+                                <span>Nome</span>
+                                <input type="text" id="settings-profile-first-name" placeholder="Seu nome">
+                            </label>
+                            <label class="settings-field">
+                                <span>Sobrenome</span>
+                                <input type="text" id="settings-profile-last-name" placeholder="Seu sobrenome">
+                            </label>
+                            <label class="settings-field">
+                                <span>User</span>
+                                <input type="text" id="settings-profile-username" placeholder="@seuuser" autocapitalize="none" autocomplete="off" spellcheck="false" oninput="normalizarCampoUsernamePerfil(this)">
+                                <small>Use apenas minúsculas, números, ponto ou underline. Esse @ precisa ser único.</small>
+                            </label>
+                            <label class="settings-field">
+                                <span>Profissão</span>
+                                <input type="text" id="settings-profile-profession" placeholder="Arquiteto e urbanista">
+                            </label>
+                        </div>
+
+                        <div class="settings-actions">
+                            <button type="button" class="btn-settings-primary" id="btn-save-settings-profile" onclick="salvarConfiguracoesPerfil()">Salvar perfil</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" data-settings-panel="app">
+                        <div class="settings-panel-head">
+                            <span>Preferências</span>
+                            <h3>Configurações do app</h3>
+                            <p>Ajuste a experiência geral da plataforma.</p>
+                        </div>
+
+                        <div class="settings-card-list">
+                            <div class="settings-toggle-row">
+                                <div>
+                                    <strong>Modo noturno</strong>
+                                    <span>Alterna a interface entre tema claro e escuro.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="settings-theme-toggle" onchange="toggleTema(this)">
+                                    <span class="slider-switch"></span>
+                                </label>
+                            </div>
+
+                            <label class="settings-field">
+                                <span>Ciclo da assistente</span>
+                                <select id="settings-modo-ia" onchange="salvarPreferenciasApp()">
+                                    <option value="calendario">Mês calendário</option>
+                                    <option value="fatura">Mês seguinte / fatura</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" data-settings-panel="seguranca">
+                        <div class="settings-panel-head">
+                            <span>Proteção</span>
+                            <h3>Conta e segurança</h3>
+                            <p>Alterações sensíveis exigem confirmação da senha atual. Para trocar o e-mail, a mudança só acontece depois da verificação enviada para o novo endereço.</p>
+                        </div>
+
+                        <div class="settings-security-grid">
+                            <div class="settings-security-card">
+                                <div class="settings-security-card-head">
+                                    <i class="fi fi-rr-envelope"></i>
+                                    <div>
+                                        <strong>Alterar e-mail</strong>
+                                        <span>Atual: <b id="settings-security-current-email">email@exemplo.com</b></span>
+                                    </div>
+                                </div>
+
+                                <label class="settings-field">
+                                    <span>Novo e-mail</span>
+                                    <input type="email" id="settings-security-new-email" placeholder="novo@email.com">
+                                </label>
+                                <label class="settings-field">
+                                    <span>Senha atual</span>
+                                    <input type="password" id="settings-security-email-password" placeholder="Confirme sua senha atual">
+                                </label>
+
+                                <button type="button" class="btn-settings-primary" id="btn-update-email" onclick="solicitarAlteracaoEmail()">Enviar verificação</button>
+                                <small>Você continuará usando o e-mail atual até confirmar o link enviado para o novo endereço.</small>
+                            </div>
+
+                            <div class="settings-security-card">
+                                <div class="settings-security-card-head">
+                                    <i class="fi fi-rr-lock"></i>
+                                    <div>
+                                        <strong>Alterar senha</strong>
+                                        <span>Use uma senha com pelo menos 6 caracteres.</span>
+                                    </div>
+                                </div>
+
+                                <label class="settings-field">
+                                    <span>Senha atual</span>
+                                    <input type="password" id="settings-security-current-password" placeholder="Digite sua senha atual">
+                                </label>
+                                <label class="settings-field">
+                                    <span>Nova senha</span>
+                                    <input type="password" id="settings-security-new-password" placeholder="Digite a nova senha">
+                                </label>
+                                <label class="settings-field">
+                                    <span>Confirmar nova senha</span>
+                                    <input type="password" id="settings-security-confirm-password" placeholder="Repita a nova senha">
+                                </label>
+
+                                <button type="button" class="btn-settings-primary" id="btn-update-password" onclick="alterarSenhaSegura()">Atualizar senha</button>
+                            </div>
+
+                            <div class="settings-security-card settings-google-card">
+                                <div class="settings-security-card-head settings-google-card-head">
+                                    <span class="google-card-logo" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" focusable="false">
+                                            <path fill="#4285F4" d="M21.6 12.23c0-.76-.07-1.48-.19-2.18H12v4.13h5.38a4.6 4.6 0 0 1-1.99 3.02v2.51h3.23c1.89-1.74 2.98-4.3 2.98-7.48z"/>
+                                            <path fill="#34A853" d="M12 22c2.7 0 4.96-.89 6.62-2.41l-3.23-2.51c-.9.6-2.05.96-3.39.96-2.6 0-4.8-1.75-5.59-4.11H3.07v2.59A10 10 0 0 0 12 22z"/>
+                                            <path fill="#FBBC05" d="M6.41 13.93a6.01 6.01 0 0 1 0-3.86V7.48H3.07a10 10 0 0 0 0 9.04l3.34-2.59z"/>
+                                            <path fill="#EA4335" d="M12 5.96c1.47 0 2.78.5 3.82 1.49l2.87-2.87C16.96 2.96 14.7 2 12 2a10 10 0 0 0-8.93 5.48l3.34 2.59C7.2 7.71 9.4 5.96 12 5.96z"/>
+                                        </svg>
+                                    </span>
+                                    <div>
+                                        <strong>Conexão com Google</strong>
+                                        <span id="settings-google-status-text">Verificando conexão...</span>
+                                    </div>
+                                </div>
+
+                                <div class="settings-google-status-row">
+                                    <div>
+                                        <span>Conta vinculada</span>
+                                        <small id="settings-google-email">Nenhuma conta Google vinculada.</small>
+                                    </div>
+                                    <span class="settings-google-pill" id="settings-google-status-pill">Não conectado</span>
+                                </div>
+
+                                <div class="settings-google-actions">
+                                    <button type="button" class="btn-settings-primary" id="btn-connect-google" onclick="conectarGoogleConta()">Conectar Google</button>
+                                    <button type="button" class="btn-settings-secondary" id="btn-disconnect-google" style="display: none;" onclick="desconectarGoogleConta()">Desconectar</button>
+                                </div>
+
+                                <small>Depois de conectado, você poderá entrar com Google sem preencher e-mail e senha.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" data-settings-panel="organizacao">
+                        <div class="settings-panel-head">
+                            <span>Estrutura</span>
+                            <h3>Organização financeira</h3>
+                            <p>Gerencie os cadastros que alimentam seus lançamentos.</p>
+                        </div>
+
+                        <div class="settings-org-grid">
+                            <section class="settings-wallet-card">
+                                <div class="settings-org-card-head">
+                                    <div>
+                                        <span>Minha Carteira</span>
+                                        <h4>Cartões e contas</h4>
+                                    </div>
+                                    <strong id="settings-wallet-count">0</strong>
+                                </div>
+
+                                <div class="wallet-page-grid">
+                                    <div class="wallet-page-carousel-wrap">
+                                        <div id="settings-lista-cartoes" class="wallet-carousel settings-wallet-carousel"></div>
+                                    </div>
+
+                                    <div class="wallet-page-form">
+                                        <div class="wallet-form-header">
+                                            <span class="wallet-form-kicker">Novo cartão</span>
+                                            <h4>Adicionar à carteira</h4>
+                                            <p>Cadastre cartões de crédito ou contas usadas apenas no débito.</p>
+                                        </div>
+
+                                        <div class="novo-cartao-form-clean wallet-form">
+                                            <div class="input-group">
+                                                <label>Nome do cartão</label>
+                                                <input type="text" id="settings-nc-nome" placeholder="Ex: Nubank, Inter...">
+                                            </div>
+                                            
+                                            <label class="wallet-debit-toggle" for="settings-banco-apenas-debito">
+                                                <input type="checkbox" id="settings-banco-apenas-debito" onchange="toggleInputsDebitoConfiguracoes()">
+                                                <span>
+                                                    <strong>Este cartão é apenas débito</strong>
+                                                    <small>Use quando não houver fechamento ou vencimento de fatura.</small>
+                                                </span>
+                                            </label>
+
+                                            <div id="settings-box-datas-cartao" class="wallet-date-grid">
+                                                <div class="input-group">
+                                                    <label>Fechamento</label>
+                                                    <input type="number" id="settings-nc-fechamento" placeholder="Dia" min="1" max="31">
+                                                </div>
+                                                <div class="input-group">
+                                                    <label>Vencimento</label>
+                                                    <input type="number" id="settings-nc-vencimento" placeholder="Dia" min="1" max="31">
+                                                </div>
+                                            </div>
+                                            
+                                            <button type="button" class="btn-settings-primary" onclick="adicionarNovoCartaoConfiguracoes()">
+                                                Adicionar à Carteira
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="settings-categories-card">
+                                <div class="settings-org-card-head">
+                                    <div>
+                                        <span>Categorias</span>
+                                        <h4>Tags de organização</h4>
+                                    </div>
+                                    <strong id="settings-category-count">0</strong>
+                                </div>
+
+                                <div id="settings-lista-categorias" class="settings-category-cloud"></div>
+
+                                <div class="settings-category-form">
+                                    <label class="settings-field">
+                                        <span>Nova categoria</span>
+                                        <input type="text" id="settings-nt-nome" placeholder="Ex: Lazer, Estudos...">
+                                    </label>
+                                    <button type="button" class="btn-settings-primary" onclick="adicionarNovaTagConfiguracoes()">Salvar categoria</button>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" data-settings-panel="assinatura">
+                        <div class="settings-panel-head">
+                            <span>Plano</span>
+                            <h3>Assinatura</h3>
+                            <p>Gerencie seu plano, convites e recursos avançados da plataforma.</p>
+                        </div>
+
+                        <div class="settings-subscription-grid">
+                            <section class="subscription-status-card">
+                                <span class="subscription-badge">Em breve</span>
+                                <h4>Guget Pro está em desenvolvimento</h4>
+                                <p>Em breve você poderá controlar sua assinatura, formas de pagamento e benefícios direto por aqui.</p>
+                                <div class="subscription-mini-list">
+                                    <span>Relatórios avançados</span>
+                                    <span>Recursos colaborativos</span>
+                                    <span>Mais automações financeiras</span>
+                                </div>
+                            </section>
+
+                            <section class="subscription-invite-card">
+                                <div class="subscription-invite-top">
+                                    <div>
+                                        <span>Convites</span>
+                                        <h4>Indique um amigo</h4>
+                                    </div>
+                                    <strong id="contador-convites">0/3</strong>
+                                </div>
+                                <p>Ajude alguém a organizar as finanças e acompanhe seus convites disponíveis.</p>
+                                <button type="button" id="btn-gerar-convite" onclick="copiarLinkConvite()">Copiar link de convite</button>
+                            </section>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" data-settings-panel="lembretes">
+                        <div class="settings-panel-head">
+                            <span>Alertas</span>
+                            <h3>Lembretes</h3>
+                            <p>Configure avisos para vencimentos e rotina financeira.</p>
+                        </div>
+
+                        <div class="settings-action-grid">
+                            <button type="button" class="settings-action-card" onclick="solicitarPermissaoNotificacao()">
+                                <i class="fi fi-rr-bell"></i>
+                                <strong>Ativar lembretes</strong>
+                                <span>Permita notificações do navegador.</span>
+                            </button>
+                            <button type="button" class="settings-action-card" onclick="abrirOnboarding()">
+                                <i class="fi fi-rr-interrogation"></i>
+                                <strong>Rever tutorial</strong>
+                                <span>Veja novamente o guia inicial do app.</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settings-panel" data-settings-panel="dados">
+                        <div class="settings-panel-head">
+                            <span>Backup</span>
+                            <h3>Dados e segurança</h3>
+                            <p>Importe, exporte ou reinicie os dados do aplicativo.</p>
+                        </div>
+
+                        <div class="settings-action-grid">
+                            <button type="button" class="settings-action-card" onclick="document.getElementById('input-import-extrato').click()">
+                                <i class="fi fi-rr-file-invoice-dollar"></i>
+                                <strong>Importar extrato</strong>
+                                <span>Traga lançamentos de arquivos OFX ou CSV.</span>
+                            </button>
+                            <button type="button" class="settings-action-card" onclick="document.getElementById('input-import-js').click()">
+                                <i class="fi fi-rr-download"></i>
+                                <strong>Importar backup</strong>
+                                <span>Restaure dados salvos anteriormente.</span>
+                            </button>
+                            <button type="button" class="settings-action-card" onclick="salvarAlteracoes()">
+                                <i class="fi fi-rr-disk"></i>
+                                <strong>Criar backup</strong>
+                                <span>Salve uma cópia dos dados atuais.</span>
+                            </button>
+                            <button type="button" class="settings-action-card settings-action-danger" onclick="limparTudo()">
+                                <i class="fi fi-rr-trash"></i>
+                                <strong>Resetar app</strong>
+                                <span>Apague os dados locais e comece do zero.</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
     </main>
 
@@ -763,8 +1322,15 @@
 </div>
 
 <div id="div-nome-terceiro" class="input-group campo-nome-terceiro">
-    <label class="input-label">Nome da pessoa</label>
-    <input type="text" id="g-nome-terceiro" placeholder="Ex: Patrícia">
+    <label class="input-label">Responsável</label>
+    <div class="terceiro-search-box">
+        <input type="text" id="g-nome-terceiro" placeholder="Digite @user ou nome da pessoa" autocomplete="off" oninput="buscarUsuariosTerceiro(this.value)">
+        <input type="hidden" id="g-terceiro-user-id">
+        <input type="hidden" id="g-terceiro-username">
+        <input type="hidden" id="g-terceiro-tipo" value="manual">
+        <div id="g-terceiro-sugestoes" class="terceiro-suggestions"></div>
+    </div>
+    <small class="terceiro-helper">Se escolher um @user, a pessoa recebe uma solicitação. Se não escolher, fica como controle manual.</small>
 </div>
 
 <div class="bloco-secundario bloco-comprovante">
@@ -1005,7 +1571,7 @@
 	                <span style="font-weight: 700; font-size: 13px; color: var(--text-main);">Modo Escuro</span>
 	            </div>
 	            <label class="switch">
-	                <input type="checkbox" id="theme-toggle" onchange="toggleTema()">
+	                <input type="checkbox" id="theme-toggle" onchange="toggleTema(this)">
 	                <span class="slider-switch"></span>
 	            </label>
 	        </div>
@@ -1324,6 +1890,79 @@
         <img id="img-comprovante-preview" src="" alt="Comprovante" style="width: 100%; max-height: 65vh; object-fit: contain; border-radius: 12px; border: 1px solid var(--border);">
     </div>
 </dialog>
+
+<dialog id="modal-cortar-avatar" class="modal-estilizado modal-avatar-crop">
+    <div class="avatar-crop-content">
+        <div class="avatar-crop-header">
+            <div>
+                <span>Foto de perfil</span>
+                <h2>Ajustar enquadramento</h2>
+                <p>Arraste a imagem e use o zoom para definir o foco do círculo.</p>
+            </div>
+            <button class="btn-close-modal" onclick="fecharModalCorteAvatar()" style="position: static;">×</button>
+        </div>
+
+        <div class="avatar-crop-stage" id="avatar-crop-stage">
+            <img id="avatar-crop-image" src="" alt="Prévia da foto">
+            <div class="avatar-crop-mask"></div>
+        </div>
+
+        <label class="avatar-zoom-control">
+            <span>Zoom</span>
+            <input type="range" id="avatar-crop-zoom" min="1" max="3" step="0.01" value="1">
+        </label>
+
+        <div class="avatar-crop-actions">
+            <button type="button" class="btn-settings-ghost" onclick="fecharModalCorteAvatar()">Cancelar</button>
+            <button type="button" class="btn-settings-primary" id="btn-save-avatar" onclick="salvarFotoPerfilCortada()">Salvar foto</button>
+        </div>
+    </div>
+</dialog>
+
+<dialog id="modal-caixinha" class="modal-estilizado modal-caixinha">
+    <div class="modal-content modal-caixinha-content">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+        <div class="modal-caixinha-header">
+            <span id="caixinha-modal-kicker">Caixinha</span>
+            <h3 id="caixinha-modal-title">Adicionar à caixinha</h3>
+            <p id="caixinha-modal-desc">Registre um valor guardado ou retirado.</p>
+        </div>
+
+        <input type="hidden" id="caixinha-tipo" value="entrada">
+        <input type="hidden" id="caixinha-id" value="">
+
+        <div class="settings-form-grid">
+            <label class="settings-field settings-field-wide">
+                <span>Nome</span>
+                <input type="text" id="caixinha-nome" placeholder="Ex: Reserva de emergência">
+            </label>
+            <label class="settings-field">
+                <span>Valor</span>
+                <input type="text" id="caixinha-valor" placeholder="R$ 0,00" onblur="formatarMoeda(this)">
+            </label>
+            <label class="settings-field">
+                <span>Data</span>
+                <input type="date" id="caixinha-data">
+            </label>
+            <label class="settings-field settings-field-wide">
+                <span>Descrição</span>
+                <input type="text" id="caixinha-descricao" placeholder="Observação opcional">
+            </label>
+        </div>
+
+        <div class="bloco-secundario bloco-comprovante caixinha-comprovante">
+            <div class="bloco-secundario-topo">
+                <span class="bloco-secundario-titulo">Comprovante</span>
+                <span class="bloco-secundario-desc">Opcional, mas útil para acompanhar sua reserva.</span>
+            </div>
+            <input type="file" id="caixinha-comprovante" accept="image/*" class="input-file-hidden">
+            <button type="button" class="btn-settings-secondary" onclick="document.getElementById('caixinha-comprovante').click()">Anexar comprovante</button>
+            <span id="caixinha-comprovante-status" class="caixinha-file-status">Nenhum comprovante anexado</span>
+        </div>
+
+        <button type="button" class="btn-settings-primary btn-caixinha-save" id="btn-save-caixinha" onclick="salvarMovimentoCaixinha()">Salvar movimento</button>
+    </div>
+</dialog>
 	
 	<div id="toast-notificacao">
         <i class="fi fi-rr-check-circle"></i>
@@ -1340,8 +1979,8 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, updateEmail, updatePassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, updatePassword, sendPasswordResetEmail, EmailAuthProvider, GoogleAuthProvider, signInWithPopup, linkWithPopup, unlink, deleteUser, reauthenticateWithCredential, verifyBeforeUpdateEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, query, where, orderBy, limit, getDocs, addDoc, updateDoc, deleteDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD1HyxzZ-YFMMbMSIwBDDKfNWdCWHb07AY",
@@ -1354,6 +1993,7 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  auth.languageCode = 'pt-BR';
   const db = getFirestore(app);
 
   window.auth = auth;
@@ -1366,28 +2006,34 @@
   window.setDoc = setDoc;
   window.getDoc = getDoc;
   window.onSnapshot = onSnapshot;
+  window.collection = collection;
+  window.query = query;
+  window.where = where;
+  window.orderBy = orderBy;
+  window.limit = limit;
+  window.getDocs = getDocs;
+  window.addDoc = addDoc;
+  window.updateDoc = updateDoc;
+  window.deleteDoc = deleteDoc;
+  window.runTransaction = runTransaction;
+  window.serverTimestamp = serverTimestamp;
   window.updateProfile = updateProfile;
-  window.updateEmail = updateEmail;
   window.updatePassword = updatePassword;  
   window.sendPasswordResetEmail = sendPasswordResetEmail;
+  window.EmailAuthProvider = EmailAuthProvider;
+  window.GoogleAuthProvider = GoogleAuthProvider;
+  window.signInWithPopup = signInWithPopup;
+  window.linkWithPopup = linkWithPopup;
+  window.unlink = unlink;
+  window.deleteUser = deleteUser;
+  window.reauthenticateWithCredential = reauthenticateWithCredential;
+  window.verifyBeforeUpdateEmail = verifyBeforeUpdateEmail;
 
   if (window.iniciarVigia) {
       window.iniciarVigia();
   }
 </script>
 
-<script>
-    // Força a leitura do tema antes de qualquer outra coisa carregar
-    if (localStorage.getItem('guget_theme') === 'dark') {
-        document.body.classList.add('dark-theme');
-        // Se o botão já existir no ecrã, deixa-o ligado
-        setTimeout(() => {
-            const toggleEl = document.getElementById('theme-toggle');
-            if (toggleEl) toggleEl.checked = true;
-        }, 500);
-    }
-</script>
-	
 	<script src="js/core.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/transacoes.js"></script>
