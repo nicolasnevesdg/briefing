@@ -153,7 +153,8 @@ function toggleMenuOpcoes(event) {
 // NOVA: Abre/Fecha o menu cascata do PC
 function toggleMenuOpcoesPC(event) {
     event.stopPropagation();
-    document.getElementById('menu-dropdown-pc').classList.toggle('active');
+    const menuPC = document.getElementById('menu-dropdown-pc');
+    if (menuPC) menuPC.classList.toggle('active');
 }
 
 // 2. Lógica global para fechar os menus ao clicar em qualquer lugar da tela
@@ -326,13 +327,15 @@ function obterCartoesCarteira() {
     return resultado;
 }
 
-function abrirModalCartoes() {
-    const lista = document.getElementById('lista-cartoes-config');
-    const contador = document.getElementById('contador-cartoes-config');
+function renderizarCarteiraNoContainer(containerId, contadorId) {
+    const lista = document.getElementById(containerId);
+    const contador = contadorId ? document.getElementById(contadorId) : null;
     const cartoes = obterCartoesCarteira();
 
     if (contador) {
-        contador.textContent = `${cartoes.length} cartão${cartoes.length === 1 ? '' : 'ões'}`;
+        contador.textContent = contadorId === 'settings-wallet-count'
+            ? String(cartoes.length)
+            : `${cartoes.length} cartão${cartoes.length === 1 ? '' : 'ões'}`;
     }
 
     if (!lista) return;
@@ -418,23 +421,39 @@ function abrirModalCartoes() {
 
 const navHtml = cartoes.length > 1 ? `
     <div class="wallet-carousel-nav">
-        <div class="wallet-carousel-dots" id="wallet-carousel-dots"></div>
+        <div class="wallet-carousel-dots"></div>
     </div>
 ` : "";
 
 lista.innerHTML = cardsHtml + navHtml;
-
-    document.getElementById('modal-cartoes').showModal();
+lista.dataset.walletContainerId = containerId;
+carteiraContainerAtual = containerId;
 
 requestAnimationFrame(() => {
     iniciarCarouselCarteira();
 });
 }
 
-// 2. Adiciona um novo cartão ao banco de dados
-function adicionarNovoCartao() {
-    let nome = document.getElementById('nc-nome').value.trim();
-    const checkbox = document.getElementById('banco-apenas-debito');
+function abrirModalCartoes() {
+    if (typeof irParaConfiguracoes === 'function') {
+        irParaConfiguracoes('organizacao');
+        return;
+    }
+
+    renderizarCarteiraNoContainer('lista-cartoes-config', 'contador-cartoes-config');
+    const modal = document.getElementById('modal-cartoes');
+    if (modal) modal.showModal();
+}
+
+function atualizarOrganizacaoConfiguracoes() {
+    if (typeof renderizarConfiguracoesOrganizacao === 'function') {
+        renderizarConfiguracoesOrganizacao();
+    }
+}
+
+function adicionarCartaoPorIds(ids) {
+    let nome = document.getElementById(ids.nome)?.value.trim() || '';
+    const checkbox = document.getElementById(ids.debito);
     const isDebito = checkbox ? checkbox.checked : false;
 
     if (!nome) {
@@ -443,8 +462,8 @@ function adicionarNovoCartao() {
     }
 
     // 2. Mágica das Datas: Ignora as datas se for débito
-    const fechamento = isDebito ? null : parseInt(document.getElementById('nc-fechamento').value);
-    const vencimento = isDebito ? null : parseInt(document.getElementById('nc-vencimento').value);
+    const fechamento = isDebito ? null : parseInt(document.getElementById(ids.fechamento)?.value);
+    const vencimento = isDebito ? null : parseInt(document.getElementById(ids.vencimento)?.value);
 
     // Se NÃO for débito, obriga a ter datas
     if (!isDebito && (!fechamento || !vencimento)) {
@@ -464,17 +483,47 @@ function adicionarNovoCartao() {
     salsiData.config.bancos = salsiData.config.detalhesBancos.map(b => b.nome);
 
     // Limpa campos e reseta a caixinha
-    document.getElementById('nc-nome').value = '';
-    document.getElementById('nc-fechamento').value = '';
-    document.getElementById('nc-vencimento').value = '';
+    const inputNome = document.getElementById(ids.nome);
+    const inputFechamento = document.getElementById(ids.fechamento);
+    const inputVencimento = document.getElementById(ids.vencimento);
+
+    if (inputNome) inputNome.value = '';
+    if (inputFechamento) inputFechamento.value = '';
+    if (inputVencimento) inputVencimento.value = '';
     if (checkbox) {
         checkbox.checked = false;
-        toggleInputsDebito(); // Reseta o visual opaco
+        if (ids.box && document.getElementById(ids.box)) {
+            document.getElementById(ids.box).style.opacity = '1';
+            document.getElementById(ids.box).style.pointerEvents = 'auto';
+        } else if (typeof toggleInputsDebito === 'function') {
+            toggleInputsDebito();
+        }
     }
     
     popularSelects();
-    abrirModalCartoes(); 
+    atualizarOrganizacaoConfiguracoes();
     renderizar(); 
+}
+
+// 2. Adiciona um novo cartão ao banco de dados
+function adicionarNovoCartao() {
+    adicionarCartaoPorIds({
+        nome: 'nc-nome',
+        debito: 'banco-apenas-debito',
+        fechamento: 'nc-fechamento',
+        vencimento: 'nc-vencimento',
+        box: 'box-datas-cartao'
+    });
+}
+
+function adicionarNovoCartaoConfiguracoes() {
+    adicionarCartaoPorIds({
+        nome: 'settings-nc-nome',
+        debito: 'settings-banco-apenas-debito',
+        fechamento: 'settings-nc-fechamento',
+        vencimento: 'settings-nc-vencimento',
+        box: 'settings-box-datas-cartao'
+    });
 }
 
 // 3. Remove o cartão da lista de opções (mantém no histórico)
@@ -483,7 +532,7 @@ function excluirCartaoConfig(index) {
         salsiData.config.detalhesBancos.splice(index, 1);
         salsiData.config.bancos = salsiData.config.detalhesBancos.map(b => b.nome);
         popularSelects();
-        abrirModalCartoes();
+        atualizarOrganizacaoConfiguracoes();
         renderizar();
     }
 }
@@ -549,8 +598,46 @@ function mudarAnoGrafico(n) {
 
 // --- GESTÃO DE CATEGORIAS (TAGS) ---
 
+function renderizarCategoriasConfiguracoes() {
+    const lista = document.getElementById('settings-lista-categorias');
+    const contador = document.getElementById('settings-category-count');
+    if (!lista) return;
+
+    const tags = salsiData.config.categorias || [];
+    if (contador) contador.textContent = String(tags.length);
+
+    lista.innerHTML = tags.length > 0 ? tags.map((tag, index) => {
+        const tagSegura = escaparHtmlCarteira(tag);
+        const cor = normalizarHexCarteira(getCor(tag));
+
+        return `
+            <article class="settings-category-chip" style="--category-color: ${cor};">
+                <span class="settings-category-dot"></span>
+                <strong>${tagSegura}</strong>
+                <button type="button" onclick="excluirTagConfig(${index})" aria-label="Excluir categoria ${tagSegura}">×</button>
+            </article>
+        `;
+    }).join('') : `
+        <div class="settings-category-empty">
+            <i class="fi fi-rr-tags"></i>
+            <strong>Nenhuma categoria cadastrada</strong>
+            <span>Crie sua primeira categoria para organizar melhor os lançamentos.</span>
+        </div>
+    `;
+}
+
+function renderizarConfiguracoesOrganizacao() {
+    renderizarCarteiraNoContainer('settings-lista-cartoes', 'settings-wallet-count');
+    renderizarCategoriasConfiguracoes();
+}
+
 // 1. Função para abrir o modal e listar as categorias atuais
 function abrirModalCategorias() {
+    if (typeof irParaConfiguracoes === 'function') {
+        irParaConfiguracoes('organizacao');
+        return;
+    }
+
     const lista = document.getElementById('lista-tags-config');
     // Busca as categorias do seu banco de dados ou cria um array vazio se não houver
     const tags = salsiData.config.categorias || [];
@@ -565,12 +652,15 @@ function abrirModalCategorias() {
 		</div>
 	`).join('') : "<p style='font-size:12px; opacity:0.5; padding:10px;'>Nenhuma tag cadastrada.</p>";
 
-    document.getElementById('modal-categorias').showModal();
+    const modal = document.getElementById('modal-categorias');
+    if (modal) modal.showModal();
 }
 
 // 2. Função para salvar uma nova categoria digitada
-function adicionarNovaTag() {
-    const input = document.getElementById('nt-nome');
+function adicionarTagPorInput(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
     const nome = input.value.trim();
 
     if (!nome) {
@@ -585,8 +675,16 @@ function adicionarNovaTag() {
     // Limpa o campo e atualiza tudo
     input.value = '';
     popularSelects(); // ESSA LINHA é o que faz a tag aparecer no formulário de "Novo Gasto"
-    abrirModalCategorias(); // Atualiza a lista visual no pop-up
+    atualizarOrganizacaoConfiguracoes();
     renderizar(); // Salva no cache
+}
+
+function adicionarNovaTag() {
+    adicionarTagPorInput('nt-nome');
+}
+
+function adicionarNovaTagConfiguracoes() {
+    adicionarTagPorInput('settings-nt-nome');
 }
 
 // 3. Função para excluir uma categoria
@@ -594,7 +692,7 @@ function excluirTagConfig(index) {
     if (confirm("Deseja remover esta categoria? (Isso não apaga gastos antigos)")) {
         salsiData.config.categorias.splice(index, 1);
         popularSelects();
-        abrirModalCategorias();
+        atualizarOrganizacaoConfiguracoes();
         renderizar();
     }
 }
@@ -692,7 +790,979 @@ function verDetalhes(index) {
 function toggleCampoNomeTerceiro() {
     const check = document.getElementById('g-terceiro').checked;
     document.getElementById('div-nome-terceiro').style.display = check ? 'block' : 'none';
+
+    if (!check) {
+        const ids = ['g-nome-terceiro', 'g-terceiro-user-id', 'g-terceiro-username'];
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+
+        const tipo = document.getElementById('g-terceiro-tipo');
+        const sugestoes = document.getElementById('g-terceiro-sugestoes');
+        if (tipo) tipo.value = 'manual';
+        if (sugestoes) sugestoes.innerHTML = '';
+    }
 }
+
+let buscaTerceiroTimer = null;
+
+async function buscarUsuariosTerceiro(valor) {
+    const sugestoes = document.getElementById('g-terceiro-sugestoes');
+    const tipo = document.getElementById('g-terceiro-tipo');
+    const userId = document.getElementById('g-terceiro-user-id');
+    const usernameInput = document.getElementById('g-terceiro-username');
+
+    if (tipo) tipo.value = 'manual';
+    if (userId) userId.value = '';
+    if (usernameInput) usernameInput.value = '';
+    if (!sugestoes) return;
+
+    const termo = String(valor || '').trim().replace(/^@+/, '').toLowerCase();
+    sugestoes.innerHTML = '';
+
+    clearTimeout(buscaTerceiroTimer);
+
+    if (termo.length < 2 || !window.collection || !window.query) return;
+
+    buscaTerceiroTimer = setTimeout(async () => {
+        try {
+            const usuariosRef = window.collection(window.db, 'usernames');
+            const q = window.query(
+                usuariosRef,
+                window.orderBy('usernameBusca'),
+                window.where('usernameBusca', '>=', termo),
+                window.where('usernameBusca', '<=', termo + '\uf8ff'),
+                window.limit(5)
+            );
+
+            const snap = await window.getDocs(q);
+            const resultados = [];
+
+            snap.forEach(docSnap => {
+                const publico = docSnap.data();
+                if (!publico || !publico.username) return;
+                if (window.auth?.currentUser?.uid === publico.uid) return;
+                resultados.push(publico);
+            });
+
+            sugestoes.innerHTML = resultados.length ? resultados.map(user => `
+                <button type="button" class="terceiro-suggestion-item" onclick="selecionarUsuarioTerceiro('${user.uid}', '${escaparHtmlCarteira(user.username)}', '${escaparHtmlCarteira(user.nome || user.username)}')">
+                    <img src="${user.avatar || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}" alt="">
+                    <span>
+                        <strong>${escaparHtmlCarteira(user.nome || user.username)}</strong>
+                        <small>@${escaparHtmlCarteira(user.username)}</small>
+                    </span>
+                </button>
+            `).join('') : '<div class="terceiro-suggestion-empty">Nenhum usuário encontrado. Será salvo como nome manual.</div>';
+        } catch (error) {
+            console.error('Erro ao buscar usuarios:', error);
+            sugestoes.innerHTML = '<div class="terceiro-suggestion-empty">Não foi possível buscar usuários agora.</div>';
+        }
+    }, 320);
+}
+
+function selecionarUsuarioTerceiro(uid, username, nome) {
+    const nomeInput = document.getElementById('g-nome-terceiro');
+    const userId = document.getElementById('g-terceiro-user-id');
+    const usernameInput = document.getElementById('g-terceiro-username');
+    const tipo = document.getElementById('g-terceiro-tipo');
+    const sugestoes = document.getElementById('g-terceiro-sugestoes');
+
+    if (nomeInput) nomeInput.value = `@${username}`;
+    if (userId) userId.value = uid;
+    if (usernameInput) usernameInput.value = username;
+    if (tipo) tipo.value = 'usuario';
+    if (sugestoes) sugestoes.innerHTML = `<div class="terceiro-suggestion-selected">Vinculado a @${escaparHtmlCarteira(username)}</div>`;
+}
+
+async function criarSolicitacaoGastoTerceiro(transacao) {
+    if (!transacao?.terceiro || transacao.terceiro.tipo !== 'usuario') return;
+    if (!window.addDoc || !window.collection || !window.auth?.currentUser) return;
+
+    const user = window.auth.currentUser;
+    const perfil = salsiData?.config?.perfil || {};
+    const enviadoPorNome = [perfil.nome, perfil.sobrenome].filter(Boolean).join(' ').trim() || user.displayName || 'Usuário';
+
+    try {
+        const docRef = await window.addDoc(
+            window.collection(window.db, 'gastosCompartilhados'),
+            montarPayloadGastoCompartilhado(transacao, {
+                status: 'pendente',
+                criadoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString()
+            })
+        );
+
+        transacao.terceiro.status = 'pendente';
+        transacao.terceiro.solicitacaoId = docRef.id;
+    } catch (error) {
+        console.error('Erro ao enviar gasto compartilhado:', error);
+        mostrarToast('Gasto salvo, mas a solicitação não foi enviada.');
+    }
+}
+
+function montarPayloadGastoCompartilhado(transacao, extras = {}) {
+    const user = window.auth?.currentUser;
+    const perfil = salsiData?.config?.perfil || {};
+    const enviadoPorNome = [perfil.nome, perfil.sobrenome].filter(Boolean).join(' ').trim() || user?.displayName || 'Usuário';
+
+    return {
+        gastoLocalId: transacao.criadoEm || Date.now(),
+        enviadoPor: user?.uid || '',
+        enviadoPorNome,
+        enviadoPara: transacao.terceiro?.userId || '',
+        enviadoParaUsername: transacao.terceiro?.username || '',
+        nome: transacao.nome,
+        valor: transacao.valorTotal,
+        valorParcela: transacao.valorParcela,
+        parcelas: transacao.parcelas,
+        categoria: transacao.categoria,
+        banco: transacao.banco,
+        dataCompra: transacao.dataCompra,
+        observacao: transacao.observacao || '',
+        comprovanteUrl: transacao.comprovanteUrl || '',
+        ...extras
+    };
+}
+
+function moedaVisual(valor) {
+    return (Number(valor) || 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
+function dataVisual(data) {
+    if (!data) return 'Sem data';
+    return new Date(`${data}T12:00:00`).toLocaleDateString('pt-BR');
+}
+
+function parseMoedaVisual(valor) {
+    return parseFloat(String(valor || '').replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+}
+
+function garantirEstruturaCaixinha() {
+    if (!Array.isArray(salsiData.caixinha)) {
+        salsiData.caixinha = [];
+    }
+}
+
+function calcularSaldoCaixinha() {
+    garantirEstruturaCaixinha();
+    return salsiData.caixinha.reduce((total, mov) => {
+        const valor = Number(mov.valor) || 0;
+        return total + (mov.tipo === 'saida' ? -valor : valor);
+    }, 0);
+}
+
+function obterMesVisualizacao() {
+    if (typeof dataFiltro !== 'undefined' && dataFiltro instanceof Date) {
+        return new Date(dataFiltro.getFullYear(), dataFiltro.getMonth(), 1);
+    }
+
+    const hoje = new Date();
+    return new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+}
+
+function calcularParcelasPorMesVisual(t) {
+    const total = Math.max(1, Number(t.parcelas || 1));
+    const inicio = typeof calcularCompetenciaInicialGasto === 'function'
+        ? calcularCompetenciaInicialGasto(t)
+        : new Date(`${t.dataCompra}T12:00:00`);
+    const mesBase = obterMesVisualizacao();
+    const diffMeses = (mesBase.getFullYear() - inicio.getFullYear()) * 12 + (mesBase.getMonth() - inicio.getMonth());
+
+    const faltam = diffMeses < 0
+        ? total
+        : Math.max(0, total - diffMeses);
+    const parcelaAtual = diffMeses < 0
+        ? 0
+        : Math.min(total, diffMeses + 1);
+    const concluidasAntesDoMes = Math.max(0, Math.min(total, diffMeses));
+    const finalizado = faltam === 0;
+
+    return {
+        total,
+        inicio,
+        mesBase,
+        diffMeses,
+        parcelaAtual,
+        faltam,
+        finalizado,
+        progresso: total ? Math.round((concluidasAntesDoMes / total) * 100) : 0
+    };
+}
+
+function calcularRecebimentoTerceiro(t) {
+    const total = Math.max(1, Number(t.parcelas || 1));
+    const statusCompartilhado = obterStatusCompartilhado(t);
+
+    if (statusCompartilhado === 'pago') {
+        return {
+            total,
+            recebidas: total,
+            pendentes: 0,
+            concluido: true,
+            valorPendente: 0
+        };
+    }
+
+    if (total > 1) {
+        const recebidas = Array.from({ length: total }).filter((_, index) => {
+            return parcelaTerceiroRecebida(t, index);
+        }).length;
+
+        return {
+            total,
+            recebidas,
+            pendentes: Math.max(0, total - recebidas),
+            concluido: recebidas >= total,
+            valorPendente: Math.max(0, total - recebidas) * (Number(t.valorParcela) || 0)
+        };
+    }
+
+    const concluido = !!t.pago;
+
+    return {
+        total: 1,
+        recebidas: concluido ? 1 : 0,
+        pendentes: concluido ? 0 : 1,
+        concluido,
+        valorPendente: concluido ? 0 : Number(t.valorTotal || 0)
+    };
+}
+
+function parcelaTerceiroRecebida(t, index) {
+    const total = Math.max(1, Number(t?.parcelas || 1));
+
+    if (total <= 1) {
+        return !!t?.pago;
+    }
+
+    const mapaParcelas = t?.pagamentosParcelas || null;
+    const temControlePorParcela = mapaParcelas && Object.keys(mapaParcelas).length > 0;
+
+    if (!temControlePorParcela) {
+        return !!t?.pago;
+    }
+
+    return mapaParcelas[index] === true || mapaParcelas[String(index)] === true;
+}
+
+function obterStatusCompartilhado(t) {
+    if (!t?.terceiro || t.terceiro.tipo !== 'usuario') return 'manual';
+    return t.terceiro.status || 'enviado';
+}
+
+function gastoTerceiroContaNoResumo(t) {
+    const status = obterStatusCompartilhado(t);
+    return status === 'manual' || status === 'aceito' || status === 'pago';
+}
+
+function labelStatusCompartilhado(status) {
+    const labels = {
+        manual: 'Manual',
+        enviado: 'Aguardando aceite',
+        pendente: 'Aguardando aceite',
+        aceito: 'Aceito',
+        contestado: 'Contestado',
+        pago: 'Pago',
+        arquivado: 'Arquivado'
+    };
+
+    return labels[status] || status || 'Manual';
+}
+
+function classeStatusCompartilhado(status) {
+    if (status === 'contestado') return 'danger';
+    if (status === 'enviado' || status === 'pendente') return 'warn';
+    if (status === 'arquivado') return 'muted';
+    return '';
+}
+
+let dividasRecebidasCache = {};
+
+function renderizarVisualizacoes() {
+    renderizarVisualTerceiros();
+    renderizarVisualDividas();
+    renderizarVisualParcelados();
+    renderizarVisualCaixinha();
+}
+
+async function renderizarSolicitacoesRecebidas() {
+    if (!window.auth?.currentUser || !window.collection || !window.query || !window.getDocs) {
+        return [];
+    }
+
+    try {
+        const q = window.query(
+            window.collection(window.db, 'gastosCompartilhados'),
+            window.where('enviadoPara', '==', window.auth.currentUser.uid),
+            window.limit(50)
+        );
+
+        const snap = await window.getDocs(q);
+        const resultado = [];
+        snap.forEach(docSnap => resultado.push({ id: docSnap.id, ...docSnap.data() }));
+        return resultado;
+    } catch (error) {
+        console.error('Erro ao buscar gastos recebidos:', error);
+        return [];
+    }
+}
+
+async function buscarSolicitacoesEnviadas() {
+    if (!window.auth?.currentUser || !window.collection || !window.query || !window.getDocs) {
+        return [];
+    }
+
+    try {
+        const q = window.query(
+            window.collection(window.db, 'gastosCompartilhados'),
+            window.where('enviadoPor', '==', window.auth.currentUser.uid),
+            window.limit(100)
+        );
+
+        const snap = await window.getDocs(q);
+        const resultado = [];
+        snap.forEach(docSnap => resultado.push({ id: docSnap.id, ...docSnap.data() }));
+        return resultado;
+    } catch (error) {
+        console.error('Erro ao buscar gastos enviados:', error);
+        return [];
+    }
+}
+
+function sincronizarStatusGastosEnviados(enviados) {
+    if (!Array.isArray(enviados) || !Array.isArray(salsiData.transacoes)) return;
+
+    let alterou = false;
+
+    enviados.forEach(item => {
+        const gasto = salsiData.transacoes.find(t => {
+            if (!t?.terceiro || t.terceiro.tipo !== 'usuario') return false;
+
+            const mesmoDestino = t.terceiro.userId === item.enviadoPara;
+            const mesmoId = String(t.criadoEm || '') === String(item.gastoLocalId || '');
+
+            return mesmoDestino && mesmoId;
+        });
+
+        if (!gasto) return;
+
+        if (!gasto.terceiro) gasto.terceiro = {};
+
+        const novoStatus = item.status || 'enviado';
+        if (gasto.terceiro.status !== novoStatus || gasto.terceiro.solicitacaoId !== item.id) {
+            gasto.terceiro.status = novoStatus;
+            gasto.terceiro.solicitacaoId = item.id;
+            alterou = true;
+        }
+    });
+
+    if (alterou) {
+        localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+        if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
+    }
+}
+
+async function obterSolicitacaoDoGasto(t) {
+    if (!t?.terceiro || t.terceiro.tipo !== 'usuario') return null;
+
+    if (t.terceiro.solicitacaoId) {
+        return { id: t.terceiro.solicitacaoId };
+    }
+
+    const enviados = await buscarSolicitacoesEnviadas();
+    const encontrado = enviados.find(item => {
+        const mesmoDestino = item.enviadoPara === t.terceiro.userId;
+        const mesmoId = String(item.gastoLocalId || '') === String(t.criadoEm || '');
+        return mesmoDestino && mesmoId;
+    });
+
+    return encontrado || null;
+}
+
+async function reenviarGastoTerceiro(index) {
+    const gasto = salsiData.transacoes[index];
+    if (!gasto?.terceiro || gasto.terceiro.tipo !== 'usuario') return;
+    if (!window.auth?.currentUser || !window.updateDoc || !window.doc) return;
+
+    try {
+        const solicitacao = await obterSolicitacaoDoGasto(gasto);
+
+        if (solicitacao?.id) {
+            await window.updateDoc(window.doc(window.db, 'gastosCompartilhados', solicitacao.id), {
+                ...montarPayloadGastoCompartilhado(gasto),
+                status: 'pendente',
+                reenviadoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString(),
+                arquivadoEm: null,
+                respondidoEm: null
+            });
+
+            gasto.terceiro.solicitacaoId = solicitacao.id;
+        } else if (window.addDoc && window.collection) {
+            const docRef = await window.addDoc(
+                window.collection(window.db, 'gastosCompartilhados'),
+                montarPayloadGastoCompartilhado(gasto, {
+                    status: 'pendente',
+                    criadoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString()
+                })
+            );
+
+            gasto.terceiro.solicitacaoId = docRef.id;
+        }
+
+        gasto.terceiro.status = 'pendente';
+        localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+        if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
+
+        renderizarVisualTerceiros();
+        if (typeof mostrarToast === 'function') mostrarToast('Gasto reenviado para aceite.');
+    } catch (error) {
+        console.error('Erro ao reenviar gasto:', error);
+        if (typeof mostrarToast === 'function') mostrarToast('Não foi possível reenviar agora.');
+    }
+}
+
+async function apagarGastoTerceiroContestado(index) {
+    const gasto = salsiData.transacoes[index];
+    if (!gasto) return;
+
+    if (!confirm(`Apagar "${gasto.nome || 'gasto'}" e remover da conta da outra pessoa?`)) return;
+
+    try {
+        const solicitacao = await obterSolicitacaoDoGasto(gasto);
+
+        if (solicitacao?.id && window.updateDoc && window.doc) {
+            await window.updateDoc(window.doc(window.db, 'gastosCompartilhados', solicitacao.id), {
+                status: 'arquivado',
+                arquivadoPor: window.auth?.currentUser?.uid || '',
+                arquivadoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString()
+            });
+        }
+
+        salsiData.transacoes.splice(index, 1);
+        renderizar();
+        renderizarVisualTerceiros();
+
+        if (typeof mostrarToast === 'function') mostrarToast('Gasto apagado e solicitação removida.');
+    } catch (error) {
+        console.error('Erro ao apagar gasto contestado:', error);
+        if (typeof mostrarToast === 'function') mostrarToast('Não foi possível apagar agora.');
+    }
+}
+
+async function renderizarVisualTerceiros() {
+    const lista = document.getElementById('visual-lista-terceiros');
+    const resumoPendentes = document.getElementById('visual-terceiros-pendentes');
+    if (!lista) return;
+
+    lista.innerHTML = '<div class="visual-empty">Atualizando status dos gastos enviados...</div>';
+
+    const enviados = await buscarSolicitacoesEnviadas();
+    sincronizarStatusGastosEnviados(enviados);
+
+    const gastos = (salsiData.transacoes || [])
+        .filter(t => t.eDeTerceiro)
+        .sort((a, b) => new Date((b.dataCompra || '') + 'T12:00:00') - new Date((a.dataCompra || '') + 'T12:00:00'));
+
+    const totalPendente = gastos.reduce((total, t) => {
+        if (!gastoTerceiroContaNoResumo(t)) return total;
+        return total + calcularRecebimentoTerceiro(t).valorPendente;
+    }, 0);
+    if (resumoPendentes) resumoPendentes.textContent = moedaVisual(totalPendente);
+
+    const enviadosHtml = gastos.length ? `
+        <div class="visual-section-label">Seus gastos de terceiros</div>
+        ${gastos.map(t => {
+            const idx = salsiData.transacoes.indexOf(t);
+            const vinculado = t.terceiro?.tipo === 'usuario' && t.terceiro?.username;
+            const nomeResponsavel = vinculado ? `@${t.terceiro.username}` : (t.nomeTerceiro || t.terceiro?.nomeManual || 'Nome manual');
+            const recebimento = calcularRecebimentoTerceiro(t);
+            const statusCompartilhado = obterStatusCompartilhado(t);
+            const status = vinculado
+                ? labelStatusCompartilhado(recebimento.concluido ? 'pago' : statusCompartilhado)
+                : (recebimento.concluido ? 'Pago' : (recebimento.total > 1 ? `${recebimento.pendentes} pendente${recebimento.pendentes === 1 ? '' : 's'}` : 'Manual'));
+            const statusClass = vinculado
+                ? classeStatusCompartilhado(recebimento.concluido ? 'pago' : statusCompartilhado)
+                : (recebimento.concluido ? '' : 'muted');
+            const recebimentoTexto = recebimento.total > 1
+                ? `Recebidas: ${recebimento.recebidas}/${recebimento.total}`
+                : (recebimento.concluido ? 'Recebido' : 'Pendente');
+            const acoesContestado = vinculado && statusCompartilhado === 'contestado'
+                ? `
+                    <button type="button" class="visual-mini-btn danger" onclick="apagarGastoTerceiroContestado(${idx})">Apagar</button>
+                    <button type="button" class="visual-mini-btn primary" onclick="reenviarGastoTerceiro(${idx})">Enviar</button>
+                `
+                : '';
+
+            return `
+                <div class="visual-card">
+                    <div class="visual-card-main">
+                        <span class="visual-item-kicker">${vinculado ? 'Vinculado a usuário' : 'Controle manual'}</span>
+                        <div class="visual-card-title">
+                            <span>${escaparHtmlCarteira(t.nome || 'Gasto')}</span>
+                            <small class="visual-badge ${statusClass}">${status}</small>
+                        </div>
+                        <div class="visual-card-meta">
+                            <span>${escaparHtmlCarteira(nomeResponsavel)}</span>
+                            <span>${dataVisual(t.dataCompra)}</span>
+                            <span>${escaparHtmlCarteira(t.categoria || 'Sem categoria')}</span>
+                            <span>${Number(t.parcelas || 1)}x</span>
+                            <span>${recebimentoTexto}</span>
+                        </div>
+                    </div>
+                    <div class="visual-card-value">
+                        <strong>${moedaVisual(t.valorTotal || 0)}</strong>
+                        <div class="visual-card-actions">
+                            ${acoesContestado}
+                            <button type="button" class="visual-mini-btn" onclick="verDetalhes(${idx})">Ver detalhes</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('')}
+    ` : '';
+
+    lista.innerHTML = enviadosHtml
+        ? enviadosHtml
+        : '<div class="visual-empty">Nenhum gasto de terceiro por enquanto. Quando cadastrar um responsável manual ou um @user, ele aparece aqui.</div>';
+}
+
+async function responderSolicitacaoGasto(id, status) {
+    if (!window.updateDoc || !window.doc) return;
+
+    try {
+        await window.updateDoc(window.doc(window.db, 'gastosCompartilhados', id), {
+            status,
+            respondidoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString()
+        });
+
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(status === 'aceito' ? 'Gasto aceito.' : 'Gasto contestado.');
+        }
+
+        renderizarVisualTerceiros();
+        renderizarVisualDividas();
+    } catch (error) {
+        console.error('Erro ao responder solicitação:', error);
+        if (typeof mostrarToast === 'function') mostrarToast('Não foi possível responder agora.');
+    }
+}
+
+async function renderizarVisualDividas() {
+    const lista = document.getElementById('visual-lista-dividas');
+    const resumo = document.getElementById('visual-dividas-pendentes');
+    if (!lista) return;
+
+    lista.innerHTML = '<div class="visual-empty">Carregando dívidas recebidas...</div>';
+
+    const dividas = await renderizarSolicitacoesRecebidas();
+    dividasRecebidasCache = {};
+
+    dividas.forEach(item => {
+        dividasRecebidasCache[item.id] = item;
+    });
+
+    const pendentes = dividas.filter(item => (item.status || 'pendente') === 'pendente');
+    const aceitas = dividas.filter(item => item.status === 'aceito');
+    const contestadas = dividas.filter(item => item.status === 'contestado');
+    const pagas = dividas.filter(item => item.status === 'pago');
+
+    const totalPendente = [...pendentes, ...aceitas].reduce((total, item) => total + Number(item.valor || 0), 0);
+    if (resumo) resumo.textContent = moedaVisual(totalPendente);
+
+    const cardDivida = (item, tipo) => {
+        const status = item.status || 'pendente';
+        const statusLabel = labelStatusCompartilhado(status);
+        const statusClass = classeStatusCompartilhado(status);
+        const acoes = tipo === 'pendente'
+            ? `
+                <button type="button" class="visual-mini-btn" onclick="responderSolicitacaoGasto('${item.id}', 'contestado')">Contestar</button>
+                <button type="button" class="visual-mini-btn primary" onclick="responderSolicitacaoGasto('${item.id}', 'aceito')">Aceitar</button>
+            `
+            : tipo === 'aceita'
+                ? `<button type="button" class="visual-mini-btn primary" onclick="abrirPagamentoDivida('${item.id}')">Pagar</button>`
+                : '';
+
+        return `
+            <div class="visual-card">
+                <div class="visual-card-main">
+                    <span class="visual-item-kicker">Enviado por ${escaparHtmlCarteira(item.enviadoPorNome || 'Usuário')}</span>
+                    <div class="visual-card-title">
+                        <span>${escaparHtmlCarteira(item.nome || 'Dívida')}</span>
+                        <small class="visual-badge ${statusClass}">${statusLabel}</small>
+                    </div>
+                    <div class="visual-card-meta">
+                        <span>${dataVisual(item.dataCompra)}</span>
+                        <span>${escaparHtmlCarteira(item.categoria || 'Sem categoria')}</span>
+                        <span>${Number(item.parcelas || 1)}x de ${moedaVisual(item.valorParcela || item.valor || 0)}</span>
+                        ${item.observacao ? `<span>${escaparHtmlCarteira(item.observacao)}</span>` : ''}
+                    </div>
+                </div>
+                <div class="visual-card-value">
+                    <strong>${moedaVisual(item.valor || 0)}</strong>
+                    ${acoes ? `<div class="visual-card-actions">${acoes}</div>` : ''}
+                </div>
+            </div>
+        `;
+    };
+
+    const html = [
+        pendentes.length ? `<div class="visual-section-label">Solicitações pendentes</div>${pendentes.map(item => cardDivida(item, 'pendente')).join('')}` : '',
+        aceitas.length ? `<div class="visual-section-label">Aceitas para pagamento</div>${aceitas.map(item => cardDivida(item, 'aceita')).join('')}` : '',
+        contestadas.length ? `<div class="visual-section-label">Contestadas</div>${contestadas.map(item => cardDivida(item, 'historico')).join('')}` : '',
+        pagas.length ? `<div class="visual-section-label">Pagas</div>${pagas.map(item => cardDivida(item, 'historico')).join('')}` : ''
+    ].join('');
+
+    lista.innerHTML = html || '<div class="visual-empty">Nenhuma dívida recebida por enquanto.</div>';
+}
+
+function abrirPagamentoDivida(id) {
+    const divida = dividasRecebidasCache[id];
+    if (!divida) {
+        if (typeof mostrarToast === 'function') mostrarToast('Não encontrei essa dívida para pagamento.');
+        return;
+    }
+
+    if (typeof abrirModalGasto === 'function') abrirModalGasto();
+
+    window.dividaEmPagamentoId = id;
+    window.dividaEmPagamentoDoc = divida;
+
+    const nome = document.getElementById('g-nome');
+    const valor = document.getElementById('g-valor');
+    const data = document.getElementById('g-data');
+    const obs = document.getElementById('g-observacao');
+    const parcelas = document.getElementById('g-parcelas');
+    const checkTerceiro = document.getElementById('g-terceiro');
+
+    if (nome) nome.value = `Dívida - ${divida.nome || 'gasto compartilhado'}`;
+    if (valor) {
+        valor.value = (Number(divida.valor || 0) * 100).toFixed(0);
+        formatarMoeda(valor);
+    }
+    if (data) data.value = new Date().toISOString().split('T')[0];
+    if (parcelas) parcelas.value = 1;
+    if (checkTerceiro) checkTerceiro.checked = false;
+    if (typeof toggleCampoNomeTerceiro === 'function') toggleCampoNomeTerceiro();
+    if (obs) {
+        obs.value = `Pagamento de dívida enviada por ${divida.enviadoPorNome || 'usuário'} em ${dataVisual(divida.dataCompra)}.`;
+    }
+
+    if (typeof mostrarToast === 'function') {
+        mostrarToast('Escolha como você quer pagar essa dívida.');
+    }
+}
+
+function renderizarVisualParcelados() {
+    const lista = document.getElementById('visual-lista-parcelados');
+    if (!lista) return;
+
+    const parcelados = (salsiData.transacoes || [])
+        .filter(t => Number(t.parcelas || 1) > 1)
+        .map(t => {
+            return { t, ...calcularParcelasPorMesVisual(t) };
+        })
+        .sort((a, b) => {
+            if (a.finalizado !== b.finalizado) return a.finalizado ? 1 : -1;
+            return new Date((b.t.dataCompra || '') + 'T12:00:00') - new Date((a.t.dataCompra || '') + 'T12:00:00');
+        });
+
+    lista.innerHTML = parcelados.length ? parcelados.map(item => {
+        const { t, parcelaAtual, faltam, total, finalizado, progresso } = item;
+        const idx = salsiData.transacoes.indexOf(t);
+        const textoParcela = item.diffMeses < 0
+            ? 'Ainda não iniciou'
+            : `Parcela atual: ${parcelaAtual}/${total}`;
+
+        return `
+            <div class="visual-card">
+                <div class="visual-card-main">
+                    <span class="visual-item-kicker">${escaparHtmlCarteira(t.banco || t.formaPagamento || 'Parcelado')}</span>
+                    <div class="visual-card-title">
+                        <span>${escaparHtmlCarteira(t.nome || 'Gasto parcelado')}</span>
+                        <small class="visual-badge ${finalizado ? '' : 'warn'}">${finalizado ? 'Finalizado' : `${faltam} restante${faltam === 1 ? '' : 's'}`}</small>
+                    </div>
+                    <div class="visual-card-meta">
+                        <span>${textoParcela}</span>
+                        <span>Valor da parcela: ${moedaVisual(t.valorParcela || 0)}</span>
+                        <span>${dataVisual(t.dataCompra)}</span>
+                    </div>
+                </div>
+                <div class="visual-card-value">
+                    <strong>${moedaVisual(t.valorTotal || 0)}</strong>
+                    <div class="visual-progress" title="${progresso}% concluído">
+                        <span style="width:${progresso}%"></span>
+                    </div>
+                    <button type="button" class="visual-mini-btn" onclick="verDetalhes(${idx})">Ver detalhes</button>
+                </div>
+            </div>
+        `;
+    }).join('') : '<div class="visual-empty">Nenhum gasto parcelado cadastrado ainda.</div>';
+}
+
+function renderizarVisualCaixinha() {
+    garantirEstruturaCaixinha();
+
+    const lista = document.getElementById('visual-lista-caixinha');
+    const saldoHeader = document.getElementById('visual-caixinha-saldo');
+    const saldoPrincipal = document.getElementById('caixinha-saldo-principal');
+    if (!lista) return;
+
+    const saldo = calcularSaldoCaixinha();
+    if (saldoHeader) saldoHeader.textContent = moedaVisual(saldo);
+    if (saldoPrincipal) saldoPrincipal.textContent = moedaVisual(saldo);
+
+    const movimentos = [...salsiData.caixinha].sort((a, b) => new Date((b.data || '') + 'T12:00:00') - new Date((a.data || '') + 'T12:00:00'));
+
+    lista.innerHTML = movimentos.length ? movimentos.map(mov => `
+        <div class="visual-card">
+            <div class="visual-card-main">
+                <span class="visual-item-kicker">${mov.tipo === 'saida' ? 'Retirada' : 'Valor guardado'}</span>
+                <div class="visual-card-title">
+                    <span>${escaparHtmlCarteira(mov.nome || 'Movimento da caixinha')}</span>
+                    <small class="visual-badge ${mov.tipo === 'saida' ? 'muted' : ''}">${mov.tipo === 'saida' ? 'Saiu da caixinha' : 'Entrou na caixinha'}</small>
+                </div>
+                <div class="visual-card-meta">
+                    <span>${dataVisual(mov.data)}</span>
+                    ${mov.descricao ? `<span>${escaparHtmlCarteira(mov.descricao)}</span>` : ''}
+                    ${mov.comprovanteUrl ? `<span>Comprovante anexado</span>` : ''}
+                </div>
+            </div>
+            <div class="visual-card-value">
+                <strong>${mov.tipo === 'saida' ? '-' : '+'} ${moedaVisual(mov.valor || 0)}</strong>
+                <div class="visual-card-actions">
+                    ${mov.comprovanteUrl ? `<button type="button" class="visual-mini-btn" onclick="abrirComprovanteCaixinha('${mov.comprovanteUrl}')">Comprovante</button>` : ''}
+                    <button type="button" class="visual-mini-btn" onclick="editarMovimentoCaixinha(${mov.id})">Editar</button>
+                    <button type="button" class="visual-mini-btn danger" onclick="excluirMovimentoCaixinha(${mov.id})">Apagar</button>
+                </div>
+            </div>
+        </div>
+    `).join('') : '<div class="visual-empty">Sua caixinha ainda está vazia. Use Adicionar para registrar dinheiro guardado.</div>';
+}
+
+function abrirModalCaixinha(tipo = 'entrada') {
+    const modal = document.getElementById('modal-caixinha');
+    if (!modal) return;
+
+    const hoje = new Date().toISOString().split('T')[0];
+    const isSaida = tipo === 'saida';
+
+    document.getElementById('caixinha-tipo').value = isSaida ? 'saida' : 'entrada';
+    document.getElementById('caixinha-id').value = '';
+    document.getElementById('caixinha-nome').value = '';
+    document.getElementById('caixinha-valor').value = '';
+    document.getElementById('caixinha-data').value = hoje;
+    document.getElementById('caixinha-descricao').value = '';
+    document.getElementById('caixinha-comprovante').value = '';
+
+    const status = document.getElementById('caixinha-comprovante-status');
+    if (status) status.textContent = 'Nenhum comprovante anexado';
+
+    document.getElementById('caixinha-modal-kicker').textContent = isSaida ? 'Retirada' : 'Caixinha';
+    document.getElementById('caixinha-modal-title').textContent = isSaida ? 'Retirar da caixinha' : 'Adicionar à caixinha';
+    document.getElementById('caixinha-modal-desc').textContent = isSaida
+        ? 'Registre um valor que saiu da sua reserva.'
+        : 'Guardar dinheiro aqui também cria um gasto para reduzir o disponível do mês.';
+    document.getElementById('btn-save-caixinha').textContent = isSaida ? 'Salvar retirada' : 'Guardar valor';
+
+    modal.showModal();
+    document.getElementById('caixinha-nome')?.focus();
+}
+
+function editarMovimentoCaixinha(id) {
+    garantirEstruturaCaixinha();
+
+    const movimento = salsiData.caixinha.find(mov => String(mov.id) === String(id));
+    const modal = document.getElementById('modal-caixinha');
+    if (!movimento || !modal) return;
+
+    const isSaida = movimento.tipo === 'saida';
+
+    document.getElementById('caixinha-id').value = movimento.id;
+    document.getElementById('caixinha-tipo').value = movimento.tipo;
+    document.getElementById('caixinha-nome').value = movimento.nome || '';
+    document.getElementById('caixinha-valor').value = (Number(movimento.valor || 0) * 100).toFixed(0);
+    formatarMoeda(document.getElementById('caixinha-valor'));
+    document.getElementById('caixinha-data').value = movimento.data || new Date().toISOString().split('T')[0];
+    document.getElementById('caixinha-descricao').value = movimento.descricao || '';
+    document.getElementById('caixinha-comprovante').value = '';
+
+    const status = document.getElementById('caixinha-comprovante-status');
+    if (status) status.textContent = movimento.comprovanteUrl ? 'Comprovante atual mantido' : 'Nenhum comprovante anexado';
+
+    document.getElementById('caixinha-modal-kicker').textContent = isSaida ? 'Editar retirada' : 'Editar caixinha';
+    document.getElementById('caixinha-modal-title').textContent = isSaida ? 'Editar retirada' : 'Editar valor guardado';
+    document.getElementById('caixinha-modal-desc').textContent = isSaida
+        ? 'Ajuste o registro dessa retirada.'
+        : 'Ajuste o registro e o gasto vinculado à caixinha.';
+    document.getElementById('btn-save-caixinha').textContent = 'Salvar alterações';
+
+    modal.showModal();
+    document.getElementById('caixinha-nome')?.focus();
+}
+
+async function enviarComprovanteCaixinha(file) {
+    if (!file) return '';
+
+    const apiKey = '9ce95a3c98b6a4e35865fb7cf8b535db';
+    const arquivoLeve = typeof comprimirImagem === 'function'
+        ? await comprimirImagem(file)
+        : file;
+    const formData = new FormData();
+    formData.append('image', arquivoLeve);
+
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+        method: 'POST',
+        body: formData
+    });
+
+    const data = await response.json();
+    if (!data.success) {
+        throw new Error(data.error ? data.error.message : 'Erro ao enviar comprovante');
+    }
+
+    return data.data.url;
+}
+
+async function salvarMovimentoCaixinha() {
+    garantirEstruturaCaixinha();
+
+    const tipo = document.getElementById('caixinha-tipo')?.value === 'saida' ? 'saida' : 'entrada';
+    const idEdit = document.getElementById('caixinha-id')?.value || '';
+    const indexEdit = salsiData.caixinha.findIndex(mov => String(mov.id) === String(idEdit));
+    const movimentoAnterior = indexEdit >= 0 ? salsiData.caixinha[indexEdit] : null;
+    const nome = document.getElementById('caixinha-nome')?.value.trim() || (tipo === 'saida' ? 'Retirada da caixinha' : 'Valor guardado');
+    const valor = parseMoedaVisual(document.getElementById('caixinha-valor')?.value);
+    const data = document.getElementById('caixinha-data')?.value || new Date().toISOString().split('T')[0];
+    const descricao = document.getElementById('caixinha-descricao')?.value.trim() || '';
+    const fileInput = document.getElementById('caixinha-comprovante');
+    const btn = document.getElementById('btn-save-caixinha');
+
+    if (valor <= 0) {
+        alert('Informe um valor válido.');
+        return;
+    }
+
+    let comprovanteUrl = movimentoAnterior?.comprovanteUrl || '';
+    const textoOriginal = btn ? btn.textContent : '';
+
+    try {
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Salvando...';
+        }
+
+        if (fileInput?.files?.length) {
+            comprovanteUrl = await enviarComprovanteCaixinha(fileInput.files[0]);
+        }
+
+        const id = movimentoAnterior?.id || Date.now();
+        const movimento = {
+            id,
+            tipo,
+            nome,
+            valor,
+            data,
+            descricao,
+            comprovanteUrl,
+            criadoEm: id
+        };
+
+        if (indexEdit >= 0) {
+            salsiData.caixinha[indexEdit] = movimento;
+        } else {
+            salsiData.caixinha.push(movimento);
+        }
+
+        salsiData.transacoes = (salsiData.transacoes || []).filter(t => {
+            return !(t.origemCaixinha && String(t.caixinhaId) === String(id));
+        });
+
+        if (tipo === 'entrada') {
+            if (!salsiData.config.categorias.includes('Caixinha')) {
+                salsiData.config.categorias.push('Caixinha');
+            }
+
+            salsiData.transacoes.push({
+                nome: `Caixinha - ${nome}`,
+                tipo: 'debito',
+                valorTotal: valor,
+                valorParcela: valor,
+                parcelas: 1,
+                dataCompra: data,
+                banco: 'Caixinha',
+                categoria: 'Caixinha',
+                observacao: descricao,
+                pago: true,
+                delayPagamento: 0,
+                eDeTerceiro: false,
+                nomeTerceiro: '',
+                terceiro: null,
+                formaPagamento: 'Caixinha',
+                comprovanteUrl,
+                origemCaixinha: true,
+                caixinhaId: id,
+                criadoEm: id,
+                destaqueAte: id + (5 * 60 * 1000)
+            });
+        }
+
+        renderizar();
+        renderizarVisualizacoes();
+        document.getElementById('modal-caixinha')?.close();
+        if (typeof mostrarToast === 'function') {
+            mostrarToast(indexEdit >= 0 ? 'Movimento da caixinha atualizado.' : (tipo === 'saida' ? 'Retirada registrada.' : 'Valor guardado na caixinha.'));
+        }
+    } catch (error) {
+        console.error('Erro ao salvar caixinha:', error);
+        alert('Não foi possível salvar o movimento: ' + error.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = textoOriginal;
+        }
+    }
+}
+
+function excluirMovimentoCaixinha(id) {
+    garantirEstruturaCaixinha();
+
+    const movimento = salsiData.caixinha.find(mov => String(mov.id) === String(id));
+    if (!movimento) return;
+
+    if (!confirm(`Apagar "${movimento.nome || 'movimento da caixinha'}"?`)) return;
+
+    salsiData.caixinha = salsiData.caixinha.filter(mov => String(mov.id) !== String(id));
+    salsiData.transacoes = (salsiData.transacoes || []).filter(t => {
+        return !(t.origemCaixinha && String(t.caixinhaId) === String(id));
+    });
+
+    renderizar();
+    renderizarVisualizacoes();
+
+    if (typeof mostrarToast === 'function') {
+        mostrarToast('Movimento da caixinha apagado.');
+    }
+}
+
+function abrirComprovanteCaixinha(url) {
+    const img = document.getElementById('img-comprovante-preview');
+    const modal = document.getElementById('modal-ver-comprovante');
+    if (!img || !modal) return;
+
+    img.src = url;
+    modal.showModal();
+}
+
+document.getElementById('caixinha-comprovante')?.addEventListener('change', function() {
+    const status = document.getElementById('caixinha-comprovante-status');
+    if (status) {
+        status.textContent = this.files?.[0]?.name || 'Nenhum comprovante anexado';
+    }
+});
 
 // 2. MÁSCARA DE MOEDA EM TEMPO REAL (Transforma 100 em R$ 100,00)
 function formatarMoeda(input) {
@@ -1314,6 +2384,13 @@ function ativarScrollCarteira() {
 let carteiraIndexAtual = 0;
 let carteiraWheelTravado = false;
 let carteiraTouchStartY = 0;
+let carteiraContainerAtual = 'settings-lista-cartoes';
+
+function obterContainerCarteiraAtual() {
+    return document.getElementById(carteiraContainerAtual)
+        || document.getElementById('settings-lista-cartoes')
+        || document.getElementById('lista-cartoes-config');
+}
 
 function limitarCarteiraIndex(index, total) {
     if (total <= 0) return 0;
@@ -1321,11 +2398,11 @@ function limitarCarteiraIndex(index, total) {
 }
 
 function atualizarCarouselCarteira() {
-    const carousel = document.getElementById('lista-cartoes-config');
+    const carousel = obterContainerCarteiraAtual();
     if (!carousel) return;
 
     const cards = Array.from(carousel.querySelectorAll('.wallet-card'));
-    const dotsContainer = document.getElementById('wallet-carousel-dots');
+    const dotsContainer = carousel.querySelector('.wallet-carousel-dots');
 
     const total = cards.length;
     if (!total) return;
@@ -1380,7 +2457,8 @@ const blur = absDiff === 0 ? 0 : Math.min(absDiff * 1.35, 4.2);
 }
 
 function irParaCarteira(index) {
-    const total = document.querySelectorAll('#lista-cartoes-config .wallet-card').length;
+    const carousel = obterContainerCarteiraAtual();
+    const total = carousel ? carousel.querySelectorAll('.wallet-card').length : 0;
     carteiraIndexAtual = limitarCarteiraIndex(index, total);
     atualizarCarouselCarteira();
 }
@@ -1390,7 +2468,7 @@ function moverCarteira(direcao) {
 }
 
 function iniciarCarouselCarteira() {
-    const carousel = document.getElementById('lista-cartoes-config');
+    const carousel = obterContainerCarteiraAtual();
     if (!carousel) return;
 
     const cards = carousel.querySelectorAll('.wallet-card');

@@ -95,6 +95,10 @@ async function confirmarGasto() {
 
 const agoraCadastro = Date.now();
 const tempoDestaqueNovo = 5 * 60 * 1000; // 5 minutos
+const terceiroTipo = document.getElementById('g-terceiro-tipo')?.value || 'manual';
+const terceiroUserId = document.getElementById('g-terceiro-user-id')?.value || '';
+const terceiroUsername = document.getElementById('g-terceiro-username')?.value || '';
+const nomeTerceiroValor = document.getElementById('g-nome-terceiro').value || "";
 
     // Monta o pacote de dados
     const novosDados = {
@@ -110,7 +114,14 @@ const tempoDestaqueNovo = 5 * 60 * 1000; // 5 minutos
     pago: false,
     delayPagamento: parseInt(document.getElementById('g-inicio-pagamento').value) || 0,
     eDeTerceiro: document.getElementById('g-terceiro').checked,
-    nomeTerceiro: document.getElementById('g-nome-terceiro').value || "",
+    nomeTerceiro: nomeTerceiroValor,
+    terceiro: document.getElementById('g-terceiro').checked ? {
+        tipo: terceiroTipo === 'usuario' && terceiroUserId ? 'usuario' : 'manual',
+        nomeManual: terceiroTipo === 'usuario' && terceiroUsername ? `@${terceiroUsername}` : nomeTerceiroValor,
+        userId: terceiroUserId,
+        username: terceiroUsername,
+        status: terceiroTipo === 'usuario' && terceiroUserId ? 'enviado' : 'local'
+    } : null,
     formaPagamento: (tipo === 'debito') ? formaPag : null,
     comprovanteUrl: comprovanteUrl,
 
@@ -123,7 +134,33 @@ const tempoDestaqueNovo = 5 * 60 * 1000; // 5 minutos
         salsiData.transacoes[indexEdit] = novosDados;
         if (typeof mostrarToast === 'function') mostrarToast("Lançamento atualizado com sucesso!");
     } else {
+        if (window.dividaEmPagamentoId) {
+            novosDados.origemDividaCompartilhada = true;
+            novosDados.dividaCompartilhadaId = window.dividaEmPagamentoId;
+        }
+
         salsiData.transacoes.push(novosDados);
+        if (novosDados.terceiro?.tipo === 'usuario' && typeof criarSolicitacaoGastoTerceiro === 'function') {
+            await criarSolicitacaoGastoTerceiro(novosDados);
+        }
+
+        if (window.dividaEmPagamentoId && window.updateDoc && window.doc) {
+            try {
+                await window.updateDoc(window.doc(window.db, 'gastosCompartilhados', window.dividaEmPagamentoId), {
+                    status: 'pago',
+                    pagoPor: window.auth?.currentUser?.uid || '',
+                    pagoPorTransacaoLocal: novosDados.criadoEm,
+                    pagoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString()
+                });
+            } catch (error) {
+                console.error('Erro ao marcar dívida como paga:', error);
+                if (typeof mostrarToast === 'function') mostrarToast('Gasto salvo, mas a dívida não foi marcada como paga.');
+            } finally {
+                window.dividaEmPagamentoId = null;
+                window.dividaEmPagamentoDoc = null;
+            }
+        }
+
         if (typeof mostrarToast === 'function') mostrarToast("Lançamento salvo com sucesso! 💸");
     }
     
@@ -136,9 +173,14 @@ function alternarStatusPago(index, parcelaIndex = null) {
     
     // Se for um gasto parcelado (ex: de terceiro) e a função enviou o index da parcela
     if (parcelaIndex !== null && gasto.parcelas > 1) {
-        // Cria a gaveta de pagamentos individuais se ela não existir
+        // Compatibilidade com lançamentos antigos:
+        // antes existia apenas o "pago" geral, então inicializamos todas as parcelas
+        // com esse estado antes de inverter a parcela clicada.
         if (!gasto.pagamentosParcelas) {
             gasto.pagamentosParcelas = {};
+            for (let i = 0; i < gasto.parcelas; i++) {
+                gasto.pagamentosParcelas[i] = !!gasto.pago;
+            }
         }
         
         // Lê o status atual dessa parcela (se não tiver, herda o antigo "pago" geral)
@@ -149,6 +191,7 @@ function alternarStatusPago(index, parcelaIndex = null) {
         
         // Inverte APENAS o status desta parcela!
         gasto.pagamentosParcelas[parcelaIndex] = !statusAtual;
+        gasto.pago = Object.values(gasto.pagamentosParcelas).filter(Boolean).length >= gasto.parcelas;
         
     } else {
         // Comportamento normal para Gastos Fixos (Não parcelados)
@@ -610,6 +653,9 @@ function excluirEntrada(idx) { if(confirm("Apagar?")) { salsiData.entradas.splic
 function mudarMes(n) { dataFiltro.setMonth(dataFiltro.getMonth() + n); renderizar(); }
 // 1. DATA AUTOMÁTICA E RESET AO ABRIR (MODO CRIAÇÃO)
 function abrirModalGasto() {
+    window.dividaEmPagamentoId = null;
+    window.dividaEmPagamentoDoc = null;
+
     popularSelects();
     
     // Define a data de hoje no formato YYYY-MM-DD
@@ -636,6 +682,10 @@ function abrirModalGasto() {
     const checkTerceiro = document.getElementById('g-terceiro');
     if(checkTerceiro) checkTerceiro.checked = false;
     document.getElementById('g-nome-terceiro').value = '';
+    if (document.getElementById('g-terceiro-user-id')) document.getElementById('g-terceiro-user-id').value = '';
+    if (document.getElementById('g-terceiro-username')) document.getElementById('g-terceiro-username').value = '';
+    if (document.getElementById('g-terceiro-tipo')) document.getElementById('g-terceiro-tipo').value = 'manual';
+    if (document.getElementById('g-terceiro-sugestoes')) document.getElementById('g-terceiro-sugestoes').innerHTML = '';
 
     // Reseta o visual para Modo Criação
     const titulo = document.getElementById('modal-titulo');
@@ -689,6 +739,14 @@ function editarGasto(index) {
     const checkTerceiro = document.getElementById('g-terceiro');
     if (checkTerceiro) checkTerceiro.checked = t.eDeTerceiro || false;
     document.getElementById('g-nome-terceiro').value = t.nomeTerceiro || '';
+    if (document.getElementById('g-terceiro-user-id')) document.getElementById('g-terceiro-user-id').value = t.terceiro?.userId || '';
+    if (document.getElementById('g-terceiro-username')) document.getElementById('g-terceiro-username').value = t.terceiro?.username || '';
+    if (document.getElementById('g-terceiro-tipo')) document.getElementById('g-terceiro-tipo').value = t.terceiro?.tipo || 'manual';
+    if (document.getElementById('g-terceiro-sugestoes')) {
+        document.getElementById('g-terceiro-sugestoes').innerHTML = t.terceiro?.username
+            ? `<div class="terceiro-suggestion-selected">Vinculado a @${t.terceiro.username}</div>`
+            : '';
+    }
 
     // 👇 2. Atualiza o visual e reconstrói as listas vazias ANTES de preencher o banco
     if (typeof ajustarCamposModal === 'function') ajustarCamposModal();

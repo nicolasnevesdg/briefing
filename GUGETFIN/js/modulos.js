@@ -652,61 +652,65 @@ function confirmarImportacao() {
 // MÓDULO: MODO NOTURNO (DARK THEME)
 // ==========================================
 
-function toggleTema() {
-    const isDark = document.getElementById('theme-toggle').checked;
-    
+function toggleTema(origemEl) {
+    const toggleAntigo = document.getElementById('theme-toggle');
+    const toggleNovo = document.getElementById('settings-theme-toggle');
+    const origem = origemEl || toggleNovo || toggleAntigo;
+    const isDark = origem ? origem.checked : !document.body.classList.contains('dark-theme');
+
+    aplicarTemaConta(isDark);
+    salvarTemaConta(isDark);
+}
+
+function atualizarBotaoTemaTopo(isDark = document.body.classList.contains('dark-theme')) {
+    const btn = document.getElementById('header-theme-toggle');
+    if (!btn) return;
+
+    btn.classList.toggle('is-dark', isDark);
+    btn.setAttribute('aria-label', isDark ? 'Ativar modo claro' : 'Ativar modo noturno');
+}
+
+function alternarTemaTopo() {
+    const isDark = !document.body.classList.contains('dark-theme');
+
+    aplicarTemaConta(isDark);
+    salvarTemaConta(isDark);
+}
+
+function aplicarTemaConta(isDark) {
+    const toggleEl = document.getElementById('theme-toggle');
+    const toggleNovo = document.getElementById('settings-theme-toggle');
+
     if (isDark) {
         document.body.classList.add('dark-theme');
-        localStorage.setItem('guget_theme', 'dark'); 
     } else {
         document.body.classList.remove('dark-theme');
-        localStorage.setItem('guget_theme', 'light');
     }
 
-    // Atualiza o gráfico anual e os gráficos de metas para as cores ajustarem
+    if (toggleEl) toggleEl.checked = isDark;
+    if (toggleNovo) toggleNovo.checked = isDark;
+    atualizarBotaoTemaTopo(isDark);
+
     setTimeout(() => {
         if (typeof atualizarGraficoAnual === 'function') atualizarGraficoAnual();
         if (typeof atualizarGraficoMeta === 'function') atualizarGraficoMeta();
     }, 100);
 }
 
-function carregarTemaPreferido() {
-    const temaSalvo = localStorage.getItem('guget_theme');
-    const toggleEl = document.getElementById('theme-toggle');
+function salvarTemaConta(isDark) {
+    if (!salsiData.config) salsiData.config = {};
+    salsiData.config.tema = isDark ? 'dark' : 'light';
+    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
 
-    if (temaSalvo === 'dark') {
-        document.body.classList.add('dark-theme');
-        if (toggleEl) toggleEl.checked = true; 
-    } else {
-        document.body.classList.remove('dark-theme');
-        if (toggleEl) toggleEl.checked = false;
-    }
+    if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
 }
 
-// ==========================================
-// MÓDULO: CARREGAMENTO AUTOMÁTICO DO TEMA
-// ==========================================
-
 function carregarTemaPreferido() {
-    // 1. Lê a memória do navegador
-    const temaSalvo = localStorage.getItem('guget_theme');
-    const toggleEl = document.getElementById('theme-toggle');
+    const userLogado = !!(window.auth && window.auth.currentUser);
+    const temaSalvo = userLogado ? (salsiData?.config?.tema || 'light') : 'light';
 
-    // 2. Aplica a cor correta e ajusta o interruptor no modal de perfil
-    if (temaSalvo === 'dark') {
-        document.body.classList.add('dark-theme');
-        if (toggleEl) toggleEl.checked = true; 
-    } else {
-        document.body.classList.remove('dark-theme');
-        if (toggleEl) toggleEl.checked = false;
-    }
+    aplicarTemaConta(temaSalvo === 'dark');
 }
-
-// 3. GATILHO AUTOMÁTICO: Roda a função assim que o HTML da página termina de carregar
-document.addEventListener('DOMContentLoaded', carregarTemaPreferido);
-
-// 4. GATILHO EXTRA: Garante que rode imediatamente se a página já estiver montada
-carregarTemaPreferido();
 
 // ==========================================
 // MÓDULO: ASSISTENTE VIRTUAL (NANO BANANA)
@@ -961,7 +965,8 @@ function gerarRespostaAssistente(pergunta, chat) {
 // Abre/Fecha a central de Faturas no PC
 function toggleNotificacoesPC(event) {
     event.stopPropagation();
-    document.getElementById('dropdown-notificacoes').classList.toggle('active');
+    const dropdown = document.getElementById('dropdown-notificacoes');
+    if (dropdown) dropdown.classList.toggle('active');
 }
 
 // Atualiza o click global para fechar essa janelinha também
@@ -1107,6 +1112,8 @@ function abrirCalendarioFinanceiro() {
     const main = document.querySelector('main');
     if (!main) return;
 
+    main.classList.remove('settings-mode');
+    main.classList.remove('visualizacoes-mode');
     main.classList.add('calendar-mode');
 
     const mes = typeof m !== 'undefined' ? m : new Date().getMonth();
@@ -1120,6 +1127,8 @@ function abrirDashboardFinanceira() {
     if (!main) return;
 
     main.classList.remove('calendar-mode');
+    main.classList.remove('settings-mode');
+    main.classList.remove('visualizacoes-mode');
 }
 
 function formatarMoedaCalendario(valor) {

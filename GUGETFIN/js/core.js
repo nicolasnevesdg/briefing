@@ -438,7 +438,16 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
                 if (fTercNome !== 'Todos' && t.nomeTerceiro !== fTercNome) return;
                 if (fTercBanco !== 'Todos' && t.banco !== fTercBanco) return;
 
-                totalTerceirosMes += val; 
+                const statusCompartilhado = t.terceiro?.tipo === 'usuario'
+                    ? (t.terceiro.status || 'enviado')
+                    : 'manual';
+                const deveContabilizarTerceiro = statusCompartilhado === 'manual'
+                    || statusCompartilhado === 'aceito'
+                    || statusCompartilhado === 'pago';
+
+                if (deveContabilizarTerceiro) {
+                    totalTerceirosMes += val;
+                }
                 temGastoTerceiro = true;
 
                 const tagTipoPC = t.tipo === 'cartao' 
@@ -449,7 +458,9 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
                 const parcelaIndex = diff; // Sabe exatamente qual mês estamos olhando
                 let estaParcelaPaga = false;
                 
-                if (t.pagamentosParcelas && t.pagamentosParcelas[parcelaIndex] !== undefined) {
+                if (typeof parcelaTerceiroRecebida === 'function') {
+                    estaParcelaPaga = parcelaTerceiroRecebida(t, parcelaIndex);
+                } else if (t.pagamentosParcelas && t.pagamentosParcelas[parcelaIndex] !== undefined) {
                     estaParcelaPaga = t.pagamentosParcelas[parcelaIndex];
                 } else {
                     estaParcelaPaga = !!t.pago; // Fallback para gastos antigos
@@ -809,6 +820,10 @@ const main = document.querySelector('main');
 if (main && main.classList.contains('calendar-mode')) {
     renderizarCalendarioFinanceiro(m, a);
 }
+
+if (main && main.classList.contains('visualizacoes-mode') && typeof renderizarVisualizacoes === 'function') {
+    renderizarVisualizacoes();
+}
 }
 
 /* ========================================================= */
@@ -822,9 +837,17 @@ function marcarViewSidebar(view) {
         btn.classList.remove('active');
     });
 
-    const btn = document.getElementById(
-        view === 'calendario' ? 'btn-view-calendario' : 'btn-view-dashboard'
-    );
+    const btnSettings = document.getElementById('btn-view-settings');
+    if (btnSettings) btnSettings.classList.remove('active');
+
+    const mapaBotoes = {
+        dashboard: 'btn-view-dashboard',
+        calendario: 'btn-view-calendario',
+        visualizacoes: 'btn-view-visualizacoes',
+        settings: 'btn-view-settings'
+    };
+
+    const btn = document.getElementById(mapaBotoes[view] || 'btn-view-dashboard');
 
     if (btn) btn.classList.add('active');
 }
@@ -843,6 +866,68 @@ function irParaCalendario() {
     }
 
     marcarViewSidebar('calendario');
+}
+
+function irParaConfiguracoes(aba = 'perfil') {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    main.classList.remove('calendar-mode');
+    main.classList.remove('visualizacoes-mode');
+    main.classList.add('settings-mode');
+
+    marcarViewSidebar('settings');
+    selecionarAbaConfiguracoes(aba);
+
+    if (typeof carregarConfiguracoesPerfil === 'function') {
+        carregarConfiguracoesPerfil();
+    }
+
+    const menuMob = document.getElementById('menu-dropdown');
+    if (menuMob) menuMob.classList.remove('active');
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function irParaVisualizacoes(aba = 'terceiros') {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    main.classList.remove('calendar-mode');
+    main.classList.remove('settings-mode');
+    main.classList.add('visualizacoes-mode');
+
+    marcarViewSidebar('visualizacoes');
+    selecionarAbaVisualizacoes(aba);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selecionarAbaVisualizacoes(aba = 'terceiros') {
+    document.querySelectorAll('.visual-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.visualTab === aba);
+    });
+
+    document.querySelectorAll('.visual-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.dataset.visualPanel === aba);
+    });
+
+    if (typeof renderizarVisualizacoes === 'function') {
+        renderizarVisualizacoes();
+    }
+}
+
+function selecionarAbaConfiguracoes(aba = 'perfil') {
+    document.querySelectorAll('.settings-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.settingsTab === aba);
+    });
+
+    document.querySelectorAll('.settings-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.dataset.settingsPanel === aba);
+    });
+
+    if (aba === 'organizacao' && typeof renderizarConfiguracoesOrganizacao === 'function') {
+        renderizarConfiguracoesOrganizacao();
+    }
 }
 
 function toggleEntradasSidebar() {
