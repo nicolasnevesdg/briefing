@@ -410,15 +410,20 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
     bottom: 20px; /* Descola do fundo da tela */
     left: 50%;
     transform: translateX(-50%); /* Centraliza perfeitamente */
-    width: calc(100% - 30px); /* Dá uma margem de respiro nas laterais */
-    max-width: 80%; /* Fica bonito até em celulares gigantões */
-    background-color: #ffffffe0;
+    width: calc(100% - 28px); /* Dá uma margem de respiro nas laterais */
+    max-width: 360px; /* Mantém o formato de pílula sem apertar os ícones */
+    background-color: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-radius: 50px; /* Arredonda como uma pílula */
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Sombra suave para "flutuar" */
+    box-shadow:
+        0 18px 44px rgba(9, 21, 18, 0.20),
+        0 8px 18px rgba(9, 21, 18, 0.12),
+        inset 0 1px 0 rgba(255,255,255,0.55); /* Sombra suave para "flutuar" */
     z-index: 1000;
     border-top: none; /* Tira aquela linha dura velha */
 }
@@ -436,8 +441,8 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 
 /* O fundo transparente para as abas inativas */
 .tab-btn {
-    width: 46px;  
-    height: 46px; 
+    width: 42px;  
+    height: 42px; 
     background-color: transparent; 
     color: #a0aec0; /* Ícone cinza claro para não roubar a atenção */
 }
@@ -451,8 +456,8 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 
 /* O botão principal (+) em destaque dentro da barra */
 .fab-btn {
-    width: 56px;  /* O botão + é visivelmente maior */
-    height: 56px;
+    width: 54px;  /* O botão + é visivelmente maior */
+    height: 54px;
     background-color: #1a362d; /* O verde "quase preto" da sua referência */
     color: #96e6a1; /* O verdinho claro do ícone de + */
     box-shadow: 0 4px 15px rgba(26, 54, 45, 0.25);
@@ -460,7 +465,7 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 }
 
 .mobile-tab-bar .fi {
-    font-size: 18px !important;  /* Tamanho dos ícones normais */
+    font-size: 17px !important;  /* Tamanho dos ícones normais */
     line-height: 1 !important;   /* Remove espaços extras verticais */
     display: flex !important;    /* Garante centralização */
     align-items: center !important;
@@ -478,6 +483,66 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 /* Mira no botão de + para ele ser maior ainda */
 .fab-btn .fi {
     font-size: 18px !important; /* Tamanho do ícone de + */
+}
+
+.mobile-back-top {
+    position: fixed;
+    right: 22px;
+    bottom: 98px;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.88);
+    color: var(--dark-green);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 14px 32px rgba(9, 21, 18, 0.18),
+        inset 0 1px 0 rgba(255,255,255,0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.mobile-back-top i {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.mobile-back-top.visible {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+@media (max-width: 360px) {
+    .mobile-tab-bar {
+        width: calc(100% - 18px);
+        padding: 7px 8px;
+    }
+
+    .tab-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .fab-btn {
+        width: 50px;
+        height: 50px;
+        margin-left: 2px;
+    }
+
+    .mobile-back-top {
+        right: 16px;
+        bottom: 92px;
+    }
 }
 
 /* Ajuste fino para os ícones do Flaticon */
@@ -1024,9 +1089,10 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
         white-space: nowrap;
     }
     
-    /* Forçar o card de resumo a respeitar o estado inicial no mobile */
-    #card-resumo-conteudo {
-        display: block;
+    /* A troca Resumo/Terceiros agora é controlada pelo JS no mobile */
+    #card-resumo-conteudo:not(.mobile-subtab-active),
+    #card-terceiros:not(.mobile-subtab-active) {
+        display: none;
     }
 	.card.resumo-mensal {
         margin: 0 !important;
@@ -1054,9 +1120,13 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 }
 
 @media (max-width: 1024px) {
-    /* Garante que o card de resumo respeite o JS e não o 'display: block' do PC */
+    /* Garante que os cards respeitem o estado ativo escolhido no mobile */
+    #card-resumo-conteudo.mobile-subtab-active,
+    #card-terceiros.mobile-subtab-active {
+        display: block !important;
+    }
+
     #card-resumo-conteudo {
-        display: block!important;
 		border: 1px solid #c8e6c9;
     }
 
@@ -3518,6 +3588,10 @@ main.settings-mode #settings-view {
 }
 
 @media (max-width: 1024px) {
+    main.settings-mode .month-nav {
+        display: none !important;
+    }
+
     main.settings-mode #settings-view {
         display: block !important;
     }
@@ -3536,14 +3610,20 @@ main.settings-mode #settings-view {
     }
 
     .settings-tabs {
-        overflow-x: auto;
+        overflow-x: visible;
         flex-direction: row;
+        flex-wrap: wrap;
+        gap: 7px;
+        padding: 8px;
         border-radius: 16px;
     }
 
     .settings-tab {
-        width: auto;
-        min-width: max-content;
+        width: calc(50% - 4px);
+        min-width: 0;
+        justify-content: center;
+        padding: 11px 9px;
+        font-size: 11px;
     }
 
     .settings-content {
@@ -3562,6 +3642,306 @@ main.settings-mode #settings-view {
 
     .settings-category-form {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================================= */
+/* MENU MOBILE FULLSCREEN                                    */
+/* ========================================================= */
+
+@media (max-width: 1024px) {
+    body.menu-opcoes-open {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    .options-trigger {
+        overflow: hidden;
+        background: var(--sidebar-bg) !important;
+    }
+
+    .mobile-avatar-img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    #container-opcoes .options-trigger.mobile-profile-trigger {
+        width: auto !important;
+        min-width: 62px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        padding: 3px 9px 3px 3px !important;
+        gap: 7px !important;
+        border-radius: 999px !important;
+        overflow: visible !important;
+    }
+
+    #container-opcoes .mobile-profile-trigger .mobile-avatar-img {
+        width: 34px !important;
+        height: 34px !important;
+        flex: 0 0 34px !important;
+    }
+
+    .mobile-profile-dots {
+        width: 8px;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+    }
+
+    .mobile-profile-dots span {
+        width: 3px;
+        height: 3px;
+        display: block;
+        border-radius: 999px;
+        background: var(--text-sec);
+    }
+
+    #menu-dropdown {
+        position: fixed !important;
+        inset: 0 0 0 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        padding: 0 !important;
+        display: none !important;
+        align-items: stretch !important;
+        justify-content: stretch !important;
+        background: var(--sidebar-bg) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        z-index: 6000 !important;
+        box-sizing: border-box;
+    }
+
+    #menu-dropdown.active {
+        display: flex !important;
+    }
+
+    .mobile-menu-panel {
+        position: relative;
+        width: 100%;
+        min-height: 100dvh;
+        max-height: 100dvh;
+        padding: 32px 22px 34px 22px;
+        border: 0;
+        border-radius: 0;
+        background:
+            radial-gradient(circle at 70% 100%, rgba(108, 192, 128, 0.10), transparent 34%),
+            var(--sidebar-bg);
+        box-shadow: none;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        box-sizing: border-box;
+    }
+
+    .mobile-menu-close {
+        position: absolute;
+        top: 24px;
+        right: 22px;
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        color: var(--text-main);
+        font-size: 28px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    .mobile-menu-profile {
+        min-height: 78px;
+        margin: 54px 0 24px 0;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-app);
+    }
+
+    .mobile-menu-profile img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .mobile-menu-profile strong,
+    .mobile-menu-profile span {
+        display: block;
+    }
+
+    .mobile-menu-profile strong {
+        color: var(--text-main);
+        font-size: 14px;
+        font-weight: 900;
+        line-height: 1.2;
+    }
+
+    .mobile-menu-profile span {
+        margin-top: 3px;
+        color: var(--text-sec);
+        font-size: 12px;
+        font-weight: 650;
+        word-break: break-word;
+    }
+
+    .mobile-menu-section {
+        display: grid;
+        gap: 5px;
+        padding: 14px 0;
+        border-top: 1px solid var(--border);
+    }
+
+    .mobile-menu-section > span {
+        margin: 0 0 6px 4px;
+        color: var(--text-sec);
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    #menu-dropdown .dropdown-item,
+    #menu-dropdown .option-btn {
+        min-height: 50px !important;
+        padding: 0 12px !important;
+        border: 0 !important;
+        border-radius: 14px !important;
+        background: transparent !important;
+        color: var(--text-main) !important;
+        font-size: 14px !important;
+        font-weight: 750 !important;
+        gap: 13px !important;
+        white-space: normal !important;
+    }
+
+    #menu-dropdown .dropdown-item i,
+    #menu-dropdown .option-btn i {
+        width: 20px;
+        color: var(--text-sec);
+        font-size: 16px;
+    }
+
+    #menu-dropdown .dropdown-item:hover,
+    #menu-dropdown .option-btn:hover {
+        background: var(--bg-app) !important;
+        color: var(--dark-green) !important;
+    }
+
+    #menu-dropdown .dropdown-divider {
+        display: none;
+    }
+
+    #menu-dropdown .btn-danger-text {
+        color: #dc2626 !important;
+    }
+
+    #menu-dropdown .btn-logout {
+        color: var(--text-main) !important;
+    }
+
+    #menu-dropdown .mobile-theme-row {
+        display: grid !important;
+        grid-template-columns: 20px minmax(0, 1fr) 46px !important;
+        align-items: center !important;
+        gap: 13px !important;
+    }
+
+    .mobile-theme-text {
+        display: block;
+        min-width: 0;
+    }
+
+    .mobile-theme-text strong,
+    .mobile-theme-text small {
+        display: block;
+    }
+
+    .mobile-theme-text strong {
+        color: var(--text-main);
+        font-size: 14px;
+        font-weight: 850;
+        line-height: 1.1;
+    }
+
+    .mobile-theme-text small {
+        margin-top: 3px;
+        color: var(--text-sec);
+        font-size: 11px;
+        font-weight: 650;
+    }
+
+    .mobile-theme-switch {
+        position: relative;
+        width: 44px;
+        height: 26px;
+        margin-left: auto;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg-app);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .mobile-theme-switch span {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        background: var(--text-sec);
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .mobile-theme-switch.active {
+        background: rgba(108, 192, 128, 0.16);
+        border-color: rgba(108, 192, 128, 0.45);
+    }
+
+    .mobile-theme-switch.active span {
+        transform: translateX(18px);
+        background: var(--dark-green);
+    }
+
+    .terceiro-mobile-empty {
+        min-height: 86px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--text-sec);
+    }
+
+    .terceiro-mobile-empty strong {
+        display: block;
+        color: var(--text-main);
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .terceiro-mobile-empty span {
+        display: block;
+        margin-top: 5px;
+        color: var(--text-sec);
+        font-size: 11px;
+        font-weight: 650;
+    }
+}
+
+@media (max-width: 380px) {
+    .settings-tab {
+        width: 100%;
     }
 }
 

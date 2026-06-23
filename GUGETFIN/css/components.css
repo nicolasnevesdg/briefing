@@ -169,6 +169,91 @@
     }
 }
 
+/* ========================================================= */
+/* MENU MOBILE FULLSCREEN - OVERRIDE FINAL                   */
+/* ========================================================= */
+
+@media (max-width: 1024px) {
+    #container-opcoes .mobile-avatar-img {
+        display: block !important;
+    }
+
+    #container-opcoes .user-profile-icon,
+    #container-opcoes .system-icon,
+    #container-opcoes .btn-text-mobile {
+        display: none !important;
+    }
+
+    #menu-dropdown {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100dvh !important;
+        padding: 0 !important;
+        background: var(--sidebar-bg) !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        z-index: 6000 !important;
+    }
+
+    #menu-dropdown.active {
+        display: flex !important;
+    }
+
+    #card-terceiros.mobile-subtab-active {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        min-height: 120px !important;
+    }
+
+    #card-terceiros.mobile-subtab-active #lista-terceiros-mobile {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+        padding: 10px 0 !important;
+    }
+
+    #card-terceiros.mobile-subtab-active #tabela-terceiros {
+        display: none !important;
+    }
+
+    #aba-resumo-home .home-toggle:has(#btn-show-terceiros.active) + .card-stack #card-resumo-conteudo {
+        display: none !important;
+    }
+
+    #aba-resumo-home .home-toggle:has(#btn-show-terceiros.active) + .card-stack #card-terceiros {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+        min-height: 120px !important;
+    }
+
+    #aba-resumo-home .home-toggle:has(#btn-show-terceiros.active) + .card-stack #lista-terceiros-mobile {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+        padding: 10px 0 !important;
+    }
+
+    #aba-resumo-home .home-toggle:has(#btn-show-terceiros.active) + .card-stack #tabela-terceiros {
+        display: none !important;
+    }
+
+    #aba-resumo-home .home-toggle:has(#btn-show-resumo.active) + .card-stack #card-resumo-conteudo {
+        display: block !important;
+    }
+
+    #aba-resumo-home .home-toggle:has(#btn-show-resumo.active) + .card-stack #card-terceiros {
+        display: none !important;
+    }
+}
+
 
 /* Mantenha o seu :root e estilos de base da paleta Mint & Dark Forest */
 
@@ -2220,27 +2305,448 @@ body.valores-ocultos canvas {
     .visual-summary {
         min-width: 0;
         width: 100%;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+        margin-top: 14px;
+    }
+
+    .visual-summary > div {
+        min-width: 0;
+        padding: 11px 9px;
+        border-radius: 13px;
+    }
+
+    .visual-summary span {
+        margin-bottom: 5px;
+        font-size: 7.5px;
+        line-height: 1.15;
+        letter-spacing: 0.06em;
+    }
+
+    .visual-summary strong {
+        display: block;
+        font-size: 13.5px;
+        line-height: 1.1;
+        white-space: nowrap;
     }
 
     .visual-tabs {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 4px;
+        padding: 5px;
+        box-sizing: border-box;
     }
 
     .visual-tab {
+        min-width: 0;
+        min-height: 42px;
         justify-content: center;
-        padding: 0 10px;
+        padding: 0 4px;
+        gap: 4px;
+        border-radius: 12px;
+        font-size: 10px;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .visual-tab i {
+        font-size: 13px;
     }
 
     .visual-content {
-        padding: 18px;
+        padding: 16px;
         border-radius: var(--radius);
+    }
+
+    .visualizacoes-view {
+        padding-bottom: 116px;
+    }
+
+    .visual-page-header {
+        margin-bottom: 16px;
+    }
+
+    .visual-page-header h2 {
+        margin: 6px 0;
+        font-size: 28px;
+        line-height: 1.02;
+    }
+
+    .visual-page-header p,
+    .visual-panel-head p {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .visual-panel-head {
+        margin-bottom: 18px;
+    }
+
+    .visual-panel-head h3 {
+        margin: 6px 0;
+        font-size: 23px;
+        line-height: 1.04;
+    }
+
+    .visual-actions {
+        margin-top: 16px;
+        justify-content: stretch;
+    }
+
+    .visual-actions .btn-settings-primary,
+    .visual-actions .btn-settings-secondary {
+        width: 100%;
     }
 
     .visual-card-value {
         align-items: flex-start;
         text-align: left;
+        margin-top: 14px;
+    }
+}
+
+/* ========================================================= */
+/* AJUSTES FINAIS MOBILE - VISUALIZACOES / SETTINGS / WALLET */
+/* ========================================================= */
+
+@media (min-width: 1025px) {
+    .mobile-back-top,
+    .mobile-back-top.visible {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .visualizacoes-view {
+        width: 100%;
+        max-width: none;
+        padding: 0 2px 116px 2px;
+        box-sizing: border-box;
+    }
+
+    .visual-page-header {
+        display: block;
+        margin-bottom: 18px;
+    }
+
+    .visual-page-header h2 {
+        max-width: 300px;
+        font-size: 27px;
+        line-height: 1.02;
+    }
+
+    .visual-page-header p {
+        max-width: 340px;
+        font-size: 12px;
+        line-height: 1.42;
+    }
+
+    .visual-summary {
+        width: calc(100% + 24px);
+        margin: 16px -12px 0 -12px;
+        padding: 0 12px 4px 12px;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .visual-summary::-webkit-scrollbar,
+    .visual-tabs::-webkit-scrollbar,
+    .settings-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .visual-summary > div {
+        flex: 0 0 154px;
+        min-width: 154px;
+        padding: 14px 13px;
+        scroll-snap-align: start;
+    }
+
+    .visual-summary span {
+        min-height: 24px;
+        margin-bottom: 8px;
+        font-size: 8.5px;
+        line-height: 1.25;
+    }
+
+    .visual-summary strong {
+        font-size: 17px;
+        line-height: 1.1;
+    }
+
+    .visual-tabs {
+        width: calc(100% + 24px);
+        margin: 0 -12px 16px -12px;
+        padding: 6px 12px;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;
+        background: transparent;
+        box-sizing: border-box;
+    }
+
+    .visual-tab {
+        flex: 0 0 auto;
+        min-width: 112px;
+        min-height: 44px;
+        padding: 0 13px;
+        justify-content: center;
+        gap: 7px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--sidebar-bg);
+        font-size: 12px;
+    }
+
+    .visual-tab span {
+        white-space: nowrap;
+    }
+
+    .visual-content {
+        padding: 15px;
+    }
+
+    .visual-panel-head {
+        gap: 14px;
+    }
+
+    .visual-panel-head h3 {
+        font-size: 24px;
+    }
+
+    .visual-panel-head p {
+        max-width: 320px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .visual-panel-head .btn-settings-primary {
+        min-height: 46px;
+    }
+
+    .settings-page-header {
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .settings-page-header h2 {
+        max-width: 320px;
+        font-size: 28px;
+        line-height: 1.02;
+    }
+
+    .settings-page-header p {
+        max-width: 330px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .settings-user-card {
+        min-height: 70px;
+        padding: 12px 14px;
+    }
+
+    .settings-shell {
+        display: block;
+        min-height: 0;
+    }
+
+    .settings-tabs {
+        width: calc(100% + 24px);
+        margin: 0 -12px 16px -12px;
+        padding: 6px 12px;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 8px;
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;
+        background: transparent;
+        box-sizing: border-box;
+    }
+
+    .settings-tab {
+        flex: 0 0 auto;
+        width: auto;
+        min-width: 98px;
+        min-height: 44px;
+        padding: 0 13px;
+        justify-content: center;
+        gap: 8px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--sidebar-bg);
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .settings-tab.active {
+        border-color: rgba(108, 192, 128, 0.34);
+    }
+
+    .settings-content {
+        padding: 18px;
+        border-radius: var(--radius);
+    }
+
+    .settings-panel-head h3 {
+        font-size: 24px;
+        line-height: 1.05;
+    }
+
+    .settings-panel-head p {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .settings-wallet-card {
+        padding: 18px;
+        border-radius: var(--radius);
+    }
+
+    .wallet-page-grid {
+        gap: 16px;
+    }
+
+    .wallet-page-carousel-wrap {
+        min-height: 286px;
+        border-radius: var(--radius);
+    }
+
+    .settings-wallet-carousel {
+        height: 274px;
+        min-height: 274px;
+        padding: 16px 18px 42px 18px;
+        touch-action: pan-y;
+        overflow: hidden;
+    }
+
+    .settings-wallet-carousel .wallet-card {
+        width: min(272px, calc(100% - 32px));
+        height: 170px;
+        min-height: 170px;
+        padding: 17px;
+        border-radius: 20px;
+    }
+
+    .settings-wallet-carousel .wallet-card h5 {
+        max-width: 160px;
+        font-size: 18px;
+    }
+
+    .settings-wallet-carousel .wallet-card-label,
+    .settings-wallet-carousel .wallet-card-type {
+        font-size: 7.5px;
+    }
+
+    .settings-wallet-carousel .wallet-card-type {
+        margin-right: 22px;
+        padding: 5px 8px;
+    }
+
+    .settings-wallet-carousel .wallet-chip {
+        width: 35px;
+        height: 25px;
+        border-radius: 7px;
+    }
+
+    .settings-wallet-carousel .wallet-card-bottom {
+        gap: 8px;
+    }
+
+    .settings-wallet-carousel .wallet-card-info {
+        padding: 9px 10px;
+        border-radius: 12px;
+    }
+
+    .settings-wallet-carousel .wallet-card-info span {
+        font-size: 7px;
+    }
+
+    .settings-wallet-carousel .wallet-card-info strong {
+        font-size: 12px;
+    }
+
+    .settings-wallet-carousel .wallet-card-delete {
+        top: 12px;
+        right: 12px;
+        width: 25px;
+        height: 25px;
+        opacity: 0.9;
+        pointer-events: auto;
+    }
+
+    .settings-wallet-carousel .wallet-carousel-nav {
+        left: 50%;
+        right: auto;
+        top: auto;
+        bottom: 12px;
+        transform: translateX(-50%);
+    }
+
+    .settings-wallet-carousel .wallet-carousel-dots {
+        flex-direction: row;
+        gap: 6px;
+    }
+
+    .settings-wallet-carousel .wallet-carousel-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    .settings-wallet-carousel .wallet-carousel-dot.active {
+        width: 22px;
+        height: 6px;
+    }
+
+    .wallet-page-form {
+        padding: 18px;
+        border-radius: var(--radius);
+    }
+
+    .wallet-page-form .wallet-form-header {
+        margin-bottom: 16px;
+    }
+
+    .wallet-page-form .wallet-form-header h4 {
+        font-size: 22px;
+    }
+
+    .wallet-page-form .wallet-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .wallet-page-form .wallet-date-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .wallet-page-form .wallet-debit-toggle {
+        grid-template-columns: 18px minmax(0, 1fr);
+        align-items: center;
+        padding: 13px;
+        gap: 11px;
+    }
+
+    .wallet-page-form .btn-settings-primary {
+        min-height: 48px;
+        margin-top: 2px;
     }
 }
