@@ -648,7 +648,18 @@ function verDetalhesEntrada(index) {
     document.getElementById('modal-detalhes-entrada').showModal();
 }
 
-function excluirGasto(idx) { salsiData.transacoes.splice(idx,1); renderizar(); }
+function excluirGasto(idx) {
+    const gasto = salsiData.transacoes[idx];
+
+    if (gasto?.eDeTerceiro && typeof apagarGastoTerceiroEnviado === 'function') {
+        apagarGastoTerceiroEnviado(idx);
+        return;
+    }
+
+    salsiData.transacoes.splice(idx, 1);
+    renderizar();
+    if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
+}
 function excluirEntrada(idx) { if(confirm("Apagar?")) { salsiData.entradas.splice(idx,1); renderizar(); } }
 function mudarMes(n) { dataFiltro.setMonth(dataFiltro.getMonth() + n); renderizar(); }
 // 1. DATA AUTOMÁTICA E RESET AO ABRIR (MODO CRIAÇÃO)

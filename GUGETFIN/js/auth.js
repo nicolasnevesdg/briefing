@@ -231,6 +231,18 @@ window.iniciarVigia = function() {
                     if (typeof salsiData.config.mostrarCaixinhaDashboard === 'undefined') {
                         salsiData.config.mostrarCaixinhaDashboard = false;
                     }
+
+                    const usernameCriado = await garantirUsernamePerfilLegado(user);
+                    if (usernameCriado) {
+                        const perfil = salsiData.config.perfil || {};
+                        const nomePublico = [perfil.nome, perfil.sobrenome].filter(Boolean).join(' ').trim()
+                            || user.displayName
+                            || 'Usuario';
+                        await window.setDoc(userDoc, {
+                            dados: salsiData,
+                            perfilPublico: montarPerfilPublicoUsuario(perfil.username, nomePublico, perfil.avatar || '')
+                        }, { merge: true });
+                    }
                     
                     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
                     atualizarSplashInicialTema();
@@ -258,9 +270,17 @@ window.iniciarVigia = function() {
                     console.log("Usuário novo! Criando estrutura inicial...");
                     const partesNome = obterPartesNomePerfil(user.displayName || '');
                     salsiData = criarEstruturaInicialUsuario(partesNome.nome, partesNome.sobrenome, '', user.email || '');
+                    await garantirUsernamePerfilLegado(user);
                     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
                     atualizarSplashInicialTema();
-                    await window.setDoc(userDoc, { dados: salsiData }, { merge: true });
+                    const perfilNovo = salsiData.config.perfil || {};
+                    const nomePublicoNovo = [perfilNovo.nome, perfilNovo.sobrenome].filter(Boolean).join(' ').trim()
+                        || user.displayName
+                        || 'Usuario';
+                    await window.setDoc(userDoc, {
+                        dados: salsiData,
+                        perfilPublico: montarPerfilPublicoUsuario(perfilNovo.username, nomePublicoNovo, perfilNovo.avatar || '')
+                    }, { merge: true });
                 }
 
             } catch (error) {
@@ -276,7 +296,7 @@ window.iniciarVigia = function() {
             if (typeof carregarConfiguracoesPerfil === 'function') {
                 carregarConfiguracoesPerfil();
             }
-            esconderSplashInicial();
+            setTimeout(esconderSplashInicial, 180);
 
 			const userRef = window.doc(window.db, 'usuarios', user.uid);
             window.onSnapshot(userRef, (docSnap) => {
@@ -524,8 +544,75 @@ function normalizarUsernamePerfil(username) {
     return String(username || '')
         .trim()
         .replace(/^@+/, '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .replace(/[^a-z0-9._]/g, '');
+}
+
+function normalizarUsernameSimples(texto) {
+    return String(texto || '')
+        .trim()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+}
+
+function gerarBaseUsernameLegado(user) {
+    const perfil = obterPerfilConfig();
+    const nomeCompleto = [perfil.nome, perfil.sobrenome].filter(Boolean).join(' ').trim()
+        || user?.displayName
+        || String(user?.email || '').split('@')[0]
+        || 'usuario';
+
+    const partes = nomeCompleto.split(/\s+/).filter(Boolean);
+    const primeiro = normalizarUsernameSimples(partes[0] || 'usuario');
+    const ultimo = normalizarUsernameSimples(partes.length > 1 ? partes[partes.length - 1] : '');
+    const base = `${primeiro}${ultimo}` || normalizarUsernameSimples(String(user?.email || '').split('@')[0]) || 'usuario';
+
+    return base.slice(0, 26);
+}
+
+async function gerarUsernameUnicoLegado(user) {
+    const base = gerarBaseUsernameLegado(user);
+
+    for (let tentativa = 0; tentativa < 100; tentativa++) {
+        const candidato = tentativa === 0 ? base : `${base}${tentativa + 1}`;
+        const ref = window.doc(window.db, 'usernames', candidato);
+        const snap = await window.getDoc(ref);
+
+        if (!snap.exists() || snap.data().uid === user.uid) {
+            return candidato;
+        }
+    }
+
+    return `${base}${Date.now().toString().slice(-5)}`;
+}
+
+async function garantirUsernamePerfilLegado(user) {
+    if (!user || !window.doc || !window.getDoc || !window.setDoc) return false;
+
+    const perfil = obterPerfilConfig();
+    const usernameAtual = normalizarUsernamePerfil(perfil.username || '');
+
+    if (usernameAtual) {
+        perfil.username = usernameAtual;
+        return false;
+    }
+
+    const candidato = await gerarUsernameUnicoLegado(user);
+    const nomePublico = [perfil.nome, perfil.sobrenome].filter(Boolean).join(' ').trim()
+        || user.displayName
+        || 'Usuario';
+    const perfilPublico = montarPerfilPublicoUsuario(candidato, nomePublico, perfil.avatar || '');
+
+    await reservarUsernameUnico(candidato, '', perfilPublico, true);
+
+    perfil.username = candidato;
+    perfil.atualizadoEm = new Date().toISOString();
+
+    return true;
 }
 
 async function validarUsernameDisponivelCadastro(username) {
@@ -697,6 +784,7 @@ function carregarConfiguracoesPerfil() {
     const settingsAvatar = document.getElementById('settings-avatar-img');
     const headerAvatar = document.getElementById('header-avatar-img');
     const mobileAvatar = document.getElementById('mobile-avatar-img');
+    const mobileProfileFirstName = document.getElementById('mobile-profile-first-name');
     const mobileMenuAvatar = document.getElementById('mobile-menu-avatar-img');
     const mobileMenuName = document.getElementById('mobile-menu-user-name');
     const mobileMenuEmail = document.getElementById('mobile-menu-user-email');
@@ -704,6 +792,7 @@ function carregarConfiguracoesPerfil() {
     if (settingsName) settingsName.textContent = nomeCompleto;
     if (settingsEmail) settingsEmail.textContent = user.email || '';
     if (securityEmail) securityEmail.textContent = user.email || '';
+    if (mobileProfileFirstName) mobileProfileFirstName.textContent = nome || nomeCompleto.split(' ')[0] || 'Conta';
     if (mobileMenuName) mobileMenuName.textContent = nomeCompleto;
     if (mobileMenuEmail) mobileMenuEmail.textContent = user.email || '';
     if (profileAvatar) profileAvatar.src = avatar;

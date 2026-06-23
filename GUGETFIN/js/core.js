@@ -501,6 +501,9 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
 
             // --- GASTOS DE TERCEIROS ---
             if (t.eDeTerceiro) {
+                const statusArquivado = t.terceiro?.tipo === 'usuario' && t.terceiro.status === 'arquivado';
+                if (statusArquivado) return;
+
                 // 2. A barreira de Filtro de Terceiros!
                 if (fTercNome !== 'Todos' && t.nomeTerceiro !== fTercNome) return;
                 if (fTercBanco !== 'Todos' && t.banco !== fTercBanco) return;
@@ -1098,16 +1101,10 @@ function renderizarGraficoCategorias(tagSum) {
 
     if (!chart || !legenda || !totalEl || !totalCentroEl || !qtdEl) return;
 
-    const cores = [
-        '#6CC080', // verde principal
-        '#1B4D3E', // verde escuro
-        '#8FD5B0', // verde claro
-        '#F4C95D', // dourado suave
-        '#7AA6A1', // verde acinzentado
-        '#B7C9A8', // sálvia
-        '#F29C6B', // laranja suave
-        '#A9B8C8'  // cinza azulado
-    ];
+    const isDark = document.body.classList.contains('dark-theme');
+    const cores = isDark
+        ? ['#2ee889', '#04b965', '#1f7a57', '#65d6a2', '#1dbf86', '#8ee9bd', '#0f5f42', '#b7f4d0']
+        : ['#025638', '#04b965', '#0a7c50', '#48dda4', '#19a66a', '#8de7b8', '#0f6d49', '#b9efd4'];
 
     const entries = Object.entries(tagSum || {})
         .filter(([, valor]) => valor > 0)

@@ -92,7 +92,7 @@ main.visualizacoes-mode #visualizacoes-view {
     color: white;
 }
 .stat-card:first-child small { color: var(--acc-green); }
-.stat-card:first-child h2 { color: white; }
+.stat-card:first-child h2 { color: white !important; }
 
 .stat-card small { font-size: 10px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; display: block; margin-bottom: 8px; }
 .stat-card h2 { margin: 0; font-size: 24px; font-weight: 800; color: var(--dark-green); }
@@ -273,7 +273,7 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
     font-size: 0.95rem;
 }
 
-.v-atual { font-weight: 800; color: #1b3a32; }
+.v-atual { font-weight: 800; color: #038356; }
 .v-de { color: #cbd5e0; font-weight: 400; margin: 0 4px; }
 .v-total { color: #718096; font-weight: 600; }
 
@@ -450,7 +450,7 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 /* Quando a aba estiver ativa, o ícone ganha destaque premium */
 .tab-btn.active {
     background-color: #e8f5e9; /* Fundo verdinho suave da sua paleta */
-    color: #1b3a32; /* Ícone verde escuro principal */
+    color: #038356; /* Ícone verde escuro principal */
     transform: scale(1.05); /* Leve pulinho de destaque */
 }
 
@@ -459,7 +459,7 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
     width: 54px;  /* O botão + é visivelmente maior */
     height: 54px;
     background-color: #1a362d; /* O verde "quase preto" da sua referência */
-    color: #96e6a1; /* O verdinho claro do ícone de + */
+    color: #48dda4; /* O verdinho claro do ícone de + */
     box-shadow: 0 4px 15px rgba(26, 54, 45, 0.25);
     margin-left: 5px; /* Um espacinho extra antes dele */
 }
@@ -708,7 +708,7 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 	.v-atual {
         font-size: 13px !important;
         font-weight: 800 !important;
-        color: #1b3a32 !important;
+        color: #038356 !important;
     }
 
     .v-total {
@@ -1294,7 +1294,7 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
     .current-month {
         font-size: 17px;
         font-weight: 800;
-        color: var(--dark-green);
+        color: var(--text-main);
         text-align: center;
         flex: 2; /* Ganha o dobro de espaço no centro para caber "Fevereiro 2026" */
         position: relative;
@@ -1376,6 +1376,7 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
         display: flex;
         gap: 20px;
         align-items: flex-start;
+        margin-top: 35px;
         margin-bottom: 25px;
     }
 
@@ -1490,9 +1491,28 @@ body.dark-theme .btn-sidebar-general:hover i { color: var(--text-main) !importan
     }
 	/* Mantém o Logo grande apenas no PC */
     #logo-guget {
-        font-size: 28px !important;
+        display: block !important;
+        width: 168px !important;
+        height: auto !important;
         margin-bottom: 20px !important;
-		text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+.brand-logo {
+    display: block;
+    height: auto;
+}
+
+.brand .brand-logo {
+    width: 168px;
+    max-width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .brand .brand-logo {
+        width: 120px;
     }
 }
 

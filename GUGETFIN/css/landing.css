@@ -4,11 +4,12 @@
 
 :root {
     --bg-app: #ffffff;
-    --bg-sec: #f4f7f6;
-    --text-main: #1b2a26;
+    --bg-sec: #f9f7f8;
+    --text-main: #0f1115;
     --text-sec: #7a8b87;
-    --acc-green: #96e6a1;
-    --dark-green: #1b3a32;
+    --acc-green: #48dda4;
+    --dark-green: #038356;
+    --brand-green: #04b965;
     --border: #e0e6e4;
     --radius: 16px;
 }
@@ -53,7 +54,11 @@ body {
     height: 80px;
 }
 
-.logo strong { font-size: 20px; color: var(--dark-green); letter-spacing: -0.03em; }
+.landing-logo-img {
+    display: block;
+    width: 132px;
+    height: auto;
+}
 
 .nav-links { display: flex; align-items: center; gap: 32px; }
 .nav-links a { text-decoration: none; color: var(--text-sec); font-weight: 500; font-size: 14px; transition: 0.2s; }

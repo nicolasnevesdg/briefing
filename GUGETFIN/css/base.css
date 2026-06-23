@@ -2,13 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root { 
-    /* Paleta baseada na referência Andrew Forbist */
-    --bg-app: #f4f7f6;           /* Fundo levemente mentolado */
+    /* Paleta Guget Fin */
+    --bg-app: #f9f7f8;           /* Off-white da marca */
     --sidebar-bg: #ffffff;
-    --text-main: #1b2a26;        /* Verde floresta quase preto */
+    --text-main: #0f1115;        /* Preto suave da marca */
     --text-sec: #7a8b87;         /* Verde acinzentado suave */
-    --acc-green: #96e6a1;        /* Verde menta vibrante (Destaques) */
-    --dark-green: #1b3a32;       /* Verde floresta profundo (Botões/Cards) */
+    --acc-green: #4deeb0;        /* Verde claro da marca */
+    --dark-green: #025638;       /* Verde profundo da marca */
+    --brand-green: #04b965;      /* Verde principal da marca */
     --border: #e0e6e4;           /* Bordas suaves */
     --radius: 16px;              /* Arredondamento moderno */
     --acc-red: #ff9999;          /* Vermelho pastel para alertas */

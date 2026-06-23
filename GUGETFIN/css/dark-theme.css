@@ -3,16 +3,22 @@
 /* ======================================================== */
 
 body.dark-theme {
-    /* Base premium */
-    --bg-app: #0f1115;         /* fundo geral */
-    --sidebar-bg: #171a20;     /* cards/sidebar/modais */
-    --text-main: #f3f6f8;      /* branco suave */
-    --text-sec: #96a0ad;       /* cinza azulado */
-    --border: #262b34;         /* borda sutil fria */
+    /* Base noturna Guget Fin */
+    --bg-app: #0f1115;
+    --sidebar-bg: #171a20;
+    --text-main: #f9f7f8;
+    --text-sec: #9aa6a2;
+    --border: #262b34;
 
-    /* Verde refinado */
-    --dark-green: #5fd3a2;     /* verde de destaque mais elegante */
-    --acc-green: #18a874;      /* verde principal */
+    /* Paleta Guget Fin no dark */
+    --dark-green: #33e592;
+    --acc-green: #04b965;
+    --brand-green: #025638;
+}
+
+body.dark-theme .brand .brand-logo-positive,
+body.dark-theme #logo-guget.brand-logo-positive {
+    content: url("../assets/logo-negative.svg");
 }
 
 /* Força a cor de fundo nos elementos principais */
@@ -35,6 +41,28 @@ body.dark-theme .cartao-item-card {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
+body.dark-theme table,
+body.dark-theme thead,
+body.dark-theme tbody,
+body.dark-theme tr,
+body.dark-theme th,
+body.dark-theme td {
+    border-color: var(--border) !important;
+}
+
+body.dark-theme tr {
+    background-color: transparent !important;
+}
+
+body.dark-theme .brand {
+    opacity: 1 !important;
+}
+
+body.dark-theme .brand .brand-logo,
+body.dark-theme .auth-showcase-brand .brand-logo {
+    filter: none !important;
+}
+
 .card-terceiros.dark-theme {
 	background: #192321 !important;
 	border-color: #000 !important;
@@ -46,7 +74,7 @@ body.dark-theme .cartao-item-card {
 
 /* O Cartão de Saldo Principal ganha o verde da marca */
 body.dark-theme .stat-card:first-child {
-    background: linear-gradient(135deg, #129c6d 0%, #18a874 100%) !important;
+    background: var(--acc-green) !important;
     border: 1px solid rgba(255,255,255,0.04) !important;
 }
 body.dark-theme .stat-card:first-child h2, 
@@ -334,7 +362,7 @@ body.dark-theme .btn-ver-comprovante {
 body.dark-theme #btn-editar-dinamico,
 body.dark-theme #btn-editar-entrada-dinamico,
 body.dark-theme .btn-detalhe-editar {
-    background: linear-gradient(135deg, #129c6d 0%, #18a874 100%) !important;
+    background: linear-gradient(135deg, #025638 0%, #04b965 100%) !important;
     color: #ffffff !important;
 }
 
@@ -366,7 +394,7 @@ body.dark-theme #btn-excluir-entrada-dinamico {
     }
 
     body.dark-theme .stat-card:first-child {
-        background: linear-gradient(135deg, #123d31 0%, #176a4d 100%) !important;
+    background: var(--acc-green) !important;
         border: 1px solid rgba(95, 211, 162, 0.14) !important;
     }
 
@@ -567,7 +595,7 @@ body.dark-theme #btn-excluir-entrada-dinamico {
 
 body.dark-theme .tag-novo-lancamento {
     background: rgba(95, 211, 162, 0.14);
-    color: #5fd3a2;
+    color: #4deeb0;
     border-color: rgba(95, 211, 162, 0.35);
 }
 
@@ -661,8 +689,8 @@ body.dark-theme .calendar-summary > div {
     border-color: var(--border);
 }
 
-body.dark-theme .calendar-summary > div:first-child {
-    background: linear-gradient(135deg, #129c6d 0%, #18a874 100%);
+body.dark-theme .calendar-summary > div:first-child, body.dark-theme .btn-settings-primary, body.dark-theme .visual-tab:hover, body.dark-theme .visual-tab.active, body.dark-theme .caixinha-balance-card {
+    background: var(--acc-green);
     border-color: rgba(255,255,255,0.04);
 }
 
@@ -682,6 +710,19 @@ body.dark-theme .calendar-day.is-expanded {
 
 body.dark-theme .calendar-more:hover {
     color: var(--dark-green);
+}
+
+body.dark-theme .btn-unified-container {
+    background: var(--acc-green) !important;
+}
+
+body.dark-theme .btn-unified-half i {
+    color: var(--dark-green) !important;
+}
+
+body.dark-theme .btn-novo-gasto {
+    background: var(--acc-green); 
+    color: var(--text-main);
 }
 
 /* ========================================================= */
@@ -1107,6 +1148,26 @@ body.dark-theme .app-loading-screen {
     text-align: center;
 }
 
+.app-loading-logo {
+    width: 154px;
+    height: auto;
+    display: block;
+}
+
+.app-loading-logo-negative {
+    display: none;
+}
+
+.app-loading-screen.is-dark .app-loading-logo-positive,
+body.dark-theme .app-loading-screen .app-loading-logo-positive {
+    display: none;
+}
+
+.app-loading-screen.is-dark .app-loading-logo-negative,
+body.dark-theme .app-loading-screen .app-loading-logo-negative {
+    display: block;
+}
+
 .app-loading-mark {
     width: 34px;
     height: 34px;
@@ -1409,6 +1470,7 @@ body.dashboard-caixinha-enabled #stat-caixinha-dashboard {
         font-size: 22px !important;
         line-height: 1.05 !important;
         white-space: nowrap !important;
+        color: var(--dark-green);
     }
 }
 
@@ -1439,5 +1501,89 @@ body.dashboard-caixinha-enabled #stat-caixinha-dashboard {
 
     body:not(.dashboard-caixinha-enabled) #aba-home .stat-card:first-child {
         grid-column: 1 / -1 !important;
+    }
+}
+
+/* ========================================================= */
+/* MOBILE HEADER - PERFIL COM NOME E CHEVRON                 */
+/* ========================================================= */
+
+@media (max-width: 1024px) {
+    .sidebar-footer,
+    .system-section.mobile-only {
+        width: auto !important;
+        min-width: 0 !important;
+        overflow: visible !important;
+    }
+
+    #container-opcoes {
+        width: auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 0 !important;
+    }
+
+    #container-opcoes .options-trigger.mobile-profile-trigger,
+    body.dark-theme #container-opcoes .options-trigger.mobile-profile-trigger {
+        width: auto !important;
+        min-width: 0 !important;
+        height: 34px !important;
+        min-height: 34px !important;
+        padding: 3px 8px 3px 3px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 13px !important;
+        border-radius: 999px !important;
+        overflow: hidden !important;
+        cursor: pointer !important;
+        font-size: 13px !important;
+    }
+
+    #container-opcoes .mobile-profile-trigger .mobile-avatar-img,
+    body.dark-theme #container-opcoes .mobile-profile-trigger .mobile-avatar-img {
+        width: 27px !important;
+        height: 27px !important;
+        min-width: 27px !important;
+        flex: 0 0 27px !important;
+        border-radius: 999px !important;
+        border: 0 !important;
+        background: var(--sidebar-bg) !important;
+        box-shadow: none !important;
+        object-fit: cover !important;
+    }
+
+    #container-opcoes .options-trigger.mobile-profile-trigger .mobile-profile-name,
+    body.dark-theme #container-opcoes .options-trigger.mobile-profile-trigger .mobile-profile-name {
+        display: inline-block !important;
+        max-width: 82px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        color: var(--text-main) !important;
+        font-size: 14px !important;
+        line-height: 1 !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.02em !important;
+    }
+
+    #container-opcoes .options-trigger.mobile-profile-trigger .mobile-profile-chevron,
+    body.dark-theme #container-opcoes .options-trigger.mobile-profile-trigger .mobile-profile-chevron {
+        width: 7px !important;
+        height: 7px !important;
+        flex: 0 0 7px !important;
+        display: inline-block !important;
+        border-right: 1.5px solid var(--text-sec) !important;
+        border-bottom: 1.5px solid var(--text-sec) !important;
+        transform: rotate(45deg) translateY(-1px) !important;
+        opacity: 0.82 !important;
+        top: -2px;
+        position: relative;
+    }
+
+    .mobile-more-trigger,
+    .mobile-profile-dots {
+        display: none !important;
     }
 }

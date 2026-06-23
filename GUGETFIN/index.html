@@ -7,6 +7,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#025638">
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 	<link rel="manifest" href="manifest.json">
 	<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
 </head>
@@ -16,8 +20,8 @@
 
 <div id="app-loading-screen" class="app-loading-screen">
     <div class="app-loading-card">
-        <div class="app-loading-mark"></div>
-        <strong>Guget Fin</strong>
+        <img class="app-loading-logo app-loading-logo-positive" src="assets/logo-positive.svg" alt="Guget Fin">
+        <img class="app-loading-logo app-loading-logo-negative" src="assets/logo-negative.svg" alt="Guget Fin">
         <span>Carregando sua conta...</span>
     </div>
 </div>
@@ -41,7 +45,7 @@
     <div class="auth-box">
         <section class="auth-showcase-panel auth-right" id="auth-showcase" style="display: none;">
             <div class="auth-showcase-brand">
-                <h2>Guget Fin</h2>
+                <img class="brand-logo brand-logo-negative" src="assets/logo-negative.svg" alt="Guget Fin">
             </div>
 
             <div class="showcase-slider">
@@ -100,7 +104,7 @@
 
         <section class="auth-form-panel auth-left">
             <div class="auth-mobile-brand">
-                <h2>Guget Fin</h2>
+                <img class="brand-logo brand-logo-positive" src="assets/logo-positive.svg" alt="Guget Fin">
             </div>
 
             <div id="auth-splash-loader" class="auth-loader">
@@ -201,7 +205,7 @@
 </div>
 
 		<aside class="sidebar">
-            <div class="brand"><h2 id="logo-guget">Guget Fin</h2></div>
+            <div class="brand"><img id="logo-guget" class="brand-logo brand-logo-positive" src="assets/logo-positive.svg" alt="Guget Fin"></div>
             
             <div class="sidebar-action-buttons desktop-only" style="margin-bottom: 30px;">
                 <div class="btn-unified-container">
@@ -259,15 +263,10 @@
                 
                 <div class="system-section mobile-only">
                     <div class="options-container" id="container-opcoes">
-                        <button class="options-trigger mobile-avatar-trigger" onclick="toggleMenuOpcoes(event)" aria-label="Abrir menu">
+                        <button class="options-trigger mobile-profile-trigger" onclick="toggleMenuOpcoes(event)" aria-label="Abrir menu da conta">
                             <img id="mobile-avatar-img" class="mobile-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
-                        </button>
-                        <button class="mobile-more-trigger" onclick="toggleMenuOpcoes(event)" aria-label="Abrir menu de opções">
-                            <span class="mobile-profile-dots" aria-hidden="true">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </span>
+                            <span id="mobile-profile-first-name" class="mobile-profile-name">Conta</span>
+                            <span class="mobile-profile-chevron" aria-hidden="true"></span>
                         </button>
                         <div class="options-dropdown" id="menu-dropdown" onclick="if (event.target === this) fecharMenuOpcoes()">
                             <div class="mobile-menu-panel">
@@ -346,7 +345,7 @@
 		</aside>
 
     <main>
-		<header class="month-nav" style="flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 35px;">
+		<header class="month-nav" style="flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 20px;">
 			
             <div class="header-left desktop-only" style="flex: 1; display: flex; align-items: center;">
                 <div id="greeting-pc" class="greeting-box" style="margin: 0; padding: 0;"></div>
@@ -370,10 +369,8 @@
                         <span class="theme-toggle-track" aria-hidden="true">
                             <span class="theme-toggle-thumb"></span>
                             <span class="theme-toggle-option theme-toggle-option-sun">
-                                <span class="theme-icon theme-icon-sun"></span>
                             </span>
                             <span class="theme-toggle-option theme-toggle-option-moon">
-                                <span class="theme-icon theme-icon-moon"></span>
                             </span>
                         </span>
                     </button>
@@ -1441,7 +1438,7 @@
 			</div>
 
 			<div id="container-botoes-detalhe-ent" style="display: flex; gap: 12px; margin-top: 25px;">
-			    <button type="button" id="btn-editar-entrada-dinamico" style="flex: 1; background-color: var(--dark-green, #1b3a32); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;">
+			    <button type="button" id="btn-editar-entrada-dinamico" style="flex: 1; background-color: var(--dark-green, #025638); color: white; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;">
 			        Editar Entrada
 			    </button>
 			    <button id="btn-excluir-entrada-dinamico" style="flex: 0.2; background-color: #ffe6e6; color: #d32f2f; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;" title="Excluir">

@@ -395,6 +395,14 @@
     color: #ffffff;
 }
 
+.auth-showcase-brand .brand-logo {
+    width: 132px;
+}
+
+.auth-mobile-brand .brand-logo {
+    width: 132px;
+}
+
 .auth-mobile-brand {
     display: none;
     color: var(--dark-green);

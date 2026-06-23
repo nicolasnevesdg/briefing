@@ -70,21 +70,26 @@ function atualizarGraficoAnual() {
     if (window.meuGrafico) window.meuGrafico.destroy();
 
     const isDark = document.body.classList.contains('dark-theme');
-    let corLinha, corFundo, corPonto;
+    let corLinha, corFundo, corPonto, corPontoBorda;
 
-    // CORES DINÂMICAS: Verde, Vermelho ou Teal
     if (tipoVisao === 'entradas') {
-        corLinha = '#10b981'; 
-        corFundo = isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.1)';
+        corLinha = isDark ? '#2ee889' : '#04b965';
+        corFundo = isDark ? 'rgba(46, 232, 137, 0.16)' : 'rgba(4, 185, 101, 0.16)';
     } else if (tipoVisao === 'saidas') {
-        corLinha = '#ef4444'; 
-        corFundo = isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+        corLinha = '#ff5f5f';
+        corFundo = isDark ? 'rgba(255, 95, 95, 0.13)' : 'rgba(255, 95, 95, 0.11)';
     } else {
-        corLinha = isDark ? '#14b8a6' : '#96e6a1'; 
-        corFundo = isDark ? 'rgba(20, 184, 166, 0.1)' : 'rgba(150, 230, 161, 0.1)';
+        corLinha = isDark ? '#2ee889' : '#025638';
+        corFundo = isDark ? 'rgba(46, 232, 137, 0.14)' : 'rgba(2, 86, 56, 0.12)';
     }
-    
-    corPonto = isDark ? '#1e293b' : '#1b3a32';
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.clientHeight || 260);
+    gradient.addColorStop(0, corFundo);
+    gradient.addColorStop(0.65, isDark ? 'rgba(46, 232, 137, 0.035)' : 'rgba(2, 86, 56, 0.035)');
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+    corPonto = isDark ? '#171a20' : '#ffffff';
+    corPontoBorda = corLinha;
 
     window.meuGrafico = new Chart(ctx, {
         type: 'line',
@@ -93,12 +98,16 @@ function atualizarGraficoAnual() {
             datasets: [{
                 data: dados,
                 borderColor: corLinha,
-                backgroundColor: corFundo,
-                borderWidth: 3,
-                tension: 0.4,
+                backgroundColor: gradient,
+                borderWidth: 2.5,
+                tension: 0.42,
                 fill: true,
-                pointRadius: 4, 
-                pointBackgroundColor: corPonto
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                pointBackgroundColor: corPonto,
+                pointBorderColor: corPontoBorda,
+                pointBorderWidth: 2,
+                pointHitRadius: 12
             }]
         },
         options: {
@@ -106,11 +115,30 @@ function atualizarGraficoAnual() {
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                tooltip: { enabled: true }, 
+                tooltip: {
+                    enabled: true,
+                    displayColors: false,
+                    backgroundColor: isDark ? '#101419' : '#ffffff',
+                    titleColor: isDark ? '#f8fafc' : '#10251f',
+                    bodyColor: isDark ? '#f8fafc' : '#10251f',
+                    borderColor: isDark ? 'rgba(255,255,255,0.10)' : 'rgba(2,86,56,0.16)',
+                    borderWidth: 1
+                },
             },
             scales: {
-                y: { display: false, padding: 20 },
-                x: { grid: { display: false }, ticks: { color: isDark ? '#94a3b8' : '#7a8b87', font: { size: 10 } } }
+                y: {
+                    display: false,
+                    padding: 20,
+                    grid: { display: false }
+                },
+                x: {
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: {
+                        color: isDark ? '#8fa3b8' : '#7a8b87',
+                        font: { size: 10, weight: 700 }
+                    }
+                }
             }
         }
     });
@@ -1126,7 +1154,7 @@ async function renderizarSolicitacoesRecebidas() {
         const resultado = [];
         snap.forEach(docSnap => {
             const item = { id: docSnap.id, ...docSnap.data() };
-            if (item.status !== 'arquivado') resultado.push(item);
+            resultado.push(item);
         });
         return resultado;
     } catch (error) {
@@ -1160,7 +1188,7 @@ async function buscarSolicitacoesEnviadas() {
     }
 }
 
-function sincronizarStatusGastosEnviados(enviados) {
+async function sincronizarStatusGastosEnviados(enviados) {
     if (!Array.isArray(enviados) || !Array.isArray(salsiData.transacoes)) return;
 
     let alterou = false;
@@ -1189,7 +1217,7 @@ function sincronizarStatusGastosEnviados(enviados) {
 
     if (alterou) {
         localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
-        if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
+        if (typeof salvarNoFirebase === 'function') await salvarNoFirebase();
     }
 }
 
@@ -1260,7 +1288,12 @@ async function apagarGastoTerceiroEnviado(index) {
     const gasto = salsiData.transacoes[index];
     if (!gasto) return;
 
-    if (!confirm(`Apagar "${gasto.nome || 'gasto'}" e remover da conta da outra pessoa?`)) return;
+    const vinculado = gasto.terceiro?.tipo === 'usuario';
+    const mensagem = vinculado
+        ? `Apagar "${gasto.nome || 'gasto'}" e remover da conta da outra pessoa?`
+        : `Apagar "${gasto.nome || 'gasto'}" dos seus gastos de terceiros?`;
+
+    if (!confirm(mensagem)) return;
 
     try {
         const solicitacao = await obterSolicitacaoDoGasto(gasto);
@@ -1275,7 +1308,7 @@ async function apagarGastoTerceiroEnviado(index) {
 
         salsiData.transacoes.splice(index, 1);
         localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
-        if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
+        if (typeof salvarNoFirebase === 'function') await salvarNoFirebase();
         renderizar();
         renderizarVisualTerceiros();
         renderizarVisualDividas();
@@ -1319,10 +1352,10 @@ async function renderizarVisualTerceiros() {
     lista.innerHTML = '<div class="visual-empty">Atualizando status dos gastos enviados...</div>';
 
     const enviados = await buscarSolicitacoesEnviadas();
-    sincronizarStatusGastosEnviados(enviados);
+    await sincronizarStatusGastosEnviados(enviados);
 
     const gastos = (salsiData.transacoes || [])
-        .filter(t => t.eDeTerceiro)
+        .filter(t => t.eDeTerceiro && obterStatusCompartilhado(t) !== 'arquivado')
         .sort((a, b) => new Date((b.dataCompra || '') + 'T12:00:00') - new Date((a.dataCompra || '') + 'T12:00:00'));
 
     const totalPendente = gastos.reduce((total, t) => {
@@ -1940,7 +1973,7 @@ salsiData.metas.forEach(meta => {
                 data: {
                     datasets: [{
                         data: [meta.atual, Math.max(0, meta.total - meta.atual)],
-                        backgroundColor: ['#96e6a1', '#f0f2f1'],
+                        backgroundColor: ['#48dda4', '#f0f2f1'],
                         borderWidth: 0,
                         borderRadius: 6
                     }]
@@ -2373,6 +2406,9 @@ injetarAssinatura();
 /* ========================================================= */
 
 let textosPrivacidadeOriginais = new Map();
+let privacidadeAplicando = false;
+let privacidadeObserver = null;
+let privacidadeTimer = null;
 
 function privacidadeAtiva() {
     return localStorage.getItem('guget_privacidade_valores') === 'true';
@@ -2435,6 +2471,8 @@ function restaurarValoresPrivacidade() {
 }
 
 function ocultarValoresPrivacidade() {
+    privacidadeAplicando = true;
+
     const walker = document.createTreeWalker(
         document.body,
         NodeFilter.SHOW_TEXT,
@@ -2472,6 +2510,8 @@ function ocultarValoresPrivacidade() {
 
         textNode.textContent = mascararValoresTexto(textosPrivacidadeOriginais.get(textNode));
     });
+
+    privacidadeAplicando = false;
 }
 
 function aplicarPrivacidadeValores() {
@@ -2488,6 +2528,42 @@ function aplicarPrivacidadeValores() {
     atualizarBotaoPrivacidadeValores();
 }
 
+function agendarAplicarPrivacidadeValores() {
+    clearTimeout(privacidadeTimer);
+    privacidadeTimer = setTimeout(() => {
+        aplicarPrivacidadeValores();
+    }, 40);
+}
+
+function observarPrivacidadeGlobal() {
+    if (privacidadeObserver || !document.body) return;
+
+    privacidadeObserver = new MutationObserver((mutations) => {
+        if (privacidadeAplicando) return;
+
+    mutations.forEach(mutation => {
+        if (mutation.type === 'characterData' && mutation.target) {
+                const textoAtual = mutation.target.textContent || '';
+                if (!textoAtual.includes('••••') && !textoAtual.includes('R$ •')) {
+                    textosPrivacidadeOriginais.delete(mutation.target);
+                }
+            }
+        });
+
+        if (privacidadeAtiva()) {
+            agendarAplicarPrivacidadeValores();
+        } else {
+            atualizarBotaoPrivacidadeValores();
+        }
+    });
+
+    privacidadeObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+}
+
 function alternarPrivacidadeValores() {
     const novoEstado = !privacidadeAtiva();
 
@@ -2496,6 +2572,7 @@ function alternarPrivacidadeValores() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    observarPrivacidadeGlobal();
     requestAnimationFrame(aplicarPrivacidadeValores);
 });
 
