@@ -74,6 +74,7 @@ function ajustarTelas() {
             'aba-resumo-home',
             'aba-planejamento',     // A aba mãe dos gráficos/metas (O SEU ACHADO!)
             'card-resumo-conteudo', 
+            'card-terceiros',
             'card-grafico',         
             'card-metas-acordeon',
             'card-desejos-acordeon'   
@@ -194,6 +195,22 @@ function criarDataCompetencia(dataBase, mesesParaSomar = 0) {
     );
 }
 
+function calcularCompetenciaPorVencimentoFatura(dataCompra, fechamento, vencimento) {
+    const diaCompra = dataCompra.getDate();
+    const mesFechamento = dataCompra.getMonth() + (diaCompra <= fechamento ? 0 : 1);
+    const anoFechamento = dataCompra.getFullYear();
+
+    /*
+        A competência passa a seguir o vencimento da fatura.
+        Ex: fechamento 28 / vencimento 9.
+        Compra 22/06 => fechamento 28/06 => vencimento 09/07 => competência julho.
+        Compra 29/06 => fechamento 28/07 => vencimento 09/08 => competência agosto.
+    */
+    const mesVencimento = mesFechamento + (vencimento <= fechamento ? 1 : 0);
+
+    return new Date(anoFechamento, mesVencimento, 1);
+}
+
 function calcularCompetenciaInicialGasto(t) {
     const dataCompra = new Date(t.dataCompra + "T12:00:00");
     const delayManual = parseInt(t.delayPagamento) || 0;
@@ -216,20 +233,34 @@ function calcularCompetenciaInicialGasto(t) {
 
     const detalhesBanco = salsiData.config.detalhesBancos?.find(b => b.nome === t.banco);
 
-    if (!detalhesBanco || detalhesBanco.isDebitoOnly || !detalhesBanco.fechamento) {
+    if (!detalhesBanco || detalhesBanco.isDebitoOnly || !detalhesBanco.fechamento || !detalhesBanco.vencimento) {
         return criarDataCompetencia(dataCompra, 0);
     }
 
     const fechamento = parseInt(detalhesBanco.fechamento);
-    const diaCompra = dataCompra.getDate();
+    const vencimento = parseInt(detalhesBanco.vencimento);
 
-    /*
-        Compra depois do fechamento entra na fatura do mês seguinte.
-        Ex: compra 31/05, fechamento dia 5 => fatura de junho.
-    */
-    const mesesParaSomar = diaCompra > fechamento ? 1 : 0;
+    return calcularCompetenciaPorVencimentoFatura(dataCompra, fechamento, vencimento);
+}
 
-    return criarDataCompetencia(dataCompra, mesesParaSomar);
+function calcularSaldoCaixinhaDashboard() {
+    if (!Array.isArray(salsiData.caixinha)) return 0;
+
+    return salsiData.caixinha.reduce((total, movimento) => {
+        const valor = parseFloat(movimento.valor) || 0;
+        return total + (movimento.tipo === 'saida' ? -valor : valor);
+    }, 0);
+}
+
+function atualizarCardCaixinhaDashboard() {
+    const card = document.getElementById('stat-caixinha-dashboard');
+    const valor = document.getElementById('resumo-caixinha');
+    const mostrar = salsiData?.config?.mostrarCaixinhaDashboard === true;
+
+    document.body.classList.toggle('dashboard-caixinha-enabled', mostrar);
+
+    if (card) card.style.removeProperty('display');
+    if (valor) valor.innerText = `R$ ${calcularSaldoCaixinhaDashboard().toFixed(2)}`;
 }
 
 function gastoEstaNovo(t) {
@@ -820,6 +851,7 @@ if (typeof renderizarGraficoCategorias === 'function') {
     document.getElementById('resumo-saldo').innerText = `R$ ${saldoFinal.toFixed(2)}`;
     document.getElementById('resumo-cartao').innerText = `R$ ${totalCartMes.toFixed(2)}`;
     document.getElementById('resumo-porcentagem').innerText = `${totalEnt > 0 ? ((totalGastoMes/totalEnt)*100).toFixed(1) : 0}%`;
+    atualizarCardCaixinhaDashboard();
 
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
 	salvarNoFirebase();
@@ -940,7 +972,11 @@ function irParaDashboard() {
     }
     if (cardTer) {
         cardTer.classList.remove('mobile-subtab-active');
-        cardTer.style.setProperty('display', 'none', 'important');
+        if (isMobileDashboard) {
+            cardTer.style.setProperty('display', 'none', 'important');
+        } else {
+            cardTer.style.setProperty('display', 'block', 'important');
+        }
     }
 
     marcarViewSidebar('dashboard');

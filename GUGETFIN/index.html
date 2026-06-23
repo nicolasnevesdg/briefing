@@ -480,6 +480,7 @@
 				<div class="stat-card"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
 				<div class="stat-card"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
 				<div class="stat-card"><small>% da Renda</small><h2 id="resumo-porcentagem">0%</h2></div>
+				<div class="stat-card stat-caixinha" id="stat-caixinha-dashboard"><small>Saldo da Caixinha</small><h2 id="resumo-caixinha">R$ 0,00</h2></div>
 			</div>
 
 		</section>
@@ -956,6 +957,17 @@
                                     <option value="fatura">Mês seguinte / fatura</option>
                                 </select>
                             </label>
+
+                            <div class="settings-toggle-row">
+                                <div>
+                                    <strong>Saldo da caixinha na dashboard</strong>
+                                    <span>Mostra o dinheiro guardado junto dos indicadores principais.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="settings-show-caixinha-dashboard" onchange="salvarPreferenciasApp()">
+                                    <span class="slider-switch"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 

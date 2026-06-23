@@ -1124,7 +1124,10 @@ async function renderizarSolicitacoesRecebidas() {
 
         const snap = await window.getDocs(q);
         const resultado = [];
-        snap.forEach(docSnap => resultado.push({ id: docSnap.id, ...docSnap.data() }));
+        snap.forEach(docSnap => {
+            const item = { id: docSnap.id, ...docSnap.data() };
+            if (item.status !== 'arquivado') resultado.push(item);
+        });
         return resultado;
     } catch (error) {
         console.error('Erro ao buscar gastos recebidos:', error);
@@ -1146,7 +1149,10 @@ async function buscarSolicitacoesEnviadas() {
 
         const snap = await window.getDocs(q);
         const resultado = [];
-        snap.forEach(docSnap => resultado.push({ id: docSnap.id, ...docSnap.data() }));
+        snap.forEach(docSnap => {
+            const item = { id: docSnap.id, ...docSnap.data() };
+            if (item.status !== 'arquivado') resultado.push(item);
+        });
         return resultado;
     } catch (error) {
         console.error('Erro ao buscar gastos enviados:', error);
@@ -1247,6 +1253,10 @@ async function reenviarGastoTerceiro(index) {
 }
 
 async function apagarGastoTerceiroContestado(index) {
+    return apagarGastoTerceiroEnviado(index);
+}
+
+async function apagarGastoTerceiroEnviado(index) {
     const gasto = salsiData.transacoes[index];
     if (!gasto) return;
 
@@ -1264,12 +1274,39 @@ async function apagarGastoTerceiroContestado(index) {
         }
 
         salsiData.transacoes.splice(index, 1);
+        localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+        if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
         renderizar();
         renderizarVisualTerceiros();
+        renderizarVisualDividas();
 
         if (typeof mostrarToast === 'function') mostrarToast('Gasto apagado e solicitação removida.');
     } catch (error) {
-        console.error('Erro ao apagar gasto contestado:', error);
+        console.error('Erro ao apagar gasto de terceiro:', error);
+        if (typeof mostrarToast === 'function') mostrarToast('Não foi possível apagar agora.');
+    }
+}
+
+async function apagarDividaRecebida(id) {
+    const divida = dividasRecebidasCache[id];
+    if (!divida) return;
+
+    if (!confirm(`Apagar "${divida.nome || 'dívida'}" da sua lista?`)) return;
+
+    try {
+        if (window.updateDoc && window.doc) {
+            await window.updateDoc(window.doc(window.db, 'gastosCompartilhados', id), {
+                status: 'arquivado',
+                arquivadoPor: window.auth?.currentUser?.uid || '',
+                arquivadoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString()
+            });
+        }
+
+        delete dividasRecebidasCache[id];
+        renderizarVisualDividas();
+        if (typeof mostrarToast === 'function') mostrarToast('Dívida removida da lista.');
+    } catch (error) {
+        console.error('Erro ao apagar dívida recebida:', error);
         if (typeof mostrarToast === 'function') mostrarToast('Não foi possível apagar agora.');
     }
 }
@@ -1311,12 +1348,12 @@ async function renderizarVisualTerceiros() {
             const recebimentoTexto = recebimento.total > 1
                 ? `Recebidas: ${recebimento.recebidas}/${recebimento.total}`
                 : (recebimento.concluido ? 'Recebido' : 'Pendente');
-            const acoesContestado = vinculado && statusCompartilhado === 'contestado'
+            const acoesEnvio = vinculado
                 ? `
-                    <button type="button" class="visual-mini-btn danger" onclick="apagarGastoTerceiroContestado(${idx})">Apagar</button>
-                    <button type="button" class="visual-mini-btn primary" onclick="reenviarGastoTerceiro(${idx})">Enviar</button>
+                    <button type="button" class="visual-mini-btn danger" onclick="apagarGastoTerceiroEnviado(${idx})">Apagar</button>
+                    ${statusCompartilhado === 'contestado' ? `<button type="button" class="visual-mini-btn primary" onclick="reenviarGastoTerceiro(${idx})">Enviar</button>` : ''}
                 `
-                : '';
+                : `<button type="button" class="visual-mini-btn danger" onclick="apagarGastoTerceiroEnviado(${idx})">Apagar</button>`;
 
             return `
                 <div class="visual-card">
@@ -1337,7 +1374,7 @@ async function renderizarVisualTerceiros() {
                     <div class="visual-card-value">
                         <strong>${moedaVisual(t.valorTotal || 0)}</strong>
                         <div class="visual-card-actions">
-                            ${acoesContestado}
+                            ${acoesEnvio}
                             <button type="button" class="visual-mini-btn" onclick="verDetalhes(${idx})">Ver detalhes</button>
                         </div>
                     </div>
@@ -1400,12 +1437,16 @@ async function renderizarVisualDividas() {
         const statusClass = classeStatusCompartilhado(status);
         const acoes = tipo === 'pendente'
             ? `
+                <button type="button" class="visual-mini-btn danger" onclick="apagarDividaRecebida('${item.id}')">Apagar</button>
                 <button type="button" class="visual-mini-btn" onclick="responderSolicitacaoGasto('${item.id}', 'contestado')">Contestar</button>
                 <button type="button" class="visual-mini-btn primary" onclick="responderSolicitacaoGasto('${item.id}', 'aceito')">Aceitar</button>
             `
             : tipo === 'aceita'
-                ? `<button type="button" class="visual-mini-btn primary" onclick="abrirPagamentoDivida('${item.id}')">Pagar</button>`
-                : '';
+                ? `
+                    <button type="button" class="visual-mini-btn danger" onclick="apagarDividaRecebida('${item.id}')">Apagar</button>
+                    <button type="button" class="visual-mini-btn primary" onclick="abrirPagamentoDivida('${item.id}')">Pagar</button>
+                `
+                : `<button type="button" class="visual-mini-btn danger" onclick="apagarDividaRecebida('${item.id}')">Apagar</button>`;
 
         return `
             <div class="visual-card">

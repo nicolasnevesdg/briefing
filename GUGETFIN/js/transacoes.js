@@ -884,7 +884,7 @@ function atualizarAlertaFatura() {
     const vencimento = parseInt(detalhesBanco.vencimento);
 
     const dataCompra = new Date(dataInput + "T12:00:00");
-const diaCompra = dataCompra.getDate();
+    const diaCompra = dataCompra.getDate();
 
 /*
     IMPORTANTE:
@@ -900,7 +900,13 @@ function criarMesAlvo(dataBase, mesesParaSomar = 0) {
     );
 }
 
-let mesAlvoDate = criarMesAlvo(dataCompra, 0);
+function calcularMesFaturaPorVencimento(dataBase, fechamentoDia, vencimentoDia) {
+    const mesFechamento = dataBase.getMonth() + (dataBase.getDate() <= fechamentoDia ? 0 : 1);
+    const mesVencimento = mesFechamento + (vencimentoDia <= fechamentoDia ? 1 : 0);
+    return new Date(dataBase.getFullYear(), mesVencimento, 1);
+}
+
+let mesAlvoDate = calcularMesFaturaPorVencimento(dataCompra, fechamento, vencimento);
 let tipoAviso = "mes-atual";
 let motivoAviso = "";
 
@@ -917,16 +923,14 @@ let motivoAviso = "";
         }
     }
 
-    // 2. Se estiver no automático, aí sim usamos o fechamento do cartão.
+    // 2. Se estiver no automático, usamos o fechamento para achar a fatura
+    // e o vencimento para definir a competência.
     else {
-        if (diaCompra > fechamento) {
-    mesAlvoDate = criarMesAlvo(dataCompra, 1);
-    tipoAviso = "virou-fatura";
-    motivoAviso = `porque a compra foi feita no dia ${diaCompra}, depois do fechamento do cartão.`;
-} else {
-            tipoAviso = "mes-atual";
-            motivoAviso = "porque a compra entra automaticamente no mês da compra.";
-        }
+        mesAlvoDate = calcularMesFaturaPorVencimento(dataCompra, fechamento, vencimento);
+        tipoAviso = "virou-fatura";
+        motivoAviso = diaCompra <= fechamento
+            ? `porque a compra entra na fatura que fecha dia ${fechamento} e vence dia ${vencimento}.`
+            : `porque a compra ficou para a próxima fatura, com vencimento dia ${vencimento}.`;
     }
 
     const meses = [

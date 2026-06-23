@@ -228,6 +228,9 @@ window.iniciarVigia = function() {
                     
                     // Blindagem: Se for uma conta antiga que não tinha detalhesBancos
                     if (!salsiData.config.detalhesBancos) salsiData.config.detalhesBancos = [];
+                    if (typeof salsiData.config.mostrarCaixinhaDashboard === 'undefined') {
+                        salsiData.config.mostrarCaixinhaDashboard = false;
+                    }
                     
                     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
                     atualizarSplashInicialTema();
@@ -279,6 +282,10 @@ window.iniciarVigia = function() {
             window.onSnapshot(userRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const dados = docSnap.data();
+                    if (dados.dados?.config) {
+                        aplicarPreferenciaCaixinhaDashboardRemota(dados.dados.config.mostrarCaixinhaDashboard);
+                    }
+
                     let convitesUsados = dados.convitesUsados || 0;
                     
                     const badgeContador = document.getElementById('contador-convites');
@@ -552,7 +559,8 @@ function criarEstruturaInicialUsuario(nome = '', sobrenome = '', username = '', 
             bancos: ["Cadastre seus cartões!"],
             detalhesBancos: [
                 { nome: "Cadastre seus cartões!", fechamento: 10, vencimento: 20 }
-            ]
+            ],
+            mostrarCaixinhaDashboard: false
         },
         entradas: [],
         transacoes: [],
@@ -603,6 +611,13 @@ async function reservarUsernameUnico(username, usernameAnterior, perfilPublico, 
     if (window.runTransaction) {
         await window.runTransaction(window.db, async (transaction) => {
             const novoSnap = await transaction.get(novoRef);
+            let antigoRef = null;
+            let antigoSnap = null;
+
+            if (usernameAntigo && usernameAntigo !== usernameLimpo) {
+                antigoRef = window.doc(window.db, 'usernames', usernameAntigo);
+                antigoSnap = await transaction.get(antigoRef);
+            }
 
             if (novoSnap.exists() && novoSnap.data().uid !== uid) {
                 if (bloquearDuplicado) throw erroDuplicado();
@@ -611,13 +626,8 @@ async function reservarUsernameUnico(username, usernameAnterior, perfilPublico, 
 
             transaction.set(novoRef, dadosIndice, { merge: true });
 
-            if (usernameAntigo && usernameAntigo !== usernameLimpo) {
-                const antigoRef = window.doc(window.db, 'usernames', usernameAntigo);
-                const antigoSnap = await transaction.get(antigoRef);
-
-                if (antigoSnap.exists() && antigoSnap.data().uid === uid) {
-                    transaction.delete(antigoRef);
-                }
+            if (antigoRef && antigoSnap && antigoSnap.exists() && antigoSnap.data().uid === uid) {
+                transaction.delete(antigoRef);
             }
         });
 
@@ -714,7 +724,29 @@ function carregarConfiguracoesPerfil() {
     if (themeToggleAntigo) themeToggleAntigo.checked = temaEscuro;
     if (themeToggleNovo) themeToggleNovo.checked = temaEscuro;
 
+    const caixinhaToggle = document.getElementById('settings-show-caixinha-dashboard');
+    if (caixinhaToggle) caixinhaToggle.checked = salsiData.config?.mostrarCaixinhaDashboard === true;
+    if (typeof atualizarCardCaixinhaDashboard === 'function') atualizarCardCaixinhaDashboard();
+
     atualizarStatusGoogleConta();
+}
+
+function aplicarPreferenciaCaixinhaDashboardRemota(valorRemoto) {
+    if (!salsiData.config) salsiData.config = {};
+
+    const valorNormalizado = valorRemoto === true;
+    if (salsiData.config.mostrarCaixinhaDashboard === valorNormalizado) {
+        if (typeof atualizarCardCaixinhaDashboard === 'function') atualizarCardCaixinhaDashboard();
+        return;
+    }
+
+    salsiData.config.mostrarCaixinhaDashboard = valorNormalizado;
+    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+
+    const caixinhaToggle = document.getElementById('settings-show-caixinha-dashboard');
+    if (caixinhaToggle) caixinhaToggle.checked = valorNormalizado;
+
+    if (typeof atualizarCardCaixinhaDashboard === 'function') atualizarCardCaixinhaDashboard();
 }
 
 function obterConexaoGoogleUsuario(user = window.auth?.currentUser) {
@@ -881,18 +913,36 @@ async function desconectarGoogleConta() {
     }
 }
 
-function salvarPreferenciasApp() {
+async function salvarPreferenciasApp() {
     if (!salsiData.config) salsiData.config = {};
 
     const selectModoNovo = document.getElementById('settings-modo-ia');
     const selectModoAntigo = document.getElementById('perfil-modo-ia');
     const novoModoIA = selectModoNovo ? selectModoNovo.value : 'calendario';
+    const caixinhaToggle = document.getElementById('settings-show-caixinha-dashboard');
+    const mostrarCaixinhaDashboard = caixinhaToggle ? caixinhaToggle.checked : false;
 
     salsiData.config.modoIA = novoModoIA;
+    salsiData.config.mostrarCaixinhaDashboard = mostrarCaixinhaDashboard;
+
     if (selectModoAntigo) selectModoAntigo.value = novoModoIA;
+    if (typeof atualizarCardCaixinhaDashboard === 'function') atualizarCardCaixinhaDashboard();
 
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
-    if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
+
+    if (window.auth?.currentUser && window.updateDoc && window.doc) {
+        try {
+            await window.updateDoc(window.doc(window.db, 'usuarios', window.auth.currentUser.uid), {
+                'dados.config.modoIA': novoModoIA,
+                'dados.config.mostrarCaixinhaDashboard': mostrarCaixinhaDashboard
+            });
+            return;
+        } catch (error) {
+            console.error('Erro ao salvar preferências rápidas:', error);
+        }
+    }
+
+    if (typeof salvarNoFirebase === 'function') await salvarNoFirebase();
 }
 
 const avatarPadraoPerfil = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
@@ -1273,7 +1323,7 @@ async function salvarConfiguracoesPerfil() {
         alert("Erro ao atualizar: " + error.message);
     } finally {
         if (btn) {
-            btn.innerText = 'Salvar perfil';
+            btn.innerText = 'Atualizar senha';
             btn.disabled = false;
         }
     }
