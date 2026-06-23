@@ -14,6 +14,29 @@
 
 <body>
 
+<div id="app-loading-screen" class="app-loading-screen">
+    <div class="app-loading-card">
+        <div class="app-loading-mark"></div>
+        <strong>Guget Fin</strong>
+        <span>Carregando sua conta...</span>
+    </div>
+</div>
+<script>
+    (function () {
+        try {
+            var tema = localStorage.getItem('guget_tema_preferido') || 'light';
+            var cache = localStorage.getItem('salsifin_cache');
+            if (cache) {
+                var dados = JSON.parse(cache);
+                tema = (dados && dados.config && dados.config.tema) || tema;
+            }
+            if (tema === 'dark') {
+                document.getElementById('app-loading-screen').classList.add('is-dark');
+            }
+        } catch (error) {}
+    })();
+</script>
+
 <div id="auth-screen" class="auth-overlay auth-v2">
     <div class="auth-box">
         <section class="auth-showcase-panel auth-right" id="auth-showcase" style="display: none;">
@@ -236,24 +259,63 @@
                 
                 <div class="system-section mobile-only">
                     <div class="options-container" id="container-opcoes">
-                        <button class="options-trigger" onclick="toggleMenuOpcoes(event)">
-                            <span class="system-icon">⚙️</span>
-                            <svg class="user-profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                            <span class="btn-text-mobile">Opções</span> 
+                        <button class="options-trigger mobile-avatar-trigger" onclick="toggleMenuOpcoes(event)" aria-label="Abrir menu">
+                            <img id="mobile-avatar-img" class="mobile-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
                         </button>
-                        <div class="options-dropdown" id="menu-dropdown">
-                            <button class="dropdown-item option-btn" onclick="irParaConfiguracoes('perfil')"><i class="fi fi-rr-settings"></i> Editar Perfil</button>
-                            <hr class="dropdown-divider">
-                            <button class="dropdown-item option-btn" onclick="irParaConfiguracoes('organizacao')"><i class="fi fi-rr-credit-card"></i> Minha Carteira</button>
-                            <button class="dropdown-item option-btn" onclick="irParaConfiguracoes('organizacao')"><i class="fi fi-rr-tags"></i> Categorias</button>
-                            <button onclick="solicitarPermissaoNotificacao()" class="dropdown-item option-btn"><i class="fi fi-rr-bell"></i> Ativar Lembretes</button>
-                            <button class="dropdown-item option-btn" onclick="abrirOnboarding()"><i class="fi fi-rr-interrogation"></i> Rever Tutorial</button>
-                            <hr class="dropdown-divider">
-                            <button class="dropdown-item option-btn" onclick="document.getElementById('input-import-extrato').click()"><i class="fi fi-rr-file-invoice-dollar"></i> Importar Extrato</button>
-                            <button class="dropdown-item option-btn" onclick="document.getElementById('input-import-js').click()"><i class="fi fi-rr-download"></i> Importar Backup</button>
-                            <button class="dropdown-item option-btn btn-save-inside" onclick="salvarAlteracoes()"><i class="fi fi-rr-disk"></i> Criar Backup</button>
-                            <hr class="dropdown-divider">
-                            <button class="dropdown-item option-btn btn-danger-text" onclick="limparTudo()"><i class="fi fi-rr-trash"></i> Resetar App</button>
+                        <button class="mobile-more-trigger" onclick="toggleMenuOpcoes(event)" aria-label="Abrir menu de opções">
+                            <span class="mobile-profile-dots" aria-hidden="true">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </button>
+                        <div class="options-dropdown" id="menu-dropdown" onclick="if (event.target === this) fecharMenuOpcoes()">
+                            <div class="mobile-menu-panel">
+                                <button type="button" class="mobile-menu-close" onclick="fecharMenuOpcoes()" aria-label="Fechar menu">×</button>
+
+                                <div class="mobile-menu-profile">
+                                    <img id="mobile-menu-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
+                                    <div>
+                                        <strong id="mobile-menu-user-name">Guget Fin</strong>
+                                        <span id="mobile-menu-user-email">Sua conta</span>
+                                    </div>
+                                </div>
+
+                                <div class="mobile-menu-section">
+                                    <span>Conta</span>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('perfil'))"><i class="fi fi-rr-user"></i> Editar perfil</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('seguranca'))"><i class="fi fi-rr-shield-check"></i> Conta e segurança</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('assinatura'))"><i class="fi fi-rr-ticket"></i> Assinatura</button>
+                                    <button type="button" class="dropdown-item option-btn mobile-theme-row" onclick="alternarTemaTopo(); atualizarMenuTemaMobile();">
+                                        <i class="fi fi-rr-moon"></i>
+                                        <span class="mobile-theme-text">
+                                            <strong>Modo noturno</strong>
+                                            <small id="mobile-theme-state">Desativado</small>
+                                        </span>
+                                        <span class="mobile-theme-switch" id="mobile-theme-switch"><span></span></span>
+                                    </button>
+                                </div>
+
+                                <div class="mobile-menu-section">
+                                    <span>Organização</span>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('organizacao'))"><i class="fi fi-rr-credit-card"></i> Minha carteira</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('organizacao'))"><i class="fi fi-rr-tags"></i> Categorias</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('lembretes'))"><i class="fi fi-rr-bell"></i> Lembretes</button>
+                                </div>
+
+                                <div class="mobile-menu-section">
+                                    <span>Dados e suporte</span>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => document.getElementById('input-import-extrato').click())"><i class="fi fi-rr-file-invoice-dollar"></i> Importar extrato</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => document.getElementById('input-import-js').click())"><i class="fi fi-rr-download"></i> Importar backup</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => salvarAlteracoes())"><i class="fi fi-rr-disk"></i> Criar backup</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => abrirOnboarding())"><i class="fi fi-rr-interrogation"></i> Rever tutorial</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => mostrarToast('Página em desenvolvimento! Em breve teremos uma central de ajuda aqui.'))"><i class="fi fi-rr-interrogation"></i> Ajuda</button>
+                                </div>
+
+                                <div class="mobile-menu-section mobile-menu-danger">
+                                    <button class="dropdown-item option-btn btn-logout" onclick="executarOpcaoMenuMobile(() => sairDaConta())"><i class="fi fi-rr-sign-out-alt"></i> Logout</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -501,55 +563,17 @@
 					
 					<div class="mobile-tabs-toggle home-toggle">
 						<button id="btn-show-resumo" class="active" onclick="toggleSubAba('resumo')">Resumo Mensal</button>
-						<button id="btn-show-terceiros" onclick="irParaVisualizacoes('terceiros')">Gastos de Terceiros</button>
+						<button id="btn-show-terceiros" onclick="toggleSubAba('terceiros')">Gastos de Terceiros</button>
 					</div>
 					
 					<div class="card-stack">
-					<div id="card-resumo-conteudo" class="card resumo-mensal">
+					<div id="card-resumo-conteudo" class="card resumo-mensal mobile-subtab-active">
 						<h3>Resumo Mensal</h3>
 						
 						<div class="resumo-central-item">
 							<small>POR CARTÃO / BANCO</small>
 							<div id="resumo-bancos-lista"></div>
 						</div>
-
-                        <div class="cat-chart-widget">
-    <!-- <div class="cat-chart-header">
-        <div>
-            <h4>Estatística</h4>
-            <p>Gastos por categoria</p>
-        </div>
-
-        <div class="cat-chart-period">
-            <span>Este mês</span>
-        </div>
-    </div>
-
-    <div class="cat-chart-topline">
-        <div class="cat-chart-top-item">
-            <span>Total</span>
-            <strong id="grafico-categorias-total">R$ 0,00</strong>
-        </div>
-
-        <div class="cat-chart-top-item cat-chart-top-item-soft">
-            <span>Categorias</span>
-            <strong id="grafico-categorias-qtd">0</strong>
-        </div>
-    </div>
-
-    <div class="cat-chart-body">
-        <div class="cat-chart-donut-wrap">
-            <div id="grafico-categorias" class="cat-chart-donut">
-                <div class="cat-chart-donut-center">
-                    <small>Total em categorias</small>
-                    <strong id="grafico-categorias-total-centro">R$ 0,00</strong>
-                </div>
-            </div>
-        </div>
-
-        <div id="grafico-categorias-legenda" class="cat-chart-legend"></div>
-    </div>
-</div>-->
 
 						<div class="resumo-central-item" style="margin-top: 24px;">
 							<small>POR CATEGORIA (TAGS)</small>
@@ -1211,6 +1235,9 @@
     <button class="tab-btn" onclick="navegar('fixos')">
         <i class="fi fi-rr-thumbtack"></i>
     </button>
+    <button class="tab-btn" onclick="irParaVisualizacoesMobile('terceiros')">
+        <i class="fi fi-rr-chart-pie-alt"></i>
+    </button>
     <button class="tab-btn" onclick="navegar('planejamento')">
         <i class="fi fi-rr-chart-simple"></i>
     </button>
@@ -1219,6 +1246,10 @@
         <i class="fi fi-rr-plus"></i>
     </button>
 </nav>
+
+<button type="button" id="mobile-back-top" class="mobile-back-top" onclick="voltarAoTopoMobile()" aria-label="Voltar ao topo">
+    <i class="fi fi-rr-angle-small-up"></i>
+</button>
 
     <dialog id="modal-gasto" class="modal-gasto-dialog">
     <div class="modal-content modal-gasto-content">
