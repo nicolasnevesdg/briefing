@@ -146,8 +146,38 @@ function selecionarFiltroGrafico(valor, texto, event) {
 
 // 1. Abre/Fecha o menu cascata do Mobile
 function toggleMenuOpcoes(event) {
-    event.stopPropagation();
-    document.getElementById('menu-dropdown').classList.toggle('active');
+    if (event) event.stopPropagation();
+
+    const menu = document.getElementById('menu-dropdown');
+    if (!menu) return;
+
+    const vaiAbrir = !menu.classList.contains('active');
+    menu.classList.toggle('active', vaiAbrir);
+    document.body.classList.toggle('menu-opcoes-open', vaiAbrir);
+
+    if (vaiAbrir) atualizarMenuTemaMobile();
+}
+
+function fecharMenuOpcoes() {
+    const menu = document.getElementById('menu-dropdown');
+    if (menu) menu.classList.remove('active');
+    document.body.classList.remove('menu-opcoes-open');
+}
+
+function executarOpcaoMenuMobile(callback) {
+    fecharMenuOpcoes();
+    if (typeof callback === 'function') {
+        setTimeout(callback, 80);
+    }
+}
+
+function atualizarMenuTemaMobile() {
+    const isDark = document.body.classList.contains('dark-theme');
+    const state = document.getElementById('mobile-theme-state');
+    const control = document.getElementById('mobile-theme-switch');
+
+    if (state) state.textContent = isDark ? 'Ativado' : 'Desativado';
+    if (control) control.classList.toggle('active', isDark);
 }
 
 // NOVA: Abre/Fecha o menu cascata do PC
@@ -163,7 +193,7 @@ document.addEventListener('click', function(event) {
     const menuMob = document.getElementById('menu-dropdown');
     const contMob = document.getElementById('container-opcoes');
     if (menuMob && menuMob.classList.contains('active') && contMob && !contMob.contains(event.target)) {
-        menuMob.classList.remove('active');
+        fecharMenuOpcoes();
     }
     
     // Verifica e fecha o do PC
@@ -171,15 +201,6 @@ document.addEventListener('click', function(event) {
     const contPC = document.getElementById('container-opcoes-pc');
     if (menuPC && menuPC.classList.contains('active') && contPC && !contPC.contains(event.target)) {
         menuPC.classList.remove('active');
-    }
-});
-
-// 2. Lógica para fechar ao clicar em qualquer lugar da tela
-document.addEventListener('click', function(event) {
-    const menu = document.getElementById('menu-dropdown');
-    const container = document.getElementById('container-opcoes');
-    if (menu && menu.classList.contains('active') && !container.contains(event.target)) {
-        menu.classList.remove('active');
     }
 });
 
@@ -1906,6 +1927,13 @@ function toggleMetas() {
 }
 
 function navegar(abaId) {
+    const main = document.querySelector('main');
+    if (main) {
+        main.classList.remove('calendar-mode');
+        main.classList.remove('visualizacoes-mode');
+        main.classList.remove('settings-mode');
+    }
+
     // 1. Esconde tudo com força total (Limpa a tela e remove o menu de cartões se estiver aberto)
     document.querySelectorAll('.tab-content').forEach(secao => {
         secao.classList.remove('active');
@@ -1964,6 +1992,51 @@ function navegar(abaId) {
     });
 }
 
+function irParaVisualizacoesMobile(aba = 'terceiros') {
+    const main = document.querySelector('main');
+    if (main) {
+        main.classList.remove('calendar-mode');
+        main.classList.remove('settings-mode');
+        main.classList.add('visualizacoes-mode');
+    }
+
+    document.querySelectorAll('.tab-content').forEach(secao => {
+        secao.classList.remove('active');
+        secao.style.setProperty('display', 'none', 'important');
+    });
+
+    if (typeof irParaVisualizacoes === 'function') {
+        irParaVisualizacoes(aba);
+    }
+
+    document.querySelectorAll('.mobile-tab-bar .tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    document.querySelectorAll('.mobile-tab-bar .tab-btn').forEach(btn => {
+        const acao = btn.getAttribute('onclick') || '';
+        if (acao.includes('irParaVisualizacoesMobile')) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+function voltarAoTopoMobile() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function atualizarBotaoVoltarTopoMobile() {
+    const btn = document.getElementById('mobile-back-top');
+    if (!btn) return;
+
+    const deveMostrar = window.innerWidth <= 1024 && window.scrollY > 620;
+    btn.classList.toggle('visible', deveMostrar);
+}
+
+window.addEventListener('scroll', atualizarBotaoVoltarTopoMobile, { passive: true });
+window.addEventListener('resize', atualizarBotaoVoltarTopoMobile);
+document.addEventListener('DOMContentLoaded', atualizarBotaoVoltarTopoMobile);
+
 function toggleSubAba(alvo) {
     // IDs exatos conforme o seu código HTML
     const cardRes = document.getElementById('card-resumo-conteudo');
@@ -1984,6 +2057,8 @@ function toggleSubAba(alvo) {
         // Alterna Cards
         cardRes.style.setProperty('display', 'block', 'important');
         cardTer.style.setProperty('display', 'none', 'important');
+        cardRes.classList.add('mobile-subtab-active');
+        cardTer.classList.remove('mobile-subtab-active');
     } else {
         // Ativa botão Terceiros
         btnRes.classList.remove('active');
@@ -1992,6 +2067,60 @@ function toggleSubAba(alvo) {
         // Alterna Cards
         cardRes.style.setProperty('display', 'none', 'important');
         cardTer.style.setProperty('display', 'block', 'important');
+        cardRes.classList.remove('mobile-subtab-active');
+        cardTer.classList.add('mobile-subtab-active');
+
+        const listaTerceirosMobile = document.getElementById('lista-terceiros-mobile');
+        if (listaTerceirosMobile) {
+            listaTerceirosMobile.style.setProperty('display', 'flex', 'important');
+            listaTerceirosMobile.style.setProperty('flex-direction', 'column', 'important');
+        }
+
+        garantirTerceirosMobileVisivel();
+
+        setTimeout(() => {
+            if (listaTerceirosMobile && !listaTerceirosMobile.innerHTML.trim()) {
+                listaTerceirosMobile.innerHTML = `
+                    <div class="cartao-item-mobile terceiro-mobile-empty">
+                        <div>
+                            <strong>Nenhum gasto de terceiro neste mês</strong>
+                            <span>Quando houver lançamentos, eles aparecem aqui.</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }, 120);
+    }
+}
+
+function garantirTerceirosMobileVisivel() {
+    const cardTer = document.getElementById('card-terceiros');
+    const lista = document.getElementById('lista-terceiros-mobile');
+    const tabela = document.getElementById('tabela-terceiros');
+    const total = document.querySelector('#card-terceiros .mobile-total-card');
+
+    if (cardTer) {
+        cardTer.classList.add('mobile-subtab-active');
+        cardTer.style.setProperty('display', 'block', 'important');
+        cardTer.style.setProperty('visibility', 'visible', 'important');
+        cardTer.style.setProperty('opacity', '1', 'important');
+        cardTer.style.setProperty('height', 'auto', 'important');
+        cardTer.style.setProperty('min-height', '120px', 'important');
+    }
+
+    if (tabela && window.innerWidth <= 1024) {
+        tabela.style.setProperty('display', 'none', 'important');
+    }
+
+    if (lista) {
+        lista.style.setProperty('display', 'flex', 'important');
+        lista.style.setProperty('flex-direction', 'column', 'important');
+        lista.style.setProperty('gap', '12px', 'important');
+        lista.style.setProperty('width', '100%', 'important');
+    }
+
+    if (total && window.innerWidth <= 1024) {
+        total.style.setProperty('display', 'flex', 'important');
     }
 }
 
@@ -2029,23 +2158,29 @@ function toggleSubCartao(alvo) {
     }
 }
 
-// --- NOVA LÓGICA DE SWIPE GLOBAL E ANIMADA (TELA INTEIRA) ---
+// --- SWIPE DE MESES RESTRITO A BARRA DE MESES MOBILE ---
 let touchstartX = 0;
 let touchstartY = 0;
 let touchendX = 0;
 let touchendY = 0;
+let touchMonthNavAtivo = false;
 
-// Escuta o toque na tela inteira
 document.addEventListener('touchstart', function(event) {
+    const navMovel = document.getElementById('mobile-month-nav');
+    touchMonthNavAtivo = !!(navMovel && navMovel.contains(event.target));
+    if (!touchMonthNavAtivo) return;
+
     touchstartX = event.changedTouches[0].screenX;
     touchstartY = event.changedTouches[0].screenY;
 }, {passive: true});
 
-// Escuta quando o dedo solta
 document.addEventListener('touchend', function(event) {
+    if (!touchMonthNavAtivo) return;
+
     touchendX = event.changedTouches[0].screenX;
     touchendY = event.changedTouches[0].screenY;
     analisarMovimentoSwipe();
+    touchMonthNavAtivo = false;
 }, {passive: true});
 
 function analisarMovimentoSwipe() {
@@ -2384,6 +2519,7 @@ function ativarScrollCarteira() {
 let carteiraIndexAtual = 0;
 let carteiraWheelTravado = false;
 let carteiraTouchStartY = 0;
+let carteiraTouchStartX = 0;
 let carteiraContainerAtual = 'settings-lista-cartoes';
 
 function obterContainerCarteiraAtual() {
@@ -2415,14 +2551,16 @@ function atualizarCarouselCarteira() {
 
         const isMobileCarteira = window.innerWidth <= 720;
 
-const y = diff * (isMobileCarteira ? 34 : 38);
-const z = -absDiff * (isMobileCarteira ? 92 : 126);
-const rotateX = diff * (isMobileCarteira ? -3.5 : -5);
+        const x = isMobileCarteira ? diff * 78 : 0;
+        const y = isMobileCarteira ? 0 : diff * 38;
+const z = -absDiff * (isMobileCarteira ? 72 : 126);
+const rotateX = isMobileCarteira ? 0 : diff * -5;
+const rotateY = isMobileCarteira ? diff * 5 : 0;
 
 const scale = index === carteiraIndexAtual
     ? 1
     : Math.max(
-        isMobileCarteira ? 0.82 : 0.76,
+        isMobileCarteira ? 0.84 : 0.76,
         (isMobileCarteira ? 0.92 : 0.90) - absDiff * 0.045
     );
 
@@ -2437,9 +2575,11 @@ const blur = absDiff === 0 ? 0 : Math.min(absDiff * 1.35, 4.2);
         card.style.filter = `blur(${blur}px)`;
         card.style.transform = `
             translate(-50%, -50%)
+            translateX(${x}px)
             translateY(${y}px)
             translateZ(${z}px)
             rotateX(${rotateX}deg)
+            rotateY(${rotateY}deg)
             scale(${scale})
         `;
     });
@@ -2496,14 +2636,23 @@ function iniciarCarouselCarteira() {
 
         carousel.addEventListener('touchstart', (event) => {
             carteiraTouchStartY = event.touches[0].clientY;
+            carteiraTouchStartX = event.touches[0].clientX;
         }, { passive: true });
 
         carousel.addEventListener('touchend', (event) => {
+            const isMobileCarteira = window.innerWidth <= 720;
+            const endX = event.changedTouches[0].clientX;
             const endY = event.changedTouches[0].clientY;
+            const diffX = carteiraTouchStartX - endX;
             const diffY = carteiraTouchStartY - endY;
 
-            if (Math.abs(diffY) < 35) return;
+            if (isMobileCarteira) {
+                if (Math.abs(diffX) < 38 || Math.abs(diffX) < Math.abs(diffY)) return;
+                moverCarteira(diffX > 0 ? 1 : -1);
+                return;
+            }
 
+            if (Math.abs(diffY) < 35) return;
             moverCarteira(diffY > 0 ? 1 : -1);
         }, { passive: true });
     }

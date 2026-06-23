@@ -700,6 +700,7 @@ function aplicarTemaConta(isDark) {
 function salvarTemaConta(isDark) {
     if (!salsiData.config) salsiData.config = {};
     salsiData.config.tema = isDark ? 'dark' : 'light';
+    localStorage.setItem('guget_tema_preferido', salsiData.config.tema);
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
 
     if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
@@ -709,6 +710,7 @@ function carregarTemaPreferido() {
     const userLogado = !!(window.auth && window.auth.currentUser);
     const temaSalvo = userLogado ? (salsiData?.config?.tema || 'light') : 'light';
 
+    localStorage.setItem('guget_tema_preferido', temaSalvo);
     aplicarTemaConta(temaSalvo === 'dark');
 }
 

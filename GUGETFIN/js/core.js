@@ -25,19 +25,55 @@ HTMLDialogElement.prototype.close = function() {
 // --- CONTROLE DE TELA (PC vs MOBILE) ---
 function ajustarTelas() {
     if (window.innerWidth <= 1024) {
-        // NO CELULAR: Apenas garante que o Resumo seja a aba principal ao abrir
+        // NO CELULAR: respeita a subaba ativa. Resize de navegador mobile
+        // não pode resetar "Gastos de Terceiros" para vazio.
         const cardRes = document.getElementById('card-resumo-conteudo');
         const cardTer = document.getElementById('card-terceiros');
+        const btnTer = document.getElementById('btn-show-terceiros');
+        const terceiroAtivo = btnTer && btnTer.classList.contains('active');
         
-        if (cardRes) cardRes.style.setProperty('display', 'block', 'important');
-        if (cardTer) cardTer.style.setProperty('display', 'none', 'important');
+        if (terceiroAtivo) {
+            if (cardRes) {
+                cardRes.classList.remove('mobile-subtab-active');
+                cardRes.style.setProperty('display', 'none', 'important');
+            }
+            if (cardTer) {
+                cardTer.classList.add('mobile-subtab-active');
+                cardTer.style.setProperty('display', 'block', 'important');
+            }
+            if (typeof garantirTerceirosMobileVisivel === 'function') {
+                garantirTerceirosMobileVisivel();
+            }
+        } else {
+            if (cardRes) {
+                cardRes.classList.add('mobile-subtab-active');
+                cardRes.style.setProperty('display', 'block', 'important');
+            }
+            if (cardTer) {
+                cardTer.classList.remove('mobile-subtab-active');
+                cardTer.style.setProperty('display', 'none', 'important');
+            }
+        }
     } else {
+        const main = document.querySelector('main');
+        if (main && (
+            main.classList.contains('calendar-mode') ||
+            main.classList.contains('visualizacoes-mode') ||
+            main.classList.contains('settings-mode')
+        )) {
+            return;
+        }
+
         // NO PC: Arranca o "none !important" das abas mães e dos cards!
         const elementosParaMostrar = [
             'aba-resumo',           // A aba mãe do resumo
+            'aba-home',
+            'aba-fixos',
+            'aba-debito',
+            'aba-cartao',
+            'aba-resumo-home',
             'aba-planejamento',     // A aba mãe dos gráficos/metas (O SEU ACHADO!)
             'card-resumo-conteudo', 
-            'card-terceiros', 
             'card-grafico',         
             'card-metas-acordeon',
             'card-desejos-acordeon'   
@@ -797,11 +833,26 @@ if (typeof renderizarGraficoCategorias === 'function') {
         const cardTer = document.getElementById('card-terceiros');
 
         if (btnTerceiros && btnTerceiros.classList.contains('active')) {
-            if(cardRes) cardRes.style.setProperty('display', 'none', 'important');
-            if(cardTer) cardTer.style.setProperty('display', 'block', 'important');
+            if(cardRes) {
+                cardRes.classList.remove('mobile-subtab-active');
+                cardRes.style.setProperty('display', 'none', 'important');
+            }
+            if(cardTer) {
+                cardTer.classList.add('mobile-subtab-active');
+                cardTer.style.setProperty('display', 'block', 'important');
+            }
+            if (typeof garantirTerceirosMobileVisivel === 'function') {
+                garantirTerceirosMobileVisivel();
+            }
         } else {
-            if(cardRes) cardRes.style.setProperty('display', 'block', 'important');
-            if(cardTer) cardTer.style.setProperty('display', 'none', 'important');
+            if(cardRes) {
+                cardRes.classList.add('mobile-subtab-active');
+                cardRes.style.setProperty('display', 'block', 'important');
+            }
+            if(cardTer) {
+                cardTer.classList.remove('mobile-subtab-active');
+                cardTer.style.setProperty('display', 'none', 'important');
+            }
         }
     }
 
@@ -857,10 +908,60 @@ function irParaDashboard() {
         abrirDashboardFinanceira();
     }
 
+    document.querySelectorAll('.tab-content').forEach(secao => {
+        secao.classList.remove('active');
+        secao.style.setProperty('display', 'none', 'important');
+    });
+
+    const isMobileDashboard = window.innerWidth <= 1024;
+    const secoesDashboard = isMobileDashboard
+        ? ['aba-home', 'aba-resumo-home']
+        : ['aba-planejamento', 'aba-home', 'aba-fixos', 'aba-debito', 'aba-cartao', 'aba-resumo-home'];
+
+    secoesDashboard.forEach(id => {
+        const secao = document.getElementById(id);
+        if (secao) {
+            secao.classList.add('active');
+            const display = !isMobileDashboard && id === 'aba-planejamento' ? 'flex' : 'block';
+            secao.style.setProperty('display', display, 'important');
+        }
+    });
+
+    const btnRes = document.getElementById('btn-show-resumo');
+    const btnTer = document.getElementById('btn-show-terceiros');
+    const cardRes = document.getElementById('card-resumo-conteudo');
+    const cardTer = document.getElementById('card-terceiros');
+
+    if (btnRes) btnRes.classList.add('active');
+    if (btnTer) btnTer.classList.remove('active');
+    if (cardRes) {
+        cardRes.classList.add('mobile-subtab-active');
+        cardRes.style.setProperty('display', 'block', 'important');
+    }
+    if (cardTer) {
+        cardTer.classList.remove('mobile-subtab-active');
+        cardTer.style.setProperty('display', 'none', 'important');
+    }
+
     marcarViewSidebar('dashboard');
+
+    if (typeof renderizar === 'function') {
+        renderizar();
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function ocultarAbasDashboardParaView() {
+    document.querySelectorAll('.tab-content').forEach(secao => {
+        secao.classList.remove('active');
+        secao.style.setProperty('display', 'none', 'important');
+    });
 }
 
 function irParaCalendario() {
+    ocultarAbasDashboardParaView();
+
     if (typeof abrirCalendarioFinanceiro === 'function') {
         abrirCalendarioFinanceiro();
     }
@@ -871,6 +972,11 @@ function irParaCalendario() {
 function irParaConfiguracoes(aba = 'perfil') {
     const main = document.querySelector('main');
     if (!main) return;
+
+    document.querySelectorAll('.tab-content').forEach(secao => {
+        secao.classList.remove('active');
+        secao.style.setProperty('display', 'none', 'important');
+    });
 
     main.classList.remove('calendar-mode');
     main.classList.remove('visualizacoes-mode');
@@ -892,6 +998,8 @@ function irParaConfiguracoes(aba = 'perfil') {
 function irParaVisualizacoes(aba = 'terceiros') {
     const main = document.querySelector('main');
     if (!main) return;
+
+    ocultarAbasDashboardParaView();
 
     main.classList.remove('calendar-mode');
     main.classList.remove('settings-mode');

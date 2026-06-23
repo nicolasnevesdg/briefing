@@ -181,6 +181,24 @@ async function fazerCadastro() {
 // Trava de segurança para evitar que o app trave num loop infinito
 let isSincronizando = false; 
 
+function atualizarSplashInicialTema() {
+    const splash = document.getElementById('app-loading-screen');
+    if (!splash) return;
+
+    const tema = salsiData?.config?.tema || 'light';
+    splash.classList.toggle('is-dark', tema === 'dark');
+}
+
+function esconderSplashInicial() {
+    const splash = document.getElementById('app-loading-screen');
+    if (!splash) return;
+
+    splash.classList.add('is-hidden');
+    setTimeout(() => {
+        splash.style.display = 'none';
+    }, 260);
+}
+
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
@@ -212,6 +230,7 @@ window.iniciarVigia = function() {
                     if (!salsiData.config.detalhesBancos) salsiData.config.detalhesBancos = [];
                     
                     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+                    atualizarSplashInicialTema();
                 } else {
                     const entrouSoComGoogle = user.providerData.some(provider => provider.providerId === 'google.com')
                         && !user.providerData.some(provider => provider.providerId === 'password');
@@ -237,6 +256,7 @@ window.iniciarVigia = function() {
                     const partesNome = obterPartesNomePerfil(user.displayName || '');
                     salsiData = criarEstruturaInicialUsuario(partesNome.nome, partesNome.sobrenome, '', user.email || '');
                     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+                    atualizarSplashInicialTema();
                     await window.setDoc(userDoc, { dados: salsiData }, { merge: true });
                 }
 
@@ -253,6 +273,7 @@ window.iniciarVigia = function() {
             if (typeof carregarConfiguracoesPerfil === 'function') {
                 carregarConfiguracoesPerfil();
             }
+            esconderSplashInicial();
 
 			const userRef = window.doc(window.db, 'usuarios', user.uid);
             window.onSnapshot(userRef, (docSnap) => {
@@ -295,9 +316,9 @@ window.iniciarVigia = function() {
             const registerForm = document.getElementById('register-form');
             
             if (window.innerWidth <= 1024) {
-                if (authLeft) authLeft.style.display = 'none';
-                if (authRight) authRight.style.display = 'flex';
-                if (loginForm) loginForm.style.display = 'none';
+                if (authLeft) authLeft.style.display = 'flex';
+                if (authRight) authRight.style.display = 'none';
+                if (loginForm) loginForm.style.display = 'block';
                 if (registerForm) registerForm.style.display = 'none';
             } else {
                 if (authLeft) authLeft.style.display = 'flex';
@@ -307,6 +328,7 @@ window.iniciarVigia = function() {
             }
             
             iniciarSliderAuth(); 
+            esconderSplashInicial();
         }
     });
 };
@@ -467,7 +489,11 @@ function abrirModalPerfil() {
         document.getElementById('modal-perfil').showModal();
         
         // Fecha o menu cascata
-        document.getElementById('menu-dropdown').classList.remove('active');
+        if (typeof fecharMenuOpcoes === 'function') {
+            fecharMenuOpcoes();
+        } else {
+            document.getElementById('menu-dropdown')?.classList.remove('active');
+        }
     }
 }
 
@@ -660,13 +686,21 @@ function carregarConfiguracoesPerfil() {
     const profileAvatar = document.getElementById('settings-profile-avatar-preview');
     const settingsAvatar = document.getElementById('settings-avatar-img');
     const headerAvatar = document.getElementById('header-avatar-img');
+    const mobileAvatar = document.getElementById('mobile-avatar-img');
+    const mobileMenuAvatar = document.getElementById('mobile-menu-avatar-img');
+    const mobileMenuName = document.getElementById('mobile-menu-user-name');
+    const mobileMenuEmail = document.getElementById('mobile-menu-user-email');
 
     if (settingsName) settingsName.textContent = nomeCompleto;
     if (settingsEmail) settingsEmail.textContent = user.email || '';
     if (securityEmail) securityEmail.textContent = user.email || '';
+    if (mobileMenuName) mobileMenuName.textContent = nomeCompleto;
+    if (mobileMenuEmail) mobileMenuEmail.textContent = user.email || '';
     if (profileAvatar) profileAvatar.src = avatar;
     if (settingsAvatar) settingsAvatar.src = avatar;
     if (headerAvatar) headerAvatar.src = avatar;
+    if (mobileAvatar) mobileAvatar.src = avatar;
+    if (mobileMenuAvatar) mobileMenuAvatar.src = avatar;
 
     const modoIA = salsiData.config?.modoIA || 'calendario';
     const selectModoAntigo = document.getElementById('perfil-modo-ia');
@@ -882,7 +916,9 @@ function atualizarPreviewAvatarPerfil(url) {
     const ids = [
         'settings-profile-avatar-preview',
         'settings-avatar-img',
-        'header-avatar-img'
+        'header-avatar-img',
+        'mobile-avatar-img',
+        'mobile-menu-avatar-img'
     ];
 
     ids.forEach(id => {
