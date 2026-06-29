@@ -28,14 +28,46 @@
 <script>
     (function () {
         try {
+            function hojeLocal() {
+                var agora = new Date();
+                return agora.getFullYear() + '-' + String(agora.getMonth() + 1).padStart(2, '0') + '-' + String(agora.getDate()).padStart(2, '0');
+            }
+
+            function minutos(valor, fallback) {
+                var partes = String(valor || fallback).split(':').map(Number);
+                return Math.max(0, Math.min(1439, ((partes[0] || 0) * 60) + (partes[1] || 0)));
+            }
+
+            function noTurno(inicio, fim) {
+                var agora = new Date();
+                var atual = agora.getHours() * 60 + agora.getMinutes();
+                var ini = minutos(inicio, '18:00');
+                var end = minutos(fim, '06:00');
+                if (ini === end) return true;
+                return ini < end ? atual >= ini && atual < end : atual >= ini || atual < end;
+            }
+
             var tema = localStorage.getItem('guget_tema_preferido') || 'light';
             var cache = localStorage.getItem('salsifin_cache');
             if (cache) {
                 var dados = JSON.parse(cache);
-                tema = (dados && dados.config && dados.config.tema) || tema;
+                var config = (dados && dados.config) || {};
+                var modo = config.modoTema || 'manual';
+                var override = JSON.parse(localStorage.getItem('guget_tema_override_diario') || 'null');
+
+                if (modo !== 'manual' && override && override.data === hojeLocal()) {
+                    tema = override.tema === 'dark' ? 'dark' : 'light';
+                } else if (modo === 'system') {
+                    tema = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                } else if (modo === 'schedule') {
+                    tema = noTurno(config.temaTurnoInicio, config.temaTurnoFim) ? 'dark' : 'light';
+                } else {
+                    tema = config.temaManual || config.tema || tema;
+                }
             }
             if (tema === 'dark') {
                 document.getElementById('app-loading-screen').classList.add('is-dark');
+                document.body.classList.add('dark-theme');
             }
         } catch (error) {}
     })();
@@ -697,12 +729,12 @@
         <div>
             <span class="calendar-kicker">Visão mensal</span>
             <h2 id="calendar-title">Calendário financeiro</h2>
-            <p>Veja seus gastos organizados por dia no mês selecionado.</p>
+            <p>Veja gastos, terceiros e entradas organizados por dia no mês selecionado.</p>
         </div>
 
         <div class="calendar-summary">
             <div>
-                <span>Total de gastos</span>
+                <span id="calendar-total-label">Total de gastos</span>
                 <strong id="calendar-total-gastos">R$ 0,00</strong>
             </div>
             <div>
@@ -710,6 +742,29 @@
                 <strong id="calendar-dias-movimento">0</strong>
             </div>
         </div>
+    </div>
+
+    <div class="calendar-filter-bar" role="tablist" aria-label="Filtro do calendário">
+        <button type="button" class="calendar-filter-btn active" data-calendar-filter="todos" onclick="selecionarFiltroCalendario('todos')">
+            <i class="fi fi-rr-apps"></i>
+            <span>Tudo</span>
+        </button>
+        <button type="button" class="calendar-filter-btn" data-calendar-filter="gastos" onclick="selecionarFiltroCalendario('gastos')">
+            <i class="fi fi-rr-receipt"></i>
+            <span>Gastos</span>
+        </button>
+        <button type="button" class="calendar-filter-btn" data-calendar-filter="terceiros" onclick="selecionarFiltroCalendario('terceiros')">
+            <i class="fi fi-rr-users-alt"></i>
+            <span>Gasto de terceiros</span>
+        </button>
+        <button type="button" class="calendar-filter-btn" data-calendar-filter="entradas" onclick="selecionarFiltroCalendario('entradas')">
+            <i class="fi fi-rr-arrow-trend-up"></i>
+            <span>Entradas</span>
+        </button>
+        <button type="button" class="calendar-expand-all-btn" id="calendar-expand-all-btn" onclick="alternarTodosDiasCalendario()">
+            <i class="fi fi-rr-expand"></i>
+            <span>Abrir tudo</span>
+        </button>
     </div>
 
     <div class="calendar-weekdays">
@@ -936,15 +991,51 @@
                         </div>
 
                         <div class="settings-card-list">
-                            <div class="settings-toggle-row">
-                                <div>
-                                    <strong>Modo noturno</strong>
-                                    <span>Alterna a interface entre tema claro e escuro.</span>
+                            <div class="settings-theme-card">
+                                <div class="settings-theme-head">
+                                    <div>
+                                        <strong>Modo de aparência</strong>
+                                        <span>Escolha como o GugetFin decide entre tema claro e noturno.</span>
+                                    </div>
                                 </div>
-                                <label class="switch">
-                                    <input type="checkbox" id="settings-theme-toggle" onchange="toggleTema(this)">
-                                    <span class="slider-switch"></span>
+
+                                <label class="settings-field">
+                                    <span>Comportamento</span>
+                                    <select id="settings-theme-mode" onchange="salvarPreferenciasTema()">
+                                        <option value="manual">Manual</option>
+                                        <option value="schedule">Por horário</option>
+                                        <option value="system">Tema do dispositivo</option>
+                                    </select>
                                 </label>
+
+                                <div class="settings-toggle-row settings-theme-manual-row" id="settings-theme-manual-row">
+                                    <div>
+                                        <strong>Tema fixo</strong>
+                                        <span>Use esta opção quando quiser manter claro ou noturno sempre.</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="settings-theme-toggle" onchange="toggleTema(this)">
+                                        <span class="slider-switch"></span>
+                                    </label>
+                                </div>
+
+                                <div class="settings-theme-schedule" id="settings-theme-schedule">
+                                    <div class="settings-theme-time-grid">
+                                        <label class="settings-field">
+                                            <span>Modo noturno começa</span>
+                                            <input type="time" id="settings-theme-start" value="18:00" onchange="salvarPreferenciasTema()">
+                                        </label>
+                                        <label class="settings-field">
+                                            <span>Modo noturno termina</span>
+                                            <input type="time" id="settings-theme-end" value="06:00" onchange="salvarPreferenciasTema()">
+                                        </label>
+                                    </div>
+                                    <p>Fora desse intervalo, o app usa o tema claro automaticamente.</p>
+                                </div>
+
+                                <p class="settings-theme-note" id="settings-theme-note">
+                                    O botão rápido no topo pode mudar o tema temporariamente. Em modos automáticos, a regra escolhida volta a valer no próximo dia.
+                                </p>
                             </div>
 
                             <label class="settings-field">

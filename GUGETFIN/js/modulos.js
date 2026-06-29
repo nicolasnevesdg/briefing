@@ -652,14 +652,103 @@ function confirmarImportacao() {
 // MÓDULO: MODO NOTURNO (DARK THEME)
 // ==========================================
 
+const TEMA_OVERRIDE_KEY = 'guget_tema_override_diario';
+let temaSystemListenerRegistrado = false;
+let temaScheduleTimer = null;
+
+function obterDataLocalTema() {
+    const agora = new Date();
+    const ano = agora.getFullYear();
+    const mes = String(agora.getMonth() + 1).padStart(2, '0');
+    const dia = String(agora.getDate()).padStart(2, '0');
+    return `${ano}-${mes}-${dia}`;
+}
+
+function obterConfigTemaConta() {
+    if (!salsiData.config) salsiData.config = {};
+
+    const temaManual = salsiData.config.temaManual || salsiData.config.tema || 'light';
+    return {
+        modo: salsiData.config.modoTema || 'manual',
+        temaManual: temaManual === 'dark' ? 'dark' : 'light',
+        inicio: salsiData.config.temaTurnoInicio || '18:00',
+        fim: salsiData.config.temaTurnoFim || '06:00'
+    };
+}
+
+function horaTemaParaMinutos(valor, fallback) {
+    const partes = String(valor || fallback).split(':').map(Number);
+    const horas = Number.isFinite(partes[0]) ? partes[0] : 0;
+    const minutos = Number.isFinite(partes[1]) ? partes[1] : 0;
+    return Math.max(0, Math.min(1439, horas * 60 + minutos));
+}
+
+function estaDentroDoTurnoNoturno(inicio, fim, agora = new Date()) {
+    const atual = agora.getHours() * 60 + agora.getMinutes();
+    const ini = horaTemaParaMinutos(inicio, '18:00');
+    const end = horaTemaParaMinutos(fim, '06:00');
+
+    if (ini === end) return true;
+    if (ini < end) return atual >= ini && atual < end;
+    return atual >= ini || atual < end;
+}
+
+function obterTemaSistema() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function obterOverrideTemaDiario() {
+    try {
+        const override = JSON.parse(localStorage.getItem(TEMA_OVERRIDE_KEY) || 'null');
+        if (!override || override.data !== obterDataLocalTema()) {
+            localStorage.removeItem(TEMA_OVERRIDE_KEY);
+            return null;
+        }
+        return override.tema === 'dark' ? 'dark' : 'light';
+    } catch (error) {
+        localStorage.removeItem(TEMA_OVERRIDE_KEY);
+        return null;
+    }
+}
+
+function salvarOverrideTemaDiario(tema) {
+    localStorage.setItem(TEMA_OVERRIDE_KEY, JSON.stringify({
+        tema: tema === 'dark' ? 'dark' : 'light',
+        data: obterDataLocalTema()
+    }));
+}
+
+function limparOverrideTemaDiario() {
+    localStorage.removeItem(TEMA_OVERRIDE_KEY);
+}
+
+function calcularTemaPreferido({ ignorarOverride = false } = {}) {
+    const config = obterConfigTemaConta();
+
+    if (!ignorarOverride && config.modo !== 'manual') {
+        const override = obterOverrideTemaDiario();
+        if (override) return override;
+    }
+
+    if (config.modo === 'system') return obterTemaSistema();
+    if (config.modo === 'schedule') return estaDentroDoTurnoNoturno(config.inicio, config.fim) ? 'dark' : 'light';
+    return config.temaManual;
+}
+
 function toggleTema(origemEl) {
     const toggleAntigo = document.getElementById('theme-toggle');
     const toggleNovo = document.getElementById('settings-theme-toggle');
     const origem = origemEl || toggleNovo || toggleAntigo;
     const isDark = origem ? origem.checked : !document.body.classList.contains('dark-theme');
+    const tema = isDark ? 'dark' : 'light';
+    const config = obterConfigTemaConta();
 
-    aplicarTemaConta(isDark);
-    salvarTemaConta(isDark);
+    if (config.modo === 'manual') {
+        salvarTemaConta(isDark);
+    } else {
+        salvarOverrideTemaDiario(tema);
+        aplicarTemaConta(isDark);
+    }
 }
 
 function atualizarBotaoTemaTopo(isDark = document.body.classList.contains('dark-theme')) {
@@ -672,9 +761,14 @@ function atualizarBotaoTemaTopo(isDark = document.body.classList.contains('dark-
 
 function alternarTemaTopo() {
     const isDark = !document.body.classList.contains('dark-theme');
+    const config = obterConfigTemaConta();
 
-    aplicarTemaConta(isDark);
-    salvarTemaConta(isDark);
+    if (config.modo === 'manual') {
+        salvarTemaConta(isDark);
+    } else {
+        salvarOverrideTemaDiario(isDark ? 'dark' : 'light');
+        aplicarTemaConta(isDark);
+    }
 }
 
 function aplicarTemaConta(isDark) {
@@ -690,6 +784,7 @@ function aplicarTemaConta(isDark) {
     if (toggleEl) toggleEl.checked = isDark;
     if (toggleNovo) toggleNovo.checked = isDark;
     atualizarBotaoTemaTopo(isDark);
+    atualizarInterfaceTemaSettings();
 
     setTimeout(() => {
         if (typeof atualizarGraficoAnual === 'function') atualizarGraficoAnual();
@@ -699,19 +794,133 @@ function aplicarTemaConta(isDark) {
 
 function salvarTemaConta(isDark) {
     if (!salsiData.config) salsiData.config = {};
-    salsiData.config.tema = isDark ? 'dark' : 'light';
-    localStorage.setItem('guget_tema_preferido', salsiData.config.tema);
+    const tema = isDark ? 'dark' : 'light';
+    salsiData.config.modoTema = 'manual';
+    salsiData.config.temaManual = tema;
+    salsiData.config.tema = tema;
+    limparOverrideTemaDiario();
+    localStorage.setItem('guget_tema_preferido', tema);
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+    aplicarTemaConta(isDark);
 
     if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
 }
 
 function carregarTemaPreferido() {
     const userLogado = !!(window.auth && window.auth.currentUser);
-    const temaSalvo = userLogado ? (salsiData?.config?.tema || 'light') : 'light';
+    const temaSalvo = userLogado ? calcularTemaPreferido() : 'light';
 
     localStorage.setItem('guget_tema_preferido', temaSalvo);
     aplicarTemaConta(temaSalvo === 'dark');
+    configurarAtualizacaoAutomaticaTema();
+}
+
+function atualizarInterfaceTemaSettings() {
+    const config = obterConfigTemaConta();
+    const modeEl = document.getElementById('settings-theme-mode');
+    const startEl = document.getElementById('settings-theme-start');
+    const endEl = document.getElementById('settings-theme-end');
+    const scheduleEl = document.getElementById('settings-theme-schedule');
+    const manualEl = document.getElementById('settings-theme-manual-row');
+    const noteEl = document.getElementById('settings-theme-note');
+
+    if (modeEl && modeEl.value !== config.modo) modeEl.value = config.modo;
+    if (startEl && startEl.value !== config.inicio) startEl.value = config.inicio;
+    if (endEl && endEl.value !== config.fim) endEl.value = config.fim;
+
+    if (scheduleEl) scheduleEl.style.display = config.modo === 'schedule' ? 'block' : 'none';
+    if (manualEl) manualEl.style.display = config.modo === 'manual' ? 'flex' : 'none';
+
+    if (noteEl) {
+        if (config.modo === 'manual') {
+            noteEl.textContent = 'No modo manual, o botão rápido altera e salva a aparência fixa da conta.';
+        } else if (config.modo === 'system') {
+            noteEl.textContent = 'O app segue o tema do dispositivo. O botão rápido vale como ajuste temporário até o próximo dia.';
+        } else {
+            noteEl.textContent = 'O app troca automaticamente conforme o intervalo definido. O botão rápido vale como ajuste temporário até o próximo dia.';
+        }
+    }
+}
+
+async function salvarPreferenciasTema() {
+    if (!salsiData.config) salsiData.config = {};
+
+    const modeEl = document.getElementById('settings-theme-mode');
+    const toggleEl = document.getElementById('settings-theme-toggle');
+    const startEl = document.getElementById('settings-theme-start');
+    const endEl = document.getElementById('settings-theme-end');
+
+    const modo = modeEl?.value || 'manual';
+    const temaManual = toggleEl?.checked ? 'dark' : 'light';
+
+    salsiData.config.modoTema = modo;
+    salsiData.config.temaManual = temaManual;
+    salsiData.config.temaTurnoInicio = startEl?.value || '18:00';
+    salsiData.config.temaTurnoFim = endEl?.value || '06:00';
+    limparOverrideTemaDiario();
+
+    const temaEfetivo = calcularTemaPreferido({ ignorarOverride: true });
+    salsiData.config.tema = temaEfetivo;
+    localStorage.setItem('guget_tema_preferido', temaEfetivo);
+    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+
+    aplicarTemaConta(temaEfetivo === 'dark');
+    configurarAtualizacaoAutomaticaTema();
+
+    if (window.auth?.currentUser && window.updateDoc && window.doc) {
+        try {
+            await window.updateDoc(window.doc(window.db, 'usuarios', window.auth.currentUser.uid), {
+                'dados.config.modoTema': salsiData.config.modoTema,
+                'dados.config.temaManual': salsiData.config.temaManual,
+                'dados.config.temaTurnoInicio': salsiData.config.temaTurnoInicio,
+                'dados.config.temaTurnoFim': salsiData.config.temaTurnoFim,
+                'dados.config.tema': salsiData.config.tema
+            });
+            return;
+        } catch (error) {
+            console.error('Erro ao salvar preferências de tema:', error);
+        }
+    }
+
+    if (typeof salvarNoFirebase === 'function') await salvarNoFirebase();
+}
+
+function reavaliarTemaAutomatico() {
+    if (!window.auth?.currentUser) return;
+    const tema = calcularTemaPreferido();
+    if (!salsiData.config) salsiData.config = {};
+    salsiData.config.tema = tema;
+    localStorage.setItem('guget_tema_preferido', tema);
+    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+    aplicarTemaConta(tema === 'dark');
+}
+
+function configurarAtualizacaoAutomaticaTema() {
+    const config = obterConfigTemaConta();
+
+    if (temaScheduleTimer) {
+        clearInterval(temaScheduleTimer);
+        temaScheduleTimer = null;
+    }
+
+    if (config.modo !== 'manual') {
+        temaScheduleTimer = setInterval(reavaliarTemaAutomatico, 60000);
+    }
+
+    if (!temaSystemListenerRegistrado && window.matchMedia) {
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const listener = () => {
+            if (obterConfigTemaConta().modo === 'system') reavaliarTemaAutomatico();
+        };
+
+        if (typeof media.addEventListener === 'function') {
+            media.addEventListener('change', listener);
+        } else if (typeof media.addListener === 'function') {
+            media.addListener(listener);
+        }
+
+        temaSystemListenerRegistrado = true;
+    }
 }
 
 // ==========================================
@@ -1140,13 +1349,50 @@ function formatarMoedaCalendario(valor) {
     });
 }
 
+let filtroCalendarioFinanceiro = 'todos';
+let calendarioTodosDiasAbertos = false;
+
 function criarDataLocalCalendario(dataString) {
     if (!dataString) return null;
     return new Date(dataString + 'T12:00:00');
 }
 
-function obterGastosDoMesCalendario(mes, ano) {
-    if (!salsiData || !Array.isArray(salsiData.transacoes)) return [];
+function gastoEhDeTerceiroCalendario(transacao) {
+    return transacao?.eDeTerceiro === true || !!transacao?.nomeTerceiro || !!transacao?.terceiro;
+}
+
+function obterEntradasDoMesCalendario(mes, ano) {
+    if (!salsiData || !Array.isArray(salsiData.entradas)) return [];
+
+    return salsiData.entradas
+        .map((entrada, index) => {
+            const data = criarDataLocalCalendario(
+                entrada.dataRecebimento ||
+                entrada.data ||
+                (Number.isInteger(entrada.ano) && Number.isInteger(entrada.mes)
+                    ? `${entrada.ano}-${String(entrada.mes + 1).padStart(2, '0')}-01`
+                    : '')
+            );
+
+            if (!data) return null;
+            if (data.getMonth() !== mes || data.getFullYear() !== ano) return null;
+
+            return {
+                index,
+                nome: entrada.nome || 'Entrada sem nome',
+                valor: Number(entrada.valor || 0),
+                banco: entrada.cliente || '',
+                categoria: entrada.categoria || 'Entrada',
+                data,
+                dia: data.getDate(),
+                tipo: 'entrada'
+            };
+        })
+        .filter(Boolean);
+}
+
+function obterGastosDoMesCalendario(mes, ano, filtro = 'todos') {
+    if (!Array.isArray(salsiData.transacoes)) return [];
 
     return salsiData.transacoes
         .map((t, index) => {
@@ -1154,6 +1400,11 @@ function obterGastosDoMesCalendario(mes, ano) {
             if (!data) return null;
 
             if (data.getMonth() !== mes || data.getFullYear() !== ano) return null;
+            const isTerceiro = gastoEhDeTerceiroCalendario(t);
+
+            if (filtro === 'terceiros' && !isTerceiro) return null;
+            if (filtro === 'gastos' && isTerceiro) return null;
+            if (filtro === 'entradas') return null;
 
             return {
                 index,
@@ -1163,13 +1414,103 @@ function obterGastosDoMesCalendario(mes, ano) {
                 categoria: t.categoria || '',
                 data,
                 dia: data.getDate(),
-                tipo: t.tipo || 'gasto'
+                tipo: isTerceiro ? 'terceiro' : (t.tipo || 'gasto')
             };
         })
         .filter(Boolean);
 }
 
+function obterItensDoMesCalendario(mes, ano) {
+    if (!salsiData) return [];
+    const filtro = filtroCalendarioFinanceiro || 'todos';
+    const entradas = filtro === 'todos' || filtro === 'entradas'
+        ? obterEntradasDoMesCalendario(mes, ano)
+        : [];
+    const gastos = filtro === 'entradas'
+        ? []
+        : obterGastosDoMesCalendario(mes, ano, filtro);
+
+    return [...gastos, ...entradas].sort((itemA, itemB) => {
+        const dataDiff = itemA.data - itemB.data;
+        if (dataDiff !== 0) return dataDiff;
+        return String(itemA.nome || '').localeCompare(String(itemB.nome || ''), 'pt-BR');
+    });
+}
+
+function obterMetaFiltroCalendario() {
+    const metas = {
+        todos: {
+            titulo: 'Tudo',
+            total: 'Total do período',
+            mais: 'movimento',
+            vazio: 'Nenhum movimento neste dia.'
+        },
+        gastos: {
+            titulo: 'Gastos',
+            total: 'Total de gastos',
+            mais: 'gasto',
+            vazio: 'Nenhum gasto neste dia.'
+        },
+        terceiros: {
+            titulo: 'Gastos de terceiros',
+            total: 'Total de terceiros',
+            mais: 'gasto',
+            vazio: 'Nenhum gasto de terceiro neste dia.'
+        },
+        entradas: {
+            titulo: 'Entradas',
+            total: 'Total de entradas',
+            mais: 'entrada',
+            vazio: 'Nenhuma entrada neste dia.'
+        }
+    };
+
+    return metas[filtroCalendarioFinanceiro] || metas.todos;
+}
+
+function selecionarFiltroCalendario(filtro) {
+    const filtrosValidos = ['todos', 'gastos', 'terceiros', 'entradas'];
+    filtroCalendarioFinanceiro = filtrosValidos.includes(filtro) ? filtro : 'todos';
+    calendarioTodosDiasAbertos = false;
+
+    document.querySelectorAll('[data-calendar-filter]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.calendarFilter === filtroCalendarioFinanceiro);
+    });
+
+    const mes = window.calendarioMesAtual ?? (typeof m !== 'undefined' ? m : new Date().getMonth());
+    const ano = window.calendarioAnoAtual ?? (typeof a !== 'undefined' ? a : new Date().getFullYear());
+    renderizarCalendarioFinanceiro(mes, ano);
+}
+
+function atualizarBotaoExpandirCalendario() {
+    const btn = document.getElementById('calendar-expand-all-btn');
+    if (!btn) return;
+
+    btn.classList.toggle('active', calendarioTodosDiasAbertos);
+    btn.innerHTML = calendarioTodosDiasAbertos
+        ? '<i class="fi fi-rr-compress"></i><span>Recolher tudo</span>'
+        : '<i class="fi fi-rr-expand"></i><span>Abrir tudo</span>';
+}
+
+function alternarTodosDiasCalendario() {
+    calendarioTodosDiasAbertos = !calendarioTodosDiasAbertos;
+    const mes = window.calendarioMesAtual ?? (typeof m !== 'undefined' ? m : new Date().getMonth());
+    const ano = window.calendarioAnoAtual ?? (typeof a !== 'undefined' ? a : new Date().getFullYear());
+    renderizarCalendarioFinanceiro(mes, ano);
+}
+
+function abrirItemCalendario(itemTipo, index) {
+    if (itemTipo === 'entrada') {
+        if (typeof verDetalhesEntrada === 'function') verDetalhesEntrada(index);
+        return;
+    }
+
+    if (typeof verDetalhes === 'function') verDetalhes(index);
+}
+
 function renderizarCalendarioFinanceiro(mes, ano) {
+    window.calendarioMesAtual = mes;
+    window.calendarioAnoAtual = ano;
     const grid = document.getElementById('financial-calendar-grid');
     if (!grid) return;
 
@@ -1179,29 +1520,33 @@ function renderizarCalendarioFinanceiro(mes, ano) {
     ];
 
     const title = document.getElementById('calendar-title');
+    const metaFiltro = obterMetaFiltroCalendario();
     if (title) {
-        title.textContent = `Calendário financeiro — ${nomesMeses[mes]} ${ano}`;
+        title.textContent = `${metaFiltro.titulo} — ${nomesMeses[mes]} ${ano}`;
     }
+    atualizarBotaoExpandirCalendario();
 
     const primeiroDia = new Date(ano, mes, 1);
     const ultimoDia = new Date(ano, mes + 1, 0);
     const totalDias = ultimoDia.getDate();
     const inicioSemana = primeiroDia.getDay();
 
-    const gastos = obterGastosDoMesCalendario(mes, ano);
+    const itensCalendario = obterItensDoMesCalendario(mes, ano);
 
-    const gastosPorDia = {};
-    gastos.forEach(gasto => {
-        if (!gastosPorDia[gasto.dia]) gastosPorDia[gasto.dia] = [];
-        gastosPorDia[gasto.dia].push(gasto);
+    const itensPorDia = {};
+    itensCalendario.forEach(item => {
+        if (!itensPorDia[item.dia]) itensPorDia[item.dia] = [];
+        itensPorDia[item.dia].push(item);
     });
 
-    const totalMes = gastos.reduce((acc, item) => acc + item.valor, 0);
-    const diasComMovimento = Object.keys(gastosPorDia).length;
+    const totalMes = itensCalendario.reduce((acc, item) => acc + item.valor, 0);
+    const diasComMovimento = Object.keys(itensPorDia).length;
 
     const totalEl = document.getElementById('calendar-total-gastos');
+    const totalLabelEl = document.getElementById('calendar-total-label');
     const diasEl = document.getElementById('calendar-dias-movimento');
 
+    if (totalLabelEl) totalLabelEl.textContent = metaFiltro.total;
     if (totalEl) totalEl.textContent = formatarMoedaCalendario(totalMes);
     if (diasEl) diasEl.textContent = diasComMovimento;
 
@@ -1215,7 +1560,7 @@ function renderizarCalendarioFinanceiro(mes, ano) {
     }
 
     for (let dia = 1; dia <= totalDias; dia++) {
-        const itens = gastosPorDia[dia] || [];
+        const itens = itensPorDia[dia] || [];
         const totalDia = itens.reduce((acc, item) => acc + item.valor, 0);
         const isToday = isMesAtual && hoje.getDate() === dia;
 
@@ -1223,7 +1568,7 @@ function renderizarCalendarioFinanceiro(mes, ano) {
 
 html += `
     <div 
-        class="calendar-day ${isToday ? 'is-today' : ''} ${itens.length > 3 ? 'has-hidden-items' : ''}"
+        class="calendar-day ${isToday ? 'is-today' : ''} ${itens.length > 3 ? 'has-hidden-items' : ''} ${calendarioTodosDiasAbertos && itens.length > 3 ? 'is-expanded' : ''}"
         onclick="alternarDiaCalendario(event, this)"
         onmouseleave="programarFechamentoDiaCalendario(this)"
         onmouseenter="cancelarFechamentoDiaCalendario()"
@@ -1236,8 +1581,8 @@ html += `
         <div class="calendar-items">
             ${itens.map((item, itemIndex) => `
                 <div 
-                    class="calendar-item ${itemIndex >= 3 ? 'calendar-item-extra' : ''}" 
-                    onclick="event.stopPropagation(); verDetalhes(${item.index})" 
+                    class="calendar-item calendar-item-${item.tipo} ${itemIndex >= 3 ? 'calendar-item-extra' : ''}" 
+                    onclick="event.stopPropagation(); abrirItemCalendario('${item.tipo}', ${item.index})" 
                     title="${item.nome}"
                 >
                     <span class="calendar-item-name">${item.nome}</span>
@@ -1245,7 +1590,7 @@ html += `
                 </div>
             `).join('')}
 
-            ${restante > 0 ? `<button type="button" class="calendar-more" onclick="event.stopPropagation(); alternarDiaCalendario(event, this.closest('.calendar-day'))">+${restante} gasto${restante > 1 ? 's' : ''}</button>` : ''}
+            ${restante > 0 ? `<button type="button" class="calendar-more" onclick="event.stopPropagation(); alternarDiaCalendario(event, this.closest('.calendar-day'))">+${restante} ${metaFiltro.mais}${restante > 1 ? 's' : ''}</button>` : ''}
         </div>
     </div>
 `;
@@ -1261,6 +1606,8 @@ html += `
 let timerFecharDiaCalendario = null;
 
 function fecharDiaCalendario() {
+    if (calendarioTodosDiasAbertos) return;
+
     document.querySelectorAll('.calendar-day.is-expanded').forEach(day => {
         day.classList.remove('is-expanded');
     });
@@ -1268,6 +1615,7 @@ function fecharDiaCalendario() {
 
 function alternarDiaCalendario(event, dayElement) {
     if (!dayElement || !dayElement.classList.contains('calendar-day')) return;
+    if (calendarioTodosDiasAbertos) return;
 
     const temItensOcultos = dayElement.classList.contains('has-hidden-items');
     if (!temItensOcultos) return;
@@ -1282,6 +1630,7 @@ function alternarDiaCalendario(event, dayElement) {
 }
 
 function programarFechamentoDiaCalendario(dayElement) {
+    if (calendarioTodosDiasAbertos) return;
     if (!dayElement || !dayElement.classList.contains('is-expanded')) return;
 
     cancelarFechamentoDiaCalendario();
@@ -1299,6 +1648,7 @@ function cancelarFechamentoDiaCalendario() {
 }
 
 document.addEventListener('click', function(event) {
+    if (calendarioTodosDiasAbertos) return;
     const clicouEmDia = event.target.closest('.calendar-day');
 
     if (!clicouEmDia) {

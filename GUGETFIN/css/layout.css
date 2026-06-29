@@ -2066,6 +2066,83 @@ main.settings-mode #settings-view {
     font-weight: 900;
 }
 
+.calendar-filter-bar {
+    width: fit-content;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 20px 0;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--sidebar-bg);
+    overflow-x: auto;
+}
+
+.calendar-filter-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.calendar-filter-btn {
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text-sec);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 850;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.calendar-filter-btn i,
+.calendar-expand-all-btn i {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.calendar-filter-btn:hover,
+.calendar-filter-btn.active {
+    background: rgba(108, 192, 128, 0.12);
+    border-color: rgba(108, 192, 128, 0.20);
+    color: var(--dark-green);
+}
+
+.calendar-expand-all-btn {
+    min-height: 38px;
+    margin-left: 4px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-app);
+    color: var(--text-sec);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 850;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.calendar-expand-all-btn:hover,
+.calendar-expand-all-btn.active {
+    background: var(--dark-green);
+    border-color: var(--dark-green);
+    color: #ffffff;
+}
+
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -2176,6 +2253,24 @@ main.settings-mode #settings-view {
     font-size: 11px;
     font-weight: 900;
     white-space: nowrap;
+}
+
+.calendar-item-entrada {
+    background: rgba(16, 185, 129, 0.10);
+    border-color: rgba(16, 185, 129, 0.16);
+}
+
+.calendar-item-entrada .calendar-item-value {
+    color: #10b981;
+}
+
+.calendar-item-terceiro {
+    background: rgba(245, 158, 11, 0.10);
+    border-color: rgba(245, 158, 11, 0.16);
+}
+
+.calendar-item-terceiro .calendar-item-value {
+    color: #d97706;
 }
 
 .calendar-more {
@@ -2911,6 +3006,82 @@ main.settings-mode #settings-view {
     color: var(--text-sec);
     font-size: 12px;
     font-weight: 600;
+}
+
+.settings-theme-card {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-app);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-theme-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.settings-theme-head strong,
+.settings-theme-head span {
+    display: block;
+}
+
+.settings-theme-head strong {
+    color: var(--text-main);
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.settings-theme-head span {
+    margin-top: 5px;
+    color: var(--text-sec);
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 650;
+}
+
+.settings-theme-card .settings-toggle-row {
+    min-height: 68px;
+    padding: 15px;
+    border-radius: 14px;
+    background: var(--sidebar-bg);
+}
+
+.settings-theme-time-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.settings-theme-schedule {
+    display: none;
+}
+
+.settings-theme-schedule p,
+.settings-theme-note {
+    margin: 0;
+    color: var(--text-sec);
+    font-size: 12px;
+    line-height: 1.45;
+    font-weight: 650;
+}
+
+.settings-theme-note {
+    padding-top: 2px;
+}
+
+@media (max-width: 720px) {
+    .settings-theme-time-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-theme-card .settings-toggle-row {
+        align-items: flex-start;
+    }
 }
 
 .settings-action-grid {

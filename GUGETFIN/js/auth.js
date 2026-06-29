@@ -813,6 +813,14 @@ function carregarConfiguracoesPerfil() {
     if (themeToggleAntigo) themeToggleAntigo.checked = temaEscuro;
     if (themeToggleNovo) themeToggleNovo.checked = temaEscuro;
 
+    const themeMode = document.getElementById('settings-theme-mode');
+    const themeStart = document.getElementById('settings-theme-start');
+    const themeEnd = document.getElementById('settings-theme-end');
+    if (themeMode) themeMode.value = salsiData.config?.modoTema || 'manual';
+    if (themeStart) themeStart.value = salsiData.config?.temaTurnoInicio || '18:00';
+    if (themeEnd) themeEnd.value = salsiData.config?.temaTurnoFim || '06:00';
+    if (typeof atualizarInterfaceTemaSettings === 'function') atualizarInterfaceTemaSettings();
+
     const caixinhaToggle = document.getElementById('settings-show-caixinha-dashboard');
     if (caixinhaToggle) caixinhaToggle.checked = salsiData.config?.mostrarCaixinhaDashboard === true;
     if (typeof atualizarCardCaixinhaDashboard === 'function') atualizarCardCaixinhaDashboard();

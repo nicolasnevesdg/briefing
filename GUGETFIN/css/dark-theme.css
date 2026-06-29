@@ -680,6 +680,40 @@ body.dark-theme .calendar-item {
     border-color: var(--border);
 }
 
+body.dark-theme .calendar-filter-bar {
+    background: #171a20;
+    border-color: var(--border);
+}
+
+body.dark-theme .calendar-filter-btn:hover,
+body.dark-theme .calendar-filter-btn.active {
+    background: rgba(95, 211, 162, 0.14);
+    border-color: rgba(95, 211, 162, 0.20);
+    color: var(--acc-green);
+}
+
+body.dark-theme .calendar-expand-all-btn {
+    background: #11161c;
+    border-color: var(--border);
+}
+
+body.dark-theme .calendar-expand-all-btn:hover,
+body.dark-theme .calendar-expand-all-btn.active {
+    background: var(--acc-green);
+    border-color: rgba(255,255,255,0.04);
+    color: #ffffff;
+}
+
+body.dark-theme .calendar-item-entrada {
+    background: rgba(52, 211, 153, 0.10);
+    border-color: rgba(52, 211, 153, 0.16);
+}
+
+body.dark-theme .calendar-item-terceiro {
+    background: rgba(245, 158, 11, 0.11);
+    border-color: rgba(245, 158, 11, 0.18);
+}
+
 body.dark-theme .calendar-day.is-today {
     box-shadow: 0 0 0 3px rgba(95, 211, 162, 0.08);
 }
@@ -749,6 +783,7 @@ body.dark-theme .settings-wallet-card,
 body.dark-theme .settings-categories-card,
 body.dark-theme .wallet-page-form,
 body.dark-theme .subscription-invite-card,
+body.dark-theme .settings-theme-card,
 body.dark-theme .settings-toggle-row,
 body.dark-theme .settings-action-card,
 body.dark-theme .settings-google-status-row,
