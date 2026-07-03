@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GugetFin | Configuração inicial</title>
+    <meta name="theme-color" content="#025638">
+    <script>document.documentElement.classList.add('dark-theme', 'guget-fixed-dark-page');</script>
+    <style id="guget-fixed-dark-prepaint">
+        html, body { background: #090b0f; color: #f8fafc; }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/onboarding.css">
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+</head>
+<body class="onboarding-body dark-theme guget-fixed-dark-page">
+<div id="app-loading-screen" class="app-loading-screen is-dark is-hidden" style="display: none;" role="status" aria-live="polite" aria-label="Carregando sua conta">
+    <div class="app-loading-glow" aria-hidden="true"></div>
+    <div class="app-loading-card">
+        <img class="app-loading-logo app-loading-logo-positive" src="assets/logo-positive.svg" alt="GugetFin">
+        <img class="app-loading-logo app-loading-logo-negative" src="assets/logo-negative.svg" alt="GugetFin">
+        <img class="app-loading-dots" src="assets/loading-dots-gugetfin.svg" alt="" aria-hidden="true">
+        <span>Carregando sua conta...</span>
+    </div>
+</div>
+
+<script>
+    (function () {
+        window.gugetShowPageLoader = function (texto) {
+            var splash = document.getElementById('app-loading-screen');
+            if (!splash) return;
+            var label = splash.querySelector('.app-loading-card span');
+            if (label && texto) label.textContent = texto;
+            splash.style.display = 'flex';
+            splash.classList.add('is-dark');
+            requestAnimationFrame(function () {
+                splash.classList.remove('is-hidden');
+            });
+        };
+
+        window.gugetNavigateWithLoader = function (url, texto) {
+            window.gugetShowPageLoader(texto || 'Carregando sua conta...');
+            try { sessionStorage.setItem('guget_show_dashboard_loader', '1'); } catch (e) {}
+            setTimeout(function () { window.location.href = url; }, 80);
+        };
+
+        document.addEventListener('click', function (event) {
+            var link = event.target.closest && event.target.closest('a[href]');
+            if (!link || event.defaultPrevented || link.target === '_blank') return;
+
+            var href = link.getAttribute('href') || '';
+            if (!href || /^(mailto:|tel:|#|javascript:)/i.test(href)) return;
+
+            var url;
+            try { url = new URL(href, window.location.href); } catch (e) { return; }
+            if (url.origin !== window.location.origin) return;
+
+            var file = (url.pathname.split('/').pop() || 'index.html').toLowerCase();
+            if (file === 'index.html' || file === 'onboarding.html') {
+                event.preventDefault();
+                window.gugetNavigateWithLoader(url.href, file === 'onboarding.html' ? 'Abrindo configuração inicial...' : 'Carregando sua conta...');
+            }
+        }, true);
+    })();
+</script>
+
+    <main class="onboarding-shell">
+        <header class="onboarding-header">
+            <img class="onboarding-logo onboarding-logo-positive" src="assets/logo-positive.svg" alt="GugetFin">
+            <img class="onboarding-logo onboarding-logo-negative" src="assets/logo-negative.svg" alt="GugetFin">
+
+            <div class="onboarding-progress-card" aria-label="Progresso da configuração">
+                <div class="onboarding-progress-meta">
+                    <span id="onboarding-progress-label">Etapa 1 de 6</span>
+                    <strong id="onboarding-progress-percent">0%</strong>
+                </div>
+                <div class="onboarding-progress-track">
+                    <i id="onboarding-progress-fill"></i>
+                </div>
+            </div>
+
+            <button type="button" class="onboarding-ghost onboarding-exit" id="onboarding-exit" onclick="gugetNavigateWithLoader('index.html', 'Carregando sua conta...')">
+                Sair
+            </button>
+        </header>
+
+        <ol class="onboarding-steps-list" id="onboarding-steps-list" aria-label="Etapas da configuração inicial">
+            <li class="active"><span>1</span> Conhecer</li>
+            <li><span>2</span> Carteira</li>
+            <li><span>3</span> Categorias</li>
+            <li><span>4</span> Perfil</li>
+            <li><span>5</span> Preferências</li>
+            <li><span>6</span> Pronto</li>
+        </ol>
+
+        <section class="onboarding-stage">
+            <section class="onboarding-step active" data-onboarding-step="0">
+                <span class="onboarding-kicker">Bem-vindo ao GugetFin</span>
+                <h1>Vamos preparar sua conta antes da Dashboard.</h1>
+                <p>Em poucos passos, você cadastra o mínimo necessário para registrar gastos, entradas e organizações sem começar por uma tela vazia.</p>
+
+                <div class="onboarding-feature-strip">
+                    <article>
+                        <i class="fi fi-rr-layout-fluid"></i>
+                        <strong>Dashboard</strong>
+                        <span>Resumo do mês sem precisar procurar informação.</span>
+                    </article>
+                    <article>
+                        <i class="fi fi-rr-calendar"></i>
+                        <strong>Calendário</strong>
+                        <span>Tudo organizado por data.</span>
+                    </article>
+                    <article>
+                        <i class="fi fi-rr-chart-pie-alt"></i>
+                        <strong>Visualizações</strong>
+                        <span>Parcelas, terceiros, dívidas e caixinha.</span>
+                    </article>
+                </div>
+            </section>
+
+            <section class="onboarding-step" data-onboarding-step="1">
+                <span class="onboarding-kicker">Carteira</span>
+                <h1>Primeiro, cadastre seus cartões.</h1>
+                <p>Todo gasto precisa de uma origem. Com pelo menos um cartão, o GugetFin já consegue organizar suas faturas e compras.</p>
+
+                <div class="onboarding-form-card">
+                    <div class="onboarding-form-grid">
+                        <label>
+                            <span>Nome do cartão</span>
+                            <input type="text" id="onboarding-card-name" placeholder="Ex.: Nubank, Itaú, Banco do Brasil" autocomplete="off">
+                        </label>
+                        <label class="onboarding-credit-field">
+                            <span>Fechamento</span>
+                            <input type="text" id="onboarding-card-close" inputmode="numeric" maxlength="2" placeholder="Dia">
+                        </label>
+                        <label class="onboarding-credit-field">
+                            <span>Vencimento</span>
+                            <input type="text" id="onboarding-card-due" inputmode="numeric" maxlength="2" placeholder="Dia">
+                        </label>
+                    </div>
+
+                    <label class="onboarding-toggle-row">
+                        <input type="checkbox" id="onboarding-card-debit" onchange="atualizarModoCartaoOnboarding()">
+                        <span class="onboarding-toggle-visual" aria-hidden="true"></span>
+                        <span class="onboarding-toggle-copy">
+                            <strong>Este cartão é apenas de débito</strong>
+                            <small>Use quando não houver fechamento ou vencimento de fatura.</small>
+                        </span>
+                    </label>
+
+                    <button type="button" class="onboarding-secondary" onclick="adicionarCartaoOnboarding()">Adicionar cartão</button>
+                </div>
+
+                <div class="onboarding-pill-list" id="onboarding-card-list"></div>
+            </section>
+
+            <section class="onboarding-step" data-onboarding-step="2">
+                <span class="onboarding-kicker">Categorias</span>
+                <h1>Agora escolha suas categorias.</h1>
+                <p>Marque as categorias que você costuma usar. Isso evita que o primeiro gasto fique travado por falta de organização.</p>
+
+                <div class="onboarding-chip-grid" id="onboarding-category-grid"></div>
+
+                <div class="onboarding-inline-add">
+                    <input type="text" id="onboarding-category-custom" placeholder="Digite uma categoria">
+                    <button type="button" onclick="adicionarCategoriaOnboarding()">Adicionar</button>
+                </div>
+            </section>
+
+            <section class="onboarding-step" data-onboarding-step="3">
+                <span class="onboarding-kicker">Perfil</span>
+                <h1>Configure sua identidade no app.</h1>
+                <p>O @user precisa ser único. Ele será usado em recursos colaborativos, como gastos enviados entre contas.</p>
+
+                <div class="onboarding-form-card">
+                    <div class="onboarding-form-grid two">
+                        <label>
+                            <span>Nome</span>
+                            <input type="text" id="onboarding-first-name" placeholder="Seu nome" required>
+                        </label>
+                        <label>
+                            <span>Sobrenome</span>
+                            <input type="text" id="onboarding-last-name" placeholder="Seu sobrenome" required>
+                        </label>
+                        <label>
+                            <span>@user único</span>
+                            <input type="text" id="onboarding-username" placeholder="@seuuser" required autocapitalize="none" autocomplete="off" spellcheck="false" oninput="normalizarCampoUsernameOnboarding(this)">
+                            <small class="onboarding-field-hint" id="onboarding-username-status">Use apenas minúsculas, números, ponto ou underline.</small>
+                        </label>
+                        <label>
+                            <span>Profissão</span>
+                            <input type="text" id="onboarding-profession" placeholder="Sua profissão" required>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="onboarding-step" data-onboarding-step="4">
+                <span class="onboarding-kicker">Preferências</span>
+                <h1>Escolha o tema do seu GugetFin.</h1>
+                <p>Essas configurações ficam salvas na conta e podem ser alteradas depois em Configurações.</p>
+
+                <div class="onboarding-preference-list">
+                    <span class="onboarding-preference-label">Tema</span>
+                    <div class="onboarding-theme-options" role="radiogroup" aria-label="Modo de tema">
+                        <label class="onboarding-theme-option">
+                            <input type="radio" name="onboarding-theme-mode" value="manual" onchange="atualizarTemaOnboarding()" checked>
+                            <strong>Manual</strong>
+                            <small>Você escolhe claro ou noturno.</small>
+                        </label>
+                        <label class="onboarding-theme-option">
+                            <input type="radio" name="onboarding-theme-mode" value="system" onchange="atualizarTemaOnboarding()">
+                            <strong>Dispositivo</strong>
+                            <small>Segue o tema do celular ou computador.</small>
+                        </label>
+                        <label class="onboarding-theme-option">
+                            <input type="radio" name="onboarding-theme-mode" value="schedule" onchange="atualizarTemaOnboarding()">
+                            <strong>Por horário</strong>
+                            <small>Ativa o noturno no intervalo definido.</small>
+                        </label>
+                    </div>
+
+                    <div class="onboarding-theme-panel" id="onboarding-theme-manual-panel">
+                        <span class="onboarding-preference-label">Aparência manual</span>
+                        <div class="onboarding-theme-switch" role="radiogroup" aria-label="Aparência manual">
+                            <label>
+                                <input type="radio" name="onboarding-theme-manual" value="light" onchange="atualizarTemaOnboarding()" checked>
+                                <span>Claro</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="onboarding-theme-manual" value="dark" onchange="atualizarTemaOnboarding()">
+                                <span>Noturno</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="onboarding-theme-panel" id="onboarding-theme-schedule-panel" hidden>
+                        <span class="onboarding-preference-label">Horário do modo noturno</span>
+                        <div class="onboarding-time-grid">
+                            <label>
+                                <span>Começa</span>
+                                <input type="time" id="onboarding-theme-start" value="18:00">
+                            </label>
+                            <label>
+                                <span>Termina</span>
+                                <input type="time" id="onboarding-theme-end" value="06:00">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="onboarding-step" data-onboarding-step="5">
+                <span class="onboarding-kicker onboarding-done-kicker">
+                    <i class="fi fi-rr-check"></i>
+                    Tudo pronto
+                </span>
+                <h1>Sua conta está pronta para começar.</h1>
+                <p>Carteira, categorias, perfil e preferências foram preparados. Agora você já pode cadastrar seu primeiro gasto com mais segurança.</p>
+
+                <div class="onboarding-done-card">
+                    <i class="fi fi-rr-check-circle"></i>
+                    <div>
+                        <strong>Conta configurada</strong>
+                        <span id="onboarding-done-summary">Revise os dados e conclua para acessar o app.</span>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <footer class="onboarding-actions">
+            <button type="button" class="onboarding-ghost" id="onboarding-back" onclick="voltarEtapaOnboarding()">Voltar</button>
+            <span id="onboarding-status">Carregando sua conta...</span>
+            <button type="button" class="onboarding-primary" id="onboarding-next" onclick="avancarEtapaOnboarding()">Continuar</button>
+        </footer>
+    </main>
+
+    <script type="module" src="js/onboarding.js"></script>
+</body>
+</html>

@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="help-center-html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GugetFin | Central de Ajuda</title>
+    <meta name="theme-color" content="#025638">
+    <script>document.documentElement.classList.add('dark-theme', 'guget-fixed-dark-page');</script>
+    <style id="guget-fixed-dark-prepaint">
+        html, body { background: #090b0f; color: #f8fafc; }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/onboarding.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+</head>
+<body class="help-center-body dark-theme guget-fixed-dark-page">
+<div id="app-loading-screen" class="app-loading-screen is-dark is-hidden" style="display: none;" role="status" aria-live="polite" aria-label="Carregando sua conta">
+    <div class="app-loading-glow" aria-hidden="true"></div>
+    <div class="app-loading-card">
+        <img class="app-loading-logo app-loading-logo-positive" src="assets/logo-positive.svg" alt="GugetFin">
+        <img class="app-loading-logo app-loading-logo-negative" src="assets/logo-negative.svg" alt="GugetFin">
+        <img class="app-loading-dots" src="assets/loading-dots-gugetfin.svg" alt="" aria-hidden="true">
+        <span>Carregando sua conta...</span>
+    </div>
+</div>
+
+<script>
+    (function () {
+        window.gugetShowPageLoader = function (texto) {
+            var splash = document.getElementById('app-loading-screen');
+            if (!splash) return;
+            var label = splash.querySelector('.app-loading-card span');
+            if (label && texto) label.textContent = texto;
+            splash.style.display = 'flex';
+            splash.classList.add('is-dark');
+            requestAnimationFrame(function () {
+                splash.classList.remove('is-hidden');
+            });
+        };
+
+        window.gugetNavigateWithLoader = function (url, texto) {
+            window.gugetShowPageLoader(texto || 'Carregando sua conta...');
+            try { sessionStorage.setItem('guget_show_dashboard_loader', '1'); } catch (e) {}
+            setTimeout(function () { window.location.href = url; }, 80);
+        };
+
+        document.addEventListener('click', function (event) {
+            var link = event.target.closest && event.target.closest('a[href]');
+            if (!link || event.defaultPrevented || link.target === '_blank') return;
+
+            var href = link.getAttribute('href') || '';
+            if (!href || /^(mailto:|tel:|#|javascript:)/i.test(href)) return;
+
+            var url;
+            try { url = new URL(href, window.location.href); } catch (e) { return; }
+            if (url.origin !== window.location.origin) return;
+
+            var file = (url.pathname.split('/').pop() || 'index.html').toLowerCase();
+            if (file === 'index.html' || file === 'onboarding.html') {
+                event.preventDefault();
+                window.gugetNavigateWithLoader(url.href, file === 'onboarding.html' ? 'Abrindo configuração inicial...' : 'Carregando sua conta...');
+            }
+        }, true);
+    })();
+</script>
+
+    <div class="help-center-page">
+        <header class="help-center-topbar">
+            <a class="help-center-brand" href="index.html" aria-label="Voltar para o GugetFin">
+                <img class="help-center-logo help-center-logo-positive" src="assets/logo-positive.svg" alt="GugetFin">
+                <img class="help-center-logo help-center-logo-negative" src="assets/logo-negative.svg" alt="GugetFin">
+            </a>
+
+            <div class="date-profile-pill" aria-label="Informações rápidas da conta">
+                <span id="header-current-date" class="header-current-date">Hoje</span>
+                <img id="header-avatar-img" class="header-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
+                <button type="button" class="header-theme-toggle" id="header-theme-toggle" aria-label="Alternar modo noturno" onclick="alternarTemaTopo()">
+                    <span class="theme-toggle-track" aria-hidden="true">
+                        <span class="theme-toggle-thumb"></span>
+                        <span class="theme-toggle-option theme-toggle-option-sun"></span>
+                        <span class="theme-toggle-option theme-toggle-option-moon"></span>
+                    </span>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <section class="help-center-hero">
+                <span class="help-center-kicker">Central de ajuda</span>
+                <h1 id="help-main-title">Como posso te ajudar?</h1>
+                <p>Encontre rapidamente onde clicar, como cadastrar informações e onde visualizar cada parte do GugetFin.</p>
+
+                <label class="help-center-search" for="help-search">
+                    <i class="fi fi-rr-search"></i>
+                    <input id="help-search" type="search" autocomplete="off" placeholder="Busque por gasto, cartão, caixinha, calendário, backup...">
+                    <button type="button" id="help-search-button">Buscar</button>
+                </label>
+
+                <p class="help-center-category-intro">Ou escolha uma categoria para encontrar o guia certo para sua dúvida.</p>
+            </section>
+
+            <section class="help-center-categories" aria-label="Categorias de ajuda">
+                <button class="help-category-card is-active" type="button" data-category="primeiros">
+                    <i class="fi fi-rr-rocket-lunch"></i>
+                    <span>Primeiros passos</span>
+                    <small>Configuração inicial e checklist</small>
+                </button>
+                <button class="help-category-card" type="button" data-category="lancamentos">
+                    <i class="fi fi-rr-receipt"></i>
+                    <span>Lançamentos</span>
+                    <small>Gastos, entradas e comprovantes</small>
+                </button>
+                <button class="help-category-card" type="button" data-category="terceiros">
+                    <i class="fi fi-rr-users-alt"></i>
+                    <span>Terceiros e dívidas</span>
+                    <small>Envios, aceite, contestação e pagamento</small>
+                </button>
+                <button class="help-category-card" type="button" data-category="organizacao">
+                    <i class="fi fi-rr-settings-sliders"></i>
+                    <span>Organização</span>
+                    <small>Carteira, categorias e caixinha</small>
+                </button>
+                <button class="help-category-card" type="button" data-category="visualizacao">
+                    <i class="fi fi-rr-chart-pie-alt"></i>
+                    <span>Visualização</span>
+                    <small>Dashboard, calendário e relatórios</small>
+                </button>
+                <button class="help-category-card" type="button" data-category="conta">
+                    <i class="fi fi-rr-shield-check"></i>
+                    <span>Conta e dados</span>
+                    <small>Perfil, segurança, tema e backups</small>
+                </button>
+            </section>
+
+            <section class="help-center-faq">
+                <div class="help-faq-header">
+                    <div>
+                        <span class="help-center-kicker" id="help-faq-kicker">Guias recomendados</span>
+                        <h2 id="help-faq-title">Primeiros passos</h2>
+                        <p id="help-faq-subtitle">Comece por aqui para deixar a conta pronta antes dos lançamentos reais.</p>
+                    </div>
+                    <span class="help-result-count" id="help-result-count"></span>
+                </div>
+
+                <div class="help-article-list" id="help-article-list" aria-live="polite"></div>
+
+                <div class="help-empty-state" id="help-empty-state" hidden>
+                    <i class="fi fi-rr-search-alt"></i>
+                    <h3>Nenhum guia encontrado</h3>
+                    <p>Tente buscar por uma palavra mais simples, como “cartão”, “entrada”, “calendário” ou “senha”.</p>
+                </div>
+            </section>
+
+            <section class="help-contact">
+                <span class="help-center-kicker">Suporte</span>
+                <h2>Ainda precisa de ajuda?</h2>
+                <p>Se não conseguiu encontrar uma resposta para sua dúvida no FAQ, entre em contato pelos canais disponíveis.</p>
+
+                <div class="help-contact-grid">
+                    <a class="help-contact-card" href="mailto:onicolasneves@gmail.com">
+                        <i class="fi fi-rr-envelope"></i>
+                        <span>E-mail</span>
+                        <strong>onicolasneves@gmail.com</strong>
+                        <small>Melhor canal para dúvidas, sugestões e problemas.</small>
+                    </a>
+                    <div class="help-contact-card is-disabled">
+                        <i class="fi fi-rr-phone-call"></i>
+                        <span>Telefone</span>
+                        <strong>Em breve</strong>
+                        <small>Esse canal ainda está sendo preparado.</small>
+                    </div>
+                </div>
+            </section>
+
+            <section class="help-feedback-section" aria-labelledby="help-feedback-title">
+                <div class="help-feedback-copy">
+                    <span class="help-center-kicker">Feedback</span>
+                    <h2 id="help-feedback-title">Encontrou um bug ou teve uma ideia?</h2>
+                    <p>Conte o que aconteceu, envie uma sugestão ou descreva uma melhoria que deixaria o GugetFin mais útil para você.</p>
+                </div>
+
+                <form class="help-feedback-form" id="help-feedback-form">
+                    <div class="help-feedback-grid">
+                        <label class="help-feedback-field" for="feedback-name">
+                            <span>Nome</span>
+                            <input id="feedback-name" name="nome" type="text" autocomplete="name" placeholder="Seu nome" required>
+                        </label>
+
+                        <label class="help-feedback-field" for="feedback-email">
+                            <span>E-mail</span>
+                            <input id="feedback-email" name="email" type="email" autocomplete="email" placeholder="seu@email.com" required>
+                        </label>
+                    </div>
+
+                    <label class="help-feedback-field" for="feedback-title">
+                        <span>Título</span>
+                        <input id="feedback-title" name="titulo" type="text" placeholder="Ex.: erro ao cadastrar gasto" required>
+                    </label>
+
+                    <label class="help-feedback-field" for="feedback-message">
+                        <span>Mensagem</span>
+                        <textarea id="feedback-message" name="mensagem" rows="7" placeholder="Descreva o bug, dúvida ou sugestão com o máximo de detalhes que quiser." required></textarea>
+                    </label>
+
+                    <div class="help-feedback-actions">
+                        <small>A mensagem será aberta no seu e-mail antes do envio.</small>
+                        <button type="submit">Enviar mensagem</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer class="help-center-footer">
+            <div class="help-footer-brand">
+                <img class="help-center-logo help-center-logo-positive" src="assets/logo-positive.svg" alt="GugetFin">
+                <img class="help-center-logo help-center-logo-negative" src="assets/logo-negative.svg" alt="GugetFin">
+            </div>
+            <div class="help-footer-grid">
+                <nav aria-label="Navegação da ajuda">
+                    <strong>Produto</strong>
+                    <a href="index.html">Dashboard</a>
+                    <a href="index.html#calendario">Calendário</a>
+                    <a href="index.html#visualizacoes">Visualizações</a>
+                </nav>
+                <nav aria-label="Configuração e suporte">
+                    <strong>Suporte</strong>
+                    <a href="onboarding.html?rever=1">Rever configuração</a>
+                    <a href="mailto:onicolasneves@gmail.com">Enviar dúvida</a>
+                    <a href="index.html#settings">Configurações</a>
+                </nav>
+                <nav aria-label="Contato">
+                    <strong>Contato</strong>
+                    <a href="mailto:onicolasneves@gmail.com">onicolasneves@gmail.com</a>
+                    <span>Telefone em breve</span>
+                    <span style="color: #0b0f14;">.</span>
+                </nav>
+            </div>
+            <div class="help-footer-bottom">
+                <span>@ 2026 . Todos os direitos reservados</span>
+                <span>Central de ajuda para organizar sua rotina financeira.</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        (function () {
+            var articleData = [
+                {
+                    category: 'primeiros',
+                    icon: 'fi fi-rr-rocket-lunch',
+                    title: 'Refazer a configuração inicial',
+                    summary: 'Use quando quiser passar novamente pelo assistente que prepara carteira, categorias, perfil e preferências.',
+                    keywords: 'onboarding configuração inicial primeiro acesso carteira categorias perfil preferências',
+                    steps: [
+                        'Clique em “Rever configuração”, no rodapé desta página ou dentro da área de ajuda.',
+                        'Passe pela apresentação inicial para entender Dashboard, Calendário e Visualizações.',
+                        'Cadastre pelo menos um cartão ou conta para o GugetFin saber a origem dos gastos.',
+                        'Escolha suas categorias-base para organizar os primeiros lançamentos.',
+                        'Revise nome, sobrenome, @user e profissão.',
+                        'Escolha como o tema do app deve abrir para você e conclua o processo.'
+                    ]
+                },
+                {
+                    category: 'primeiros',
+                    icon: 'fi fi-rr-list-check',
+                    title: 'Usar o checklist da Dashboard',
+                    summary: 'Entenda o passo a passo horizontal exibido para contas novas no desktop.',
+                    keywords: 'checklist primeiros passos rotina financeira dashboard',
+                    steps: [
+                        'Entre na Dashboard pelo menu lateral.',
+                        'Logo abaixo da saudação, veja a faixa “Primeiros passos”.',
+                        'Clique em uma etapa, como Carteira, Crédito, Débito/Pix ou Calendário.',
+                        'O GugetFin leva você para a área correta e mostra uma explicação no canto da tela.',
+                        'Conclua a ação sugerida e avance para a próxima etapa.'
+                    ]
+                },
+                {
+                    category: 'lancamentos',
+                    icon: 'fi fi-rr-credit-card',
+                    title: 'Cadastrar um gasto no cartão de crédito',
+                    summary: 'Use quando a compra entra na fatura de um cartão cadastrado.',
+                    keywords: 'gasto crédito cartão fatura compra parcelado comprovante descrição',
+                    steps: [
+                        'Clique no botão “+” ou no botão de nova saída.',
+                        'Escolha “Novo gasto”.',
+                        'Preencha nome, valor total e data da compra.',
+                        'Em “Tipo de gasto”, selecione “Cartão de Crédito”.',
+                        'Informe o número de parcelas. Para compra à vista, mantenha 1.',
+                        'Escolha o cartão ou banco usado.',
+                        'Confira a competência da fatura calculada automaticamente.',
+                        'Escolha a categoria, adicione descrição e anexe comprovante se quiser.',
+                        'Clique em “Adicionar”.'
+                    ]
+                },
+                {
+                    category: 'lancamentos',
+                    icon: 'fi fi-rr-wallet',
+                    title: 'Cadastrar débito, Pix ou dinheiro',
+                    summary: 'Use quando a saída acontece direto no mês da compra.',
+                    keywords: 'débito pix dinheiro saída à vista forma pagamento',
+                    steps: [
+                        'Abra o cadastro de “Novo gasto”.',
+                        'Preencha nome, valor total e data da compra.',
+                        'Em “Tipo de gasto”, escolha “Débito / Pix / Dinheiro”.',
+                        'Selecione a forma de pagamento correta.',
+                        'Escolha a categoria da saída.',
+                        'Adicione descrição e comprovante quando precisar guardar contexto.',
+                        'Clique em “Adicionar”.'
+                    ]
+                },
+                {
+                    category: 'lancamentos',
+                    icon: 'fi fi-rr-receipt',
+                    title: 'Cadastrar um gasto fixo',
+                    summary: 'Use para contas recorrentes que aparecem todo mês.',
+                    keywords: 'fixos recorrente mensal conta recorrência assinatura',
+                    steps: [
+                        'Na Dashboard, encontre a box “Gastos Fixos”.',
+                        'Clique no botão de adicionar ou abra o cadastro pelo botão “+”.',
+                        'Informe nome, valor, categoria e data de referência.',
+                        'Marque se o gasto já foi pago no mês atual.',
+                        'Salve o cadastro.',
+                        'Depois, use o checkbox da lista para controlar se aquele fixo foi pago ou não.'
+                    ]
+                },
+                {
+                    category: 'lancamentos',
+                    icon: 'fi fi-rr-arrow-trend-up',
+                    title: 'Registrar uma entrada',
+                    summary: 'Use para salário, serviço, reembolso ou qualquer dinheiro recebido.',
+                    keywords: 'entrada recebimento cliente pagador serviço parcela comprovante salário',
+                    steps: [
+                        'Clique em “Entrada” no menu lateral ou no botão “+”.',
+                        'Informe nome da entrada, valor, data e categoria.',
+                        'Preencha pagador ou origem do recebimento.',
+                        'Se for um serviço parcelado, informe a quantidade de parcelas.',
+                        'Adicione descrição e comprovante quando fizer sentido.',
+                        'Salve. A entrada entra no mês correspondente e aparece no resumo mensal.'
+                    ]
+                },
+                {
+                    category: 'lancamentos',
+                    icon: 'fi fi-rr-picture',
+                    title: 'Anexar comprovante ou nota',
+                    summary: 'Guarde foto, recibo ou imagem junto ao lançamento.',
+                    keywords: 'comprovante nota recibo imagem anexo foto',
+                    steps: [
+                        'Durante o cadastro de gasto ou entrada, encontre a área “Comprovante / Nota”.',
+                        'Clique em “Anexar Comprovante”.',
+                        'Escolha uma imagem da galeria ou dos arquivos do dispositivo.',
+                        'Confira se o arquivo apareceu no campo de comprovante.',
+                        'Salve o lançamento normalmente.',
+                        'Depois, abra os detalhes do item para rever a imagem anexada.'
+                    ]
+                },
+                {
+                    category: 'terceiros',
+                    icon: 'fi fi-rr-user',
+                    title: 'Cadastrar gasto de terceiro manual',
+                    summary: 'Use quando alguém usou seu cartão, mas você quer organizar apenas pelo nome.',
+                    keywords: 'terceiro manual amigo responsável gasto de outra pessoa',
+                    steps: [
+                        'Abra o cadastro de “Novo gasto”.',
+                        'Preencha os dados normais da compra.',
+                        'Na área “Responsável pelo gasto”, marque “Esse gasto não é meu”.',
+                        'Digite o nome da pessoa no campo de responsável.',
+                        'Se não aparecer um @user para vincular, mantenha como nome simples.',
+                        'Salve o gasto. Ele aparecerá como controle manual em “Gastos de terceiros”.'
+                    ]
+                },
+                {
+                    category: 'terceiros',
+                    icon: 'fi fi-rr-user-add',
+                    title: 'Enviar gasto para outro usuário',
+                    summary: 'Use quando a outra pessoa tem conta e precisa receber a solicitação.',
+                    keywords: 'terceiro vinculado usuário @user notificação aceitar contestar pagar dívida',
+                    steps: [
+                        'No cadastro de gasto, marque “Esse gasto não é meu”.',
+                        'Digite o @user da pessoa responsável.',
+                        'Selecione o usuário correto na busca.',
+                        'Salve o gasto.',
+                        'A outra pessoa receberá a solicitação na área de dívidas.',
+                        'Se ela aceitar, o gasto fica como dívida pendente para ela pagar.',
+                        'Se ela contestar, o gasto volta para você como contestado, permitindo corrigir, reenviar ou apagar.'
+                    ]
+                },
+                {
+                    category: 'terceiros',
+                    icon: 'fi fi-rr-hand-holding-usd',
+                    title: 'Acompanhar dívidas recebidas',
+                    summary: 'Veja o que outras pessoas enviaram para você aceitar, contestar ou pagar.',
+                    keywords: 'dívidas recebidas aceitar contestar pagar notificações usuário',
+                    steps: [
+                        'Entre em “Visualizações”.',
+                        'Abra a aba “Dívidas”.',
+                        'Veja as solicitações recebidas de outros usuários.',
+                        'Clique em aceitar quando reconhecer o gasto.',
+                        'Clique em contestar quando o valor ou motivo estiver errado.',
+                        'Quando pagar, use o botão de pagamento para registrar como esse gasto foi quitado.'
+                    ]
+                },
+                {
+                    category: 'terceiros',
+                    icon: 'fi fi-rr-trash',
+                    title: 'Apagar testes de terceiros ou dívidas',
+                    summary: 'Remova lançamentos criados apenas para teste ou enviados por engano.',
+                    keywords: 'apagar excluir teste terceiros dívida enviada recebida contestado',
+                    steps: [
+                        'Entre em “Visualizações”.',
+                        'Abra “Terceiros” para gastos enviados por você ou “Dívidas” para solicitações recebidas.',
+                        'Localize o lançamento de teste.',
+                        'Clique em “Apagar”.',
+                        'Confirme a exclusão apenas se tiver certeza.',
+                        'Quando o gasto estiver vinculado a outro usuário, ele também será removido da visualização relacionada.'
+                    ]
+                },
+                {
+                    category: 'organizacao',
+                    icon: 'fi fi-rr-credit-card',
+                    title: 'Cadastrar cartões e contas',
+                    summary: 'Configure a origem dos gastos para faturas, bancos e cartões ficarem organizados.',
+                    keywords: 'carteira cartão conta banco fechamento vencimento débito',
+                    steps: [
+                        'Entre em “Settings”.',
+                        'Abra a aba “Organização”.',
+                        'Na área “Minha carteira”, preencha o nome do cartão ou conta.',
+                        'Informe fechamento e vencimento quando for cartão de crédito.',
+                        'Marque “apenas débito” se a conta não tiver fatura.',
+                        'Clique em “Adicionar à Carteira”.',
+                        'Use o carrossel para revisar os cartões cadastrados.'
+                    ]
+                },
+                {
+                    category: 'organizacao',
+                    icon: 'fi fi-rr-tags',
+                    title: 'Criar ou remover categorias',
+                    summary: 'Categorias são as tags que organizam seus gastos, entradas e relatórios.',
+                    keywords: 'categoria tag organização tags compra salvar categoria',
+                    steps: [
+                        'Entre em “Settings”.',
+                        'Abra “Organização”.',
+                        'Na área “Categorias”, veja todas as tags atuais.',
+                        'Para adicionar, digite o nome da nova categoria.',
+                        'Clique em “Salvar categoria”.',
+                        'Para remover, clique no “x” da categoria desejada.',
+                        'Use nomes curtos para manter os relatórios fáceis de ler.'
+                    ]
+                },
+                {
+                    category: 'organizacao',
+                    icon: 'fi fi-rr-piggy-bank',
+                    title: 'Usar a Caixinha',
+                    summary: 'Controle dinheiro guardado ou retirado da reserva.',
+                    keywords: 'caixinha reserva guardar retirar dinheiro saldo',
+                    steps: [
+                        'Entre em “Visualizações”.',
+                        'Abra a aba “Caixinha”.',
+                        'Clique em “Adicionar” para registrar dinheiro guardado.',
+                        'Clique em “Retirar” para registrar retirada da reserva.',
+                        'Preencha nome, valor, data, descrição e comprovante se quiser.',
+                        'Edite ou apague um lançamento quando precisar corrigir.'
+                    ]
+                },
+                {
+                    category: 'organizacao',
+                    icon: 'fi fi-rr-bullseye',
+                    title: 'Usar metas e lista de desejos',
+                    summary: 'Registre objetivos financeiros e itens que deseja acompanhar.',
+                    keywords: 'metas objetivos desejos lista planejamento',
+                    steps: [
+                        'Na Dashboard, abra “Metas e Objetivos” ou “Lista de Desejos”.',
+                        'Clique em adicionar.',
+                        'Preencha nome, valor desejado e observação, quando houver.',
+                        'Acompanhe os itens pela própria box da Dashboard.',
+                        'Atualize ou remova itens conforme eles deixarem de fazer sentido.'
+                    ]
+                },
+                {
+                    category: 'visualizacao',
+                    icon: 'fi fi-rr-apps',
+                    title: 'Ler a Dashboard',
+                    summary: 'A Dashboard mostra o estado principal do mês selecionado.',
+                    keywords: 'dashboard saldo mensal total cartão renda resumo mensal',
+                    steps: [
+                        'Use os meses no topo para navegar entre competências.',
+                        'Veja “Saldo mensal” para entender entradas menos saídas.',
+                        'Veja “Total cartão” para acompanhar gastos de crédito.',
+                        'Veja “% da renda” para comparar gastos e recebimentos.',
+                        'Use “Resumo mensal” para ver totais por cartão, categoria e entradas.',
+                        'Abra as boxes de gastos fixos, débito/Pix e cartão para detalhes.'
+                    ]
+                },
+                {
+                    category: 'visualizacao',
+                    icon: 'fi fi-rr-calendar',
+                    title: 'Usar o calendário financeiro',
+                    summary: 'Veja gastos, terceiros e entradas organizados exatamente por dia.',
+                    keywords: 'calendário calendario financeiro filtros tudo gastos terceiros entradas abrir tudo',
+                    steps: [
+                        'Clique em “Calendário” no menu lateral.',
+                        'Use os meses no topo para mudar a competência.',
+                        'Escolha “Tudo” para ver todos os movimentos juntos.',
+                        'Use os filtros “Gastos”, “Gasto de terceiros” ou “Entradas” para focar em um tipo.',
+                        'Clique em um dia para expandir os lançamentos daquele dia.',
+                        'Use “Abrir tudo” para expandir todos os dias com movimentação.'
+                    ]
+                },
+                {
+                    category: 'visualizacao',
+                    icon: 'fi fi-rr-chart-pie-alt',
+                    title: 'Usar a página Visualizações',
+                    summary: 'Acompanhe detalhes que não precisam ocupar a Dashboard principal.',
+                    keywords: 'visualizações terceiros dívidas parcelados caixinha controle detalhado',
+                    steps: [
+                        'Clique em “Visualizações” no menu lateral.',
+                        'Use “Terceiros” para gastos que outras pessoas precisam pagar a você.',
+                        'Use “Dívidas” para solicitações que você recebeu de outros usuários.',
+                        'Use “Parcelados” para acompanhar parcelas restantes.',
+                        'Use “Caixinha” para ver dinheiro guardado e retirado.',
+                        'Clique em “Ver detalhes” para revisar o lançamento original.'
+                    ]
+                },
+                {
+                    category: 'visualizacao',
+                    icon: 'fi fi-rr-calendar',
+                    title: 'Acompanhar parcelamentos',
+                    summary: 'Veja quantas parcelas faltam e quando a compra termina.',
+                    keywords: 'parcelados parcelas restantes finalizado compra futura',
+                    steps: [
+                        'Entre em “Visualizações”.',
+                        'Clique na aba “Parcelados”.',
+                        'Veja a parcela atual, o total de parcelas e o valor de cada parcela.',
+                        'Use o status para entender se o parcelamento ainda está em aberto ou finalizado.',
+                        'Clique em “Ver detalhes” para revisar o lançamento original.'
+                    ]
+                },
+                {
+                    category: 'conta',
+                    icon: 'fi fi-rr-user',
+                    title: 'Editar perfil e foto',
+                    summary: 'Mantenha nome, @user, profissão e foto atualizados.',
+                    keywords: 'perfil foto nome sobrenome user profissão configurações',
+                    steps: [
+                        'Clique em “Settings” ou no atalho do usuário no topo.',
+                        'Abra a aba “Perfil”.',
+                        'Para trocar a foto, clique em “Alterar foto”.',
+                        'Ajuste o enquadramento dentro do círculo e salve.',
+                        'Preencha nome, sobrenome, @user e profissão.',
+                        'Salve as alterações.'
+                    ]
+                },
+                {
+                    category: 'conta',
+                    icon: 'fi fi-rr-moon',
+                    title: 'Alterar tema e modo noturno',
+                    summary: 'Escolha entre manual, dispositivo ou horário definido.',
+                    keywords: 'tema modo noturno claro escuro dispositivo horário manual',
+                    steps: [
+                        'Entre em “Settings” e abra a aba “App”.',
+                        'Escolha o modo de tema: “Manual”, “Dispositivo” ou “Por horário”.',
+                        'No modo manual, escolha claro ou noturno.',
+                        'No modo dispositivo, o GugetFin acompanha o tema do celular ou computador.',
+                        'No modo por horário, defina início e fim do período noturno.',
+                        'O botão de tema no topo pode alterar temporariamente a aparência durante o uso.'
+                    ]
+                },
+                {
+                    category: 'conta',
+                    icon: 'fi fi-rr-shield-check',
+                    title: 'Conectar ou desconectar Google',
+                    summary: 'Use o Google para facilitar o login sem substituir seus dados principais.',
+                    keywords: 'google login conectar desconectar conta segurança',
+                    steps: [
+                        'Entre em “Settings” e abra “Conta e segurança”.',
+                        'Na área “Conexão com Google”, veja se a conta está conectada.',
+                        'Para conectar, clique no botão de conexão com Google e confirme a conta.',
+                        'Para remover, clique em “Desconectar”.',
+                        'Depois de conectado, você pode entrar com Google na tela de login.'
+                    ]
+                },
+                {
+                    category: 'conta',
+                    icon: 'fi fi-rr-lock',
+                    title: 'Alterar e-mail ou senha',
+                    summary: 'Revise dados sensíveis dentro da área de conta.',
+                    keywords: 'email senha alterar autenticação segurança',
+                    steps: [
+                        'Abra “Settings”.',
+                        'Entre em “Conta e segurança”.',
+                        'Localize os campos de e-mail e senha.',
+                        'Preencha o novo dado desejado.',
+                        'Confirme a alteração e siga qualquer validação solicitada pelo Firebase.',
+                        'Se o sistema pedir login recente, saia e entre novamente antes de tentar alterar dados sensíveis.'
+                    ]
+                },
+                {
+                    category: 'conta',
+                    icon: 'fi fi-rr-database',
+                    title: 'Criar e importar backup',
+                    summary: 'Guarde uma cópia dos dados ou restaure informações quando necessário.',
+                    keywords: 'backup criar importar exportar dados',
+                    steps: [
+                        'Entre em “Settings” e abra a aba “Dados”.',
+                        'Use “Criar Backup” para salvar uma cópia dos seus dados.',
+                        'Use “Importar Backup” somente quando quiser restaurar dados de um arquivo confiável.',
+                        'Revise as informações após importar para garantir que tudo entrou corretamente.'
+                    ]
+                },
+                {
+                    category: 'conta',
+                    icon: 'fi fi-rr-file-import',
+                    title: 'Importar extrato',
+                    summary: 'Acelere o cadastro de movimentações quando houver arquivo compatível.',
+                    keywords: 'importar extrato arquivo lançamentos',
+                    steps: [
+                        'Abra “Settings” e vá até “Dados”.',
+                        'Clique em “Importar Extrato”.',
+                        'Escolha o arquivo no formato aceito pela plataforma.',
+                        'Revise os lançamentos importados antes de confiar nos totais.',
+                        'Corrija categorias, cartões ou descrições quando necessário.'
+                    ]
+                },
+                {
+                    category: 'conta',
+                    icon: 'fi fi-rr-triangle-warning',
+                    title: 'Resetar o app com segurança',
+                    summary: 'Use apenas quando realmente quiser limpar os dados da conta.',
+                    keywords: 'resetar app apagar dados cuidado suporte',
+                    steps: [
+                        'Antes de resetar, crie um backup.',
+                        'Vá em “Settings” e abra a aba “Dados”.',
+                        'Leia o aviso da área de reset.',
+                        'Confirme somente se tiver certeza de que deseja apagar os dados do app.',
+                        'Depois do reset, revise carteira, categorias e preferências antes de cadastrar novos lançamentos.'
+                    ]
+                }
+            ];
+
+            var categoryCopy = {
+                primeiros: {
+                    title: 'Primeiros passos',
+                    subtitle: 'Comece por aqui para deixar a conta pronta antes dos lançamentos reais.'
+                },
+                lancamentos: {
+                    title: 'Lançamentos',
+                    subtitle: 'Aprenda a registrar gastos, entradas, comprovantes e recorrências.'
+                },
+                terceiros: {
+                    title: 'Terceiros e dívidas',
+                    subtitle: 'Veja como controlar gastos de outras pessoas, envios para @user e dívidas recebidas.'
+                },
+                organizacao: {
+                    title: 'Organização',
+                    subtitle: 'Configure carteira, categorias, caixinha, metas e lista de desejos.'
+                },
+                visualizacao: {
+                    title: 'Visualização',
+                    subtitle: 'Entenda onde acompanhar Dashboard, Calendário, Visualizações e parcelamentos.'
+                },
+                conta: {
+                    title: 'Conta e dados',
+                    subtitle: 'Ajuste perfil, segurança, tema, Google, e-mail, senha e backups.'
+                }
+            };
+
+            var selectedCategory = 'primeiros';
+            var list = document.getElementById('help-article-list');
+            var search = document.getElementById('help-search');
+            var count = document.getElementById('help-result-count');
+            var title = document.getElementById('help-faq-title');
+            var subtitle = document.getElementById('help-faq-subtitle');
+            var kicker = document.getElementById('help-faq-kicker');
+            var empty = document.getElementById('help-empty-state');
+            var categoryButtons = Array.prototype.slice.call(document.querySelectorAll('.help-category-card'));
+
+            function normalizeText(value) {
+                return String(value || '')
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .trim();
+            }
+
+            function getCache() {
+                try {
+                    return JSON.parse(localStorage.getItem('salsifin_cache') || '{}');
+                } catch (error) {
+                    return {};
+                }
+            }
+
+            function getProfile(cache) {
+                return (cache && (
+                    cache.perfil ||
+                    cache.profile ||
+                    cache.usuario ||
+                    (cache.config && cache.config.perfil) ||
+                    (cache.config && cache.config.usuario)
+                )) || {};
+            }
+
+            function applyInitialTheme() {
+                document.documentElement.classList.add('dark-theme', 'guget-fixed-dark-page');
+                document.body.classList.add('dark-theme', 'guget-fixed-dark-page');
+                atualizarBotaoTemaTopo(true);
+            }
+
+            function atualizarBotaoTemaTopo(isDark) {
+                var button = document.getElementById('header-theme-toggle');
+                if (!button) return;
+
+                button.classList.toggle('is-dark', !!isDark);
+                button.setAttribute('aria-label', isDark ? 'Ativar modo claro' : 'Ativar modo noturno');
+            }
+
+            function alternarTemaTopo() {
+                // A Central de Ajuda permanece sempre no visual noturno.
+                // O botão mantém a mesma aparência da plataforma, mas não clareia esta página.
+                document.documentElement.classList.add('dark-theme', 'guget-fixed-dark-page');
+                document.body.classList.add('dark-theme', 'guget-fixed-dark-page');
+                atualizarBotaoTemaTopo(true);
+            }
+            window.alternarTemaTopo = alternarTemaTopo;
+
+            function setupHeader() {
+                var cache = getCache();
+                var profile = getProfile(cache);
+                var fullName = profile.nomeCompleto ||
+                    profile.displayName ||
+                    profile.name ||
+                    [profile.nome, profile.sobrenome].filter(Boolean).join(' ') ||
+                    '';
+                var firstName = formatFirstName(String(fullName).trim().split(/\s+/)[0] || '');
+                var photo = profile.fotoPerfil || profile.photoURL || profile.foto || profile.avatar || '';
+                var avatar = document.getElementById('header-avatar-img');
+                var titleEl = document.getElementById('help-main-title');
+                var dateEl = document.getElementById('header-current-date');
+
+                if (titleEl) {
+                    titleEl.textContent = firstName ? firstName + ', como posso te ajudar?' : 'Como posso te ajudar?';
+                }
+                if (avatar && photo) avatar.src = photo;
+
+                if (dateEl) {
+                    var formatted = new Intl.DateTimeFormat('pt-BR', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short'
+                    }).format(new Date());
+                    dateEl.textContent = formatted.replace('.', '').split(' ').map(function (word) {
+                        return word.charAt(0).toUpperCase() + word.slice(1);
+                    }).join(' ');
+                }
+
+                atualizarBotaoTemaTopo(document.body.classList.contains('dark-theme'));
+            }
+
+            function setupFeedbackForm() {
+                var form = document.getElementById('help-feedback-form');
+                if (!form) return;
+
+                var cache = getCache();
+                var profile = getProfile(cache);
+                var nameInput = document.getElementById('feedback-name');
+                var emailInput = document.getElementById('feedback-email');
+                var titleInput = document.getElementById('feedback-title');
+                var messageInput = document.getElementById('feedback-message');
+
+                var fullName = profile.nomeCompleto ||
+                    profile.displayName ||
+                    profile.name ||
+                    [profile.nome, profile.sobrenome].filter(Boolean).join(' ') ||
+                    '';
+                var email = profile.email || profile.emailUsuario || profile.userEmail || '';
+
+                if (nameInput && fullName && !nameInput.value) nameInput.value = fullName;
+                if (emailInput && email && !emailInput.value) emailInput.value = email;
+
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    var nome = (nameInput && nameInput.value || '').trim();
+                    var emailContato = (emailInput && emailInput.value || '').trim();
+                    var titulo = (titleInput && titleInput.value || '').trim();
+                    var mensagem = (messageInput && messageInput.value || '').trim();
+
+                    if (!nome || !emailContato || !titulo || !mensagem) {
+                        alert('Preencha nome, e-mail, título e mensagem para enviar.');
+                        return;
+                    }
+
+                    var assunto = '[GugetFin] ' + titulo;
+                    var corpo = [
+                        'Nome: ' + nome,
+                        'E-mail: ' + emailContato,
+                        '',
+                        'Título: ' + titulo,
+                        '',
+                        'Mensagem:',
+                        mensagem,
+                        '',
+                        'Página: Central de Ajuda'
+                    ].join('\n');
+
+                    window.location.href = 'mailto:onicolasneves@gmail.com?subject=' +
+                        encodeURIComponent(assunto) +
+                        '&body=' +
+                        encodeURIComponent(corpo);
+                });
+            }
+
+            function formatFirstName(name) {
+                var clean = String(name || '')
+                    .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ'-]/g, '')
+                    .trim();
+                var normalized = normalizeText(clean);
+
+                if (!clean) return '';
+                if (!/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(clean)) return '';
+                if (clean.length === 1 && clean.toLowerCase() !== 'ó') return '';
+                if (['ola', 'olá', 'nos', 'nós'].indexOf(normalized) !== -1) return '';
+
+                return clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+            }
+
+            function articleMatches(article, term) {
+                if (!term) return article.category === selectedCategory;
+
+                var haystack = normalizeText([
+                    article.title,
+                    article.summary,
+                    article.keywords,
+                    article.category,
+                    article.steps.join(' ')
+                ].join(' '));
+
+                return haystack.indexOf(term) !== -1;
+            }
+
+            function createArticle(article) {
+                var item = document.createElement('article');
+                item.className = 'help-article';
+
+                var button = document.createElement('button');
+                button.className = 'help-article-toggle';
+                button.type = 'button';
+                button.setAttribute('aria-expanded', 'false');
+
+                button.innerHTML = [
+                    '<span class="help-article-icon"><i class="' + article.icon + '"></i></span>',
+                    '<span class="help-article-copy">',
+                    '<strong>' + article.title + '</strong>',
+                    '<small>' + article.summary + '</small>',
+                    '</span>',
+                    '<span class="help-article-signal" aria-hidden="true">+</span>'
+                ].join('');
+
+                var body = document.createElement('div');
+                body.className = 'help-article-body';
+                body.hidden = true;
+
+                var steps = document.createElement('ol');
+                steps.className = 'help-steps';
+                article.steps.forEach(function (step) {
+                    var li = document.createElement('li');
+                    li.textContent = step;
+                    steps.appendChild(li);
+                });
+
+                body.appendChild(steps);
+
+                button.addEventListener('click', function () {
+                    var expanded = button.getAttribute('aria-expanded') === 'true';
+                    button.setAttribute('aria-expanded', String(!expanded));
+                    body.hidden = expanded;
+                    button.querySelector('.help-article-signal').textContent = expanded ? '+' : '-';
+                });
+
+                item.appendChild(button);
+                item.appendChild(body);
+                return item;
+            }
+
+            function renderArticles() {
+                var term = normalizeText(search && search.value);
+                var filtered = articleData.filter(function (article) {
+                    return articleMatches(article, term);
+                });
+                var categoryInfo = categoryCopy[selectedCategory];
+
+                if (term) {
+                    kicker.textContent = 'Resultado da busca';
+                    title.textContent = 'Guias encontrados';
+                    subtitle.textContent = 'Mostrando os artigos mais próximos da sua pesquisa.';
+                } else {
+                    kicker.textContent = 'Guias recomendados';
+                    title.textContent = categoryInfo.title;
+                    subtitle.textContent = categoryInfo.subtitle;
+                }
+
+                count.textContent = filtered.length === 1 ? '1 artigo' : filtered.length + ' artigos';
+                list.innerHTML = '';
+                empty.hidden = filtered.length !== 0;
+
+                filtered.forEach(function (article) {
+                    list.appendChild(createArticle(article));
+                });
+            }
+
+            function selectCategory(category) {
+                selectedCategory = category;
+                if (search) search.value = '';
+
+                categoryButtons.forEach(function (button) {
+                    button.classList.toggle('is-active', button.dataset.category === category);
+                });
+
+                renderArticles();
+            }
+
+            function revealSelectedCategory() {
+                var faq = document.querySelector('.help-center-faq');
+                if (!faq) return;
+
+                var rect = faq.getBoundingClientRect();
+                var shouldAdjust = rect.top < 92 || rect.top > window.innerHeight * 0.82;
+
+                if (shouldAdjust) {
+                    faq.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+
+            applyInitialTheme();
+            setupHeader();
+            setupFeedbackForm();
+
+            categoryButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    selectCategory(button.dataset.category);
+                });
+            });
+
+            if (search) {
+                search.addEventListener('input', function () {
+                    categoryButtons.forEach(function (button) {
+                        button.classList.remove('is-active');
+                    });
+                    renderArticles();
+                });
+            }
+
+            var searchButton = document.getElementById('help-search-button');
+            if (searchButton && search) {
+                searchButton.addEventListener('click', function () {
+                    search.focus();
+                    renderArticles();
+                });
+            }
+
+            renderArticles();
+        })();
+    </script>
+</body>
+</html>

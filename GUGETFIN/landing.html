@@ -1,130 +1,629 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guget Fin | Gestão Financeira Inteligente</title>
-    <meta name="theme-color" content="#025638">
-    <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
-    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-    <link rel="manifest" href="manifest.json">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/landing.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GugetFin — organize sua vida financeira</title>
+  <meta name="description" content="Organize gastos, entradas, cartões, terceiros, calendário financeiro e visualizações em um só lugar." />
+  <meta name="theme-color" content="#0b0f14" />
+
+  <!-- Troque o src abaixo pelo mesmo arquivo de logo usado no app, caso o caminho seja diferente. -->
+  <link rel="icon" href="./assets/favicon.png" />
+  <link rel="stylesheet" href="./css/landing.css" />
 </head>
+
 <body>
+  <div class="landing-loading" id="landing-loading" aria-hidden="true">
+    <div class="landing-loading-card">
+      <img class="landing-loading-logo" src="./assets/logo-negative.svg" alt="GugetFin" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+      <span class="landing-logo-fallback" style="display:none;"><span class="fallback-mark"></span>GugetFin</span>
+      <div class="landing-loading-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <p>Carregando sua conta...</p>
+    </div>
+  </div>
 
-    <!-- Navegação Topo -->
-    <header class="navbar" id="navbar">
-        <div class="container nav-content">
-            <div class="logo">
-                <img class="landing-logo-img" src="assets/logo-positive.svg" alt="Guget Fin">
-            </div>
-            <nav class="nav-links">
-                <a href="#funcionalidades">Funcionalidades</a>
-                <a href="#ia">Inteligência Artificial</a>
-                <!-- Link para a tela de login real do seu app -->
-                <a href="index.html" class="btn-login">Entrar no Cofre</a>
-            </nav>
-        </div>
-    </header>
+  <header class="landing-header" id="topo">
+    <a class="landing-brand" href="#topo" aria-label="GugetFin">
+      <img src="./assets/logo-negative.svg" alt="GugetFin" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+      <span class="landing-logo-fallback" style="display:none;"><span class="fallback-mark"></span>GugetFin</span>
+    </a>
 
-    <!-- Seção Hero (Apresentação Principal) -->
-    <section class="hero container">
-        <div class="hero-text">
-            <span class="badge-hero">Novo Módulo de IA Disponível</span>
-            <h1>Sua gestão financeira,<br>agora na nuvem.</h1>
-            <p>Controle os seus gastos, acompanhe faturas de cartão de crédito em tempo real e atinja as suas metas com a ajuda do nosso modelo de inteligência artificial.</p>
-            <div class="hero-actions">
-                <a href="index.html" class="btn-primary">Começar a Usar Grátis</a>
-            </div>
+    <nav class="landing-nav" id="landing-nav" aria-label="Navegação da landing page">
+      <a href="#funcionalidades">Funcionalidades</a>
+      <a href="#problema">Problema</a>
+      <a href="#produto">Produto</a>
+      <a href="#depoimentos">Depoimentos</a>
+      <a href="#planos">Planos</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="landing-actions" id="landing-actions">
+      <a class="btn btn-ghost" href="./index.html?auth=login" data-auth-link="login">Login</a>
+      <a class="btn btn-primary" href="./index.html?auth=register" data-auth-link="register">Começar agora</a>
+    </div>
+
+    <button class="landing-menu-btn" id="landing-menu-btn" type="button" aria-label="Abrir menu">
+      <span></span><span></span>
+    </button>
+  </header>
+
+  <main>
+    <section class="landing-section landing-hero is-dark" id="inicio">
+      <div class="landing-container hero-grid">
+        <div class="hero-copy reveal">
+          <p class="section-kicker">Finanças pessoais sem planilha quebrada</p>
+          <h1>Sua vida financeira organizada em um só lugar.</h1>
+          <p>
+            Cadastre gastos, entradas, cartões, categorias e terceiros. Depois acompanhe tudo pelo desktop
+            ou celular, com uma visão clara do seu mês.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="./index.html?auth=register" data-auth-link="register">Criar minha conta</a>
+            <a class="btn btn-soft btn-lg" href="#funcionalidades">Ver funcionalidades</a>
+          </div>
         </div>
-        <div class="hero-image">
-            <!-- Placeholder para um print bonito do seu dashboard -->
-            <div class="dashboard-mockup">
-                <div class="mockup-header"></div>
-                <div class="mockup-body">
-                    <div class="mockup-chart"></div>
-                    <div class="mockup-cards">
-                        <div class="m-card"></div>
-                        <div class="m-card"></div>
-                    </div>
-                </div>
-            </div>
+
+        <div class="hero-preview hero-notebook-preview reveal delay-1" aria-label="Previa do GugetFin em um notebook">
+          <img src="./assets/Notebook.png" alt="GugetFin exibido em um notebook" class="hero-notebook-img">
         </div>
+      </div>
     </section>
 
-    <!-- Seção de Funcionalidades -->
-    <section id="funcionalidades" class="features bg-light">
-        <div class="container">
-            <div class="section-title">
-                <h2>Projetado para dar clareza.</h2>
-                <p>Esqueça as planilhas complexas. O Guget Fin faz o trabalho pesado por si.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="f-icon">💳</div>
-                    <h3>Alertas Inteligentes de Fatura</h3>
-                    <p>Saiba exatamente em qual mês a sua compra de crédito será cobrada. O sistema cruza os dias de fechamento e vencimento na hora do registo.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="f-icon">🧾</div>
-                    <h3>Comprovantes na Nuvem</h3>
-                    <p>Anexe notas fiscais aos seus gastos. O nosso sistema comprime as imagens automaticamente antes de enviar para o servidor, poupando dados.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="f-icon">📂</div>
-                    <h3>Importação OFX e CSV</h3>
-                    <p>Não quer digitar tudo à mão? Importe o extrato do seu banco e o sistema categoriza automaticamente as despesas mais comuns.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="f-icon">🎯</div>
-                    <h3>Metas e Desejos</h3>
-                    <p>Crie orçamentos mensais invisíveis e acompanhe o progresso de cada um através de gráficos de anel dinâmicos.</p>
-                </div>
-            </div>
+    <section class="landing-section is-light" id="funcionalidades">
+      <div class="landing-container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">Funcionalidades</p>
+          <h2>Controle completo sem complicar o uso.</h2>
+          <p>O GugetFin organiza o que normalmente fica espalhado entre planilhas, anotações e mensagens.</p>
         </div>
+
+        <div class="feature-grid reveal delay-1">
+  <article class="feature-card is-featured">
+    <span class="feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>
+    </span>
+    <h3>Gastos no cartão</h3>
+    <p>Controle compras por cartão, parcelas, fatura, vencimento e categoria.</p>
+    <a href="#produto">Ver detalhes</a>
+  </article>
+
+  <article class="feature-card">
+    <span class="feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M7 7h10v10H7z"/><path d="M4 12h3"/><path d="M17 12h3"/><path d="M12 4v3"/><path d="M12 17v3"/></svg>
+    </span>
+    <h3>Débito, Pix e dinheiro</h3>
+    <p>Registre saídas diretas que entram no mês da compra.</p>
+    <a href="#produto">Ver detalhes</a>
+  </article>
+
+  <article class="feature-card">
+    <span class="feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M17 2v4"/><path d="M7 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 15h5"/><path d="M8 18h3"/></svg>
+    </span>
+    <h3>Gastos fixos</h3>
+    <p>Organize contas recorrentes e marque o que já foi pago.</p>
+    <a href="#produto">Ver detalhes</a>
+  </article>
+
+  <article class="feature-card">
+    <span class="feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    </span>
+    <h3>Gastos de terceiros</h3>
+    <p>Separe compras feitas para outras pessoas e acompanhe pendências.</p>
+    <a href="#produto">Ver detalhes</a>
+  </article>
+
+  <article class="feature-card">
+    <span class="feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+    </span>
+    <h3>Entradas mensais</h3>
+    <p>Cadastre salário, serviços, reembolsos, pagadores e parcelas.</p>
+    <a href="#produto">Ver detalhes</a>
+  </article>
+
+  <article class="feature-card">
+    <span class="feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
+    </span>
+    <h3>Calendário financeiro</h3>
+    <p>Veja gastos, terceiros e entradas por data, com filtros rápidos.</p>
+    <a href="#produto">Ver detalhes</a>
+  </article>
+
+  <article class="feature-card">
+    <span class="feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9v9z"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>
+    </span>
+    <h3>Visualizações</h3>
+    <p>Acompanhe dívidas, parcelados, terceiros e caixinha em uma área dedicada.</p>
+    <a href="#produto">Ver detalhes</a>
+  </article>
+
+  <article class="feature-card">
+    <span class="feature-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M2 14h4"/><path d="M10 8h4"/><path d="M18 16h4"/></svg>
+    </span>
+    <h3>Preferências</h3>
+    <p>Ajuste tema, perfil, cartões, categorias, segurança e dados da conta.</p>
+    <a href="#produto">Ver detalhes</a>
+  </article>
+</div>
+      </div>
     </section>
 
-    <!-- Seção IA Nano Banana -->
-    <section id="ia" class="ai-section container">
-        <div class="ai-content">
-            <h2>Conheça o modelo<br><span class="highlight">Nano Banana</span></h2>
-            <p>Muito mais do que um chat. A nossa inteligência artificial lê o seu comportamento financeiro atual, compara com o seu histórico do mês passado e emite alertas antes que a sua fatura estoure.</p>
-            <ul class="ai-list">
-                <li>✓ Previsão de despesas futuras.</li>
-                <li>✓ Análise de "ralos de dinheiro" por estabelecimento.</li>
-                <li>✓ Recomendações personalizadas de poupança.</li>
+    <section class="landing-section is-dark" id="problema">
+      <div class="landing-container split-grid">
+        <div class="split-copy reveal">
+          <p class="section-kicker">O problema</p>
+          <h2>Planilha funciona... até começar a atrapalhar.</h2>
+          <p>
+            No início, uma planilha parece suficiente. Depois surgem cartões diferentes, compras parceladas,
+            gastos de terceiros, entradas, comprovantes, categorias e contas fixas. A organização passa a depender
+            de fórmulas, arquivos soltos e atualização manual.
+          </p>
+
+          <div class="compare-grid">
+            <div class="compare-card before">
+              <strong>Antes</strong>
+              <ul>
+                <li>Fórmulas quebradas</li>
+                <li>Arquivo salvo em um computador</li>
+                <li>Difícil de usar no celular</li>
+                <li>Terceiros e parcelas misturados</li>
+              </ul>
+            </div>
+
+            <div class="compare-card after">
+              <strong>Depois</strong>
+              <ul>
+                <li>Acesso desktop e mobile</li>
+                <li>Cartões, categorias e faturas</li>
+                <li>Calendário por data</li>
+                <li>Terceiros, dívidas e caixinha separados</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="problem-visual reveal delay-1">
+          <div class="sheet-card">
+            <span></span><span></span><span></span><span></span>
+            <span></span><strong>#ERRO</strong><span></span><span></span>
+            <span></span><span></span><strong>#REF!</strong><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+
+          <div class="cloud-card">
+            <span class="feature-icon">☁</span>
+            <h3>Organização em nuvem</h3>
+            <p>Uma experiência pensada para usar quando o gasto acontece, não só quando você abre uma planilha.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section is-light" id="produto">
+      <div class="landing-container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">Produto</p>
+          <h2>Uma visão para cada momento da sua rotina.</h2>
+          <p>Dashboard para resumir, calendário para localizar e visualizações para aprofundar.</p>
+        </div>
+
+<div class="product-tabs reveal delay-1">
+  <div class="tab-buttons" role="tablist" aria-label="Prévia das áreas do GugetFin">
+    <button class="tab-button active" type="button" data-tab="dashboard">Dashboard</button>
+    <button class="tab-button" type="button" data-tab="calendario">Calendário</button>
+    <button class="tab-button" type="button" data-tab="visualizacoes">Visualizações</button>
+  </div>
+
+  <div class="tab-preview active" id="tab-dashboard">
+    <div class="product-copy">
+      <span>01</span>
+      <h3>Dashboard com a cara do seu app</h3>
+      <p>Cards, gastos fixos, resumo mensal e cartão de crédito em uma visão limpa.</p>
+    </div>
+
+    <div class="product-window dashboard-window real-preview">
+      <div class="mini-top-lines">
+        <strong>Fluxo Anual de Gastos</strong>
+        <strong>Metas e Objetivos</strong>
+        <strong>Lista de Desejos</strong>
+      </div>
+
+      <div class="mini-kpis">
+        <div class="mini-kpi is-green"><small>Saldo mensal</small><b>R$ ••••</b></div>
+        <div class="mini-kpi"><small>Total cartão</small><b>R$ ••••</b></div>
+        <div class="mini-kpi"><small>% da renda</small><b>••••%</b></div>
+        <div class="mini-kpi"><small>Caixinha</small><b>R$ ••••</b></div>
+      </div>
+
+      <div class="mini-dashboard-grid">
+        <article class="mini-panel">
+          <h4>Gastos Fixos</h4>
+          <div class="mini-table">
+            <p><span>Uber One</span><b>R$ ••••</b></p>
+            <p><span>Amazon Prime</span><b>R$ ••••</b></p>
+            <p><span>Canva</span><b>R$ ••••</b></p>
+            <p class="total"><span>Total do mês</span><b>R$ ••••</b></p>
+          </div>
+        </article>
+
+        <article class="mini-panel">
+          <h4>Resumo Mensal</h4>
+          <div class="mini-table">
+            <p><span>Inter</span><b>R$ ••••</b></p>
+            <p><span>Nubank</span><b class="danger">R$ ••••</b></p>
+            <p><span>Transporte</span><b>R$ ••••</b></p>
+            <p><span>Alimentação</span><b class="danger">R$ ••••</b></p>
+          </div>
+        </article>
+
+        <article class="mini-panel mini-card-list">
+          <h4>Cartão de Crédito</h4>
+          <div class="mini-table">
+            <p><span>28/06 · Uber</span><i>INTER</i><b>R$ ••••</b></p>
+            <p><span>27/06 · Ifood</span><i>NUBANK</i><b>R$ ••••</b></p>
+            <p><span>24/06 · 99</span><i>MERCADO</i><b>R$ ••••</b></p>
+            
+<p><span>19/06 · Doces</span><i>INTER</i><b>R$ ••••</b></p><p><span>19/06 · Almoço</span><i>INTER</i><b>R$ ••••</b></p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-preview" id="tab-calendario">
+    <div class="product-copy">
+      <span>02</span>
+      <h3>Calendário para entender cada dia</h3>
+      <p>Gastos, entradas e terceiros organizados por data, com filtros rápidos.</p>
+    </div>
+
+    <div class="product-window calendar-window real-preview">
+      <div class="mini-calendar-head">
+        <div>
+          <small>Visão mensal</small>
+          <h4>Tudo — Junho 2026</h4>
+        </div>
+        <div class="mini-kpis compact">
+          <div class="mini-kpi is-green"><small>Total</small><b>R$ ••••</b></div>
+          <div class="mini-kpi"><small>Dias</small><b>25</b></div>
+        </div>
+      </div>
+
+      <div class="mini-filter-row">
+        <span>Tudo</span><span>Gastos</span><span>Gasto de terceiros</span><span>Entradas</span>
+      </div>
+
+      
+
+      <div class="mini-calendar-grid">
+        <article></article>
+        <article><b>1</b><p>Celular<strong>R$ ••••</strong></p><p class="income">Serviço<strong>R$ ••••</strong></p></article>
+        <article><b>2</b><p>Ingressos<strong>R$ ••••</strong></p></article>
+        <article><b>3</b><p>99 <strong>R$ ••••</strong></p><p>RioCard <strong>R$ ••••</strong></p></article>
+        <article><b>4</b><p>Estágio <strong>R$ ••••</strong></p></article>
+        <article><b>5</b><p>Amazon<strong>R$ ••••</strong></p><p>Barbearia <strong>R$ ••••</strong></p></article>
+        <article><b>6</b><p>Uber <strong>R$ ••••</strong></p></article>
+        
+        <article><b>7</b><p>99 <strong>R$ ••••</strong></p><p>Uber <strong>R$ ••••</strong></p></article><article><b>8</b><p>99 <strong>R$ ••••</strong></p><p>Uber <strong>R$ ••••</strong></p></article>
+        
+        <article><b>9</b><p>Uber <strong>R$ ••••</strong></p></article><article><b>10</b><p>Uber <strong>R$ ••••</strong></p></article>
+        
+        <article><b>11</b><p>Lanche<strong>R$ ••••</strong></p>
+<p class="income">Contrato<strong>R$ ••••</strong></p></article><article><b>12</b><p>Pizza<strong>R$ ••••</strong></p></article>
+        
+        <article><b>13</b><p>Adobe<strong>R$ ••••</strong></p>
+<p class="income">Extra<strong>R$ ••••</strong></p></article><article><b>14</b><p>Canva <strong>R$ ••••</strong></p></article>
+        
+        <article><b>15</b><p>Compras<strong>R$ ••••</strong></p></article><article><b>16</b><p>Jantar<strong>R$ ••••</strong></p>
+</article>
+        
+        <article><b>17</b><p>99 Taxi<strong>R$ ••••</strong></p></article><article><b>18</b><p>Padaria<strong>R$ ••••</strong></p></article>
+        
+        <article><b>19</b><p>Uber<strong>R$ ••••</strong></p></article><article><b>19</b><p>Roupas<strong>R$ ••••</strong></p></article>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-preview" id="tab-visualizacoes">
+    <div class="product-copy">
+      <span>03</span>
+      <h3>Detalhes sem poluir a tela inicial</h3>
+      <p>Terceiros, dívidas, parcelados e caixinha ficam em uma área própria.</p>
+    </div>
+
+    <div class="product-window insights-window real-preview">
+      <div class="mini-insights-head">
+        <div>
+          <small>Visualizações</small>
+          <h4>Controle detalhado</h4>
+        </div>
+        <div class="mini-kpis compact">
+          <div class="mini-kpi"><small>Terceiros</small><b>R$ ••••</b></div>
+          <div class="mini-kpi"><small>Dívidas</small><b>R$ ••••</b></div>
+          <div class="mini-kpi"><small>Caixinha</small><b>R$ ••••</b></div>
+        </div>
+      </div>
+
+      <div class="mini-filter-row">
+        <span>Terceiros</span><span>Dívidas</span><span>Parcelados</span><span>Caixinha</span>
+      </div>
+
+      <article class="mini-panel mini-wide-panel">
+        <small>Gastos compartilhados</small>
+        <h4>Gastos de terceiros</h4>
+
+        <div class="mini-insight-list">
+          <p><span><b>Compras do mês</b>@juliasoares · Compras · Pendente</span><strong>R$ ••••</strong></p>
+          <p><span><b>Mochila</b> Irmão · Outros · 10x</span><strong>R$ ••••</strong></p>
+          <p><span><b>Brindes do Evento</b> @joaomarcos· Pendente</span><strong>R$ ••••</strong></p>
+          <p><span><b>Presente</b> Marcele · Recebido</span><strong>R$ ••••</strong></p>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+      </div>
+    </section>
+
+    <section class="landing-section is-dark" id="depoimentos">
+      <div class="landing-container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">Depoimentos</p>
+          <h2>Feito para uma rotina financeira real.</h2>
+          <p>Feedbacks de usuários que trocaram controle manual por uma plataforma visual.</p>
+        </div>
+
+        <div class="testimonial-slider reveal delay-1">
+          <article class="testimonial-card active">
+            <p>“Eu usava planilha, mas sempre esquecia de atualizar alguma coisa. Agora consigo ver meu mês inteiro em poucos minutos.”</p>
+            <strong>Usuário beta</strong>
+            <span>Organização pessoal</span>
+          </article>
+
+          <article class="testimonial-card">
+            <p>“A parte de gastos de terceiros resolveu um problema real. Ficou muito mais fácil saber quem precisa me pagar.”</p>
+            <strong>Usuário beta</strong>
+            <span>Gastos compartilhados</span>
+          </article>
+
+          <article class="testimonial-card">
+            <p>“Gostei porque funciona bem no celular. Não preciso esperar chegar em casa para anotar um gasto.”</p>
+            <strong>Usuário beta</strong>
+            <span>Uso mobile</span>
+          </article>
+        </div>
+
+        <div class="slider-dots" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
+      </div>
+    </section>
+
+    <section class="landing-section is-light">
+      <div class="landing-container">
+        <div class="cta-card reveal">
+          <p class="section-kicker">Comece com clareza</p>
+          <h2>Organize hoje o que você sempre deixa para depois.</h2>
+          <p>O GugetFin te guia desde o primeiro acesso para cadastrar cartões, categorias e seus primeiros lançamentos.</p>
+          <a class="btn btn-primary btn-lg" href="./index.html?auth=register" data-auth-link="register">Criar minha conta</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section is-light" id="planos">
+      <div class="landing-container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">Planos</p>
+          <h2>Escolha o plano ideal para sua rotina.</h2>
+          <p>Os valores ainda estão sendo preparados. Por enquanto, comece usando a plataforma.</p>
+        </div>
+
+        <div class="pricing-grid reveal delay-1">
+          <article class="price-card">
+            <span>Essencial</span>
+            <h3>Em breve</h3>
+            <p>Para controlar gastos pessoais com clareza.</p>
+            <ul>
+              <li>Dashboard</li>
+              <li>Calendário financeiro</li>
+              <li>Gastos e entradas</li>
+              <li>Cartões e categorias</li>
             </ul>
+            <a class="btn btn-dark" href="./index.html?auth=register" data-auth-link="register">Começar agora</a>
+          </article>
+
+          <article class="price-card featured">
+            <span>Pro</span>
+            <h3>Em breve</h3>
+            <p>Para quem quer mais organização no dia a dia.</p>
+            <ul>
+              <li>Tudo do Essencial</li>
+              <li>Gastos de terceiros</li>
+              <li>Caixinha</li>
+              <li>Visualizações detalhadas</li>
+            </ul>
+            <a class="btn btn-primary" href="./index.html?auth=register" data-auth-link="register">Começar agora</a>
+          </article>
+
+          <article class="price-card">
+            <span>Premium</span>
+            <h3>Em breve</h3>
+            <p>Para recursos avançados e novidades futuras.</p>
+            <ul>
+              <li>Tudo do Pro</li>
+              <li>Assistente financeiro</li>
+              <li>Relatórios avançados</li>
+              <li>Backup e exportação</li>
+            </ul>
+            <a class="btn btn-dark" href="./index.html?auth=register" data-auth-link="register">Começar agora</a>
+          </article>
         </div>
-        <div class="ai-visual">
-            <div class="chat-mockup">
-                <div class="msg bot">Au au! Olá! Sou a Guget. Como posso ajudar com as suas finanças hoje?</div>
-                <div class="msg user">Comparar com o mês passado</div>
-                <div class="msg bot">Neste mesmo dia do mês passado, você já tinha gasto R$ 450 a mais. Excelente economia! Mantenha o ritmo.</div>
-            </div>
-        </div>
+      </div>
     </section>
 
-    <!-- CTA Final -->
-    <section class="cta-bottom">
-        <div class="container text-center">
-            <h2>Pronto para organizar o seu bolso?</h2>
-            <p>Junte-se e assuma o controlo do seu dinheiro de forma profissional e limpa.</p>
-            <a href="index.html" class="btn-primary">Criar a Minha Conta</a>
+    <section class="landing-section is-dark" id="faq">
+      <div class="landing-container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">FAQ</p>
+          <h2>O que você precisa saber antes de começar.</h2>
         </div>
+
+        <div class="faq-list reveal delay-1">
+          <details open>
+            <summary>Preciso instalar alguma coisa?</summary>
+            <p>Não. O GugetFin funciona pelo navegador e pode ser acessado no computador ou no celular.</p>
+          </details>
+
+          <details>
+            <summary>O GugetFin substitui minha planilha?</summary>
+            <p>Sim. A ideia é tirar a dependência de fórmulas e arquivos manuais, oferecendo uma experiência mais prática para registrar e visualizar seus dados.</p>
+          </details>
+
+          <details>
+            <summary>Consigo controlar gastos que outras pessoas precisam me pagar?</summary>
+            <p>Sim. A plataforma possui uma área específica para gastos de terceiros, com status, valores e visualização dedicada.</p>
+          </details>
+
+          <details>
+            <summary>Posso usar no celular?</summary>
+            <p>Sim. A plataforma foi pensada para funcionar tanto no desktop quanto no mobile.</p>
+          </details>
+        </div>
+      </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container footer-content">
-            <div class="logo"><img class="landing-logo-img" src="assets/logo-positive.svg" alt="Guget Fin"></div>
-            <p>© 2026 Guget Fin. Todos os direitos reservados.</p>
-        </div>
-    </footer>
+    <section class="landing-section is-dark final-cta">
+      <div class="landing-container reveal">
+        <p class="section-kicker">GugetFin</p>
+        <h2>Pronto para parar de se perder nos próprios gastos?</h2>
+        <p>Crie sua conta e comece a organizar sua vida financeira com mais clareza.</p>
+        <a class="btn btn-primary btn-lg" href="./index.html?auth=register" data-auth-link="register">Começar agora</a>
+      </div>
+    </section>
+  </main>
 
-    <script src="js/landing.js"></script>
+  <footer class="landing-footer">
+    <div class="landing-container footer-top">
+      <a class="landing-brand" href="#topo">
+        <img src="./assets/logo-negative.svg" alt="GugetFin" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <span class="landing-logo-fallback" style="display:none;"><span class="fallback-mark"></span>GugetFin</span>
+      </a>
+      <p>Organização financeira simples, visual e acessível.</p>
+    </div>
+
+    <div class="landing-container footer-links">
+      <div>
+        <strong>Produto</strong>
+        <a href="#funcionalidades">Funcionalidades</a>
+        <a href="#produto">Demonstração</a>
+        <a href="#planos">Planos</a>
+      </div>
+
+      <div>
+        <strong>Ajuda</strong>
+        <a href="./ajuda.html">Central de aprendizado</a>
+        <a href="#faq">FAQ</a>
+        <a href="mailto:onicolasneves@gmail.com">Contato</a>
+      </div>
+
+      <div>
+        <strong>Conta</strong>
+        <a href="./index.html?auth=login" data-auth-link="login">Login</a>
+        <a href="./index.html?auth=register" data-auth-link="register">Criar conta</a>
+        <a href="./index.html">Acessar app</a>
+      </div>
+
+      <div>
+        <strong>Contato</strong>
+        <a href="mailto:onicolasneves@gmail.com">onicolasneves@gmail.com</a>
+        <span>Telefone em breve</span>
+      </div>
+    </div>
+
+    <div class="landing-container footer-bottom">
+      <span>© 2026 GugetFin. Todos os direitos reservados.</span>
+      <a href="#topo">Voltar ao topo</a>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const menuButton = document.getElementById('landing-menu-btn');
+      const nav = document.getElementById('landing-nav');
+      const actions = document.getElementById('landing-actions');
+      const header = document.getElementById('topo');
+      const loading = document.getElementById('landing-loading');
+
+      const closeMenu = () => {
+        menuButton?.classList.remove('is-open');
+        nav?.classList.remove('is-open');
+        actions?.classList.remove('is-open');
+        document.body.classList.remove('menu-open');
+        menuButton?.setAttribute('aria-expanded', 'false');
+        menuButton?.setAttribute('aria-label', 'Abrir menu');
+      };
+
+      menuButton?.setAttribute('aria-expanded', 'false');
+      menuButton?.setAttribute('aria-controls', 'landing-nav');
+      menuButton?.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const isOpen = menuButton.classList.toggle('is-open');
+        nav?.classList.toggle('is-open', isOpen);
+        actions?.classList.toggle('is-open', isOpen);
+        document.body.classList.toggle('menu-open', isOpen);
+        menuButton.setAttribute('aria-expanded', String(isOpen));
+        menuButton.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+      }, true);
+
+      nav?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+      actions?.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
+      nav?.addEventListener('click', (event) => {
+        if (event.target === nav) closeMenu();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeMenu();
+      });
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 1180) closeMenu();
+      });
+      window.addEventListener('scroll', () => {
+        header?.classList.toggle('is-scrolled', window.scrollY > 8);
+      }, { passive: true });
+
+      document.querySelectorAll('.tab-button').forEach((button) => {
+        button.addEventListener('click', () => {
+          const tab = button.dataset.tab;
+          document.querySelectorAll('.tab-button').forEach((item) => item.classList.toggle('active', item === button));
+          document.querySelectorAll('.tab-preview').forEach((preview) => {
+            preview.classList.toggle('active', preview.id === `tab-${tab}`);
+          });
+        });
+      });
+
+      const revealItems = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        revealItems.forEach((item) => observer.observe(item));
+      } else {
+        revealItems.forEach((item) => item.classList.add('is-visible'));
+      }
+
+      window.addEventListener('load', () => loading?.classList.add('is-hidden'));
+      setTimeout(() => loading?.classList.add('is-hidden'), 1200);
+    })();
+  </script>
+  <script src="./js/landing.js"></script>
 </body>
 </html>

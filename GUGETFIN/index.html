@@ -3,6 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Guget Fin | Dashboard</title>
+    <style id="guget-boot-critical">
+        html, body {
+            background: #0b0f14;
+        }
+        #app-loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 2147483647;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0b0f14;
+            color: #f8fafc;
+        }
+    </style>
     <link rel="stylesheet" href="css/style.css">
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,10 +33,12 @@
 
 <body>
 
-<div id="app-loading-screen" class="app-loading-screen">
+<div id="app-loading-screen" class="app-loading-screen is-dark" role="status" aria-live="polite" aria-label="Carregando sua conta">
+    <div class="app-loading-glow" aria-hidden="true"></div>
     <div class="app-loading-card">
         <img class="app-loading-logo app-loading-logo-positive" src="assets/logo-positive.svg" alt="Guget Fin">
         <img class="app-loading-logo app-loading-logo-negative" src="assets/logo-negative.svg" alt="Guget Fin">
+        <img class="app-loading-dots" src="assets/loading-dots-gugetfin.svg" alt="" aria-hidden="true">
         <span>Carregando sua conta...</span>
     </div>
 </div>
@@ -72,73 +89,36 @@
         } catch (error) {}
     })();
 </script>
+<script>
+    (function () {
+        window.gugetShowPageLoader = function (texto) {
+            var splash = document.getElementById('app-loading-screen');
+            if (!splash) return;
+            var label = splash.querySelector('.app-loading-card span');
+            if (label && texto) label.textContent = texto;
+            splash.style.display = 'flex';
+            splash.classList.add('is-dark');
+            splash.classList.remove('is-hidden');
+        };
 
-<div id="auth-screen" class="auth-overlay auth-v2">
-    <div class="auth-box">
-        <section class="auth-showcase-panel auth-right" id="auth-showcase" style="display: none;">
-            <div class="auth-showcase-brand">
-                <img class="brand-logo brand-logo-negative" src="assets/logo-negative.svg" alt="Guget Fin">
-            </div>
+        window.gugetNavigateWithLoader = function (url, texto) {
+            window.gugetShowPageLoader(texto || 'Carregando sua conta...');
+            try { sessionStorage.setItem('guget_show_dashboard_loader', '1'); } catch (e) {}
+            setTimeout(function () { window.location.href = url; }, 70);
+        };
+    })();
+</script>
 
-            <div class="showcase-slider">
-                <div class="slides-container" id="slides-container">
-                    <div class="slide-item">
-                        <div class="auth-feature-card">
-                            <div class="auth-feature-top">
-                                <span>Saldo do mês</span>
-                                <strong>R$ 4.820</strong>
-                            </div>
-                            <div class="auth-feature-bars">
-                                <i style="height: 54%;"></i>
-                                <i style="height: 72%;"></i>
-                                <i style="height: 42%;"></i>
-                                <i style="height: 86%;"></i>
-                                <i style="height: 60%;"></i>
-                            </div>
-                        </div>
-                        <h3>Dashboard que explica seu dinheiro</h3>
-                        <p>Entradas, gastos, cartões e metas em uma leitura limpa para decidir melhor.</p>
-                    </div>
-                    <div class="slide-item">
-                        <div class="auth-feature-card auth-feature-stack">
-                            <div><b>@usuario</b><span>Aguardando aceite</span></div>
-                            <div><b>Despesa compartilhada</b><span>3x de R$ 42,90</span></div>
-                            <div><b>Dívidas</b><span>Aceitar, contestar ou pagar</span></div>
-                        </div>
-                        <h3>Gastos compartilhados sem confusão</h3>
-                        <p>Envie, aceite, conteste e acompanhe dívidas entre contas com histórico.</p>
-                    </div>
-                    <div class="slide-item">
-                        <div class="auth-feature-card">
-                            <div class="auth-feature-top">
-                                <span>Caixinha</span>
-                                <strong>R$ 1.250</strong>
-                            </div>
-                            <div class="auth-feature-ring">
-                                <span>68%</span>
-                            </div>
-                        </div>
-                        <h3>Planejamento com cara de hábito</h3>
-                        <p>Visualize parcelados, reservas e metas sem abrir planilha nenhuma.</p>
-                    </div>
-                </div>
+<div id="auth-screen" class="auth-overlay auth-v3" style="display: none;">
+    <div class="auth-page-topbar" aria-label="Topo da autenticação">
+        <a class="auth-page-brand" href="landing.html" aria-label="Ir para o site do GugetFin">
+            <img src="assets/logo-negative.svg" alt="Guget Fin">
+        </a>
+        <a class="auth-back-site" href="landing.html">Voltar ao site</a>
+    </div>
 
-                <div class="slider-dots">
-                    <span class="dot active"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
-            </div>
-
-            <button class="btn-auth-primary btn-get-started mobile-btn-only" onclick="mostrarFormulario('register')">Criar minha conta</button>
-            <p class="auth-switch mobile-btn-only">Já possui cadastro? <a href="#" onclick="mostrarFormulario('login')">Entrar</a></p>
-        </section>
-
+    <div class="auth-box auth-supabase-shell">
         <section class="auth-form-panel auth-left">
-            <div class="auth-mobile-brand">
-                <img class="brand-logo brand-logo-positive" src="assets/logo-positive.svg" alt="Guget Fin">
-            </div>
-
             <div id="auth-splash-loader" class="auth-loader">
                 <div class="auth-loader-mark">
                     <span></span>
@@ -151,6 +131,11 @@
                 <span class="auth-kicker">Bem-vindo de volta</span>
                 <h1>Entre na sua conta</h1>
                 <p class="auth-subtitle">Sua gestão financeira, agora na nuvem.</p>
+
+                <div class="auth-mobile-proof" aria-hidden="true">
+                    <p id="auth-mobile-testimonial-text">“O calendário financeiro me fez entender exatamente para onde meu dinheiro ia.”</p>
+                    <strong id="auth-mobile-testimonial-author">Cliente GugetFin</strong>
+                </div>
 
                 <button type="button" class="btn-auth-google" onclick="fazerLoginGoogle()">
                     <span class="google-brand-mark" aria-hidden="true">
@@ -188,6 +173,11 @@
                 <span class="auth-kicker">Comece agora</span>
                 <h1>Crie sua conta</h1>
                 <p class="auth-subtitle">Configure seu perfil e reserve seu @user único.</p>
+
+                <div class="auth-mobile-proof" aria-hidden="true">
+                    <p id="auth-mobile-register-testimonial-text">“Registrar gastos pelo celular ficou rápido o bastante para virar rotina.”</p>
+                    <strong id="auth-mobile-register-testimonial-author">Cliente GugetFin</strong>
+                </div>
 
                 <div class="auth-grid-2">
                     <label class="auth-field">
@@ -233,9 +223,22 @@
                 <p class="auth-switch">Já tem conta? <a href="#" onclick="toggleAuth(false)">Fazer login</a></p>
             </div>
         </section>
+
+        <section class="auth-showcase-panel auth-right" id="auth-showcase" style="display: none;">
+            <div class="auth-quote-wrap">
+                <span class="auth-quote-mark" aria-hidden="true">“</span>
+                <blockquote id="auth-testimonial-text">O GugetFin transformou meus gastos soltos em uma visão simples do mês. Hoje eu sei exatamente o que já comprometi.</blockquote>
+                <div class="auth-quote-person">
+                    <span id="auth-testimonial-avatar">MN</span>
+                    <div>
+                        <strong id="auth-testimonial-author">Marina Nogueira</strong>
+                        <small id="auth-testimonial-role">Usuária beta</small>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 </div>
-
 		<aside class="sidebar">
             <div class="brand"><img id="logo-guget" class="brand-logo brand-logo-positive" src="assets/logo-positive.svg" alt="Guget Fin"></div>
             
@@ -296,7 +299,7 @@
                 <div class="system-section mobile-only">
                     <div class="options-container" id="container-opcoes">
                         <button class="options-trigger mobile-profile-trigger" onclick="toggleMenuOpcoes(event)" aria-label="Abrir menu da conta">
-                            <img id="mobile-avatar-img" class="mobile-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
+                            <img id="mobile-avatar-img" class="mobile-avatar-img" src="/assets/user.jpg" alt="Foto do usuário">
                             <span id="mobile-profile-first-name" class="mobile-profile-name">Conta</span>
                             <span class="mobile-profile-chevron" aria-hidden="true"></span>
                         </button>
@@ -305,7 +308,7 @@
                                 <button type="button" class="mobile-menu-close" onclick="fecharMenuOpcoes()" aria-label="Fechar menu">×</button>
 
                                 <div class="mobile-menu-profile">
-                                    <img id="mobile-menu-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
+                                    <img id="mobile-menu-avatar-img" src="/assets/user.jpg" alt="Foto do usuário">
                                     <div>
                                         <strong id="mobile-menu-user-name">Guget Fin</strong>
                                         <span id="mobile-menu-user-email">Sua conta</span>
@@ -340,7 +343,7 @@
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => document.getElementById('input-import-js').click())"><i class="fi fi-rr-download"></i> Importar backup</button>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => salvarAlteracoes())"><i class="fi fi-rr-disk"></i> Criar backup</button>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => abrirOnboarding())"><i class="fi fi-rr-interrogation"></i> Rever tutorial</button>
-                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => mostrarToast('Página em desenvolvimento! Em breve teremos uma central de ajuda aqui.'))"><i class="fi fi-rr-interrogation"></i> Ajuda</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => window.location.href = 'ajuda.html')"><i class="fi fi-rr-interrogation"></i> Ajuda</button>
                                 </div>
 
                                 <div class="mobile-menu-section mobile-menu-danger">
@@ -360,7 +363,7 @@
                             <i class="fi fi-rr-settings"></i> Settings
                         </button>
 
-                        <button class="btn-sidebar-general" onclick="mostrarToast('Página em desenvolvimento! Em breve teremos uma central de ajuda aqui. 🚧')">
+                        <button class="btn-sidebar-general" onclick="window.location.href = 'ajuda.html'">
 						    <i class="fi fi-rr-interrogation"></i> Ajuda
 						</button>
                         <button class="btn-sidebar-general btn-logout" onclick="sairDaConta()">
@@ -396,7 +399,7 @@
                     
                     <span id="header-current-date" class="header-current-date">...</span>
                     
-                    <img id="header-avatar-img" class="header-avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
+                    <img id="header-avatar-img" class="header-avatar" src="/assets/user.jpg" alt="Foto do usuário">
                     <button type="button" class="header-theme-toggle" id="header-theme-toggle" aria-label="Alternar modo noturno" onclick="alternarTemaTopo()">
                         <span class="theme-toggle-track" aria-hidden="true">
                             <span class="theme-toggle-thumb"></span>
@@ -417,6 +420,18 @@
 
             <div id="container-lembretes-fatura" class="mobile-only" style="display: flex; gap: 10px; flex-grow: 1; justify-content: flex-end; overflow-x: auto; padding-bottom: 5px;"></div>
 		</header>
+
+        <section id="primeiros-passos-dashboard" class="first-steps-dashboard desktop-only" aria-label="Primeiros passos do GugetFin">
+            <div class="first-steps-heading">
+                <div>
+                    <span>Primeiros passos</span>
+                    <strong>Monte sua rotina financeira</strong>
+                </div>
+                <small id="first-steps-progress-text">0/9 concluídos</small>
+            </div>
+
+            <div class="first-steps-track" id="first-steps-track"></div>
+        </section>
 		
 		<section id="aba-planejamento" class="tab-content">	
 			<div class="card chart-card" id="card-grafico">
@@ -893,7 +908,7 @@
                 </div>
 
                 <div class="settings-user-card">
-                    <img id="settings-avatar-img" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do usuário">
+                    <img id="settings-avatar-img" src="/assets/user.jpg" alt="Foto do usuário">
                     <div>
                         <strong id="settings-user-name">Usuário</strong>
                         <span id="settings-user-email">email@exemplo.com</span>
@@ -943,7 +958,7 @@
 
                         <div class="settings-avatar-editor">
                             <div class="settings-avatar-preview-wrap">
-                                <img id="settings-profile-avatar-preview" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do perfil">
+                                <img id="settings-profile-avatar-preview" src="/assets/user.jpg" alt="Foto do perfil">
                             </div>
 
                             <div class="settings-avatar-info">
@@ -2163,6 +2178,47 @@
   if (window.iniciarVigia) {
       window.iniciarVigia();
   }
+</script>
+
+
+<script>
+    (function () {
+        var testimonials = [
+            {
+                text: 'O GugetFin transformou meus gastos soltos em uma visão simples do mês. Hoje eu sei exatamente o que já comprometi.',
+                author: 'Marina Nogueira',
+                role: 'Controle pessoal',
+                avatar: 'MN'
+            },
+            {
+                text: 'A área de terceiros resolveu uma bagunça que eu tinha há meses. Ficou muito mais fácil saber quem me deve e o que já foi pago.',
+                author: 'Lucas Andrade',
+                role: 'Gastos compartilhados',
+                avatar: 'LA'
+            },
+            {
+                text: 'Eu tentei planilha várias vezes, mas nunca mantinha atualizada. No GugetFin eu registro rápido e acompanho tudo pelo calendário.',
+                author: 'Beatriz Lima',
+                role: 'Rotina financeira',
+                avatar: 'BL'
+            }
+        ];
+
+        var escolhido = testimonials[Math.floor(Math.random() * testimonials.length)];
+        function setText(id, value) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
+        setText('auth-testimonial-text', escolhido.text);
+        setText('auth-testimonial-author', escolhido.author);
+        setText('auth-testimonial-role', escolhido.role);
+        setText('auth-testimonial-avatar', escolhido.avatar);
+        setText('auth-mobile-testimonial-text', '“' + escolhido.text + '”');
+        setText('auth-mobile-testimonial-author', escolhido.author + ' · ' + escolhido.role);
+        setText('auth-mobile-register-testimonial-text', '“' + escolhido.text + '”');
+        setText('auth-mobile-register-testimonial-author', escolhido.author + ' · ' + escolhido.role);
+    })();
 </script>
 
 	<script src="js/core.js"></script>
