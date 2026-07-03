@@ -217,12 +217,7 @@ let slideAtualOnb = 1;
 const totalSlidesOnb = 5;
 
 function abrirOnboarding() {
-    const modal = document.getElementById('modal-onboarding');
-    if (modal) {
-        slideAtualOnb = 1;
-        atualizarVisualOnb();
-        modal.showModal();
-    }
+    window.location.href = 'onboarding.html?rever=1';
 }
 
 function proximoSlideOnb() {

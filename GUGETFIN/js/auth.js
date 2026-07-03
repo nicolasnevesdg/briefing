@@ -12,6 +12,7 @@ async function fazerLogin() {
         }
 
         // Esconde o formulário e mostra o loader
+        if (typeof mostrarSplashInicial === 'function') mostrarSplashInicial('Entrando na sua conta...');
         if (form) form.style.display = 'none';
         if (loader) loader.style.display = 'block';
 
@@ -25,6 +26,7 @@ async function fazerLogin() {
         alert("Erro ao entrar: " + error.message);
         
         // Se der erro (ex: senha errada), ele remove o loader e devolve o formulário
+        if (typeof esconderSplashInicial === 'function') esconderSplashInicial();
         const loader = document.getElementById('auth-splash-loader'); 
         const form = document.getElementById('login-form');
         if (form) form.style.display = 'block';
@@ -42,6 +44,7 @@ async function fazerLoginGoogle() {
     }
 
     try {
+        if (typeof mostrarSplashInicial === 'function') mostrarSplashInicial('Conectando com Google...');
         if (loginForm) loginForm.style.display = 'none';
         if (loader) loader.style.display = 'block';
 
@@ -67,6 +70,7 @@ async function fazerLoginGoogle() {
                 setTimeout(() => { window.alertGoogleSemContaExibido = false; }, 1000);
             }
 
+            if (typeof esconderSplashInicial === 'function') esconderSplashInicial();
             if (loader) loader.style.display = 'none';
             if (loginForm) loginForm.style.display = 'block';
         }
@@ -80,6 +84,7 @@ async function fazerLoginGoogle() {
             alert('Erro ao entrar com Google: ' + error.message);
         }
 
+        if (typeof esconderSplashInicial === 'function') esconderSplashInicial();
         if (loader) loader.style.display = 'none';
         if (loginForm) loginForm.style.display = 'block';
     }
@@ -122,6 +127,7 @@ async function fazerCadastro() {
         }
 
         // Esconde o formulário e mostra o loader
+        if (typeof mostrarSplashInicial === 'function') mostrarSplashInicial('Criando sua conta...');
         if (form) form.style.display = 'none';
         if (loader) loader.style.display = 'block';
 
@@ -170,6 +176,7 @@ async function fazerCadastro() {
         alert("Erro ao cadastrar: " + error.message);
         
         // Se der erro (ex: e-mail já existe), ele remove o loader e devolve o formulário
+        if (typeof esconderSplashInicial === 'function') esconderSplashInicial();
         const loader = document.getElementById('auth-splash-loader'); 
         const form = document.getElementById('register-form');
         if (form) form.style.display = 'block';
@@ -189,6 +196,26 @@ function atualizarSplashInicialTema() {
     splash.classList.toggle('is-dark', tema === 'dark');
 }
 
+function mostrarSplashInicial(texto = 'Carregando sua conta...') {
+    const splash = document.getElementById('app-loading-screen');
+    if (!splash) return;
+
+    const label = splash.querySelector('.app-loading-card span');
+    if (label && texto) label.textContent = texto;
+
+    splash.style.display = 'flex';
+    splash.classList.add('is-dark');
+    splash.classList.remove('is-hidden');
+}
+
+window.mostrarGugetLoadingScreen = mostrarSplashInicial;
+window.gugetShowPageLoader = mostrarSplashInicial;
+window.gugetNavigateWithLoader = function(url, texto = 'Carregando sua conta...') {
+    mostrarSplashInicial(texto);
+    try { sessionStorage.setItem('guget_show_dashboard_loader', '1'); } catch (e) {}
+    setTimeout(() => { window.location.href = url; }, 70);
+};
+
 function esconderSplashInicial() {
     const splash = document.getElementById('app-loading-screen');
     if (!splash) return;
@@ -197,6 +224,23 @@ function esconderSplashInicial() {
     setTimeout(() => {
         splash.style.display = 'none';
     }, 260);
+}
+
+function precisaPassarPeloOnboarding() {
+    const config = salsiData?.config || {};
+    return config.onboardingConcluido !== true;
+}
+
+function redirecionarParaOnboardingSeNecessario() {
+    if (!window.auth?.currentUser) return false;
+    if (!precisaPassarPeloOnboarding()) return false;
+
+    const paginaAtual = String(window.location.pathname || '').split('/').pop();
+    if (paginaAtual === 'onboarding.html') return false;
+
+    mostrarSplashInicial('Abrindo configuração inicial...');
+    window.location.href = 'onboarding.html';
+    return true;
 }
 
 // Envolvemos o vigia nesta função para ele esperar o Firebase carregar
@@ -292,6 +336,8 @@ window.iniciarVigia = function() {
 
             // Tudo seguro! Libera a tela
             if (splashLoader) splashLoader.style.display = 'none';
+            if (redirecionarParaOnboardingSeNecessario()) return;
+
             iniciar(); 
             if (typeof carregarConfiguracoesPerfil === 'function') {
                 carregarConfiguracoesPerfil();
@@ -647,7 +693,9 @@ function criarEstruturaInicialUsuario(nome = '', sobrenome = '', username = '', 
             detalhesBancos: [
                 { nome: "Cadastre seus cartões!", fechamento: 10, vencimento: 20 }
             ],
-            mostrarCaixinhaDashboard: false
+            mostrarCaixinhaDashboard: false,
+            onboardingConcluido: false,
+            tutorialVisto: false
         },
         entradas: [],
         transacoes: [],
@@ -879,8 +927,8 @@ function atualizarStatusGoogleConta() {
             : 'Nenhuma conta Google vinculada.';
     }
 
-    if (btnConnect) btnConnect.style.display = estaConectado ? 'none' : 'inline-flex';
-    if (btnDisconnect) btnDisconnect.style.display = estaConectado ? 'inline-flex' : 'none';
+    if (btnConnect) btnConnect.style.display = estaConectado ? 'none' : 'block';
+    if (btnDisconnect) btnDisconnect.style.display = estaConectado ? 'block' : 'none';
 }
 
 function criarGoogleProviderConta() {

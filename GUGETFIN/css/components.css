@@ -1504,25 +1504,13 @@ tr.gasto-recem-adicionado td {
 /* BOTÃO DE PRIVACIDADE DOS VALORES - VERSÃO MINIMALISTA     */
 /* ========================================================= */
 
-.privacy-toggle-btn {
-    all: unset;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--dark-green);
-    transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease;
-    opacity: 0.92;
-    line-height: 1;
-}
-
 .privacy-toggle-btn:hover {
     transform: translateY(-1px) scale(1.05);
     opacity: 1;
 }
 
 .privacy-toggle-btn i {
-    font-size: 20px;
+    font-size: 25px;
     line-height: 1;
 }
 
@@ -1559,6 +1547,8 @@ tr.gasto-recem-adicionado td {
     transition: transform 0.18s ease, opacity 0.18s ease, color 0.18s ease;
     opacity: 0.9;
     line-height: 1;
+    top: 3px;
+    position: relative;
 }
 
 .privacy-toggle-btn:hover {

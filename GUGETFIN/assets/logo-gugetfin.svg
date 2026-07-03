@@ -1,0 +1,9 @@
+<svg width="178" height="44" viewBox="0 0 178 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(0 5)">
+    <rect x="12" y="3" width="37" height="20" rx="7" fill="#31DF92"/>
+    <rect x="2" y="12" width="37" height="20" rx="7" fill="#06C477"/>
+    <rect x="25" y="12" width="37" height="20" rx="7" fill="#63EAAA"/>
+    <path d="M21 18H43" stroke="#005F3C" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+  </g>
+  <text x="72" y="30" fill="white" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800">GugetFin</text>
+</svg>

@@ -166,6 +166,281 @@ function atualizarListaBancos() {
     });
 }
 
+const PRIMEIROS_PASSOS_DASHBOARD = [
+    {
+        id: 'carteira',
+        titulo: 'Carteira',
+        texto: 'Cartões e contas',
+        icone: 'fi fi-rr-credit-card',
+        acao: 'organizacao',
+        descricao: 'Cadastre pelo menos um cartão ou conta. É isso que permite separar suas compras por origem e calcular faturas corretamente.'
+    },
+    {
+        id: 'categorias',
+        titulo: 'Categorias',
+        texto: 'Tags de compra',
+        icone: 'fi fi-rr-tags',
+        acao: 'organizacao',
+        descricao: 'Escolha suas categorias de compra. Assim cada gasto entra no lugar certo e o resumo mensal fica útil desde o começo.'
+    },
+    {
+        id: 'credito',
+        titulo: 'Crédito',
+        texto: 'Gasto no cartão',
+        icone: 'fi fi-rr-receipt',
+        acao: 'credito',
+        descricao: 'Cadastre um gasto no cartão de crédito para entender parcelas, fatura e competência do mês.'
+    },
+    {
+        id: 'debito',
+        titulo: 'Débito/Pix',
+        texto: 'Saída à vista',
+        icone: 'fi fi-rr-wallet',
+        acao: 'debito',
+        descricao: 'Registre uma saída à vista, como débito, Pix ou dinheiro. Ela entra direto no mês da compra.'
+    },
+    {
+        id: 'fixos',
+        titulo: 'Fixos',
+        texto: 'Conta recorrente',
+        icone: 'fi fi-rr-thumbtack',
+        acao: 'fixos',
+        descricao: 'Cadastre uma conta recorrente. Gastos fixos ajudam a enxergar compromissos que voltam todo mês.'
+    },
+    {
+        id: 'terceiros',
+        titulo: 'Terceiros',
+        texto: 'Gasto de alguém',
+        icone: 'fi fi-rr-users-alt',
+        acao: 'terceiros',
+        descricao: 'Use terceiros quando alguém utilizar seu cartão. Você pode vincular um @user ou guardar apenas um nome.'
+    },
+    {
+        id: 'entradas',
+        titulo: 'Entradas',
+        texto: 'Dinheiro recebido',
+        icone: 'fi fi-rr-usd-circle',
+        acao: 'entrada',
+        descricao: 'Cadastre dinheiro recebido, como salário, serviço ou reembolso. Isso alimenta saldo e percentual da renda.'
+    },
+    {
+        id: 'calendario',
+        titulo: 'Calendário',
+        texto: 'Tudo por data',
+        icone: 'fi fi-rr-calendar',
+        acao: 'calendario',
+        descricao: 'Veja seus lançamentos por data no calendário. Use os filtros para comparar gastos, terceiros e entradas.'
+    },
+    {
+        id: 'visualizacoes',
+        titulo: 'Visualizações',
+        texto: 'Controle detalhado',
+        icone: 'fi fi-rr-chart-pie-alt',
+        acao: 'visualizacoes',
+        descricao: 'Acompanhe parcelamentos, terceiros, dívidas e caixinha fora da dashboard principal.'
+    }
+];
+
+function obterConfigPrimeirosPassosDashboard() {
+    if (!salsiData.config) salsiData.config = {};
+    if (!salsiData.config.primeirosPassosDashboard) {
+        salsiData.config.primeirosPassosDashboard = {};
+    }
+    return salsiData.config.primeirosPassosDashboard;
+}
+
+function existeCartaoCarteira() {
+    const detalhes = salsiData.config?.detalhesBancos || [];
+    const bancos = salsiData.config?.bancos || [];
+
+    return detalhes.some(cartao => {
+        const nome = String(cartao?.nome || '').trim().toLowerCase();
+        return nome && nome !== 'cadastre seus cartões!' && nome !== 'cadastre seus cartoes!';
+    }) || bancos.some(nome => {
+        const nomeLimpo = String(nome || '').trim().toLowerCase();
+        return nomeLimpo && nomeLimpo !== 'cadastre seus cartões!' && nomeLimpo !== 'cadastre seus cartoes!';
+    });
+}
+
+function primeiroPassoDashboardConcluido(id) {
+    const config = obterConfigPrimeirosPassosDashboard();
+    const transacoes = Array.isArray(salsiData.transacoes) ? salsiData.transacoes : [];
+    const entradas = Array.isArray(salsiData.entradas) ? salsiData.entradas : [];
+    const categorias = Array.isArray(salsiData.config?.categorias) ? salsiData.config.categorias : [];
+
+    const mapa = {
+        carteira: () => existeCartaoCarteira(),
+        categorias: () => categorias.length > 0,
+        credito: () => transacoes.some(t => t?.tipo === 'cartao'),
+        debito: () => transacoes.some(t => t?.tipo === 'debito'),
+        fixos: () => transacoes.some(t => t?.tipo === 'fixo'),
+        terceiros: () => transacoes.some(t => t?.eDeTerceiro || t?.terceiro?.tipo === 'usuario' || t?.terceiro?.tipo === 'manual'),
+        entradas: () => entradas.length > 0,
+        calendario: () => config.calendario === true,
+        visualizacoes: () => config.visualizacoes === true
+    };
+
+    return Boolean(mapa[id]?.());
+}
+
+function atualizarPrimeirosPassosDashboard() {
+    const wrapper = document.getElementById('primeiros-passos-dashboard');
+    const track = document.getElementById('first-steps-track');
+    const progressText = document.getElementById('first-steps-progress-text');
+
+    if (!wrapper || !track) return;
+
+    const estados = PRIMEIROS_PASSOS_DASHBOARD.map((passo) => ({
+        ...passo,
+        concluido: primeiroPassoDashboardConcluido(passo.id)
+    }));
+
+    const concluidos = estados.filter(passo => passo.concluido).length;
+    const primeiroPendente = estados.find(passo => !passo.concluido)?.id;
+
+    if (progressText) {
+        progressText.textContent = `${concluidos}/${estados.length} concluídos`;
+    }
+
+    wrapper.classList.toggle('is-complete', concluidos === estados.length);
+
+    track.innerHTML = estados.map((passo, index) => `
+        <button
+            type="button"
+            class="first-step-item ${passo.concluido ? 'is-done' : ''} ${passo.id === primeiroPendente ? 'is-current' : ''}"
+            onclick="executarPrimeiroPassoDashboard('${passo.acao}', '${passo.id}')"
+            aria-label="${passo.titulo}: ${passo.texto}"
+        >
+            <span class="first-step-node">
+                <span class="first-step-index">${index + 1}</span>
+                <i class="${passo.icone}"></i>
+            </span>
+            <span class="first-step-copy">
+                <strong>${passo.titulo}</strong>
+                <small>${passo.texto}</small>
+            </span>
+        </button>
+    `).join('');
+}
+
+function marcarPrimeiroPassoDashboard(id, opcoes = {}) {
+    const config = obterConfigPrimeirosPassosDashboard();
+    if (config[id] === true) return;
+
+    config[id] = true;
+    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+
+    if (!opcoes.localOnly && typeof salvarNoFirebase === 'function') {
+        salvarNoFirebase();
+    }
+
+    atualizarPrimeirosPassosDashboard();
+}
+
+function prepararModalGastoPrimeiroPasso(tipo, terceiro = false) {
+    if (typeof abrirModalGasto !== 'function') return;
+
+    abrirModalGasto();
+
+    setTimeout(() => {
+        const tipoGasto = document.getElementById('g-tipo');
+        const checkTerceiro = document.getElementById('g-terceiro');
+
+        if (tipoGasto) {
+            tipoGasto.value = tipo;
+        }
+
+        if (checkTerceiro) {
+            checkTerceiro.checked = terceiro;
+        }
+
+        if (typeof atualizarListaBancos === 'function') atualizarListaBancos();
+        if (typeof ajustarCamposModal === 'function') ajustarCamposModal();
+        if (typeof toggleCampoNomeTerceiro === 'function') toggleCampoNomeTerceiro();
+    }, 80);
+}
+
+function fecharNotificacaoPrimeiroPassoDashboard() {
+    const toast = document.getElementById('first-step-toast');
+    if (toast) {
+        toast.classList.remove('is-visible');
+    }
+}
+
+function mostrarNotificacaoPrimeiroPassoDashboard(id) {
+    if (window.innerWidth <= 1024) return;
+
+    const passo = PRIMEIROS_PASSOS_DASHBOARD.find(item => item.id === id);
+    if (!passo) return;
+
+    let toast = document.getElementById('first-step-toast');
+    if (!toast) {
+        toast = document.createElement('aside');
+        toast.id = 'first-step-toast';
+        toast.className = 'first-step-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+    }
+
+    const dialogAberto = Array.from(document.querySelectorAll('dialog[open]')).pop();
+    const host = dialogAberto || document.body;
+    host.appendChild(toast);
+    toast.classList.toggle('is-over-dialog', Boolean(dialogAberto));
+
+    const etapa = PRIMEIROS_PASSOS_DASHBOARD.findIndex(item => item.id === id) + 1;
+    const numeroEtapa = String(etapa).padStart(2, '0');
+
+    toast.innerHTML = `
+        <button type="button" class="first-step-toast-close" onclick="fecharNotificacaoPrimeiroPassoDashboard()" aria-label="Fechar aviso">&times;</button>
+        <span class="first-step-toast-kicker">Etapa ${numeroEtapa}</span>
+        <strong>${passo.titulo}</strong>
+        <p>${passo.descricao}</p>
+    `;
+
+    clearTimeout(window.firstStepToastTimer);
+    toast.classList.add('is-visible');
+    window.firstStepToastTimer = setTimeout(fecharNotificacaoPrimeiroPassoDashboard, 11000);
+}
+
+function executarPrimeiroPassoDashboard(acao, passoId) {
+    const executarAcao = () => {
+        switch (acao) {
+            case 'organizacao':
+                if (typeof irParaConfiguracoes === 'function') irParaConfiguracoes('organizacao');
+                break;
+            case 'credito':
+                prepararModalGastoPrimeiroPasso('cartao', false);
+                break;
+            case 'debito':
+                prepararModalGastoPrimeiroPasso('debito', false);
+                break;
+            case 'fixos':
+                prepararModalGastoPrimeiroPasso('fixo', false);
+                break;
+            case 'terceiros':
+                prepararModalGastoPrimeiroPasso('cartao', true);
+                break;
+            case 'entrada':
+                if (typeof abrirModalEntrada === 'function') abrirModalEntrada();
+                break;
+            case 'calendario':
+                marcarPrimeiroPassoDashboard('calendario');
+                if (typeof irParaCalendario === 'function') irParaCalendario();
+                break;
+            case 'visualizacoes':
+                marcarPrimeiroPassoDashboard('visualizacoes');
+                if (typeof irParaVisualizacoes === 'function') irParaVisualizacoes('terceiros');
+                break;
+            default:
+                break;
+        }
+    };
+
+    const abreModal = ['credito', 'debito', 'fixos', 'terceiros', 'entrada'].includes(acao);
+    executarAcao();
+    setTimeout(() => mostrarNotificacaoPrimeiroPassoDashboard(passoId), abreModal ? 140 : 80);
+}
+
 function atualizarHumorSalsicha(saldo) {
     const mascote = document.getElementById('mascote-status');
     const frase = document.getElementById('mascote-frase');
@@ -891,9 +1166,11 @@ if (typeof renderizarGraficoCategorias === 'function') {
         }
     }
 
-	if (typeof renderizarDesejos === 'function') {
+    if (typeof renderizarDesejos === 'function') {
         renderizarDesejos();
     }
+
+    atualizarPrimeirosPassosDashboard();
 	
     atualizarGraficoMeta();
 
@@ -1001,6 +1278,8 @@ function ocultarAbasDashboardParaView() {
 function irParaCalendario() {
     ocultarAbasDashboardParaView();
 
+    marcarPrimeiroPassoDashboard('calendario');
+
     if (typeof abrirCalendarioFinanceiro === 'function') {
         abrirCalendarioFinanceiro();
     }
@@ -1037,6 +1316,8 @@ function irParaConfiguracoes(aba = 'perfil') {
 function irParaVisualizacoes(aba = 'terceiros') {
     const main = document.querySelector('main');
     if (!main) return;
+
+    marcarPrimeiroPassoDashboard('visualizacoes');
 
     ocultarAbasDashboardParaView();
 

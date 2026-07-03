@@ -2792,3 +2792,36 @@ function focarCampoInicialModal(selector) {
         }
     }, 80);
 }
+
+/* GUgetFin theme snapshot */
+(function iniciarSnapshotTemaGuget() {
+    function temaAtual() {
+        var root = document.documentElement;
+        var body = document.body;
+        if (root.dataset.theme === 'dark' || root.classList.contains('dark-mode') || (body && body.classList.contains('dark-mode'))) return 'dark';
+        if (root.dataset.theme === 'light' || root.classList.contains('light-mode') || (body && body.classList.contains('light-mode'))) return 'light';
+        try {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        } catch (e) {
+            return 'light';
+        }
+    }
+
+    function salvarTemaSnapshot() {
+        try { localStorage.setItem('guget-theme-snapshot', temaAtual()); } catch (e) {}
+    }
+
+    function iniciar() {
+        salvarTemaSnapshot();
+        var observer = new MutationObserver(salvarTemaSnapshot);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+        if (document.body) observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', iniciar);
+    } else {
+        iniciar();
+    }
+})();
+/* /GUgetFin theme snapshot */

@@ -1151,18 +1151,45 @@ body.dark-theme .caixinha-balance-card {
 .app-loading-screen {
     position: fixed;
     inset: 0;
-    z-index: 99999;
+    z-index: 2147483647;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #edf2f0;
-    color: #10251f;
-    transition: opacity 0.22s ease, visibility 0.22s ease;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 56%, rgba(72, 221, 164, 0.14), transparent 22%),
+        radial-gradient(circle at 50% 108%, rgba(4, 185, 101, 0.14), transparent 34%),
+        #0b0f14;
+    color: #f8fafc;
+    transition: opacity 0.26s ease, visibility 0.26s ease;
+}
+
+.app-loading-screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(52, 211, 153, 0.08), transparent 30%),
+        radial-gradient(circle at 50% 0%, rgba(2, 86, 56, 0.34), transparent 42%);
+    pointer-events: none;
+}
+
+.app-loading-glow {
+    position: absolute;
+    width: min(520px, 72vw);
+    height: min(520px, 72vw);
+    border-radius: 999px;
+    background: rgba(4, 185, 101, 0.08);
+    filter: blur(36px);
+    animation: appLoadingPulse 2.4s ease-in-out infinite;
 }
 
 .app-loading-screen.is-dark,
 body.dark-theme .app-loading-screen {
-    background: #0f1319;
+    background:
+        radial-gradient(circle at 50% 56%, rgba(72, 221, 164, 0.14), transparent 22%),
+        radial-gradient(circle at 50% 108%, rgba(4, 185, 101, 0.14), transparent 34%),
+        #0b0f14;
     color: #f8fafc;
 }
 
@@ -1173,43 +1200,42 @@ body.dark-theme .app-loading-screen {
 }
 
 .app-loading-card {
-    min-width: 190px;
-    min-height: 150px;
+    position: relative;
+    z-index: 1;
+    min-width: 220px;
+    min-height: 176px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 14px;
     text-align: center;
 }
 
 .app-loading-logo {
-    width: 154px;
+    width: clamp(156px, 16vw, 190px);
     height: auto;
     display: block;
 }
 
 .app-loading-logo-negative {
-    display: none;
-}
-
-.app-loading-screen.is-dark .app-loading-logo-positive,
-body.dark-theme .app-loading-screen .app-loading-logo-positive {
-    display: none;
-}
-
-.app-loading-screen.is-dark .app-loading-logo-negative,
-body.dark-theme .app-loading-screen .app-loading-logo-negative {
     display: block;
 }
 
+.app-loading-logo-positive {
+    display: none;
+}
+
+.app-loading-dots {
+    width: 54px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 0 14px rgba(72, 221, 164, 0.16));
+}
+
 .app-loading-mark {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 3px solid rgba(108, 192, 128, 0.22);
-    border-top-color: var(--dark-green);
-    animation: appLoadingSpin 0.75s linear infinite;
+    display: none;
 }
 
 .app-loading-card strong {
@@ -1219,14 +1245,16 @@ body.dark-theme .app-loading-screen .app-loading-logo-negative {
 }
 
 .app-loading-card span {
-    color: var(--text-sec);
+    color: rgba(203, 220, 215, 0.84);
     font-size: 12px;
-    font-weight: 750;
+    font-weight: 800;
 }
 
-@keyframes appLoadingSpin {
-    to { transform: rotate(360deg); }
+@keyframes appLoadingPulse {
+    0%, 100% { transform: scale(0.96); opacity: 0.70; }
+    50% { transform: scale(1.04); opacity: 1; }
 }
+
 
 @media (min-width: 1025px) {
     #aba-planejamento.active {
