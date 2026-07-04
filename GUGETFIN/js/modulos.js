@@ -28,8 +28,9 @@ function abrirModalOrcamento(nome) {
     document.getElementById('orc-nome').value = nome;
     
     const inputVal = document.getElementById('orc-valor');
-    // Multiplica por 100 para a função formatarMoeda ler corretamente como centavos
-    inputVal.value = metaAtual > 0 ? (metaAtual * 100).toFixed(0) : ''; 
+    inputVal.value = metaAtual > 0
+        ? (typeof valorParaCampoMoeda === 'function' ? valorParaCampoMoeda(metaAtual) : Number(metaAtual || 0).toFixed(2).replace('.', ','))
+        : ''; 
     formatarMoeda(inputVal); 
     
     document.getElementById('modal-orcamento').showModal();
@@ -38,7 +39,9 @@ function abrirModalOrcamento(nome) {
 // Salva a decisão a partir deste mês em diante
 function salvarOrcamento() {
     const nome = document.getElementById('orc-nome').value;
-    const meta = parseFloat(document.getElementById('orc-valor').value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+    const meta = typeof parseValorMonetarioInput === 'function'
+        ? parseValorMonetarioInput(document.getElementById('orc-valor').value)
+        : (parseFloat(document.getElementById('orc-valor').value.replace(/[^\d,]/g, '').replace(',', '.')) || 0);
     
     const m = dataFiltro.getMonth();
     const a = dataFiltro.getFullYear();
@@ -92,7 +95,9 @@ function abrirModalDesejo() {
 async function salvarDesejo() {
     const nome = document.getElementById('d-nome').value.trim();
     const valorRaw = document.getElementById('d-valor').value;
-    const valor = parseFloat(valorRaw.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+    const valor = typeof parseValorMonetarioInput === 'function'
+        ? parseValorMonetarioInput(valorRaw)
+        : (parseFloat(valorRaw.replace(/[^\d,]/g, '').replace(',', '.')) || 0);
 
     if (!nome || valor <= 0) {
         alert("Preencha o nome e um valor aproximado válido!");
@@ -1432,11 +1437,34 @@ function obterItensDoMesCalendario(mes, ano) {
     });
 }
 
+function calcularResumoCalendarioFinanceiro(mes, ano, itensCalendario) {
+    const filtro = filtroCalendarioFinanceiro || 'todos';
+
+    if (filtro === 'todos') {
+        const totalEntradas = obterEntradasDoMesCalendario(mes, ano)
+            .reduce((total, item) => total + Number(item.valor || 0), 0);
+        const totalSaidas = obterGastosDoMesCalendario(mes, ano, 'gastos')
+            .reduce((total, item) => total + Number(item.valor || 0), 0);
+
+        return {
+            label: 'Saldo do período',
+            valor: totalEntradas - totalSaidas,
+            separado: false
+        };
+    }
+
+    return {
+        label: obterMetaFiltroCalendario().total,
+        valor: (itensCalendario || []).reduce((total, item) => total + Number(item.valor || 0), 0),
+        separado: false
+    };
+}
+
 function obterMetaFiltroCalendario() {
     const metas = {
         todos: {
             titulo: 'Tudo',
-            total: 'Total do período',
+            total: 'Saldo do período',
             mais: 'movimento',
             vazio: 'Nenhum movimento neste dia.'
         },
@@ -1534,15 +1562,17 @@ function renderizarCalendarioFinanceiro(mes, ano) {
         itensPorDia[item.dia].push(item);
     });
 
-    const totalMes = itensCalendario.reduce((acc, item) => acc + item.valor, 0);
+    const resumoCalendario = calcularResumoCalendarioFinanceiro(mes, ano, itensCalendario);
     const diasComMovimento = Object.keys(itensPorDia).length;
 
     const totalEl = document.getElementById('calendar-total-gastos');
     const totalLabelEl = document.getElementById('calendar-total-label');
     const diasEl = document.getElementById('calendar-dias-movimento');
 
-    if (totalLabelEl) totalLabelEl.textContent = metaFiltro.total;
-    if (totalEl) totalEl.textContent = formatarMoedaCalendario(totalMes);
+    if (totalLabelEl) totalLabelEl.textContent = resumoCalendario.label;
+    if (totalEl) {
+        totalEl.textContent = formatarMoedaCalendario(resumoCalendario.valor);
+    }
     if (diasEl) diasEl.textContent = diasComMovimento;
 
     const hoje = new Date();
@@ -1556,7 +1586,12 @@ function renderizarCalendarioFinanceiro(mes, ano) {
 
     for (let dia = 1; dia <= totalDias; dia++) {
         const itens = itensPorDia[dia] || [];
-        const totalDia = itens.reduce((acc, item) => acc + item.valor, 0);
+        const totalGastosDia = itens
+            .filter(item => item.tipo !== 'entrada' && item.tipo !== 'terceiro')
+            .reduce((acc, item) => acc + item.valor, 0);
+        const totalEntradasDia = itens
+            .filter(item => item.tipo === 'entrada')
+            .reduce((acc, item) => acc + item.valor, 0);
         const isToday = isMesAtual && hoje.getDate() === dia;
 
         const restante = itens.length > 3 ? itens.length - 3 : 0;
@@ -1570,7 +1605,12 @@ html += `
     >
         <div class="calendar-day-header">
             <span class="calendar-day-number">${dia}</span>
-            ${totalDia > 0 ? `<span class="calendar-day-total">${formatarMoedaCalendario(totalDia)}</span>` : ''}
+            ${(totalGastosDia > 0 || totalEntradasDia > 0) ? `
+                <span class="calendar-day-totals">
+                    ${totalGastosDia > 0 ? `<span class="calendar-day-total calendar-day-total-expense">${formatarMoedaCalendario(totalGastosDia)}</span>` : ''}
+                    ${totalEntradasDia > 0 ? `<span class="calendar-day-total calendar-day-total-income">${formatarMoedaCalendario(totalEntradasDia)}</span>` : ''}
+                </span>
+            ` : ''}
         </div>
 
         <div class="calendar-items">

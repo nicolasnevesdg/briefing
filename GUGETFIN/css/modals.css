@@ -483,6 +483,10 @@ dialog input, dialog select, dialog textarea { width: 100%; padding: 12px; margi
     gap: 10px;
 }
 
+#modal-gasto.modo-caixinha #alerta-fatura-cartao {
+    display: none !important;
+}
+
 /* Observações */
 #modal-gasto #g-observacao,
 #modal-entrada #e-observacao {
@@ -1328,13 +1332,43 @@ body.dark-theme .fatura-preview-alerta.is-info {
     transition: 0.2s ease;
 }
 
+#modal-cartoes .wallet-card-edit {
+    position: absolute;
+    top: 16px;
+    right: 50px;
+    z-index: 5;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.16);
+    color: rgba(255,255,255,0.9);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s ease;
+}
+
 #modal-cartoes .wallet-card.is-active .wallet-card-delete {
+    opacity: 0.85;
+    pointer-events: auto;
+}
+
+#modal-cartoes .wallet-card.is-active .wallet-card-edit {
     opacity: 0.85;
     pointer-events: auto;
 }
 
 #modal-cartoes .wallet-card-delete:hover {
     background: rgba(239,68,68,0.92);
+    color: #ffffff;
+}
+
+#modal-cartoes .wallet-card-edit:hover {
+    background: rgba(255,255,255,0.22);
     color: #ffffff;
 }
 

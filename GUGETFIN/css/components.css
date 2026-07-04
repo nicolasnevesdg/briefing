@@ -1033,7 +1033,7 @@ body.dark-theme .notif-body::-webkit-scrollbar-thumb { background: #3f3f46; }
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #ffcb3d;
+    background: var(--brand-green);
     box-shadow: 0 2px 6px rgba(154, 107, 0, 0.13);
     transition: 0.22s ease;
     z-index: 2;
@@ -2041,7 +2041,7 @@ body.valores-ocultos canvas {
 }
 
 .visual-section-label {
-    margin: 18px 0 4px 0;
+    margin-bottom: 5px;
     color: var(--text-sec);
     font-size: 10px;
     font-weight: 900;
@@ -2139,6 +2139,104 @@ body.valores-ocultos canvas {
     flex-wrap: wrap;
 }
 
+.visual-terceiros-tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.visual-search-field {
+    min-height: 42px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-app);
+    color: var(--text-sec);
+}
+
+.visual-search-field input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text-main);
+    font: 750 13px 'Inter', sans-serif;
+}
+
+.visual-search-field input::placeholder {
+    color: var(--text-sec);
+}
+
+.visual-terceiros-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.visual-terceiros-summary article {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--bg-app);
+}
+
+.visual-terceiros-summary article > span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--dark-green);
+    font-size: 11px;
+    font-weight: 900;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.visual-terceiros-summary article > strong {
+    display: block;
+    color: var(--text-main);
+    font-size: 18px;
+    font-weight: 950;
+}
+
+.visual-terceiros-summary article > small {
+    display: block;
+    margin: 2px 0 10px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.visual-terceiros-summary article div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 7px;
+    border-top: 1px solid rgba(127,127,127,0.12);
+}
+
+.visual-terceiros-summary b {
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.visual-terceiros-summary em {
+    color: var(--text-sec);
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 750;
+}
+
 .visual-mini-btn {
     min-height: 34px;
     padding: 0 12px;
@@ -2175,6 +2273,461 @@ body.valores-ocultos canvas {
     height: 100%;
     border-radius: inherit;
     background: var(--dark-green);
+}
+
+.parcelados-overview {
+    display: grid;
+    gap: 22px;
+    margin: 0px 0 35px 0;
+}
+
+.parcelados-radar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.parcelados-radar-card {
+    min-height: 80px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(127,127,127,0.035);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.parcelados-radar-card.is-primary {
+    background: var(--dark-green);
+    border-color: var(--dark-green);
+    color: #ffffff;
+}
+
+.parcelados-radar-card span {
+    color: var(--text-sec);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.parcelados-radar-card.is-primary span,
+.parcelados-radar-card.is-primary small {
+    color: rgba(255,255,255,0.74);
+}
+
+.parcelados-radar-card strong {
+    color: var(--text-main);
+    font-size: 20px;
+    line-height: 1.05;
+    font-weight: 950;
+    letter-spacing: -0.04em;
+}
+
+.parcelados-radar-card.is-primary strong {
+    color: #ffffff;
+}
+
+.parcelados-radar-card small {
+    color: var(--text-sec);
+    font-size: 11px;
+    line-height: 1.35;
+    font-weight: 750;
+}
+
+.parcelados-insight {
+    padding: 15px 16px;
+    border: 1px solid rgba(108, 192, 128, 0.28);
+    border-radius: var(--radius);
+    background: rgba(108, 192, 128, 0.08);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.parcelados-insight i {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--dark-green);
+    color: #ffffff;
+    font-size: 15px;
+}
+
+.parcelados-insight strong,
+.parcelados-insight p,
+.parcelados-insight small {
+    display: block;
+}
+
+.parcelados-insight strong {
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 950;
+}
+
+.parcelados-insight p {
+    margin: 6px 0;
+    color: var(--text-main);
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 550;
+}
+
+.parcelados-insight small {
+    color: var(--text-sec);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.parcelados-chart-card {
+    padding: 18px 18px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--sidebar-bg);
+}
+
+.parcelados-chart-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.parcelados-chart-head .visual-section-label {
+    margin: 0 0 6px 0;
+}
+
+.parcelados-chart-head strong {
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    display: none;
+}
+
+.parcelados-chart-legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 850;
+}
+
+.parcelados-chart-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.parcelados-chart-legend i {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.parcelados-chart-legend i.own {
+    background: var(--dark-green);
+}
+
+.parcelados-chart-legend i.third {
+    background: var(--terceiros);
+}
+
+.parcelados-chart-legend i.relief {
+    background: rgba(245, 158, 11, 0.9);
+}
+
+.parcelados-chart {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 10px;
+    min-height: 230px;
+}
+
+.parcelados-chart-axis {
+    height: 150px;
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.parcelados-chart-plot {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 14px;
+    padding-top: 0;
+}
+
+.parcelados-chart-plot::before {
+    content: "";
+    position: absolute;
+    left: -70px;
+    right: 0;
+    top: 0px;
+    bottom: 94px;
+    background:
+        linear-gradient(to bottom,
+            rgba(127,127,127,0.12) 0 1px,
+            transparent 1px 50%,
+            rgba(127,127,127,0.10) 50% calc(50% + 1px),
+            transparent calc(50% + 1px) calc(100% - 1px),
+            rgba(127,127,127,0.10) calc(100% - 1px) 100%);
+    pointer-events: none;
+}
+
+.parcelados-chart-month {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 136px auto;
+    gap: 10px;
+}
+
+.parcelados-chart-column {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.parcelados-chart-bar {
+    width: min(34px, 62%);
+    min-height: 8px;
+    max-height: 100%;
+    border-radius: 5px;
+    background: var(--terceiros);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+}
+
+.parcelados-chart-bar span {
+    width: 100%;
+    display: block;
+}
+
+.parcelados-chart-bar span.own {
+    background: var(--dark-green);
+    border-radius: 5px 5px 0 0;
+}
+
+.parcelados-chart-bar span.third {
+    background: var(--terceiros);
+}
+
+.parcelados-chart-label {
+    display: grid;
+    gap: 2px;
+    text-align: center;
+}
+
+.parcelados-chart-label strong {
+    color: var(--text-main);
+    font-size: 11px;
+    font-weight: 950;
+    text-transform: uppercase;
+}
+
+.parcelados-chart-label span {
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 850;
+}
+
+.parcelados-chart-label .parcelados-chart-total {
+    color: var(--text-main);
+    font-size: 11px;
+    font-weight: 950;
+}
+
+.parcelados-chart-label b {
+    color: #b45309;
+    font-size: 10px;
+    font-weight: 950;
+}
+
+.parcelados-chart-month.has-relief .parcelados-chart-bar {
+    outline-offset: 5px;
+}
+
+.parcelados-timeline {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: rgba(127,127,127,0.035);
+}
+
+.parcelados-month-card {
+    min-height: 156px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--sidebar-bg);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 10px;
+}
+
+.parcelados-month-card.has-relief {
+    border-color: rgba(108, 192, 128, 0.52);
+    box-shadow: inset 0 0 0 1px rgba(108, 192, 128, 0.12);
+}
+
+.parcelados-month-top span,
+.parcelados-month-foot span,
+.parcelados-month-foot b {
+    display: block;
+}
+
+.parcelados-month-top span {
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.parcelados-month-top strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+}
+
+.parcelados-month-bar {
+    height: 66px;
+    display: flex;
+    align-items: flex-end;
+    border-radius: 999px;
+    background: rgba(127,127,127,0.10);
+    overflow: hidden;
+}
+
+.parcelados-month-bar span {
+    width: 100%;
+    min-height: 8px;
+    display: block;
+    border-radius: inherit;
+    background: linear-gradient(180deg, var(--acc-green), var(--dark-green));
+}
+
+.parcelados-month-foot {
+    display: grid;
+    gap: 4px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.parcelados-month-foot b {
+    color: var(--dark-green);
+    font-size: 10px;
+    font-weight: 950;
+}
+
+.parcelados-ending-soon {
+    display: grid;
+    gap: 8px;
+}
+
+.parcelados-ending-soon > div {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.parcelados-ending-soon article {
+    padding: 13px;
+    border: 1px solid rgba(108, 192, 128, 0.28);
+    border-radius: 14px;
+    background: rgba(108, 192, 128, 0.08);
+}
+
+.parcelados-ending-soon article strong {
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 950;
+}
+
+.parcelados-ending-soon article p {
+    margin: 6px 0 0 0;
+    color: var(--text-sec);
+    font-size: 11px;
+    line-height: 1.4;
+    font-weight: 750;
+}
+
+.visual-badge.third {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+}
+
+.parcelado-card.is-third-party {
+    border-color: rgba(59, 130, 246, 0.24);
+}
+
+.parcelado-value-label {
+    color: var(--text-sec);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.parcelado-meta-grid {
+    width: 90%;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(110px, auto));
+    gap: 8px;
+}
+
+.parcelado-meta-chip {
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(127,127,127,0.035);
+    display: grid;
+    gap: 4px;
+}
+
+.parcelado-meta-chip small {
+    color: var(--text-sec);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.parcelado-meta-chip strong {
+    min-width: 0;
+    color: var(--text-main);
+    font-size: 11px;
+    line-height: 1.25;
+    font-weight: 850;
 }
 
 .visual-empty {
@@ -2383,7 +2936,7 @@ body.valores-ocultos canvas {
     }
 
     .visual-panel-head {
-        margin-bottom: 18px;
+        margin-bottom: 25px;
     }
 
     .visual-panel-head h3 {
@@ -2406,6 +2959,15 @@ body.valores-ocultos canvas {
         align-items: flex-start;
         text-align: left;
         margin-top: 14px;
+    }
+
+    .visual-terceiros-tools {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .visual-terceiros-summary {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -2657,7 +3219,7 @@ body.valores-ocultos canvas {
     }
 
     .settings-wallet-carousel .wallet-card-type {
-        margin-right: 22px;
+        margin-right: 30px;
         padding: 5px 8px;
     }
 
@@ -2691,6 +3253,13 @@ body.valores-ocultos canvas {
         height: 25px;
         opacity: 0.9;
         pointer-events: auto;
+    }
+
+    .settings-wallet-carousel .wallet-card-edit {
+        top: 42px;
+        right: 12px;
+        width: 25px;
+        height: 25px;
     }
 
     .settings-wallet-carousel .wallet-carousel-nav {
@@ -2751,5 +3320,186 @@ body.valores-ocultos canvas {
     .wallet-page-form .btn-settings-primary {
         min-height: 48px;
         margin-top: 2px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .parcelados-overview {
+        margin: 0px 0 40px 0;
+        gap: 20px;
+    }
+
+    .parcelados-radar {
+        width: calc(100% + 24px);
+        margin: 0 -12px;
+        padding: 0 12px 4px;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+        box-sizing: border-box;
+    }
+
+    .parcelados-radar::-webkit-scrollbar,
+    .parcelados-chart-plot::-webkit-scrollbar {
+        display: none;
+    }
+
+    .parcelados-radar-card {
+        flex: 0 0 210px;
+        min-height: 80px;
+        padding: 14px;
+        scroll-snap-align: start;
+    }
+
+    .parcelados-radar-card strong {
+        font-size: 18px;
+    }
+
+    .parcelados-insight {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .parcelados-insight i {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+    }
+
+    .parcelados-insight p {
+        font-size: 12px;
+        line-height: 1.42;
+    }
+
+    .parcelados-chart-card {
+        width: calc(100% + 24px);
+        margin: 0 -12px;
+        padding: 22px 0;
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .parcelados-chart-head {
+        padding: 0 12px;
+        display: grid;
+        gap: 10px;
+    }
+
+    .parcelados-chart-legend {
+        justify-content: flex-start;
+        gap: 10px;
+        font-size: 9px;
+    }
+
+    .parcelados-chart {
+        grid-template-columns: 60px minmax(0, 1fr);
+        gap: 8px;
+        min-height: 230px;
+        padding-left: 12px;
+    }
+
+    .parcelados-chart-axis {
+        height: 133px;
+        margin-top: 5px;
+        font-size: 9px;
+    }
+
+    .parcelados-chart-plot {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding: 0 12px 0 0;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .parcelados-chart-plot::before {
+        left: -70px;
+        right: -480px;
+        top: 0;
+        bottom: 104px;
+    }
+
+    .parcelados-chart-month {
+        flex: 0 0 88px;
+        grid-template-rows: 126px auto;
+        scroll-snap-align: start;
+    }
+
+    .parcelados-chart-bar {
+        width: 32px;
+    }
+
+    .parcelados-chart-label strong {
+        font-size: 10px;
+    }
+
+    .parcelados-chart-label .parcelados-chart-total {
+        font-size: 10px;
+    }
+
+    .parcelados-chart-label span,
+    .parcelados-chart-label b {
+        font-size: 9px;
+    }
+
+    .parcelados-timeline {
+        width: calc(100% + 24px);
+        margin: 0 -12px;
+        padding: 10px 12px;
+        display: flex;
+        gap: 9px;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        border-left: 0;
+        border-right: 0;
+        border-radius: 0;
+        background: transparent;
+        box-sizing: border-box;
+    }
+
+    .parcelados-month-card {
+        flex: 0 0 116px;
+        min-height: 146px;
+        scroll-snap-align: start;
+    }
+
+    .parcelados-ending-soon > div {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .parcelado-card .visual-card-title {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .parcelado-card .visual-card-title span {
+        flex: 0 0 100%;
+        white-space: normal;
+    }
+
+    .parcelado-card .visual-card-meta,
+    .parcelado-card .parcelado-meta-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        font-size: 11px;
+    }
+
+    .parcelado-meta-chip {
+        padding: 9px;
+    }
+
+    .parcelado-card .visual-card-value {
+        width: 100%;
+    }
+
+    .parcelado-card .visual-progress {
+        width: 100%;
     }
 }

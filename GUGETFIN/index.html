@@ -334,7 +334,7 @@
                                     <span>Organização</span>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('organizacao'))"><i class="fi fi-rr-credit-card"></i> Minha carteira</button>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('organizacao'))"><i class="fi fi-rr-tags"></i> Categorias</button>
-                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('lembretes'))"><i class="fi fi-rr-bell"></i> Lembretes</button>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('lembretes'))"><i class="fi fi-rr-bell"></i> Guias e atalhos</button>
                                 </div>
 
                                 <div class="mobile-menu-section">
@@ -869,10 +869,11 @@
                         <div>
                             <span>Compromissos futuros</span>
                             <h3>Gastos parcelados</h3>
-                            <p>Veja o que ainda falta pagar em compras parceladas.</p>
+                            <p>Veja quando suas compras parceladas terminam e em quais meses a fatura começa a aliviar.</p>
                         </div>
                     </div>
 
+                    <div id="visual-parcelados-overview" class="parcelados-overview"></div>
                     <div class="visual-list" id="visual-lista-parcelados"></div>
                 </div>
 
@@ -936,7 +937,7 @@
                     </button>
                     <button type="button" class="settings-tab" data-settings-tab="lembretes" onclick="selecionarAbaConfiguracoes('lembretes')">
                         <i class="fi fi-rr-bell"></i>
-                        <span>Lembretes</span>
+                        <span>Guias e atalhos</span>
                     </button>
                     <button type="button" class="settings-tab" data-settings-tab="assinatura" onclick="selecionarAbaConfiguracoes('assinatura')">
                         <i class="fi fi-rr-crown"></i>
@@ -1217,7 +1218,7 @@
                                                 </div>
                                             </div>
                                             
-                                            <button type="button" class="btn-settings-primary" onclick="adicionarNovoCartaoConfiguracoes()">
+                                            <button type="button" id="settings-btn-salvar-cartao" class="btn-settings-primary" onclick="adicionarNovoCartaoConfiguracoes()">
                                                 Adicionar à Carteira
                                             </button>
                                         </div>
@@ -1282,9 +1283,9 @@
 
                     <div class="settings-panel" data-settings-panel="lembretes">
                         <div class="settings-panel-head">
-                            <span>Alertas</span>
-                            <h3>Lembretes</h3>
-                            <p>Configure avisos para vencimentos e rotina financeira.</p>
+                            <span>Ajuda</span>
+                            <h3>Guias e atalhos</h3>
+                            <p>Configure avisos, reveja o tutorial e consulte comandos rápidos da plataforma.</p>
                         </div>
 
                         <div class="settings-action-grid">
@@ -1299,6 +1300,24 @@
                                 <span>Veja novamente o guia inicial do app.</span>
                             </button>
                         </div>
+
+                        <section class="settings-shortcuts-card">
+                            <div class="settings-shortcuts-head">
+                                <h4>Atalhos do teclado</h4>
+                            </div>
+                            <div class="settings-shortcut-list">
+                                <div class="settings-shortcut-row">
+                                    <strong>Novo gasto</strong>
+                                    <div class="settings-shortcut-keys"><kbd>Ctrl</kbd><kbd>G</kbd></div>
+                                    <span>No Mac, Cmd + G</span>
+                                </div>
+                                <div class="settings-shortcut-row">
+                                    <strong>Nova entrada</strong>
+                                    <div class="settings-shortcut-keys"><kbd>Ctrl</kbd><kbd>E</kbd></div>
+                                    <span>No Mac, Cmd + E</span>
+                                </div>
+                            </div>
+                        </section>
                     </div>
 
                     <div class="settings-panel" data-settings-panel="dados">
@@ -1369,7 +1388,7 @@
     <dialog id="modal-gasto" class="modal-gasto-dialog">
     <div class="modal-content modal-gasto-content">
         <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
-        <h3 id="modal-titulo">Novo Gasto 💸</h3>
+        <h3 id="modal-titulo">Novo Gasto</h3>
 
         <input type="hidden" id="g-index-edit" value="-1">
 
@@ -1407,6 +1426,7 @@
             <option value="cartao">Cartão de Crédito</option>
             <option value="fixo">Gasto Fixo</option>
             <option value="debito">Débito / PIX</option>
+            <option value="caixinha">Caixinha</option>
         </select>
     </div>
 
@@ -1433,7 +1453,7 @@
 
 <div id="alerta-fatura-cartao" class="alerta-fatura-cartao" style="display: none;"></div>
 
-    <div class="input-group">
+    <div class="input-group campo-categoria-gasto">
         <label class="input-label">Categoria</label>
         <select id="g-categoria"></select>
     </div>
@@ -1611,7 +1631,7 @@
                             </div>
                         </div>
                         
-                        <button type="button" class="btn-novo-gasto btn-wallet-submit" onclick="adicionarNovoCartao()">
+                        <button type="button" id="btn-salvar-cartao" class="btn-novo-gasto btn-wallet-submit" onclick="adicionarNovoCartao()">
                             Adicionar à Carteira
                         </button>
                     </div>
@@ -2228,10 +2248,6 @@
     <script src="js/modulos.js"></script>
 </body>
 </html>
-
-
-
-
 
 
 

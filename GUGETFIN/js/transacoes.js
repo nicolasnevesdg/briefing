@@ -1,9 +1,12 @@
 function ajustarCamposModal() {
     const tipo = document.getElementById('g-tipo').value;
+    const isCaixinha = tipo === 'caixinha';
+    const modalGasto = document.getElementById('modal-gasto');
+    if (modalGasto) modalGasto.classList.toggle('modo-caixinha', isCaixinha);
     
     const divForma = document.getElementById('div-forma-pagamento');
     if (divForma) {
-        divForma.style.display = (tipo === 'debito') ? 'block' : 'none';
+        divForma.style.display = (tipo === 'debito' && !isCaixinha) ? 'block' : 'none';
     }
 
     const campoForma = document.getElementById('g-forma-pagamento');
@@ -14,13 +17,31 @@ function ajustarCamposModal() {
     const selectBanco = document.getElementById('g-banco');
 
     if (divCartaoCampos) {
-        if (tipo === 'debito' && formaPag === 'Dinheiro') {
+        if (isCaixinha || (tipo === 'debito' && formaPag === 'Dinheiro')) {
             divCartaoCampos.style.display = 'none';
         } else {
             divCartaoCampos.style.display = window.innerWidth > 1024 ? 'grid' : 'flex';
             if (inputParcelas) inputParcelas.style.display = (tipo === 'cartao') ? '' : 'none';
             if (selectBanco) selectBanco.style.display = '';
         }
+    }
+
+    const campoCategoria = document.querySelector('.campo-categoria-gasto');
+    const campoCompetencia = document.querySelector('.campo-inicio-pagamento');
+    const blocoTerceiro = document.querySelector('.bloco-terceiro');
+    const campoNomeTerceiro = document.getElementById('div-nome-terceiro');
+
+    if (campoCategoria) campoCategoria.style.display = isCaixinha ? 'none' : '';
+    if (campoCompetencia) campoCompetencia.style.display = (tipo === 'cartao' && !isCaixinha) ? '' : 'none';
+    if (blocoTerceiro) blocoTerceiro.style.display = isCaixinha ? 'none' : '';
+    if (campoNomeTerceiro && isCaixinha) campoNomeTerceiro.style.display = 'none';
+
+    if (isCaixinha) {
+        if (inputParcelas) inputParcelas.value = 1;
+        const checkTerceiro = document.getElementById('g-terceiro');
+        if (checkTerceiro) checkTerceiro.checked = false;
+        const nomeTerceiro = document.getElementById('g-nome-terceiro');
+        if (nomeTerceiro) nomeTerceiro.value = '';
     }
     
     if (typeof atualizarListaBancos === 'function') atualizarListaBancos();
@@ -31,7 +52,9 @@ function ajustarCamposModal() {
 
 async function confirmarGasto() {
     let rawValue = document.getElementById('g-valor').value;
-    const vTotal = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+    const vTotal = typeof parseValorMonetarioInput === 'function'
+        ? parseValorMonetarioInput(rawValue)
+        : (parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0);
     
     const tipo = document.getElementById('g-tipo').value; 
     const nParc = Math.max(1, parseInt(document.getElementById('g-parcelas').value) || 1);
@@ -99,6 +122,42 @@ const terceiroTipo = document.getElementById('g-terceiro-tipo')?.value || 'manua
 const terceiroUserId = document.getElementById('g-terceiro-user-id')?.value || '';
 const terceiroUsername = document.getElementById('g-terceiro-username')?.value || '';
 const nomeTerceiroValor = document.getElementById('g-nome-terceiro').value || "";
+
+    if (indexEdit >= 0 && salsiData.transacoes[indexEdit]?.origemCaixinha && tipo !== 'caixinha') {
+        const caixinhaIdAnterior = salsiData.transacoes[indexEdit].caixinhaId;
+        if (caixinhaIdAnterior && Array.isArray(salsiData.caixinha)) {
+            salsiData.caixinha = salsiData.caixinha.filter(mov => String(mov.id) !== String(caixinhaIdAnterior));
+        }
+    }
+
+    if (tipo === 'caixinha') {
+        const nomeCaixinha = document.getElementById('g-nome').value.trim() || 'Valor guardado';
+        const dataCaixinha = document.getElementById('g-data').value || new Date().toISOString().split('T')[0];
+        const descricaoCaixinha = document.getElementById('g-observacao')
+            ? document.getElementById('g-observacao').value.trim()
+            : '';
+
+        if (vTotal <= 0) {
+            alert('Informe um valor válido.');
+            return;
+        }
+
+        if (typeof salvarMovimentoCaixinhaAPartirDoGasto === 'function') {
+            salvarMovimentoCaixinhaAPartirDoGasto({
+                nome: nomeCaixinha,
+                valor: vTotal,
+                data: dataCaixinha,
+                descricao: descricaoCaixinha,
+                comprovanteUrl,
+                indexEdit
+            });
+            renderizar();
+            if (typeof renderizarVisualizacoes === 'function') renderizarVisualizacoes();
+            document.getElementById('modal-gasto').close();
+            if (typeof mostrarToast === 'function') mostrarToast('Valor guardado na caixinha.');
+            return;
+        }
+    }
 
     // Monta o pacote de dados
     const novosDados = {
@@ -249,7 +308,9 @@ function salvarAlteracoes() {
 
 async function confirmarEntrada() {
     let rawValue = document.getElementById('e-valor').value;
-    const valorDigitado = parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+    const valorDigitado = typeof parseValorMonetarioInput === 'function'
+        ? parseValorMonetarioInput(rawValue)
+        : (parseFloat(rawValue.replace(/[^\d,]/g, '').replace(',', '.')) || 0);
     
     if (valorDigitado <= 0) {
         alert("Por favor, insira um valor válido.");
@@ -383,7 +444,10 @@ async function confirmarEntrada() {
 
             // 👇 NOVO: Lê se você aumentou ou diminuiu o orçamento global daquele projeto 👇
             let rawTotalProj = document.getElementById('e-valor-total-projeto').value;
-            let novoTotalProjeto = parseFloat(rawTotalProj.replace(/[^\d,]/g, '').replace(',', '.')) || entradaEditada.valorTotalProjeto;
+            let novoTotalProjeto = typeof parseValorMonetarioInput === 'function'
+                ? parseValorMonetarioInput(rawTotalProj)
+                : (parseFloat(rawTotalProj.replace(/[^\d,]/g, '').replace(',', '.')) || entradaEditada.valorTotalProjeto);
+            novoTotalProjeto = novoTotalProjeto || entradaEditada.valorTotalProjeto;
             
             // Atualiza todas as parcelas com esse novo teto de orçamento
             parcelasDoProjeto.forEach(p => p.valorTotalProjeto = novoTotalProjeto);
@@ -487,7 +551,9 @@ function editarEntrada(index) {
     if (inputProjId) inputProjId.value = entrada.projetoId || "";
 
     const inputValor = document.getElementById('e-valor');
-    inputValor.value = (entrada.valor * 100).toFixed(0); 
+    inputValor.value = typeof valorParaCampoMoeda === 'function'
+        ? valorParaCampoMoeda(entrada.valor)
+        : (Number(entrada.valor || 0).toFixed(2).replace('.', ','));
     if (typeof formatarMoeda === 'function') formatarMoeda(inputValor);
 
     // 👇 MÁGICA VISUAL: Mostra o Total do Projeto se for parcelado 👇
@@ -497,7 +563,9 @@ function editarEntrada(index) {
     if (entrada.projetoId && entrada.totalParcelas > 1) {
         if (divTotalProj) divTotalProj.style.display = 'block';
         if (inputTotalProj) {
-            inputTotalProj.value = (entrada.valorTotalProjeto * 100).toFixed(0);
+            inputTotalProj.value = typeof valorParaCampoMoeda === 'function'
+                ? valorParaCampoMoeda(entrada.valorTotalProjeto)
+                : (Number(entrada.valorTotalProjeto || 0).toFixed(2).replace('.', ','));
             if (typeof formatarMoeda === 'function') formatarMoeda(inputTotalProj);
         }
         inputValor.placeholder = "Valor desta parcela R$"; // O placeholder da parcela
@@ -700,7 +768,7 @@ function abrirModalGasto() {
 
     // Reseta o visual para Modo Criação
     const titulo = document.getElementById('modal-titulo');
-    if (titulo) titulo.innerText = 'Novo Gasto 💸';
+    if (titulo) titulo.innerText = 'Novo Gasto';
     
     // Reseta a memória invisível
     const indexEdit = document.getElementById('g-index-edit');
@@ -735,11 +803,15 @@ function editarGasto(index) {
     if (obsGasto) obsGasto.value = t.observacao || '';
     
     const inputValor = document.getElementById('g-valor');
-    inputValor.value = t.valorTotal ? (t.valorTotal * 100).toFixed(0) : '';
+    inputValor.value = t.valorTotal
+        ? (typeof valorParaCampoMoeda === 'function'
+            ? valorParaCampoMoeda(t.valorTotal)
+            : Number(t.valorTotal || 0).toFixed(2).replace('.', ','))
+        : '';
     formatarMoeda(inputValor);
 
     document.getElementById('g-data').value = t.dataCompra || '';
-    document.getElementById('g-tipo').value = t.tipo || 'cartao';
+    document.getElementById('g-tipo').value = t.origemCaixinha ? 'caixinha' : (t.tipo || 'cartao');
     document.getElementById('g-parcelas').value = t.parcelas || 1;
     document.getElementById('g-inicio-pagamento').value = t.delayPagamento || 0;
     

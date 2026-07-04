@@ -2141,7 +2141,7 @@ img {
   }
 
   .hero-preview.hero-notebook-preview::before {
-    inset: 8% 3% 4%;
+    inset: 8% -8% 0 10%;
     filter: blur(24px);
   }
 
@@ -2438,7 +2438,17 @@ img {
   }
 
   .hero-notebook-img {
-    width: min(132vw, 500px);
+    width: 93vh;
+    transform: translateX(4%);
+    position: relative;
+    top: 60px;
+    right: 20px;
+  }
+
+  .hero-preview.hero-notebook-preview {
+    max-height: 360px;
+    margin-top: 2px;
+    z-index: 0;
   }
 
   .feature-card,

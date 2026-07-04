@@ -420,6 +420,8 @@ function renderizarCarteiraNoContainer(containerId, contadorId) {
         <article 
             class="wallet-card ${c.isDebitoOnly ? 'is-debito' : 'is-credito'}"
             data-wallet-index="${index}"
+            onclick="if (!event.target.closest('button')) editarCartaoConfig(${c._originalIndex}, '${containerId}')"
+            title="Clique para editar este cartão"
             style="
                 --wallet-color: ${corBase};
                 --wallet-light: ${corClara};
@@ -431,10 +433,19 @@ function renderizarCarteiraNoContainer(containerId, contadorId) {
             <button 
                 type="button" 
                 class="wallet-card-delete" 
-                onclick="excluirCartaoConfig(${c._originalIndex})" 
+                onclick="event.stopPropagation(); excluirCartaoConfig(${c._originalIndex})" 
                 title="Excluir cartão"
             >
                 ×
+            </button>
+
+            <button 
+                type="button" 
+                class="wallet-card-edit" 
+                onclick="event.stopPropagation(); editarCartaoConfig(${c._originalIndex}, '${containerId}')" 
+                title="Editar cartão"
+            >
+                <i class="fi fi-rr-pencil"></i>
             </button>
 
             <div class="wallet-card-top">
@@ -504,6 +515,9 @@ function adicionarCartaoPorIds(ids) {
     let nome = document.getElementById(ids.nome)?.value.trim() || '';
     const checkbox = document.getElementById(ids.debito);
     const isDebito = checkbox ? checkbox.checked : false;
+    const indexEdicao = window.cartaoEditandoOrigem === ids.nome && Number.isInteger(window.cartaoEditandoIndex)
+        ? window.cartaoEditandoIndex
+        : -1;
 
     if (!nome) {
         alert("Preencha o nome do cartão!");
@@ -522,13 +536,22 @@ function adicionarCartaoPorIds(ids) {
 
     if (!salsiData.config.detalhesBancos) salsiData.config.detalhesBancos = [];
     
-    // 3. Salva no banco com a tag invisível
-    salsiData.config.detalhesBancos.push({ 
+    const dadosCartao = { 
         nome: nome, 
         fechamento: fechamento, 
         vencimento: vencimento,
         isDebitoOnly: isDebito 
-    });
+    };
+
+    if (indexEdicao >= 0 && salsiData.config.detalhesBancos[indexEdicao]) {
+        salsiData.config.detalhesBancos[indexEdicao] = {
+            ...salsiData.config.detalhesBancos[indexEdicao],
+            ...dadosCartao
+        };
+    } else {
+        salsiData.config.detalhesBancos.push(dadosCartao);
+    }
+
     salsiData.config.bancos = salsiData.config.detalhesBancos.map(b => b.nome);
 
     // Limpa campos e reseta a caixinha
@@ -548,10 +571,72 @@ function adicionarCartaoPorIds(ids) {
             toggleInputsDebito();
         }
     }
+    limparModoEdicaoCartao(ids);
     
     popularSelects();
     atualizarOrganizacaoConfiguracoes();
     renderizar(); 
+}
+
+function obterIdsCartaoPorContainer(containerId = 'settings-lista-cartoes') {
+    if (containerId === 'lista-cartoes-config') {
+        return {
+            nome: 'nc-nome',
+            debito: 'banco-apenas-debito',
+            fechamento: 'nc-fechamento',
+            vencimento: 'nc-vencimento',
+            box: 'box-datas-cartao',
+            botao: 'btn-salvar-cartao'
+        };
+    }
+
+    return {
+        nome: 'settings-nc-nome',
+        debito: 'settings-banco-apenas-debito',
+        fechamento: 'settings-nc-fechamento',
+        vencimento: 'settings-nc-vencimento',
+        box: 'settings-box-datas-cartao',
+        botao: 'settings-btn-salvar-cartao'
+    };
+}
+
+function limparModoEdicaoCartao(ids) {
+    if (window.cartaoEditandoOrigem === ids.nome) {
+        window.cartaoEditandoIndex = null;
+        window.cartaoEditandoOrigem = null;
+    }
+
+    const botao = document.getElementById(ids.botao);
+    if (botao) botao.textContent = 'Adicionar à Carteira';
+}
+
+function editarCartaoConfig(index, containerId = 'settings-lista-cartoes') {
+    const cartao = salsiData?.config?.detalhesBancos?.[index];
+    if (!cartao) return;
+
+    const ids = obterIdsCartaoPorContainer(containerId);
+    const nome = document.getElementById(ids.nome);
+    const debito = document.getElementById(ids.debito);
+    const fechamento = document.getElementById(ids.fechamento);
+    const vencimento = document.getElementById(ids.vencimento);
+    const botao = document.getElementById(ids.botao);
+
+    if (nome) nome.value = cartao.nome || '';
+    if (debito) debito.checked = cartao.isDebitoOnly === true;
+    if (fechamento) fechamento.value = cartao.isDebitoOnly ? '' : (cartao.fechamento || '');
+    if (vencimento) vencimento.value = cartao.isDebitoOnly ? '' : (cartao.vencimento || '');
+    if (botao) botao.textContent = 'Salvar alterações';
+
+    window.cartaoEditandoIndex = index;
+    window.cartaoEditandoOrigem = ids.nome;
+
+    if (ids.nome === 'settings-nc-nome' && typeof toggleInputsDebitoConfiguracoes === 'function') {
+        toggleInputsDebitoConfiguracoes();
+    } else if (typeof toggleInputsDebito === 'function') {
+        toggleInputsDebito();
+    }
+
+    nome?.focus();
 }
 
 // 2. Adiciona um novo cartão ao banco de dados
@@ -986,8 +1071,50 @@ function dataVisual(data) {
     return new Date(`${data}T12:00:00`).toLocaleDateString('pt-BR');
 }
 
+function parseValorMonetarioInput(valor) {
+    let texto = String(valor || '').trim();
+    if (!texto) return 0;
+
+    texto = texto.replace(/[^\d,.-]/g, '');
+    if (!texto) return 0;
+
+    const negativo = texto.includes('-');
+    texto = texto.replace(/-/g, '');
+
+    const ultimaVirgula = texto.lastIndexOf(',');
+    const ultimoPonto = texto.lastIndexOf('.');
+    let separadorDecimal = '';
+
+    if (ultimaVirgula >= 0 && ultimoPonto >= 0) {
+        separadorDecimal = ultimaVirgula > ultimoPonto ? ',' : '.';
+    } else if (ultimaVirgula >= 0) {
+        const casasDepoisDaVirgula = texto.length - ultimaVirgula - 1;
+        separadorDecimal = casasDepoisDaVirgula > 0 && casasDepoisDaVirgula <= 2 ? ',' : '';
+    } else if (ultimoPonto >= 0) {
+        const casasDepoisDoPonto = texto.length - ultimoPonto - 1;
+        separadorDecimal = casasDepoisDoPonto > 0 && casasDepoisDoPonto <= 2 ? '.' : '';
+    }
+
+    if (!separadorDecimal) {
+        const inteiro = texto.replace(/[^\d]/g, '');
+        const numeroInteiro = parseFloat(inteiro || '0') || 0;
+        return negativo ? -numeroInteiro : numeroInteiro;
+    }
+
+    const indexSeparador = texto.lastIndexOf(separadorDecimal);
+    const parteInteira = texto.slice(0, indexSeparador).replace(/[^\d]/g, '') || '0';
+    const parteDecimal = texto.slice(indexSeparador + 1).replace(/[^\d]/g, '') || '0';
+    const numero = parseFloat(`${parteInteira}.${parteDecimal}`) || 0;
+
+    return negativo ? -numero : numero;
+}
+
+function valorParaCampoMoeda(valor) {
+    return (Number(valor) || 0).toFixed(2).replace('.', ',');
+}
+
 function parseMoedaVisual(valor) {
-    return parseFloat(String(valor || '').replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+    return parseValorMonetarioInput(valor);
 }
 
 function garantirEstruturaCaixinha() {
@@ -1040,6 +1167,231 @@ function calcularParcelasPorMesVisual(t) {
         finalizado,
         progresso: total ? Math.round((concluidasAntesDoMes / total) * 100) : 0
     };
+}
+
+function adicionarMesVisual(data, meses) {
+    return new Date(data.getFullYear(), data.getMonth() + meses, 1);
+}
+
+function chaveMesVisual(data) {
+    return `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function labelMesVisual(data, formato = 'short') {
+    const opcoes = formato === 'long'
+        ? { month: 'long', year: 'numeric' }
+        : { month: 'short' };
+
+    const texto = data.toLocaleDateString('pt-BR', opcoes).replace('.', '');
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+function obterResponsavelParcelaTerceiro(t) {
+    if (!t?.eDeTerceiro) return '';
+
+    if (t.terceiro?.username) return `@${t.terceiro.username}`;
+    return t.nomeTerceiro || t.terceiro?.nomeManual || t.terceiro?.nome || 'Terceiro';
+}
+
+function obterValorParcelaVisual(t, totalParcelas = null) {
+    const total = Math.max(1, Number(totalParcelas || t?.parcelas || 1));
+    const valorParcela = Number(t?.valorParcela || 0);
+    if (valorParcela > 0) return valorParcela;
+
+    return (Number(t?.valorTotal || t?.valor || 0) || 0) / total;
+}
+
+function analisarParceladosVisual(parcelados) {
+    const mesBase = obterMesVisualizacao();
+    const meses = Array.from({ length: 12 }).map((_, index) => {
+        const data = adicionarMesVisual(mesBase, index);
+        return {
+            data,
+            chave: chaveMesVisual(data),
+            label: labelMesVisual(data),
+            labelLongo: labelMesVisual(data, 'long'),
+            valor: 0,
+            valorProprio: 0,
+            valorTerceiros: 0,
+            ativos: 0,
+            finalizam: [],
+            alivioProximoMes: 0
+        };
+    });
+
+    parcelados.forEach(item => {
+        const valorParcela = obterValorParcelaVisual(item.t, item.total);
+        const finalizaEm = adicionarMesVisual(item.inicio, item.total - 1);
+        const aliviaEm = adicionarMesVisual(item.inicio, item.total);
+        item.finalizaEm = finalizaEm;
+        item.aliviaEm = aliviaEm;
+
+        meses.forEach(mes => {
+            const diff = (mes.data.getFullYear() - item.inicio.getFullYear()) * 12 + (mes.data.getMonth() - item.inicio.getMonth());
+            if (diff >= 0 && diff < item.total) {
+                mes.valor += valorParcela;
+                mes.ativos += 1;
+                if (item.t.eDeTerceiro) {
+                    mes.valorTerceiros += valorParcela;
+                } else {
+                    mes.valorProprio += valorParcela;
+                }
+            }
+
+            if (chaveMesVisual(finalizaEm) === mes.chave && !item.finalizado) {
+                mes.finalizam.push(item);
+                mes.alivioProximoMes += valorParcela;
+            }
+        });
+    });
+
+    const atual = meses[0] || null;
+    const proximosAlivios = meses.filter(mes => mes.finalizam.length > 0);
+    const proximoAlivio = proximosAlivios[0] || null;
+    const mesesFuturos = meses.slice(1);
+    const mesMaisLeve = mesesFuturos.reduce((melhor, mes) => {
+        if (!melhor) return mes;
+        if (mes.ativos !== melhor.ativos) return mes.ativos < melhor.ativos ? mes : melhor;
+        return mes.valor < melhor.valor ? mes : melhor;
+    }, null);
+
+    const maiorValor = Math.max(1, ...meses.map(mes => mes.valor));
+
+    return {
+        meses,
+        atual,
+        proximoAlivio,
+        mesMaisLeve,
+        maiorValor,
+        totalAberto: parcelados.reduce((total, item) => total + Math.max(0, item.faltam) * obterValorParcelaVisual(item.t, item.total), 0),
+        totalAbertoTerceiros: parcelados.reduce((total, item) => item.t.eDeTerceiro
+            ? total + Math.max(0, item.faltam) * obterValorParcelaVisual(item.t, item.total)
+            : total, 0)
+    };
+}
+
+function renderizarResumoParceladosVisual(parcelados) {
+    const alvo = document.getElementById('visual-parcelados-overview');
+    if (!alvo) return;
+
+    if (!parcelados.length) {
+        alvo.innerHTML = '';
+        return;
+    }
+
+    const analise = analisarParceladosVisual(parcelados);
+    const atual = analise.atual;
+    const proximo = analise.proximoAlivio;
+    const leve = analise.mesMaisLeve;
+    const alivioTexto = proximo
+        ? `${proximo.finalizam.length} compra${proximo.finalizam.length === 1 ? '' : 's'} finaliza${proximo.finalizam.length === 1 ? '' : 'm'} em ${proximo.labelLongo}`
+        : 'Nenhuma finalização nos próximos 12 meses';
+    const alivioValor = proximo
+        ? `${moedaVisual(proximo.alivioProximoMes)}/mês a partir de ${labelMesVisual(adicionarMesVisual(proximo.data, 1), 'long')}`
+        : 'Sem alívio previsto agora';
+    const quedaPercentual = atual && leve && atual.valor > 0
+        ? Math.max(0, Math.round(((atual.valor - leve.valor) / atual.valor) * 100))
+        : 0;
+    const insight = proximo
+        ? `Seu próximo respiro vem depois de ${proximo.labelLongo}: ${proximo.finalizam.length} parcelamento${proximo.finalizam.length === 1 ? '' : 's'} deixa${proximo.finalizam.length === 1 ? '' : 'm'} de pesar e libera${proximo.finalizam.length === 1 ? '' : 'm'} ${moedaVisual(proximo.alivioProximoMes)} por mês.`
+        : `Pelos próximos meses, seus parcelamentos seguem sem finalizações relevantes. Vale acompanhar antes de assumir novas parcelas.`;
+
+    const finalizamEmBreve = analise.meses
+        .filter(mes => mes.finalizam.length > 0)
+        .slice(0, 3);
+
+    alvo.innerHTML = `
+        <div class="parcelados-radar">
+            <div class="parcelados-radar-card is-primary">
+                <span>Compromisso mensal atual</span>
+                <strong>${moedaVisual(atual?.valor || 0)}</strong>
+                <small>${atual?.ativos || 0} parcelamento${(atual?.ativos || 0) === 1 ? '' : 's'} ativo${(atual?.ativos || 0) === 1 ? '' : 's'}</small>
+            </div>
+            <div class="parcelados-radar-card">
+                <span>Seu gasto real</span>
+                <strong>${moedaVisual(atual?.valorProprio || 0)}</strong>
+                <small>${atual?.valorTerceiros ? `${moedaVisual(atual.valorTerceiros)} são de terceiros` : 'Sem parcelas de terceiros neste mês'}</small>
+            </div>
+            <div class="parcelados-radar-card">
+                <span>Próximo alívio</span>
+                <strong>${proximo ? moedaVisual(proximo.alivioProximoMes) : 'Sem previsão'}</strong>
+                <small>${alivioTexto}</small>
+            </div>
+            <div class="parcelados-radar-card">
+                <span>Mês mais leve previsto</span>
+                <strong>${leve ? labelMesVisual(leve.data, 'long') : '-'}</strong>
+                <small>${leve ? `${moedaVisual(leve.valor)} em ${leve.ativos} ativo${leve.ativos === 1 ? '' : 's'}${quedaPercentual ? `, queda de ${quedaPercentual}%` : ''}` : 'Sem dados suficientes'}</small>
+            </div>
+        </div>
+
+        <div class="parcelados-insight">
+            <i class="fi fi-rr-bulb"></i>
+            <div>
+                <strong>Leitura de futuro</strong>
+                <p>${insight}</p>
+                <small>${alivioValor}</small>
+            </div>
+        </div>
+
+        <div class="parcelados-chart-card" aria-label="Gráfico dos parcelamentos futuros">
+            <div class="parcelados-chart-head">
+                <div>
+                    <span class="visual-section-label">Previsão dos próximos meses</span>
+                    <strong>Quanto ainda fica preso na fatura</strong>
+                </div>
+                <div class="parcelados-chart-legend">
+                    <span><i class="own"></i> Seus parcelados</span>
+                    <span><i class="third"></i> Terceiros</span>
+                    <span><i class="relief"></i> Finalizações</span>
+                </div>
+            </div>
+            <div class="parcelados-chart">
+                <div class="parcelados-chart-axis">
+                    <span>${moedaVisual(analise.maiorValor)}</span>
+                    <span>${moedaVisual(analise.maiorValor / 2)}</span>
+                    <span>R$ 0</span>
+                </div>
+                <div class="parcelados-chart-plot">
+                    ${analise.meses.slice(0, 8).map(mes => {
+                        const altura = mes.valor > 0 ? Math.max(10, Math.round((mes.valor / analise.maiorValor) * 100)) : 2;
+                        const proprioPct = mes.valor > 0 ? Math.max(0, Math.round((mes.valorProprio / mes.valor) * 100)) : 0;
+                        const terceiroPct = mes.valor > 0 ? Math.max(0, 100 - proprioPct) : 0;
+                        const alivia = mes.finalizam.length > 0;
+                        return `
+                            <div class="parcelados-chart-month ${alivia ? 'has-relief' : ''}">
+                                <div class="parcelados-chart-column">
+                                    <div class="parcelados-chart-bar" style="height:${altura}%">
+                                        ${terceiroPct ? `<span class="third" style="height:${terceiroPct}%"></span>` : ''}
+                                        ${proprioPct ? `<span class="own" style="height:${proprioPct}%"></span>` : ''}
+                                    </div>
+                                </div>
+                                <div class="parcelados-chart-label">
+                                    <strong>${mes.label}</strong>
+                                    <span class="parcelados-chart-total">${moedaVisual(mes.valor)}</span>
+                                    <span>${mes.ativos} ativo${mes.ativos === 1 ? '' : 's'}</span>
+                                    ${alivia ? `<b>${mes.finalizam.length} finaliza${mes.finalizam.length === 1 ? '' : 'm'} · -${moedaVisual(mes.alivioProximoMes)}</b>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        </div>
+
+        ${finalizamEmBreve.length ? `
+            <div class="parcelados-ending-soon">
+                <span class="visual-section-label">Finalizam em breve</span>
+                <div>
+                    ${finalizamEmBreve.map(mes => `
+                        <article>
+                            <strong>${mes.labelLongo}</strong>
+                            <p>${mes.finalizam.length} compra${mes.finalizam.length === 1 ? '' : 's'} libera${mes.finalizam.length === 1 ? '' : 'm'} ${moedaVisual(mes.alivioProximoMes)}/mês a partir do mês seguinte.</p>
+                        </article>
+                    `).join('')}
+                </div>
+            </div>
+        ` : ''}
+    `;
 }
 
 function calcularRecebimentoTerceiro(t) {
@@ -1344,32 +1696,152 @@ async function apagarDividaRecebida(id) {
     }
 }
 
-async function renderizarVisualTerceiros() {
+function normalizarTextoVisual(texto) {
+    return String(texto || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+}
+
+function obterNomeResponsavelTerceiro(t) {
+    const vinculado = t?.terceiro?.tipo === 'usuario' && t?.terceiro?.username;
+    return vinculado ? `@${t.terceiro.username}` : (t?.nomeTerceiro || t?.terceiro?.nomeManual || t?.terceiro?.nome || 'Nome manual');
+}
+
+function valorPendenteTerceiroNoMes(t, mesBase) {
+    if (!gastoTerceiroContaNoResumo(t)) return 0;
+
+    const totalParcelas = Math.max(1, Number(t?.parcelas || 1));
+    const inicio = typeof calcularCompetenciaInicialGasto === 'function'
+        ? calcularCompetenciaInicialGasto(t)
+        : new Date(`${t?.dataCompra || ''}T12:00:00`);
+
+    if (!(inicio instanceof Date) || Number.isNaN(inicio.getTime())) return 0;
+
+    const diff = (mesBase.getFullYear() - inicio.getFullYear()) * 12 + (mesBase.getMonth() - inicio.getMonth());
+    if (diff < 0 || diff >= totalParcelas) return 0;
+
+    if (parcelaTerceiroRecebida(t, diff)) return 0;
+
+    return totalParcelas > 1
+        ? obterValorParcelaVisual(t, totalParcelas)
+        : Number(t?.valorTotal || t?.valor || 0);
+}
+
+function calcularResumoTerceiros(gastos) {
+    const mesBase = obterMesVisualizacao();
+    const mapa = new Map();
+
+    gastos.forEach(t => {
+        const nomeResponsavel = obterNomeResponsavelTerceiro(t);
+        const chave = normalizarTextoVisual(nomeResponsavel);
+        const recebimento = calcularRecebimentoTerceiro(t);
+        const total = Number(t.valorTotal || 0);
+
+        if (!mapa.has(chave)) {
+            mapa.set(chave, {
+                nome: nomeResponsavel,
+                quantidade: 0,
+                devendoMes: 0,
+                devendoTotal: 0,
+                totalPago: 0
+            });
+        }
+
+        const item = mapa.get(chave);
+        item.quantidade += 1;
+        item.devendoMes += valorPendenteTerceiroNoMes(t, mesBase);
+        if (gastoTerceiroContaNoResumo(t)) {
+            item.devendoTotal += recebimento.valorPendente;
+            item.totalPago += Math.max(0, total - recebimento.valorPendente);
+        }
+    });
+
+    return [...mapa.values()].sort((a, b) => b.devendoTotal - a.devendoTotal);
+}
+
+async function renderizarVisualTerceiros(atualizarStatus = true) {
     const lista = document.getElementById('visual-lista-terceiros');
     const resumoPendentes = document.getElementById('visual-terceiros-pendentes');
     if (!lista) return;
 
-    lista.innerHTML = '<div class="visual-empty">Atualizando status dos gastos enviados...</div>';
+    if (atualizarStatus) {
+        lista.innerHTML = '<div class="visual-empty">Atualizando status dos gastos enviados...</div>';
+        const enviados = await buscarSolicitacoesEnviadas();
+        await sincronizarStatusGastosEnviados(enviados);
+    }
 
-    const enviados = await buscarSolicitacoesEnviadas();
-    await sincronizarStatusGastosEnviados(enviados);
+    const termoBusca = window.visualTerceirosBusca || '';
+    const termoNormalizado = normalizarTextoVisual(termoBusca);
+    const campoBuscaAtual = document.getElementById('visual-terceiros-search');
+    const manterFocoBusca = document.activeElement === campoBuscaAtual || window.visualTerceirosSearchFocused === true;
+    const cursorBusca = manterFocoBusca && campoBuscaAtual
+        ? (campoBuscaAtual.selectionStart ?? termoBusca.length)
+        : termoBusca.length;
 
-    const gastos = (salsiData.transacoes || [])
+    const gastosBase = (salsiData.transacoes || [])
         .filter(t => t.eDeTerceiro && obterStatusCompartilhado(t) !== 'arquivado')
         .sort((a, b) => new Date((b.dataCompra || '') + 'T12:00:00') - new Date((a.dataCompra || '') + 'T12:00:00'));
 
-    const totalPendente = gastos.reduce((total, t) => {
+    const gastos = termoNormalizado
+        ? gastosBase.filter(t => {
+            const nomeResponsavel = obterNomeResponsavelTerceiro(t);
+            return normalizarTextoVisual(`${nomeResponsavel} ${t.nome || ''} ${t.categoria || ''}`).includes(termoNormalizado);
+        })
+        : gastosBase;
+
+    const totalPendente = gastosBase.reduce((total, t) => {
         if (!gastoTerceiroContaNoResumo(t)) return total;
         return total + calcularRecebimentoTerceiro(t).valorPendente;
     }, 0);
     if (resumoPendentes) resumoPendentes.textContent = moedaVisual(totalPendente);
 
+    const resumoTerceiros = calcularResumoTerceiros(gastos);
+    const resumoHtml = `
+        <div class="visual-terceiros-tools">
+            <label class="visual-search-field">
+                <i class="fi fi-rr-search"></i>
+                <input 
+                    id="visual-terceiros-search"
+                    type="search" 
+                    value="${escaparHtmlCarteira(termoBusca)}"
+                    placeholder="Buscar por pessoa, @user ou gasto"
+                    onfocus="window.visualTerceirosSearchFocused = true"
+                    onblur="window.visualTerceirosSearchFocused = false"
+                    oninput="window.visualTerceirosBusca = this.value; clearTimeout(window.visualTerceirosBuscaTimer); window.visualTerceirosBuscaTimer = setTimeout(() => renderizarVisualTerceiros(false), 180)"
+                >
+            </label>
+            ${termoBusca ? `<button type="button" class="visual-mini-btn" onclick="window.visualTerceirosBusca = ''; renderizarVisualTerceiros(false)">Limpar</button>` : ''}
+        </div>
+        ${resumoTerceiros.length ? `
+            <div class="visual-terceiros-summary">
+                ${resumoTerceiros.slice(0, 4).map(item => `
+                    <article>
+                        <span>${escaparHtmlCarteira(item.nome)}</span>
+                        <strong>${moedaVisual(item.devendoTotal)}</strong>
+                        <small>Devendo total</small>
+                        <div>
+                            <b>${moedaVisual(item.devendoMes)}</b>
+                            <em>devendo no mês</em>
+                        </div>
+                        <div>
+                            <b>${moedaVisual(item.totalPago)}</b>
+                            <em>total pago</em>
+                        </div>
+                    </article>
+                `).join('')}
+            </div>
+        ` : ''}
+    `;
+
     const enviadosHtml = gastos.length ? `
+        ${resumoHtml}
         <div class="visual-section-label">Seus gastos de terceiros</div>
         ${gastos.map(t => {
             const idx = salsiData.transacoes.indexOf(t);
             const vinculado = t.terceiro?.tipo === 'usuario' && t.terceiro?.username;
-            const nomeResponsavel = vinculado ? `@${t.terceiro.username}` : (t.nomeTerceiro || t.terceiro?.nomeManual || 'Nome manual');
+            const nomeResponsavel = obterNomeResponsavelTerceiro(t);
             const recebimento = calcularRecebimentoTerceiro(t);
             const statusCompartilhado = obterStatusCompartilhado(t);
             const status = vinculado
@@ -1418,7 +1890,17 @@ async function renderizarVisualTerceiros() {
 
     lista.innerHTML = enviadosHtml
         ? enviadosHtml
-        : '<div class="visual-empty">Nenhum gasto de terceiro por enquanto. Quando cadastrar um responsável manual ou um @user, ele aparece aqui.</div>';
+        : `${resumoHtml}<div class="visual-empty">Nenhum gasto de terceiro encontrado. Quando cadastrar um responsável manual ou um @user, ele aparece aqui.</div>`;
+
+    const campoBusca = document.getElementById('visual-terceiros-search');
+    if (manterFocoBusca && campoBusca) {
+        requestAnimationFrame(() => {
+            campoBusca.focus();
+            const posicao = Math.min(cursorBusca, campoBusca.value.length);
+            campoBusca.setSelectionRange(posicao, posicao);
+            window.visualTerceirosSearchFocused = true;
+        });
+    }
 }
 
 async function responderSolicitacaoGasto(id, status) {
@@ -1535,7 +2017,7 @@ function abrirPagamentoDivida(id) {
 
     if (nome) nome.value = `Dívida - ${divida.nome || 'gasto compartilhado'}`;
     if (valor) {
-        valor.value = (Number(divida.valor || 0) * 100).toFixed(0);
+        valor.value = valorParaCampoMoeda(divida.valor);
         formatarMoeda(valor);
     }
     if (data) data.value = new Date().toISOString().split('T')[0];
@@ -1562,32 +2044,51 @@ function renderizarVisualParcelados() {
         })
         .sort((a, b) => {
             if (a.finalizado !== b.finalizado) return a.finalizado ? 1 : -1;
+            if (a.faltam !== b.faltam) return a.faltam - b.faltam;
             return new Date((b.t.dataCompra || '') + 'T12:00:00') - new Date((a.t.dataCompra || '') + 'T12:00:00');
         });
 
+    renderizarResumoParceladosVisual(parcelados);
+
     lista.innerHTML = parcelados.length ? parcelados.map(item => {
-        const { t, parcelaAtual, faltam, total, finalizado, progresso } = item;
+        const { t, parcelaAtual, faltam, total, finalizado, progresso, finalizaEm, aliviaEm } = item;
         const idx = salsiData.transacoes.indexOf(t);
+        const valorParcela = obterValorParcelaVisual(t, total);
+        const valorRestante = Math.max(0, faltam) * valorParcela;
+        const responsavelTerceiro = obterResponsavelParcelaTerceiro(t);
         const textoParcela = item.diffMeses < 0
             ? 'Ainda não iniciou'
             : `Parcela atual: ${parcelaAtual}/${total}`;
+        const textoFinalizacao = finalizado
+            ? 'Parcelamento finalizado'
+            : `Termina em ${labelMesVisual(finalizaEm, 'long')}`;
+        const textoAlivio = finalizado
+            ? 'Este compromisso já saiu da previsão'
+            : `Libera ${moedaVisual(valorParcela)}/mês a partir de ${labelMesVisual(aliviaEm, 'long')}`;
+        const badgeTerceiro = responsavelTerceiro
+            ? `<small class="visual-badge third">Terceiro: ${escaparHtmlCarteira(responsavelTerceiro)}</small>`
+            : '';
 
         return `
-            <div class="visual-card">
+            <div class="visual-card parcelado-card ${t.eDeTerceiro ? 'is-third-party' : ''}">
                 <div class="visual-card-main">
                     <span class="visual-item-kicker">${escaparHtmlCarteira(t.banco || t.formaPagamento || 'Parcelado')}</span>
                     <div class="visual-card-title">
                         <span>${escaparHtmlCarteira(t.nome || 'Gasto parcelado')}</span>
                         <small class="visual-badge ${finalizado ? '' : 'warn'}">${finalizado ? 'Finalizado' : `${faltam} restante${faltam === 1 ? '' : 's'}`}</small>
+                        ${badgeTerceiro}
                     </div>
-                    <div class="visual-card-meta">
-                        <span>${textoParcela}</span>
-                        <span>Valor da parcela: ${moedaVisual(t.valorParcela || 0)}</span>
-                        <span>${dataVisual(t.dataCompra)}</span>
+                    <div class="visual-card-meta parcelado-meta-grid">
+                        <span class="parcelado-meta-chip"><small>Parcela</small><strong>${textoParcela}</strong></span>
+                        <span class="parcelado-meta-chip"><small>Valor mensal</small><strong>${moedaVisual(valorParcela)}</strong></span>
+                        <span class="parcelado-meta-chip"><small>Finalização</small><strong>${textoFinalizacao}</strong></span>
+                        <span class="parcelado-meta-chip"><small>Alívio</small><strong>${textoAlivio}</strong></span>
+                        <span class="parcelado-meta-chip"><small>Compra</small><strong>${dataVisual(t.dataCompra)}</strong></span>
                     </div>
                 </div>
                 <div class="visual-card-value">
-                    <strong>${moedaVisual(t.valorTotal || 0)}</strong>
+                    <span class="parcelado-value-label">Ainda falta</span>
+                    <strong>${moedaVisual(valorRestante)}</strong>
                     <div class="visual-progress" title="${progresso}% concluído">
                         <span style="width:${progresso}%"></span>
                     </div>
@@ -1639,6 +2140,24 @@ function renderizarVisualCaixinha() {
 }
 
 function abrirModalCaixinha(tipo = 'entrada') {
+    if (tipo !== 'saida' && typeof abrirModalGasto === 'function') {
+        abrirModalGasto();
+
+        requestAnimationFrame(() => {
+            const tipoGasto = document.getElementById('g-tipo');
+            if (tipoGasto) tipoGasto.value = 'caixinha';
+
+            const titulo = document.getElementById('modal-titulo');
+            if (titulo) titulo.innerText = 'Novo Gasto';
+
+            if (typeof ajustarCamposModal === 'function') ajustarCamposModal();
+            if (typeof toggleCampoNomeTerceiro === 'function') toggleCampoNomeTerceiro();
+            document.getElementById('g-nome')?.focus();
+        });
+
+        return;
+    }
+
     const modal = document.getElementById('modal-caixinha');
     if (!modal) return;
 
@@ -1679,7 +2198,7 @@ function editarMovimentoCaixinha(id) {
     document.getElementById('caixinha-id').value = movimento.id;
     document.getElementById('caixinha-tipo').value = movimento.tipo;
     document.getElementById('caixinha-nome').value = movimento.nome || '';
-    document.getElementById('caixinha-valor').value = (Number(movimento.valor || 0) * 100).toFixed(0);
+    document.getElementById('caixinha-valor').value = valorParaCampoMoeda(movimento.valor);
     formatarMoeda(document.getElementById('caixinha-valor'));
     document.getElementById('caixinha-data').value = movimento.data || new Date().toISOString().split('T')[0];
     document.getElementById('caixinha-descricao').value = movimento.descricao || '';
@@ -1720,6 +2239,70 @@ async function enviarComprovanteCaixinha(file) {
     }
 
     return data.data.url;
+}
+
+function salvarMovimentoCaixinhaAPartirDoGasto({ nome, valor, data, descricao = '', comprovanteUrl = '', indexEdit = -1 }) {
+    garantirEstruturaCaixinha();
+
+    const gastoAnterior = indexEdit >= 0 ? salsiData.transacoes[indexEdit] : null;
+    const id = gastoAnterior?.caixinhaId || Date.now();
+    const movimento = {
+        id,
+        tipo: 'entrada',
+        nome: nome || 'Valor guardado',
+        valor: Number(valor) || 0,
+        data: data || new Date().toISOString().split('T')[0],
+        descricao,
+        comprovanteUrl,
+        criadoEm: id
+    };
+
+    const indexMovimento = salsiData.caixinha.findIndex(mov => String(mov.id) === String(id));
+    if (indexMovimento >= 0) {
+        salsiData.caixinha[indexMovimento] = movimento;
+    } else {
+        salsiData.caixinha.push(movimento);
+    }
+
+    if (!Array.isArray(salsiData.config.categorias)) {
+        salsiData.config.categorias = [];
+    }
+
+    if (!salsiData.config.categorias.includes('Caixinha')) {
+        salsiData.config.categorias.push('Caixinha');
+    }
+
+    salsiData.transacoes = (salsiData.transacoes || []).filter((t, idx) => {
+        if (t.origemCaixinha && String(t.caixinhaId) === String(id)) return false;
+        if (indexEdit >= 0 && idx === indexEdit) return false;
+        return true;
+    });
+
+    salsiData.transacoes.push({
+        nome: `Caixinha - ${movimento.nome}`,
+        tipo: 'debito',
+        valorTotal: movimento.valor,
+        valorParcela: movimento.valor,
+        parcelas: 1,
+        dataCompra: movimento.data,
+        banco: 'Caixinha',
+        categoria: 'Caixinha',
+        observacao: movimento.descricao,
+        pago: true,
+        delayPagamento: 0,
+        eDeTerceiro: false,
+        nomeTerceiro: '',
+        terceiro: null,
+        formaPagamento: 'Caixinha',
+        comprovanteUrl: movimento.comprovanteUrl,
+        origemCaixinha: true,
+        caixinhaId: id,
+        criadoEm: id,
+        destaqueAte: id + (5 * 60 * 1000)
+    });
+
+    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+    if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
 }
 
 async function salvarMovimentoCaixinha() {
@@ -1861,19 +2444,34 @@ document.getElementById('caixinha-comprovante')?.addEventListener('change', func
 
 // 2. MÁSCARA DE MOEDA EM TEMPO REAL (Transforma 100 em R$ 100,00)
 function formatarMoeda(input) {
-    let valor = input.value.replace(/\D/g, ""); // Remove tudo que não é dígito
-    
-    if (valor === "") {
+    if (
+        input &&
+        document.activeElement === input &&
+        String(input.getAttribute('oninput') || '').includes('formatarMoeda')
+    ) {
+        if (!input.dataset.moneyBlurAttached) {
+            input.addEventListener('blur', () => formatarMoeda(input));
+            input.dataset.moneyBlurAttached = 'true';
+        }
+        return;
+    }
+
+    if (!input || String(input.value || '').trim() === "") {
+        if (input) input.value = "";
+        return;
+    }
+
+    const valor = parseValorMonetarioInput(input.value);
+
+    if (!Number.isFinite(valor)) {
         input.value = "";
         return;
     }
 
-    valor = (parseInt(valor) / 100).toLocaleString('pt-BR', {
+    input.value = valor.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL'
     });
-    
-    input.value = valor;
 }
 
 
@@ -1882,8 +2480,8 @@ if (!salsiData.metas) salsiData.metas = [];
 
 function salvarMeta() {
     const nome = document.getElementById('meta-nome').value;
-    const total = parseFloat(document.getElementById('meta-valor-total').value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-    const atual = parseFloat(document.getElementById('meta-valor-atual').value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
+    const total = parseValorMonetarioInput(document.getElementById('meta-valor-total').value);
+    const atual = parseValorMonetarioInput(document.getElementById('meta-valor-atual').value);
     const idExistente = document.getElementById('modal-meta').dataset.id;
 
     if (idExistente) {

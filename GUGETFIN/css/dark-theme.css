@@ -14,6 +14,7 @@ body.dark-theme {
     --dark-green: #33e592;
     --acc-green: #04b965;
     --brand-green: #025638;
+    --terceiros: #35669b;
 }
 
 body.dark-theme .brand .brand-logo-positive,
@@ -723,7 +724,11 @@ body.dark-theme .calendar-summary > div {
     border-color: var(--border);
 }
 
-body.dark-theme .calendar-summary > div:first-child, body.dark-theme .btn-settings-primary, body.dark-theme .visual-tab:hover, body.dark-theme .visual-tab.active, body.dark-theme .caixinha-balance-card {
+body.dark-theme .calendar-summary > div:first-child,
+body.dark-theme .btn-settings-primary,
+body.dark-theme .visual-tab:hover,
+body.dark-theme .visual-tab.active,
+body.dark-theme .caixinha-balance-card {
     background: var(--acc-green);
     border-color: rgba(255,255,255,0.04);
 }
@@ -731,6 +736,11 @@ body.dark-theme .calendar-summary > div:first-child, body.dark-theme .btn-settin
 body.dark-theme .calendar-summary > div:first-child span,
 body.dark-theme .calendar-summary > div:first-child strong {
     color: #ffffff;
+}
+
+body.dark-theme .calendar-summary-line.income,
+body.dark-theme .calendar-day-total-income {
+    color: var(--dark-green) !important;
 }
 
 body.dark-theme .calendar-day.has-hidden-items:hover {
@@ -786,6 +796,7 @@ body.dark-theme .subscription-invite-card,
 body.dark-theme .settings-theme-card,
 body.dark-theme .settings-toggle-row,
 body.dark-theme .settings-action-card,
+body.dark-theme .settings-shortcuts-card,
 body.dark-theme .settings-google-status-row,
 body.dark-theme .google-card-logo {
     background: #11161c;
@@ -955,6 +966,8 @@ body.dark-theme .visual-tabs,
 body.dark-theme .visual-content,
 body.dark-theme .visual-card,
 body.dark-theme .visual-mini-btn,
+body.dark-theme .visual-search-field,
+body.dark-theme .visual-terceiros-summary article,
 body.dark-theme .terceiro-suggestion-item {
     background: #171a20;
     border-color: var(--border);
@@ -978,6 +991,17 @@ body.dark-theme .visual-mini-btn.danger {
     color: #fca5a5;
 }
 
+body.dark-theme .visual-search-field input {
+    color: var(--text-main);
+}
+
+body.dark-theme .settings-shortcut-list kbd {
+    background: #20252d;
+    border-color: rgba(255,255,255,0.12);
+    color: var(--text-main);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.35);
+}
+
 body.dark-theme .visual-empty,
 body.dark-theme .terceiro-suggestion-empty,
 body.dark-theme .terceiro-suggestion-selected {
@@ -988,6 +1012,62 @@ body.dark-theme .terceiro-suggestion-selected {
 
 body.dark-theme .visual-progress {
     background: rgba(255,255,255,0.08);
+}
+
+body.dark-theme .parcelados-radar-card,
+body.dark-theme .parcelados-chart-card,
+body.dark-theme .parcelados-ending-soon article,
+body.dark-theme .parcelado-meta-chip {
+    background: #171a20;
+    border-color: var(--border);
+}
+
+body.dark-theme .parcelados-radar-card.is-primary,
+body.dark-theme .parcelados-insight i {
+    background: var(--acc-green);
+    border-color: var(--acc-green);
+    color: #0f1714;
+}
+
+body.dark-theme .parcelados-radar-card.is-primary strong {
+    color: #0f1714;
+}
+
+body.dark-theme .parcelados-radar-card.is-primary span,
+body.dark-theme .parcelados-radar-card.is-primary small {
+    color: var(--text-main);
+}
+
+body.dark-theme .parcelados-insight {
+    background: rgba(108, 192, 128, 0.10);
+    border-color: rgba(108, 192, 128, 0.24);
+}
+
+body.dark-theme .parcelados-chart-plot::before {
+    background:
+        linear-gradient(to bottom,
+            rgba(255,255,255,0.10) 0 1px,
+            transparent 1px 50%,
+            rgba(255,255,255,0.08) 50% calc(50% + 1px),
+            transparent calc(50% + 1px) calc(100% - 1px),
+            rgba(255,255,255,0.08) calc(100% - 1px) 100%);
+}
+
+body.dark-theme .parcelados-chart-label b {
+    color: #fbbf24;
+}
+
+body.dark-theme .parcelados-chart-month.has-relief .parcelados-chart-bar {
+    outline-color: rgba(245, 158, 11, 0.32);
+}
+
+body.dark-theme .visual-badge.third {
+    background: rgba(96, 165, 250, 0.14);
+    color: #93c5fd;
+}
+
+body.dark-theme .parcelado-card.is-third-party {
+    border-color: rgba(96, 165, 250, 0.30);
 }
 
 body.dark-theme .caixinha-balance-card {

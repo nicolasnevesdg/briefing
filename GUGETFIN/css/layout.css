@@ -2354,6 +2354,20 @@ main.settings-mode #settings-view {
     font-weight: 900;
 }
 
+.calendar-summary-line {
+    display: block;
+    margin: 0 0 6px 0 !important;
+    color: var(--text-main) !important;
+    font-size: 17px !important;
+    line-height: 1.1;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+.calendar-summary-line.income {
+    color: var(--dark-green) !important;
+}
+
 .calendar-filter-bar {
     width: fit-content;
     max-width: 100%;
@@ -2501,11 +2515,27 @@ main.settings-mode #settings-view {
     color: #ffffff;
 }
 
+.calendar-day-totals {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    min-width: 0;
+}
+
 .calendar-day-total {
     color: var(--dark-green);
     font-size: 11px;
     font-weight: 900;
     white-space: nowrap;
+}
+
+.calendar-day-total-expense {
+    color: var(--text-main);
+}
+
+.calendar-day-total-income {
+    color: var(--brand-green);
 }
 
 .calendar-items {
@@ -3434,6 +3464,79 @@ main.settings-mode #settings-view {
     border-color: rgba(239, 68, 68, 0.32);
 }
 
+.settings-shortcuts-card {
+    margin-top: 18px;
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--bg-app);
+}
+
+.settings-shortcuts-head {
+    margin-bottom: 14px;
+}
+
+.settings-shortcuts-head h4 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 20px;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+}
+
+.settings-shortcut-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 42px;
+}
+
+.settings-shortcut-list > div,
+.settings-shortcut-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) auto;
+    align-items: center;
+    gap: 10px 16px;
+    padding: 8px 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.settings-shortcut-keys {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.settings-shortcut-list kbd {
+    min-width: 32px;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid rgba(127,127,127,0.28);
+    border-radius: 7px;
+    background: #edf0ef;
+    color: #45524e;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.08);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: 800 11px 'Inter', sans-serif;
+}
+
+.settings-shortcut-list span {
+    grid-column: 1 / -1;
+    margin-top: -4px;
+    color: var(--text-sec);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.settings-shortcut-list strong {
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 650;
+}
+
 /* ========================================================= */
 /* CONFIGURACOES - ORGANIZACAO                               */
 /* ========================================================= */
@@ -3604,7 +3707,7 @@ main.settings-mode #settings-view {
 }
 
 .settings-wallet-carousel .wallet-card-type {
-    margin-right: 28px;
+    margin-right: 35px;
     padding: 6px 11px;
     border-radius: 999px;
     background: rgba(255,255,255,0.14);
@@ -3614,6 +3717,10 @@ main.settings-mode #settings-view {
     font-weight: 850;
     letter-spacing: 0.06em;
     white-space: nowrap;
+}
+
+.settings-wallet-carousel .wallet-card-edit i {
+    font-size: 10px;
 }
 
 .settings-wallet-carousel .wallet-chip {
@@ -3678,13 +3785,43 @@ main.settings-mode #settings-view {
     transition: 0.2s ease;
 }
 
+.settings-wallet-carousel .wallet-card-edit {
+    position: absolute;
+    top: 50px;
+    right: 16px;
+    z-index: 5;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.16);
+    color: rgba(255,255,255,0.9);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s ease;
+}
+
 .settings-wallet-carousel .wallet-card.is-active .wallet-card-delete {
+    opacity: 0.85;
+    pointer-events: auto;
+}
+
+.settings-wallet-carousel .wallet-card.is-active .wallet-card-edit {
     opacity: 0.85;
     pointer-events: auto;
 }
 
 .settings-wallet-carousel .wallet-card-delete:hover {
     background: rgba(239,68,68,0.92);
+    color: #ffffff;
+}
+
+.settings-wallet-carousel .wallet-card-edit:hover {
+    background: rgba(255,255,255,0.22);
     color: #ffffff;
 }
 
@@ -4116,6 +4253,10 @@ main.settings-mode #settings-view {
     .settings-subscription-grid,
     .settings-security-grid,
     .settings-action-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-shortcut-list {
         grid-template-columns: 1fr;
     }
 
