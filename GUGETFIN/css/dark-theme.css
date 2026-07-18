@@ -788,6 +788,7 @@ body.dark-theme .wallet-page-form input[type="number"],
 body.dark-theme .wallet-page-form .wallet-debit-toggle,
 body.dark-theme .settings-avatar-editor,
 body.dark-theme .settings-avatar-preview-wrap,
+body.dark-theme .settings-security-status-card,
 body.dark-theme .settings-security-card,
 body.dark-theme .settings-wallet-card,
 body.dark-theme .settings-categories-card,
@@ -798,9 +799,32 @@ body.dark-theme .settings-toggle-row,
 body.dark-theme .settings-action-card,
 body.dark-theme .settings-shortcuts-card,
 body.dark-theme .settings-google-status-row,
+body.dark-theme .settings-session-item,
+body.dark-theme .settings-session-empty,
 body.dark-theme .google-card-logo {
     background: #11161c;
     border-color: var(--border);
+}
+
+body.dark-theme .settings-security-status-card.is-pending {
+    background: linear-gradient(180deg, rgba(255, 176, 64, 0.08), #11161c);
+    border-color: rgba(255, 176, 64, 0.28);
+}
+
+body.dark-theme .settings-session-item.is-current {
+    background: rgba(95, 211, 162, 0.08);
+    border-color: rgba(95, 211, 162, 0.28);
+}
+
+body.dark-theme .settings-status-pill.is-safe,
+body.dark-theme .settings-session-icon {
+    background: rgba(95, 211, 162, 0.14);
+    color: var(--acc-green);
+}
+
+body.dark-theme .settings-status-pill.is-warning {
+    background: rgba(255, 176, 64, 0.16);
+    color: #ffc36a;
 }
 
 body.dark-theme .auth-loader-mark {
@@ -1729,4 +1753,42 @@ body.dashboard-caixinha-enabled #stat-caixinha-dashboard {
     .mobile-profile-dots {
         display: none !important;
     }
+}
+
+/* ========================================================= */
+/* SEGURANCA - DISPOSITIVOS CONECTADOS AO VIVO (DARK)        */
+/* ========================================================= */
+
+body.dark-theme .settings-session-summary {
+    background: linear-gradient(180deg, rgba(95, 211, 162, 0.08), rgba(17, 22, 28, 0.92));
+    border-color: rgba(95, 211, 162, 0.18);
+}
+
+body.dark-theme .btn-session-refresh,
+body.dark-theme .btn-session-revoke {
+    background: #171a20;
+    border-color: var(--border);
+    color: var(--acc-green);
+}
+
+body.dark-theme .btn-session-revoke {
+    color: #ff9f9f;
+}
+
+body.dark-theme .btn-session-revoke.is-current {
+    color: var(--acc-green);
+}
+
+body.dark-theme .btn-session-refresh:hover,
+body.dark-theme .btn-session-revoke:hover {
+    background: rgba(95, 211, 162, 0.08);
+    border-color: rgba(95, 211, 162, 0.28);
+}
+
+body.dark-theme .settings-session-item.is-online:not(.is-current) {
+    border-color: rgba(95, 211, 162, 0.22);
+}
+
+body.dark-theme .settings-session-item.is-revoked {
+    opacity: .68;
 }

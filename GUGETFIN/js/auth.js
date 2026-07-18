@@ -1,13 +1,79 @@
+const GU_LOGIN_MAX_TENTATIVAS = 5;
+const GU_LOGIN_BLOQUEIO_MS = 15 * 60 * 1000;
+
+function obterChaveTentativasLogin(email) {
+    return `gugetfin_login_attempts_${(email || '').trim().toLowerCase()}`;
+}
+
+function lerTentativasLogin(email) {
+    try {
+        return JSON.parse(localStorage.getItem(obterChaveTentativasLogin(email))) || { count: 0, lockedUntil: 0 };
+    } catch (error) {
+        return { count: 0, lockedUntil: 0 };
+    }
+}
+
+function salvarTentativasLogin(email, estado) {
+    try {
+        localStorage.setItem(obterChaveTentativasLogin(email), JSON.stringify(estado));
+    } catch (error) {
+        console.warn('Nao foi possivel salvar tentativas de login:', error);
+    }
+}
+
+function limparTentativasLogin(email) {
+    try {
+        localStorage.removeItem(obterChaveTentativasLogin(email));
+    } catch (error) {}
+}
+
+function formatarEsperaLogin(ms) {
+    const minutos = Math.max(1, Math.ceil(ms / 60000));
+    return `${minutos} minuto${minutos > 1 ? 's' : ''}`;
+}
+
+function obterBloqueioLogin(email) {
+    const estado = lerTentativasLogin(email);
+
+    if (estado.lockedUntil && Date.now() < estado.lockedUntil) {
+        return estado.lockedUntil - Date.now();
+    }
+
+    if (estado.lockedUntil && Date.now() >= estado.lockedUntil) {
+        limparTentativasLogin(email);
+    }
+
+    return 0;
+}
+
+function registrarFalhaLogin(email) {
+    const estado = lerTentativasLogin(email);
+    const novoTotal = (estado.count || 0) + 1;
+    const novoEstado = {
+        count: novoTotal,
+        lockedUntil: novoTotal >= GU_LOGIN_MAX_TENTATIVAS ? Date.now() + GU_LOGIN_BLOQUEIO_MS : 0
+    };
+
+    salvarTentativasLogin(email, novoEstado);
+    return novoEstado;
+}
+
 // Função de Login Real
 async function fazerLogin() {
-    try {
-        const email = document.getElementById('login-email').value;
-        const senha = document.getElementById('login-senha').value;
-        const loader = document.getElementById('auth-splash-loader'); 
-        const form = document.getElementById('login-form');
+    const email = document.getElementById('login-email').value.trim().toLowerCase();
+    const senha = document.getElementById('login-senha').value;
+    const loader = document.getElementById('auth-splash-loader'); 
+    const form = document.getElementById('login-form');
 
+    try {
         if (!email || !senha) {
             alert("Preencha e-mail e senha!");
+            return;
+        }
+
+        const tempoBloqueio = obterBloqueioLogin(email);
+        if (tempoBloqueio > 0) {
+            alert(`Muitas tentativas de login com erro. Aguarde ${formatarEsperaLogin(tempoBloqueio)} para tentar novamente.`);
             return;
         }
 
@@ -18,17 +84,22 @@ async function fazerLogin() {
 
         // Tenta fazer o login no Firebase
         await window.signInWithEmailAndPassword(window.auth, email, senha);
+        limparTentativasLogin(email);
         
         // Se der certo, o Vigia (onAuthStateChanged) vai assumir e esconder a tela!
         
     } catch (error) {
         console.error("Erro no login:", error);
-        alert("Erro ao entrar: " + error.message);
+        const estado = email ? registrarFalhaLogin(email) : { count: 0, lockedUntil: 0 };
+        if (estado.lockedUntil) {
+            alert(`Por seguranca, pausamos novas tentativas por ${formatarEsperaLogin(estado.lockedUntil - Date.now())}.`);
+        } else {
+            const restantes = Math.max(0, GU_LOGIN_MAX_TENTATIVAS - (estado.count || 0));
+            alert(`Erro ao entrar: ${error.message}${restantes ? `\nTentativas restantes antes da pausa: ${restantes}.` : ''}`);
+        }
         
         // Se der erro (ex: senha errada), ele remove o loader e devolve o formulário
         if (typeof esconderSplashInicial === 'function') esconderSplashInicial();
-        const loader = document.getElementById('auth-splash-loader'); 
-        const form = document.getElementById('login-form');
         if (form) form.style.display = 'block';
         if (loader) loader.style.display = 'none';
     }
@@ -154,8 +225,9 @@ async function fazerCadastro() {
             { merge: true }
         );
         localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
-		
-		// 👇 CÓDIGO NOVO: RECOMPENSA DA INDICAÇÃO FICA AQUI 👇
+        await enviarConfirmacaoEmailUsuario({ user: userCredential.user, silencioso: true });
+			
+			// 👇 CÓDIGO NOVO: RECOMPENSA DA INDICAÇÃO FICA AQUI 👇
         const amigoQueIndicou = sessionStorage.getItem('referral_uid');
         if (amigoQueIndicou) {
             const amigoRef = window.doc(window.db, 'usuarios', amigoQueIndicou);
@@ -342,6 +414,8 @@ window.iniciarVigia = function() {
             if (typeof carregarConfiguracoesPerfil === 'function') {
                 carregarConfiguracoesPerfil();
             }
+            atualizarStatusSegurancaConta(user);
+            registrarSessaoAtual(user).catch(error => console.warn('Nao foi possivel registrar a sessao atual:', error));
             setTimeout(esconderSplashInicial, 180);
 
 			const userRef = window.doc(window.db, 'usuarios', user.uid);
@@ -350,6 +424,10 @@ window.iniciarVigia = function() {
                     const dados = docSnap.data();
                     if (dados.dados?.config) {
                         aplicarPreferenciaCaixinhaDashboardRemota(dados.dados.config.mostrarCaixinhaDashboard);
+                    }
+
+                    if (Array.isArray(dados.segurancaSessoes) && !window.gugetSecuritySessionsLiveEnabled) {
+                        renderizarSessoesSeguranca(dados.segurancaSessoes);
                     }
 
                     let convitesUsados = dados.convitesUsados || 0;
@@ -373,6 +451,7 @@ window.iniciarVigia = function() {
             
         } else {
             // --- SE NÃO TIVER LOGADO --- 
+            if (typeof limparObservadoresSessoesSeguranca === 'function') limparObservadoresSessoesSeguranca();
             localStorage.removeItem('salsifin_cache');
             salsiData = { config: { categorias: [], bancos: [], detalhesBancos: [] }, entradas: [], transacoes: [], metas: [] };
             document.body.classList.remove('dark-theme');
@@ -874,6 +953,8 @@ function carregarConfiguracoesPerfil() {
     if (typeof atualizarCardCaixinhaDashboard === 'function') atualizarCardCaixinhaDashboard();
 
     atualizarStatusGoogleConta();
+    atualizarStatusSegurancaConta(user);
+    carregarSessoesSeguranca(user);
 }
 
 function aplicarPreferenciaCaixinhaDashboardRemota(valorRemoto) {
@@ -1468,7 +1549,7 @@ async function salvarConfiguracoesPerfil() {
         alert("Erro ao atualizar: " + error.message);
     } finally {
         if (btn) {
-            btn.innerText = 'Atualizar senha';
+            btn.innerText = 'Salvar perfil';
             btn.disabled = false;
         }
     }
@@ -1508,6 +1589,566 @@ function tratarErroSegurancaConta(error) {
         alert('Nao foi possivel concluir a alteracao: ' + error.message);
     }
 }
+
+function montarActionCodeSettings(extraParams = {}) {
+    try {
+        const url = new URL('auth-action.html', window.location.href);
+        Object.entries(extraParams).forEach(([key, value]) => {
+            if (value) url.searchParams.set(key, value);
+        });
+
+        return {
+            url: url.href,
+            handleCodeInApp: false
+        };
+    } catch (error) {
+        return null;
+    }
+}
+
+function erroActionCodeSettings(error) {
+    return [
+        'auth/unauthorized-continue-uri',
+        'auth/invalid-continue-uri',
+        'auth/missing-continue-uri'
+    ].includes(error?.code);
+}
+
+function atualizarStatusSegurancaConta(user = window.auth?.currentUser) {
+    if (!user) return;
+
+    const emailAtual = document.getElementById('settings-security-current-email');
+    if (emailAtual) emailAtual.textContent = user.email || '';
+
+    const card = document.getElementById('settings-email-verification-card');
+    const texto = document.getElementById('settings-email-verification-text');
+    const pill = document.getElementById('settings-email-verification-pill');
+    const actions = document.getElementById('settings-email-verification-actions');
+    const confirmado = !!user.emailVerified;
+
+    if (card) card.classList.toggle('is-pending', !confirmado);
+    if (texto) {
+        texto.textContent = confirmado
+            ? 'E-mail confirmado. Esta conta ja passou pela verificacao principal.'
+            : 'Pendente. Confirme o link enviado para liberar uma camada extra de confianca.';
+    }
+    if (pill) {
+        pill.textContent = confirmado ? 'Confirmado' : 'Pendente';
+        pill.classList.toggle('is-safe', confirmado);
+        pill.classList.toggle('is-warning', !confirmado);
+    }
+    if (actions) actions.style.display = confirmado ? 'none' : 'flex';
+}
+
+async function enviarConfirmacaoEmailUsuario({ user = window.auth?.currentUser, silencioso = false } = {}) {
+    if (!user || !window.sendEmailVerification) return false;
+
+    if (user.emailVerified) {
+        atualizarStatusSegurancaConta(user);
+        if (!silencioso) mostrarToast('Seu e-mail ja esta confirmado.');
+        return true;
+    }
+
+    try {
+        const actionSettings = montarActionCodeSettings({ verified: '1' });
+        try {
+            if (actionSettings) {
+                await window.sendEmailVerification(user, actionSettings);
+            } else {
+                await window.sendEmailVerification(user);
+            }
+        } catch (settingsError) {
+            if (!erroActionCodeSettings(settingsError)) throw settingsError;
+            await window.sendEmailVerification(user);
+        }
+        if (!silencioso) {
+            mostrarToast('E-mail de confirmacao enviado.');
+            alert(`Enviamos um link de confirmacao para ${user.email}. Verifique sua caixa de entrada e o spam.`);
+        }
+        atualizarStatusSegurancaConta(user);
+        return true;
+    } catch (error) {
+        console.warn('Nao foi possivel enviar confirmacao de e-mail:', error);
+        if (!silencioso) alert('Nao foi possivel enviar o e-mail agora: ' + error.message);
+        return false;
+    }
+}
+
+async function reenviarConfirmacaoEmail() {
+    const btn = document.getElementById('btn-resend-email-verification');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+    }
+
+    try {
+        await enviarConfirmacaoEmailUsuario({ silencioso: false });
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Reenviar e-mail';
+        }
+    }
+}
+
+async function confirmarEmailManual() {
+    const user = window.auth?.currentUser;
+    if (!user) return;
+
+    try {
+        await user.reload();
+        const atualizado = window.auth.currentUser;
+        atualizarStatusSegurancaConta(atualizado);
+
+        if (atualizado?.emailVerified) {
+            mostrarToast('Email confirmado.');
+        } else {
+            alert('Ainda nao identificamos a confirmacao. Se voce acabou de clicar no link, aguarde alguns segundos e tente novamente.');
+        }
+    } catch (error) {
+        alert('Nao foi possivel atualizar o status agora: ' + error.message);
+    }
+}
+
+const GU_SESSION_PING_INTERVAL_MS = 30000;
+const GU_SESSION_ONLINE_WINDOW_MS = 95000;
+let gugetSessionPingTimer = null;
+let gugetSessionRefreshTimer = null;
+let gugetSessionsUnsubscribe = null;
+let gugetCurrentSessionUnsubscribe = null;
+let gugetSessaoEncerrandoLocalmente = false;
+let gugetUltimaListaSessoes = [];
+
+function obterIdDispositivoSeguranca() {
+    const chave = 'gugetfin_device_id';
+    let id = localStorage.getItem(chave);
+
+    if (!id) {
+        id = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : `device_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+        localStorage.setItem(chave, id);
+    }
+
+    return id;
+}
+
+function identificarDispositivoAtual() {
+    const ua = navigator.userAgent || '';
+    let navegador = 'Navegador';
+    let sistema = 'Dispositivo';
+    let tipo = 'desktop';
+
+    if (/Edg\//.test(ua)) navegador = 'Microsoft Edge';
+    else if (/OPR\//.test(ua)) navegador = 'Opera';
+    else if (/Chrome\//.test(ua)) navegador = 'Chrome';
+    else if (/Firefox\//.test(ua)) navegador = 'Firefox';
+    else if (/Safari\//.test(ua)) navegador = 'Safari';
+
+    if (/Android/.test(ua)) {
+        sistema = 'Android';
+        tipo = 'mobile';
+    } else if (/iPhone|iPad|iPod/.test(ua)) {
+        sistema = /iPad/.test(ua) ? 'iPadOS' : 'iOS';
+        tipo = 'mobile';
+    } else if (/Windows/.test(ua)) {
+        sistema = 'Windows';
+    } else if (/Mac OS/.test(ua)) {
+        sistema = 'macOS';
+    } else if (/Linux/.test(ua)) {
+        sistema = 'Linux';
+    }
+
+    return {
+        navegador,
+        sistema,
+        tipo,
+        nome: `${navegador} em ${sistema}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Fuso horario local',
+        idioma: navigator.language || 'pt-BR',
+        userAgent: ua.slice(0, 320)
+    };
+}
+
+function escaparHtmlSeguranca(valor) {
+    return String(valor ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function normalizarDataSessao(valor) {
+    if (!valor) return null;
+    if (typeof valor === 'number') return new Date(valor);
+    if (typeof valor === 'string') return new Date(valor);
+    if (typeof valor.toDate === 'function') return valor.toDate();
+    if (typeof valor.seconds === 'number') return new Date(valor.seconds * 1000);
+    return null;
+}
+
+function obterMsSessao(sessao) {
+    if (typeof sessao.ultimoPingMs === 'number') return sessao.ultimoPingMs;
+    const data = normalizarDataSessao(sessao.ultimoAcesso || sessao.atualizadoEm || sessao.criadoEm);
+    return data && !Number.isNaN(data.getTime()) ? data.getTime() : 0;
+}
+
+function formatarSessaoData(valor) {
+    const data = normalizarDataSessao(valor);
+    if (!data || Number.isNaN(data.getTime())) return 'Agora';
+
+    return data.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function formatarTempoRelativoSessao(ms) {
+    if (!ms) return 'sem registro recente';
+    const diff = Math.max(0, Date.now() - ms);
+    if (diff < 45000) return 'agora';
+    const minutos = Math.round(diff / 60000);
+    if (minutos < 60) return `ha ${minutos} min`;
+    const horas = Math.round(minutos / 60);
+    if (horas < 24) return `ha ${horas} h`;
+    const dias = Math.round(horas / 24);
+    return `ha ${dias} dia${dias > 1 ? 's' : ''}`;
+}
+
+function sessaoEstaOnline(sessao) {
+    if (!sessao || sessao.revogado) return false;
+    const ultimo = obterMsSessao(sessao);
+    return ultimo > 0 && (Date.now() - ultimo) <= GU_SESSION_ONLINE_WINDOW_MS;
+}
+
+function obterRotuloSessao(sessao, isAtual) {
+    if (sessao.revogado) return 'Sessao encerrada';
+    if (sessaoEstaOnline(sessao)) return isAtual ? 'Online agora neste dispositivo' : 'Online agora';
+    return `Visto ${formatarTempoRelativoSessao(obterMsSessao(sessao))}`;
+}
+
+function obterClasseIconeSessao(sessao) {
+    return sessao.tipo === 'mobile' ? 'fi fi-rr-smartphone' : 'fi fi-rr-laptop-mobile';
+}
+
+function renderizarSessoesSeguranca(sessoes = []) {
+    const lista = document.getElementById('settings-active-sessions');
+    if (!lista) return;
+
+    const atual = obterIdDispositivoSeguranca();
+    const normalizadas = (Array.isArray(sessoes) ? sessoes : [])
+        .map(sessao => ({ ...sessao, id: sessao.id || sessao.deviceId || sessao.dispositivoId }))
+        .filter(sessao => !!sessao.id)
+        .sort((a, b) => {
+            const aOnline = sessaoEstaOnline(a) ? 1 : 0;
+            const bOnline = sessaoEstaOnline(b) ? 1 : 0;
+            if (a.id === atual && b.id !== atual) return -1;
+            if (b.id === atual && a.id !== atual) return 1;
+            if (aOnline !== bOnline) return bOnline - aOnline;
+            return obterMsSessao(b) - obterMsSessao(a);
+        })
+        .slice(0, 12);
+
+    gugetUltimaListaSessoes = normalizadas;
+
+    if (!normalizadas.length) {
+        lista.innerHTML = '<div class="settings-session-empty">Nenhum dispositivo registrado ainda.</div>';
+        return;
+    }
+
+    const onlineCount = normalizadas.filter(sessaoEstaOnline).length;
+    const totalCount = normalizadas.filter(sessao => !sessao.revogado).length;
+
+    const resumo = `
+        <div class="settings-session-summary">
+            <div>
+                <strong>${onlineCount} conectado${onlineCount === 1 ? '' : 's'} agora</strong>
+                <span>${totalCount} dispositivo${totalCount === 1 ? '' : 's'} reconhecido${totalCount === 1 ? '' : 's'} nesta conta</span>
+            </div>
+            <button type="button" class="btn-session-refresh" onclick="carregarSessoesSeguranca()">Atualizar</button>
+        </div>
+    `;
+
+    const cards = normalizadas.map(sessao => {
+        const isAtual = sessao.id === atual;
+        const isOnline = sessaoEstaOnline(sessao);
+        const statusClasse = sessao.revogado ? 'is-warning' : (isOnline ? 'is-safe' : '');
+        const statusTexto = sessao.revogado ? 'Encerrado' : (isOnline ? 'Online' : 'Recente');
+        const local = sessao.timezone || sessao.localizacao || 'Local aproximado indisponivel';
+        const data = formatarSessaoData(sessao.ultimoAcesso || sessao.ultimoPingMs || sessao.atualizadoEm);
+        const rotulo = obterRotuloSessao(sessao, isAtual);
+        const btnEncerrar = isAtual
+            ? '<button type="button" class="btn-session-revoke is-current" onclick="sairDaConta()">Sair daqui</button>'
+            : `<button type="button" class="btn-session-revoke" onclick='encerrarSessaoDispositivo(${JSON.stringify(sessao.id)})'>Encerrar</button>`;
+
+        return `
+            <div class="settings-session-item ${isAtual ? 'is-current' : ''} ${isOnline ? 'is-online' : ''} ${sessao.revogado ? 'is-revoked' : ''}">
+                <span class="settings-session-icon"><i class="${obterClasseIconeSessao(sessao)}"></i></span>
+                <div class="settings-session-main">
+                    <strong>${escaparHtmlSeguranca(sessao.nome || 'Dispositivo')}</strong>
+                    <small>${escaparHtmlSeguranca(local)} · ${escaparHtmlSeguranca(rotulo)} · ${escaparHtmlSeguranca(data)}</small>
+                </div>
+                <div class="settings-session-actions">
+                    <span class="settings-status-pill ${statusClasse}">${statusTexto}</span>
+                    ${btnEncerrar}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    lista.innerHTML = resumo + cards;
+}
+
+function limparObservadoresSessoesSeguranca() {
+    if (gugetSessionPingTimer) {
+        clearInterval(gugetSessionPingTimer);
+        gugetSessionPingTimer = null;
+    }
+    if (gugetSessionRefreshTimer) {
+        clearInterval(gugetSessionRefreshTimer);
+        gugetSessionRefreshTimer = null;
+    }
+    if (typeof gugetSessionsUnsubscribe === 'function') {
+        gugetSessionsUnsubscribe();
+        gugetSessionsUnsubscribe = null;
+    }
+    if (typeof gugetCurrentSessionUnsubscribe === 'function') {
+        gugetCurrentSessionUnsubscribe();
+        gugetCurrentSessionUnsubscribe = null;
+    }
+    window.gugetSecuritySessionsLiveEnabled = false;
+}
+
+function obterRefSessaoAtual(user = window.auth?.currentUser) {
+    if (!user || !window.doc || !window.db) return null;
+    return window.doc(window.db, 'usuarios', user.uid, 'sessoes', obterIdDispositivoSeguranca());
+}
+
+async function salvarPingSessaoAtual(user = window.auth?.currentUser, extra = {}) {
+    if (!user || !window.setDoc) return false;
+    const ref = obterRefSessaoAtual(user);
+    if (!ref) return false;
+
+    const dispositivo = identificarDispositivoAtual();
+    const agoraIso = new Date().toISOString();
+    const payload = {
+        id: obterIdDispositivoSeguranca(),
+        nome: dispositivo.nome,
+        navegador: dispositivo.navegador,
+        sistema: dispositivo.sistema,
+        tipo: dispositivo.tipo,
+        timezone: dispositivo.timezone,
+        idioma: dispositivo.idioma,
+        userAgent: dispositivo.userAgent,
+        ultimoPingMs: Date.now(),
+        ultimoAcesso: agoraIso,
+        ativo: true,
+        revogado: false,
+        atualizadoEm: window.serverTimestamp ? window.serverTimestamp() : agoraIso,
+        ...extra
+    };
+
+    await window.setDoc(ref, payload, { merge: true });
+    return true;
+}
+
+async function marcarSessaoAtualComoInativa() {
+    const user = window.auth?.currentUser;
+    if (!user || !window.updateDoc) return;
+    const ref = obterRefSessaoAtual(user);
+    if (!ref) return;
+
+    try {
+        await window.updateDoc(ref, {
+            ativo: false,
+            ultimoAcesso: new Date().toISOString(),
+            ultimoPingMs: Date.now(),
+            atualizadoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString()
+        });
+    } catch (error) {
+        console.warn('Nao foi possivel marcar sessao como inativa:', error);
+    }
+}
+
+async function carregarSessoesSeguranca(user = window.auth?.currentUser) {
+    if (!user) return;
+
+    if (window.collection && window.query && window.orderBy && window.limit && window.getDocs) {
+        try {
+            const q = window.query(
+                window.collection(window.db, 'usuarios', user.uid, 'sessoes'),
+                window.orderBy('ultimoPingMs', 'desc'),
+                window.limit(12)
+            );
+            const snap = await window.getDocs(q);
+            const sessoes = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            renderizarSessoesSeguranca(sessoes);
+            return;
+        } catch (error) {
+            console.warn('Nao foi possivel carregar sessoes ao vivo. Usando fallback:', error);
+        }
+    }
+
+    try {
+        const snap = await window.getDoc(window.doc(window.db, 'usuarios', user.uid));
+        if (snap.exists()) renderizarSessoesSeguranca(snap.data().segurancaSessoes || []);
+    } catch (error) {
+        console.warn('Nao foi possivel carregar sessoes:', error);
+    }
+}
+
+function observarListaSessoesSeguranca(user = window.auth?.currentUser) {
+    if (!user || !window.onSnapshot || !window.collection || !window.query || !window.orderBy || !window.limit) {
+        carregarSessoesSeguranca(user);
+        return;
+    }
+
+    if (typeof gugetSessionsUnsubscribe === 'function') gugetSessionsUnsubscribe();
+
+    try {
+        const q = window.query(
+            window.collection(window.db, 'usuarios', user.uid, 'sessoes'),
+            window.orderBy('ultimoPingMs', 'desc'),
+            window.limit(12)
+        );
+
+        window.gugetSecuritySessionsLiveEnabled = true;
+        gugetSessionsUnsubscribe = window.onSnapshot(q, snap => {
+            const sessoes = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            renderizarSessoesSeguranca(sessoes);
+        }, error => {
+            console.warn('Listener de sessoes indisponivel:', error);
+            window.gugetSecuritySessionsLiveEnabled = false;
+            carregarSessoesSeguranca(user);
+        });
+    } catch (error) {
+        console.warn('Nao foi possivel observar sessoes:', error);
+        window.gugetSecuritySessionsLiveEnabled = false;
+        carregarSessoesSeguranca(user);
+    }
+}
+
+function observarSessaoAtualParaRevogacao(user = window.auth?.currentUser) {
+    if (!user || !window.onSnapshot) return;
+    const ref = obterRefSessaoAtual(user);
+    if (!ref) return;
+
+    if (typeof gugetCurrentSessionUnsubscribe === 'function') gugetCurrentSessionUnsubscribe();
+
+    gugetCurrentSessionUnsubscribe = window.onSnapshot(ref, async snap => {
+        const dados = snap.exists() ? snap.data() : null;
+        if (!dados || !dados.revogado || gugetSessaoEncerrandoLocalmente) return;
+
+        try {
+            alert('Esta sessao foi encerrada em outro dispositivo por seguranca.');
+            await window.signOut(window.auth);
+            localStorage.removeItem('salsifin_cache');
+            location.reload();
+        } catch (error) {
+            console.warn('Nao foi possivel encerrar sessao revogada:', error);
+        }
+    });
+}
+
+async function registrarSessaoAtual(user = window.auth?.currentUser) {
+    if (!user) return;
+
+    try {
+        await salvarPingSessaoAtual(user, {
+            criadoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString(),
+            entrouEm: new Date().toISOString()
+        });
+
+        observarListaSessoesSeguranca(user);
+        observarSessaoAtualParaRevogacao(user);
+
+        if (gugetSessionPingTimer) clearInterval(gugetSessionPingTimer);
+        gugetSessionPingTimer = setInterval(() => {
+            salvarPingSessaoAtual(window.auth?.currentUser).catch(error => console.warn('Falha no ping da sessao:', error));
+        }, GU_SESSION_PING_INTERVAL_MS);
+
+        if (gugetSessionRefreshTimer) clearInterval(gugetSessionRefreshTimer);
+        gugetSessionRefreshTimer = setInterval(() => {
+            if (gugetUltimaListaSessoes.length) renderizarSessoesSeguranca(gugetUltimaListaSessoes);
+        }, 15000);
+    } catch (error) {
+        console.warn('Sessao ao vivo indisponivel. Salvando fallback local:', error);
+        await registrarSessaoAtualFallback(user);
+    }
+}
+
+async function registrarSessaoAtualFallback(user = window.auth?.currentUser) {
+    if (!user || !window.doc || !window.getDoc || !window.setDoc) return;
+
+    const ref = window.doc(window.db, 'usuarios', user.uid);
+    const snap = await window.getDoc(ref);
+    const sessoes = snap.exists() && Array.isArray(snap.data().segurancaSessoes)
+        ? snap.data().segurancaSessoes
+        : [];
+    const id = obterIdDispositivoSeguranca();
+    const dispositivo = identificarDispositivoAtual();
+    const agora = new Date().toISOString();
+    const proximaLista = [
+        {
+            id,
+            nome: dispositivo.nome,
+            navegador: dispositivo.navegador,
+            sistema: dispositivo.sistema,
+            tipo: dispositivo.tipo,
+            timezone: dispositivo.timezone,
+            ultimoPingMs: Date.now(),
+            ultimoAcesso: agora,
+            ativo: true,
+            revogado: false
+        },
+        ...sessoes.filter(sessao => sessao.id !== id)
+    ].slice(0, 6);
+
+    await window.setDoc(ref, { segurancaSessoes: proximaLista }, { merge: true });
+    renderizarSessoesSeguranca(proximaLista);
+}
+
+async function encerrarSessaoDispositivo(sessionId) {
+    const user = window.auth?.currentUser;
+    if (!user || !sessionId) return;
+
+    const atual = obterIdDispositivoSeguranca();
+    if (sessionId === atual) {
+        sairDaConta();
+        return;
+    }
+
+    if (!confirm('Encerrar o acesso deste dispositivo? Se ele ainda estiver aberto, o GugetFin vai sair automaticamente nele.')) return;
+
+    try {
+        const ref = window.doc(window.db, 'usuarios', user.uid, 'sessoes', sessionId);
+        await window.setDoc(ref, {
+            revogado: true,
+            ativo: false,
+            ultimoAcesso: new Date().toISOString(),
+            ultimoPingMs: Date.now(),
+            revogadoEm: window.serverTimestamp ? window.serverTimestamp() : new Date().toISOString(),
+            revogadoPor: atual
+        }, { merge: true });
+        mostrarToast('Dispositivo encerrado.');
+    } catch (error) {
+        console.warn('Nao foi possivel encerrar sessao:', error);
+        alert('Nao foi possivel encerrar este dispositivo agora. Verifique as regras do Firebase e tente novamente.');
+    }
+}
+
+window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        salvarPingSessaoAtual(window.auth?.currentUser).catch(() => null);
+        carregarSessoesSeguranca(window.auth?.currentUser).catch(() => null);
+    }
+});
+
+window.addEventListener('pagehide', () => {
+    marcarSessaoAtualComoInativa();
+});
 
 async function solicitarAlteracaoEmail() {
     const user = window.auth.currentUser;
@@ -1594,7 +2235,7 @@ async function alterarSenhaSegura() {
         tratarErroSegurancaConta(error);
     } finally {
         if (btn) {
-            btn.innerText = 'Salvar perfil';
+            btn.innerText = 'Atualizar senha';
             btn.disabled = false;
         }
     }
@@ -1662,6 +2303,8 @@ async function sairDaConta() {
     // 👇 NOVA TRAVA DE SEGURANÇA 👇
     if (confirm("Tem certeza que deseja sair da sua conta? 👋")) {
         try {
+            gugetSessaoEncerrandoLocalmente = true;
+            await marcarSessaoAtualComoInativa();
             await window.signOut(window.auth);
             
             // 1. Limpa o cache do navegador
@@ -1800,7 +2443,17 @@ async function recuperarSenha() {
     }
 
     try {
-        await window.sendPasswordResetEmail(window.auth, email);
+        const actionSettings = montarActionCodeSettings({ origem: 'recuperacao' });
+        try {
+            if (actionSettings) {
+                await window.sendPasswordResetEmail(window.auth, email, actionSettings);
+            } else {
+                await window.sendPasswordResetEmail(window.auth, email);
+            }
+        } catch (settingsError) {
+            if (!erroActionCodeSettings(settingsError)) throw settingsError;
+            await window.sendPasswordResetEmail(window.auth, email);
+        }
         alert(`E-mail de redefinição enviado para ${email}!\n\nVerifique sua caixa de entrada e também a pasta de Spam.`);
     } catch (error) {
         console.error("Erro ao enviar recuperação:", error);
@@ -1811,4 +2464,3 @@ async function recuperarSenha() {
         }
     }
 }
-
