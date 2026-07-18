@@ -1082,6 +1082,34 @@
                             <p>Alterações sensíveis exigem confirmação da senha atual. Para trocar o e-mail, a mudança só acontece depois da verificação enviada para o novo endereço.</p>
                         </div>
 
+                        <div class="settings-security-overview">
+                            <div class="settings-security-status-card" id="settings-email-verification-card">
+                                <div class="settings-security-card-head">
+                                    <i class="fi fi-rr-envelope-download"></i>
+                                    <div>
+                                        <strong>Confirmacao de e-mail</strong>
+                                        <span id="settings-email-verification-text">Verificando status do e-mail...</span>
+                                    </div>
+                                </div>
+                                <span class="settings-status-pill" id="settings-email-verification-pill">Verificando</span>
+                                <div class="settings-security-inline-actions" id="settings-email-verification-actions">
+                                    <button type="button" class="btn-settings-secondary" id="btn-resend-email-verification" onclick="reenviarConfirmacaoEmail()">Reenviar e-mail</button>
+                                    <button type="button" class="btn-settings-ghost" onclick="confirmarEmailManual()">Ja confirmei</button>
+                                </div>
+                            </div>
+
+                            <div class="settings-security-status-card">
+                                <div class="settings-security-card-head">
+                                    <i class="fi fi-rr-key"></i>
+                                    <div>
+                                        <strong>Protecao de login</strong>
+                                        <span>Depois de 5 tentativas com erro, o acesso por senha pausa por alguns minutos neste navegador.</span>
+                                    </div>
+                                </div>
+                                <span class="settings-status-pill is-safe">Ativo</span>
+                            </div>
+                        </div>
+
                         <div class="settings-security-grid">
                             <div class="settings-security-card">
                                 <div class="settings-security-card-head">
@@ -1160,6 +1188,20 @@
                                 </div>
 
                                 <small>Depois de conectado, você poderá entrar com Google sem preencher e-mail e senha.</small>
+                            </div>
+
+                            <div class="settings-security-card settings-security-wide">
+                                <div class="settings-security-card-head">
+                                    <i class="fi fi-rr-devices"></i>
+                                    <div>
+                                        <strong>Dispositivos conectados</strong>
+                                        <span>Veja celulares e computadores que estao usando sua conta agora ou abriram recentemente.</span>
+                                    </div>
+                                </div>
+                                <div class="settings-session-list" id="settings-active-sessions">
+                                    <div class="settings-session-empty">Carregando dispositivos...</div>
+                                </div>
+                                <small>O status online usa um sinal enviado pelo app a cada poucos segundos. Se um navegador for fechado de forma brusca, ele pode levar cerca de 1 minuto para sair de online.</small>
                             </div>
                         </div>
                     </div>
@@ -2145,7 +2187,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, updatePassword, sendPasswordResetEmail, EmailAuthProvider, GoogleAuthProvider, signInWithPopup, linkWithPopup, unlink, deleteUser, reauthenticateWithCredential, verifyBeforeUpdateEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, updatePassword, sendPasswordResetEmail, sendEmailVerification, EmailAuthProvider, GoogleAuthProvider, signInWithPopup, linkWithPopup, unlink, deleteUser, reauthenticateWithCredential, verifyBeforeUpdateEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, query, where, orderBy, limit, getDocs, addDoc, updateDoc, deleteDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -2186,6 +2228,7 @@
   window.updateProfile = updateProfile;
   window.updatePassword = updatePassword;  
   window.sendPasswordResetEmail = sendPasswordResetEmail;
+  window.sendEmailVerification = sendEmailVerification;
   window.EmailAuthProvider = EmailAuthProvider;
   window.GoogleAuthProvider = GoogleAuthProvider;
   window.signInWithPopup = signInWithPopup;
@@ -2248,8 +2291,6 @@
     <script src="js/modulos.js"></script>
 </body>
 </html>
-
-
 
 
 
