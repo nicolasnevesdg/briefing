@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20260805-2">
+    <link rel="stylesheet" href="css/style.css?v=20260805-3">
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -764,7 +764,13 @@
             <div class="invoice-planner-board">
                 <div class="invoice-planner-board-head">
                     <div><h3>Distribuição por fatura</h3><p>Os campos editáveis são salvos automaticamente.</p></div>
-                    <button type="button" class="invoice-reset-btn" onclick="limparPlanejamentoFaturasMes()">Limpar valores do mês</button>
+                    <div class="invoice-planner-actions">
+                        <span class="invoice-save-status is-saved" id="faturas-save-status">Tudo salvo</span>
+                        <button type="button" class="invoice-save-btn" id="faturas-save-btn" onclick="salvarPlanejamentoFaturas()">
+                            <i class="fi fi-rr-disk"></i> Salvar planejamento
+                        </button>
+                        <button type="button" class="invoice-reset-btn" onclick="limparPlanejamentoFaturasMes()">Limpar valores do mês</button>
+                    </div>
                 </div>
                 <div class="invoice-table-wrap">
                     <table class="invoice-table">
@@ -2329,7 +2335,7 @@
     <script src="js/transacoes.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/modulos.js"></script>
-    <script src="js/faturas.js?v=20260805-2"></script>
+    <script src="js/faturas.js?v=20260805-3"></script>
 </body>
 </html>
 
