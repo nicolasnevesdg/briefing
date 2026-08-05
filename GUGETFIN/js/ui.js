@@ -2606,6 +2606,10 @@ function navegar(abaId) {
         main.classList.remove('settings-mode');
     }
 
+    document.querySelectorAll('.sidebar-view-nav .sidebar-view-btn').forEach(botao => botao.classList.remove('active'));
+    const botaoFaturas = document.getElementById('btn-view-faturas');
+    if (abaId === 'pagamento-faturas' && botaoFaturas) botaoFaturas.classList.add('active');
+
     // 1. Esconde tudo com força total (Limpa a tela e remove o menu de cartões se estiver aberto)
     document.querySelectorAll('.tab-content').forEach(secao => {
         secao.classList.remove('active');
@@ -2651,6 +2655,10 @@ function navegar(abaId) {
         } else {
             console.error("Erro: Secção não encontrada ->", `aba-${abaId}`);
         }
+    }
+
+    if (abaId === 'pagamento-faturas' && typeof renderizarPlanejadorFaturas === 'function') {
+        renderizarPlanejadorFaturas();
     }
 
 	window.scrollTo(0, 0);

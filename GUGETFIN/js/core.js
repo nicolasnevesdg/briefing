@@ -1130,6 +1130,7 @@ if (typeof renderizarGraficoCategorias === 'function') {
     document.getElementById('resumo-cartao').innerText = `R$ ${totalCartMes.toFixed(2)}`;
     document.getElementById('resumo-porcentagem').innerText = `${totalEnt > 0 ? ((totalGastoMes/totalEnt)*100).toFixed(1) : 0}%`;
     atualizarCardCaixinhaDashboard();
+    if (typeof renderizarPlanejadorFaturas === 'function') renderizarPlanejadorFaturas();
 
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
 	salvarNoFirebase();

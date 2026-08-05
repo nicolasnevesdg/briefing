@@ -271,6 +271,11 @@
         <i class="fi fi-rr-chart-pie-alt"></i>
         <span>Visualizações</span>
     </button>
+
+    <button class="sidebar-view-btn" id="btn-view-faturas" onclick="navegar('pagamento-faturas')">
+        <i class="fi fi-rr-receipt"></i>
+        <span>Pagamento de faturas</span>
+    </button>
 </nav>
 
 <div class="sidebar-middle">
@@ -738,6 +743,38 @@
 					</div>
 			</div>
 		</section>
+
+        <section id="aba-pagamento-faturas" class="tab-content invoice-planner-page">
+            <div class="invoice-planner-header">
+                <div>
+                    <span class="invoice-planner-kicker">Organização mensal</span>
+                    <h2>Pagamento de faturas</h2>
+                    <p>Compare as faturas previstas com os valores reais e distribua o dinheiro disponível sem alterar os cálculos do dashboard.</p>
+                </div>
+                <div class="invoice-planner-month" id="faturas-mes-referencia">Mês atual</div>
+            </div>
+
+            <div class="invoice-planner-summary">
+                <article><small>Entradas do mês</small><strong id="faturas-total-entradas">R$ 0,00</strong><span>Disponível como referência</span></article>
+                <article><small>Total real das faturas</small><strong id="faturas-total-real">R$ 0,00</strong><span>Previsto quando não informado</span></article>
+                <article><small>Separado para pagar</small><strong id="faturas-total-separado">R$ 0,00</strong><span>Quanto você já reservou</span></article>
+                <article id="faturas-card-saldo"><small>Sobra / falta geral</small><strong id="faturas-saldo-geral">R$ 0,00</strong><span id="faturas-saldo-legenda">Após quitar as faturas</span></article>
+            </div>
+
+            <div class="invoice-planner-board">
+                <div class="invoice-planner-board-head">
+                    <div><h3>Distribuição por fatura</h3><p>Os campos editáveis são salvos automaticamente.</p></div>
+                    <button type="button" class="invoice-reset-btn" onclick="limparPlanejamentoFaturasMes()">Limpar valores do mês</button>
+                </div>
+                <div class="invoice-table-wrap">
+                    <table class="invoice-table">
+                        <thead><tr><th>Cartão</th><th>Previsto</th><th>Valor real</th><th>Separado</th><th>Falta / sobra</th><th>Status</th><th>Observação</th></tr></thead>
+                        <tbody id="faturas-planejador-lista"></tbody>
+                    </table>
+                </div>
+                <div id="faturas-planejador-vazio" class="invoice-empty" hidden></div>
+            </div>
+        </section>
 		
 <section id="calendar-view" class="calendar-view desktop-only">
     <div class="calendar-page-header">
@@ -1416,6 +1453,9 @@
     </button>
     <button class="tab-btn" onclick="navegar('planejamento')">
         <i class="fi fi-rr-chart-simple"></i>
+    </button>
+    <button class="tab-btn" onclick="navegar('pagamento-faturas')" aria-label="Pagamento de faturas">
+        <i class="fi fi-rr-receipt"></i>
     </button>
     
     <button class="fab-btn" onclick="abrirModalGasto()">
@@ -2289,6 +2329,7 @@
     <script src="js/transacoes.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/modulos.js"></script>
+    <script src="js/faturas.js"></script>
 </body>
 </html>
 
