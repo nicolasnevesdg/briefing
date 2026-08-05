@@ -19,7 +19,8 @@
         }
     </style>
     <link rel="stylesheet" href="css/style.css?v=20260805-3">
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#025638">
@@ -1233,6 +1234,25 @@
                                 <small>Depois de conectado, você poderá entrar com Google sem preencher e-mail e senha.</small>
                             </div>
 
+                            <div class="settings-security-card settings-drive-card">
+                                <div class="settings-security-card-head">
+                                    <i class="fi fi-rr-cloud-upload-alt"></i>
+                                    <div>
+                                        <strong>Google Drive</strong>
+                                        <span id="settings-drive-status-text">Salve comprovantes no seu próprio Drive.</span>
+                                    </div>
+                                </div>
+                                <div class="settings-google-status-row">
+                                    <div><span>Armazenamento de comprovantes</span><small id="settings-drive-folder">Pasta GugetFin / Comprovantes</small></div>
+                                    <span class="settings-google-pill" id="settings-drive-status-pill">Não conectado</span>
+                                </div>
+                                <div class="settings-google-actions">
+                                    <button type="button" class="btn-settings-primary" id="btn-connect-drive" onclick="conectarGoogleDrive()">Conectar Google Drive</button>
+                                    <button type="button" class="btn-settings-secondary" id="btn-disconnect-drive" style="display:none" onclick="desconectarGoogleDrive()">Desconectar Drive</button>
+                                </div>
+                                <small>O GugetFin acessa somente os arquivos criados por ele. Seus outros arquivos permanecem privados.</small>
+                            </div>
+
                             <div class="settings-security-card settings-security-wide">
                                 <div class="settings-security-card-head">
                                     <i class="fi fi-rr-devices"></i>
@@ -2332,10 +2352,11 @@
 
 	<script src="js/core.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/transacoes.js"></script>
-    <script src="js/ui.js"></script>
+    <script src="js/transacoes.js?v=20260805-4"></script>
+    <script src="js/ui.js?v=20260805-4"></script>
     <script src="js/modulos.js"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
+    <script src="js/drive.js?v=20260805-4"></script>
 </body>
 </html>
 

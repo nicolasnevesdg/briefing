@@ -860,10 +860,9 @@ function verDetalhes(index) {
     if (blocoComp && btnComp) {
         if (t.comprovanteUrl) {
             blocoComp.style.display = 'block';
-            btnComp.onclick = () => {
-                document.getElementById('img-comprovante-preview').src = t.comprovanteUrl;
-                document.getElementById('modal-ver-comprovante').showModal();
-            };
+            btnComp.onclick = () => typeof abrirComprovanteGuget === 'function'
+                ? abrirComprovanteGuget(t.comprovanteUrl)
+                : window.open(t.comprovanteUrl, '_blank');
         } else {
             blocoComp.style.display = 'none';
         }
@@ -2221,6 +2220,10 @@ function editarMovimentoCaixinha(id) {
 async function enviarComprovanteCaixinha(file) {
     if (!file) return '';
 
+    if (typeof usarGoogleDriveComprovantes === 'function' && usarGoogleDriveComprovantes()) {
+        return enviarImagemGugetDrive(file, 'caixinha');
+    }
+
     const apiKey = '9ce95a3c98b6a4e35865fb7cf8b535db';
     const arquivoLeve = typeof comprimirImagem === 'function'
         ? await comprimirImagem(file)
@@ -2427,6 +2430,10 @@ function excluirMovimentoCaixinha(id) {
 }
 
 function abrirComprovanteCaixinha(url) {
+    if (typeof abrirComprovanteGuget === 'function') {
+        abrirComprovanteGuget(url);
+        return;
+    }
     const img = document.getElementById('img-comprovante-preview');
     const modal = document.getElementById('modal-ver-comprovante');
     if (!img || !modal) return;
