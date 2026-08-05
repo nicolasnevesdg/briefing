@@ -57,6 +57,21 @@
         if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
     }
 
+    function atributo(valor) {
+        return String(valor || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    }
+
+    function atualizarStatusSalvamento(estado) {
+        const status = document.getElementById('faturas-save-status');
+        const botao = document.getElementById('faturas-save-btn');
+        if (!status) return;
+        status.className = `invoice-save-status is-${estado}`;
+        status.textContent = estado === 'pending'
+            ? 'Alterações não salvas'
+            : estado === 'saving' ? 'Salvando...' : 'Tudo salvo';
+        if (botao) botao.disabled = estado === 'saving';
+    }
+
     function classeDiferenca(diferenca) {
         if (Math.abs(diferenca) < 0.005) return 'is-balanced';
         return diferenca < 0 ? 'is-missing' : 'is-surplus';
@@ -67,8 +82,31 @@
         mes[cartao] = mes[cartao] || {};
         mes[cartao][campo] = campo === 'observacao' ? elemento.value : numero(elemento.value);
         if (campo !== 'observacao') elemento.value = moeda(mes[cartao][campo]);
+        atualizarStatusSalvamento('saving');
         salvar();
+        atualizarStatusSalvamento('saved');
         renderizarPlanejadorFaturas();
+    };
+
+    window.marcarPlanejamentoFaturasPendente = function () {
+        atualizarStatusSalvamento('pending');
+    };
+
+    window.salvarPlanejamentoFaturas = function () {
+        const mes = dadosMes();
+        document.querySelectorAll('#faturas-planejador-lista [data-fatura-cartao]').forEach(campo => {
+            const cartao = campo.dataset.faturaCartao;
+            const nomeCampo = campo.dataset.faturaCampo;
+            if (!cartao || !nomeCampo) return;
+            mes[cartao] = mes[cartao] || {};
+            mes[cartao][nomeCampo] = nomeCampo === 'observacao' ? campo.value : numero(campo.value);
+            if (nomeCampo !== 'observacao') campo.value = moeda(mes[cartao][nomeCampo]);
+        });
+        atualizarStatusSalvamento('saving');
+        salvar();
+        atualizarStatusSalvamento('saved');
+        renderizarPlanejadorFaturas();
+        if (typeof mostrarToast === 'function') mostrarToast('Planejamento salvo com sucesso!');
     };
 
     window.limparPlanejamentoFaturasMes = function () {
@@ -102,11 +140,11 @@
             return `<tr>
                 <td data-label="Cartão"><strong>${cartao.nome}</strong><small>Vence dia ${cartao.vencimento || '—'}</small></td>
                 <td data-label="Previsto"><span class="invoice-predicted">${moeda(previsto)}</span></td>
-                <td data-label="Valor real"><input class="invoice-money-input" value="${moeda(real)}" inputmode="decimal" onchange="atualizarPlanejamentoFatura('${cartao.nome.replace(/'/g, "\\'")}', 'real', this)"></td>
-                <td data-label="Separado"><input class="invoice-money-input" value="${moeda(separado)}" inputmode="decimal" onchange="atualizarPlanejamentoFatura('${cartao.nome.replace(/'/g, "\\'")}', 'separado', this)"></td>
+                <td data-label="Valor real"><input class="invoice-money-input" value="${moeda(real)}" inputmode="decimal" data-fatura-cartao="${atributo(cartao.nome)}" data-fatura-campo="real" oninput="marcarPlanejamentoFaturasPendente()" onchange="atualizarPlanejamentoFatura('${cartao.nome.replace(/'/g, "\\'")}', 'real', this)"></td>
+                <td data-label="Separado"><input class="invoice-money-input" value="${moeda(separado)}" inputmode="decimal" data-fatura-cartao="${atributo(cartao.nome)}" data-fatura-campo="separado" oninput="marcarPlanejamentoFaturasPendente()" onchange="atualizarPlanejamentoFatura('${cartao.nome.replace(/'/g, "\\'")}', 'separado', this)"></td>
                 <td data-label="Falta / sobra"><strong class="invoice-difference ${classeDiferenca(diferenca)}">${moeda(diferenca)}</strong></td>
                 <td data-label="Status"><span class="invoice-status ${status === 'Coberta' ? 'paid' : 'pending'}">${status}</span></td>
-                <td data-label="Observação"><input class="invoice-note-input" value="${String(registro.observacao || '').replace(/"/g, '&quot;')}" placeholder="Ex: juros, acordo..." onchange="atualizarPlanejamentoFatura('${cartao.nome.replace(/'/g, "\\'")}', 'observacao', this)"></td>
+                <td data-label="Observação"><input class="invoice-note-input" value="${atributo(registro.observacao || '')}" data-fatura-cartao="${atributo(cartao.nome)}" data-fatura-campo="observacao" placeholder="Ex: juros, acordo..." oninput="marcarPlanejamentoFaturasPendente()" onchange="atualizarPlanejamentoFatura('${cartao.nome.replace(/'/g, "\\'")}', 'observacao', this)"></td>
             </tr>`;
         }).join('');
 
