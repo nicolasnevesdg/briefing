@@ -84,6 +84,9 @@ async function confirmarGasto() {
         btnSalvar.disabled = true;
 
         try {
+            if (typeof usarGoogleDriveComprovantes === 'function' && usarGoogleDriveComprovantes()) {
+                comprovanteUrl = await enviarImagemGugetDrive(file, 'gasto');
+            } else {
             const apiKey = '9ce95a3c98b6a4e35865fb7cf8b535db'; 
             
             // 👇 1. A MÁGICA ACONTECE AQUI: Esmaga a imagem antes de enviar!
@@ -104,6 +107,7 @@ async function confirmarGasto() {
                 comprovanteUrl = data.data.url; 
             } else {
                 throw new Error(data.error ? data.error.message : "Erro desconhecido na API");
+            }
             }
 
         } catch (error) {
@@ -345,6 +349,9 @@ async function confirmarEntrada() {
         btnSalvar.disabled = true;
 
         try {
+            if (typeof usarGoogleDriveComprovantes === 'function' && usarGoogleDriveComprovantes()) {
+                comprovanteUrl = await enviarImagemGugetDrive(file, 'entrada');
+            } else {
             const apiKey = '9ce95a3c98b6a4e35865fb7cf8b535db'; 
             
             // 1. Esmaga a imagem primeiro!
@@ -365,6 +372,7 @@ async function confirmarEntrada() {
                 comprovanteUrl = data.data.url; 
             } else {
                 throw new Error(data.error ? data.error.message : "Erro desconhecido na API");
+            }
             }
 
         } catch (error) {
@@ -676,10 +684,9 @@ function verDetalhesEntrada(index) {
     if (blocoComp && btnComp) {
         if (e.comprovanteUrl) {
             blocoComp.style.display = 'block';
-            btnComp.onclick = () => {
-                document.getElementById('img-comprovante-preview').src = e.comprovanteUrl;
-                document.getElementById('modal-ver-comprovante').showModal();
-            };
+            btnComp.onclick = () => typeof abrirComprovanteGuget === 'function'
+                ? abrirComprovanteGuget(e.comprovanteUrl)
+                : window.open(e.comprovanteUrl, '_blank');
         } else {
             blocoComp.style.display = 'none';
         }
