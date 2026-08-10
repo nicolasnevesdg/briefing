@@ -731,6 +731,14 @@ function excluirGasto(idx) {
         return;
     }
 
+    if (gasto?.origemDividaManual && typeof reverterPagamentoDividaManualPorGasto === 'function') {
+        reverterPagamentoDividaManualPorGasto(gasto);
+    }
+
+    if (gasto?.origemCaixinha && gasto.caixinhaId && Array.isArray(salsiData.caixinha)) {
+        salsiData.caixinha = salsiData.caixinha.filter(movimento => String(movimento.id) !== String(gasto.caixinhaId));
+    }
+
     salsiData.transacoes.splice(idx, 1);
     renderizar();
     if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
@@ -794,6 +802,13 @@ function editarGasto(index) {
     
     const t = salsiData.transacoes[index];
     if (!t) return;
+
+    if (t.origemDividaManual) {
+        if (typeof irParaVisualizacoes === 'function') irParaVisualizacoes('dividas');
+        if (typeof abrirDividaPeloParcelado === 'function') abrirDividaPeloParcelado(t.dividaManualId);
+        if (typeof mostrarToast === 'function') mostrarToast('Para corrigir este pagamento, apague o gasto e registre-o novamente na dívida.');
+        return;
+    }
 
     popularSelects();
 

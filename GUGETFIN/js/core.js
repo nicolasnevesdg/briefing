@@ -1,4 +1,4 @@
-let salsiData = JSON.parse(localStorage.getItem('salsifin_cache')) || { config: { categorias: [], bancos: [] }, entradas: [], transacoes: [], metas: [] };
+let salsiData = JSON.parse(localStorage.getItem('salsifin_cache')) || { config: { categorias: [], bancos: [] }, entradas: [], transacoes: [], dividasManuais: [], metas: [], caixinha: [], caixinhas: [], desejos: [] };
 let subAbaCartaoAtiva = 'credito';
 let dataFiltro = new Date();
 dataFiltro.setDate(1);  
@@ -519,11 +519,15 @@ function calcularCompetenciaInicialGasto(t) {
 }
 
 function calcularSaldoCaixinhaDashboard() {
+    if (typeof calcularSaldoCaixinha === 'function') {
+        return calcularSaldoCaixinha();
+    }
     if (!Array.isArray(salsiData.caixinha)) return 0;
 
     return salsiData.caixinha.reduce((total, movimento) => {
         const valor = parseFloat(movimento.valor) || 0;
-        return total + (movimento.tipo === 'saida' ? -valor : valor);
+        const entrada = movimento.tipo === 'entrada' || movimento.tipo === 'transferencia-entrada';
+        return total + (entrada ? valor : -valor);
     }, 0);
 }
 
@@ -1130,6 +1134,7 @@ if (typeof renderizarGraficoCategorias === 'function') {
     document.getElementById('resumo-cartao').innerText = `R$ ${totalCartMes.toFixed(2)}`;
     document.getElementById('resumo-porcentagem').innerText = `${totalEnt > 0 ? ((totalGastoMes/totalEnt)*100).toFixed(1) : 0}%`;
     atualizarCardCaixinhaDashboard();
+    if (typeof renderizarResumoCompromissosDashboard === 'function') renderizarResumoCompromissosDashboard();
     if (typeof renderizarPlanejadorFaturas === 'function') renderizarPlanejadorFaturas();
 
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));

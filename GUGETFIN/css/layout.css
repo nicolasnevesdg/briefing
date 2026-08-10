@@ -2538,6 +2538,10 @@ main.settings-mode #settings-view {
     color: var(--brand-green);
 }
 
+.calendar-day-total-debt {
+    color: #d97706;
+}
+
 .calendar-items {
     display: flex;
     flex-direction: column;
@@ -2589,6 +2593,34 @@ main.settings-mode #settings-view {
 
 .calendar-item-terceiro .calendar-item-value {
     color: #d97706;
+}
+
+.calendar-item-vencimento-divida {
+    background: rgba(245, 158, 11, 0.11);
+    border-color: rgba(245, 158, 11, 0.22);
+}
+
+.calendar-item-vencimento-divida .calendar-item-value {
+    color: #b45309;
+}
+
+.calendar-item-vencimento-divida.is-vencida {
+    background: rgba(239, 68, 68, 0.10);
+    border-color: rgba(239, 68, 68, 0.24);
+}
+
+.calendar-item-vencimento-divida.is-vencida .calendar-item-value {
+    color: #dc2626;
+}
+
+.calendar-item-vencimento-divida.is-parcial {
+    background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 6px,
+        rgba(245, 158, 11, 0.055) 6px,
+        rgba(245, 158, 11, 0.055) 12px
+    );
 }
 
 .calendar-more {

@@ -715,6 +715,16 @@ body.dark-theme .calendar-item-terceiro {
     border-color: rgba(245, 158, 11, 0.18);
 }
 
+body.dark-theme .calendar-item-vencimento-divida {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.22);
+}
+
+body.dark-theme .calendar-item-vencimento-divida.is-vencida {
+    background: rgba(239, 68, 68, 0.13);
+    border-color: rgba(239, 68, 68, 0.25);
+}
+
 body.dark-theme .calendar-day.is-today {
     box-shadow: 0 0 0 3px rgba(95, 211, 162, 0.08);
 }
@@ -928,6 +938,23 @@ body.dark-theme .resumo-categorias-chart-block {
     border-color: var(--border);
 }
 
+body.dark-theme .dashboard-commitments,
+body.dark-theme .dashboard-commitment-card,
+body.dark-theme .dashboard-commitments-all {
+    background: #171a20;
+    border-color: var(--border);
+}
+
+body.dark-theme .dashboard-commitment-card:hover {
+    border-color: rgba(108, 192, 128, 0.34);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-theme .dashboard-commitment-card.is-debt.has-alert {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.28);
+}
+
 body.dark-theme .grafico-categorias::before {
     background: #11161c;
     border-color: var(--border);
@@ -1044,6 +1071,89 @@ body.dark-theme .parcelados-ending-soon article,
 body.dark-theme .parcelado-meta-chip {
     background: #171a20;
     border-color: var(--border);
+}
+
+body.dark-theme .dividas-radar-card,
+body.dark-theme .divida-manual-card,
+body.dark-theme .divida-recebida-card,
+body.dark-theme .modal-divida-manual,
+body.dark-theme .modal-pagamento-divida {
+    background: var(--sidebar-bg);
+}
+
+body.dark-theme .dividas-radar-card.is-primary {
+    background: var(--acc-green);
+    border-color: var(--acc-green);
+}
+
+body.dark-theme .dividas-radar-card.has-danger {
+    background: rgba(239, 68, 68, 0.10);
+}
+
+body.dark-theme .parcelados-radar-card.is-debt,
+body.dark-theme .pagamento-divida-notice {
+    background: rgba(245, 158, 11, 0.09);
+}
+
+/* ========================================================= */
+/* MODAL DE META POR CATEGORIA - DARK                        */
+/* ========================================================= */
+
+body.dark-theme #modal-orcamento {
+    background: #171a20 !important;
+    border: 1px solid #2a3039 !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.52) !important;
+}
+
+body.dark-theme #modal-orcamento #orc-titulo-display {
+    color: #67d6a5 !important;
+}
+
+body.dark-theme #modal-orcamento p {
+    color: #9aa6a2 !important;
+}
+
+body.dark-theme #modal-orcamento .input-label {
+    color: #78d9ae !important;
+}
+
+body.dark-theme #modal-orcamento #orc-valor {
+    background: #11161c !important;
+    color: #f3f6f5 !important;
+    border: 1px solid #3a424d !important;
+    outline: none !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+}
+
+body.dark-theme #modal-orcamento #orc-valor::placeholder {
+    color: #737d86 !important;
+    opacity: 1;
+}
+
+body.dark-theme #modal-orcamento #orc-valor:focus {
+    border-color: #36b981 !important;
+    box-shadow: 0 0 0 3px rgba(54, 185, 129, 0.13) !important;
+}
+
+body.dark-theme #modal-orcamento button:first-child {
+    background: #087451 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+body.dark-theme #modal-orcamento button:first-child:hover {
+    background: #0a855d !important;
+}
+
+body.dark-theme #modal-orcamento button:last-child {
+    background: #232830 !important;
+    color: #d8ddda !important;
+    border: 1px solid #303742 !important;
+}
+
+body.dark-theme #modal-orcamento button:last-child:hover {
+    background: #2a3039 !important;
+    color: #ffffff !important;
 }
 
 body.dark-theme .parcelados-radar-card.is-primary,
@@ -1791,4 +1901,58 @@ body.dark-theme .settings-session-item.is-online:not(.is-current) {
 
 body.dark-theme .settings-session-item.is-revoked {
     opacity: .68;
+}
+
+/* CAIXINHAS MULTIPLAS */
+body.dark-theme .caixinha-account-card,
+body.dark-theme .plan-caixinha-card {
+    background: #171b20;
+    border-color: #2a3139;
+}
+
+body.dark-theme .caixinha-account-card.is-general {
+    background: linear-gradient(145deg, rgba(0, 194, 113, .16), rgba(23, 27, 32, .96));
+    border-color: rgba(0, 194, 113, .3);
+}
+
+body.dark-theme .caixinha-account-icon,
+body.dark-theme .plan-caixinha-head > span,
+body.dark-theme .plans-summary > div,
+body.dark-theme .plans-empty,
+body.dark-theme .transferencia-caixinha-balance {
+    background: rgba(0, 194, 113, .09);
+}
+
+body.dark-theme .plans-wishes-list > div,
+body.dark-theme .legacy-goals > div:not(.plans-section-head),
+body.dark-theme .wish-plan-row {
+    background: rgba(255, 255, 255, .018);
+}
+
+body.dark-theme .plans-dashboard-item,
+body.dark-theme .caixinha-detail-section,
+body.dark-theme .caixinha-detail-item {
+    background: #171b20;
+    border-color: #2a3139;
+}
+
+body.dark-theme .plans-dashboard-icon,
+body.dark-theme .caixinha-detail-item-icon {
+    background: rgba(0, 194, 113, .09);
+}
+
+body.dark-theme .caixinha-account-actions button,
+body.dark-theme .plan-caixinha-actions button,
+body.dark-theme .plans-section-head button,
+body.dark-theme .plans-wishes-list button,
+body.dark-theme .legacy-goals button,
+body.dark-theme .wish-plan-row button {
+    border-color: #303842;
+    color: var(--acc-green);
+}
+
+body.dark-theme .caixinha-detail-item-actions button,
+body.dark-theme .caixinha-detail-empty button {
+    border-color: #303842;
+    color: var(--acc-green);
 }

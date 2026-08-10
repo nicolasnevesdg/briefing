@@ -453,7 +453,7 @@ window.iniciarVigia = function() {
             // --- SE NÃO TIVER LOGADO --- 
             if (typeof limparObservadoresSessoesSeguranca === 'function') limparObservadoresSessoesSeguranca();
             localStorage.removeItem('salsifin_cache');
-            salsiData = { config: { categorias: [], bancos: [], detalhesBancos: [] }, entradas: [], transacoes: [], metas: [] };
+            salsiData = { config: { categorias: [], bancos: [], detalhesBancos: [] }, entradas: [], transacoes: [], dividasManuais: [], metas: [], caixinha: [], caixinhas: [], desejos: [] };
             document.body.classList.remove('dark-theme');
             if (typeof atualizarBotaoTemaTopo === 'function') atualizarBotaoTemaTopo(false);
 
@@ -779,7 +779,9 @@ function criarEstruturaInicialUsuario(nome = '', sobrenome = '', username = '', 
         entradas: [],
         transacoes: [],
         metas: [],
-        caixinha: []
+        caixinha: [],
+        caixinhas: [],
+        desejos: []
     };
 }
 
