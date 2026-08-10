@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20260805-3">
+    <link rel="stylesheet" href="css/style.css?v=20260810-2">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -496,11 +496,12 @@
 			</div>
 
 			<div class="card chart-card" id="card-metas-acordeon">
-				<div class="card-header" onclick="toggleMetas()">
+				<div class="card-header" onclick="toggleMetas()" style="padding:13px 24px;">
 					<div class="header-title-group">
 						<span id="meta-toggle-icon" class="chevron"></span>
-						<h3>Metas e Objetivos</h3>
+						<h3>Caixinhas e planos</h3>
 					</div>
+					<button class="btn-novo-gasto" onclick="event.stopPropagation(); abrirModalConfigCaixinha()" style="width: fit-content;height: 29px!important;margin: 0;padding: 10px 20px;display: flex;align-items: center;">+ Nova caixinha</button>
 				</div>
 				
 				<div class="chart-content-wrapper" id="meta-body">
@@ -532,6 +533,62 @@
 				<div class="stat-card"><small>% da Renda</small><h2 id="resumo-porcentagem">0%</h2></div>
 				<div class="stat-card stat-caixinha" id="stat-caixinha-dashboard"><small>Saldo da Caixinha</small><h2 id="resumo-caixinha">R$ 0,00</h2></div>
 			</div>
+
+            <section class="dashboard-commitments" id="dashboard-commitments" aria-labelledby="dashboard-commitments-title">
+                <div class="dashboard-commitments-head">
+                    <div>
+                        <span class="dashboard-commitments-kicker">Visão rápida</span>
+                        <h2 id="dashboard-commitments-title">Compromissos e reservas</h2>
+                        <p id="dashboard-commitments-period">Acompanhe o que precisa da sua atenção.</p>
+                    </div>
+                    <button type="button" class="dashboard-commitments-all" onclick="abrirDetalhesCompromissosDashboard('dividas')">
+                        Ver todos os detalhes
+                        <i class="fi fi-rr-arrow-small-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <div class="dashboard-commitments-grid">
+                    <button type="button" class="dashboard-commitment-card is-debt" onclick="abrirDetalhesCompromissosDashboard('dividas')" aria-label="Ver detalhes das dívidas">
+                        <span class="dashboard-commitment-icon"><i class="fi fi-rr-hand-holding-usd" aria-hidden="true"></i></span>
+                        <span class="dashboard-commitment-copy">
+                            <small>Dívidas</small>
+                            <strong id="dashboard-dividas-valor">R$ 0,00</strong>
+                            <span id="dashboard-dividas-detail">Nenhuma dívida em aberto</span>
+                        </span>
+                        <span class="dashboard-commitment-link">Ver detalhes <i class="fi fi-rr-arrow-small-right" aria-hidden="true"></i></span>
+                    </button>
+
+                    <button type="button" class="dashboard-commitment-card is-installments" onclick="abrirDetalhesCompromissosDashboard('parcelados')" aria-label="Ver detalhes dos parcelados">
+                        <span class="dashboard-commitment-icon"><i class="fi fi-rr-calendar-clock" aria-hidden="true"></i></span>
+                        <span class="dashboard-commitment-copy">
+                            <small>Parcelados</small>
+                            <strong id="dashboard-parcelados-valor">R$ 0,00</strong>
+                            <span id="dashboard-parcelados-detail">Nenhum compromisso neste mês</span>
+                        </span>
+                        <span class="dashboard-commitment-link">Ver detalhes <i class="fi fi-rr-arrow-small-right" aria-hidden="true"></i></span>
+                    </button>
+
+                    <button type="button" class="dashboard-commitment-card is-third-party" onclick="abrirDetalhesCompromissosDashboard('terceiros')" aria-label="Ver detalhes dos gastos de terceiros">
+                        <span class="dashboard-commitment-icon"><i class="fi fi-rr-users-alt" aria-hidden="true"></i></span>
+                        <span class="dashboard-commitment-copy">
+                            <small>Terceiros</small>
+                            <strong id="dashboard-terceiros-valor">R$ 0,00</strong>
+                            <span id="dashboard-terceiros-detail">Ninguém está devendo</span>
+                        </span>
+                        <span class="dashboard-commitment-link">Ver detalhes <i class="fi fi-rr-arrow-small-right" aria-hidden="true"></i></span>
+                    </button>
+
+                    <button type="button" class="dashboard-commitment-card is-savings" onclick="abrirDetalhesCompromissosDashboard('caixinha')" aria-label="Ver detalhes da caixinha">
+                        <span class="dashboard-commitment-icon"><i class="fi fi-rr-piggy-bank" aria-hidden="true"></i></span>
+                        <span class="dashboard-commitment-copy">
+                            <small>Caixinha</small>
+                            <strong id="dashboard-caixinha-valor">R$ 0,00</strong>
+                            <span id="dashboard-caixinha-detail">Nenhuma movimentação neste mês</span>
+                        </span>
+                        <span class="dashboard-commitment-link">Ver detalhes <i class="fi fi-rr-arrow-small-right" aria-hidden="true"></i></span>
+                    </button>
+                </div>
+            </section>
 
 		</section>
 
@@ -820,6 +877,10 @@
             <i class="fi fi-rr-arrow-trend-up"></i>
             <span>Entradas</span>
         </button>
+        <button type="button" class="calendar-filter-btn" data-calendar-filter="vencimentos" onclick="selecionarFiltroCalendario('vencimentos')">
+            <i class="fi fi-rr-calendar-exclamation"></i>
+            <span>Vencimentos</span>
+        </button>
         <button type="button" class="calendar-expand-all-btn" id="calendar-expand-all-btn" onclick="alternarTodosDiasCalendario()">
             <i class="fi fi-rr-expand"></i>
             <span>Abrir tudo</span>
@@ -900,11 +961,13 @@
                     <div class="visual-panel-head">
                         <div>
                             <span>Conta a pagar</span>
-                            <h3>Dívidas recebidas</h3>
-                            <p>Solicitações enviadas por outros usuários ficam aqui até você aceitar, contestar ou pagar.</p>
+                            <h3>Dívidas a pagar</h3>
+                            <p>Cadastre obrigações manualmente ou acompanhe as recebidas pelo GugetFin. O gasto só é registrado quando você paga.</p>
                         </div>
+                        <button type="button" class="btn-settings-primary" onclick="abrirModalDividaManual()">Nova dívida</button>
                     </div>
 
+                    <div id="visual-dividas-overview" class="dividas-overview"></div>
                     <div class="visual-list" id="visual-lista-dividas"></div>
                 </div>
 
@@ -912,8 +975,8 @@
                     <div class="visual-panel-head">
                         <div>
                             <span>Compromissos futuros</span>
-                            <h3>Gastos parcelados</h3>
-                            <p>Veja quando suas compras parceladas terminam e em quais meses a fatura começa a aliviar.</p>
+                            <h3>Compromissos parcelados</h3>
+                            <p>Veja suas parcelas, as de terceiros e as parcelas de dívidas em uma única previsão.</p>
                         </div>
                     </div>
 
@@ -925,20 +988,60 @@
                     <div class="visual-panel-head">
                         <div>
                             <span>Reserva</span>
-                            <h3>Caixinha</h3>
-                            <p>Registre quando guardar ou retirar dinheiro. Entradas na caixinha reduzem o dinheiro disponível do mês.</p>
+                            <h3>Suas caixinhas</h3>
+                            <p>Organize o dinheiro guardado na Caixinha Geral ou em reservas separadas, com ou sem meta.</p>
                         </div>
                         <div class="visual-actions">
-                            <button type="button" class="btn-settings-secondary" onclick="abrirModalCaixinha('entrada')">Adicionar</button>
-                            <button type="button" class="btn-settings-ghost" onclick="abrirModalCaixinha('saida')">Retirar</button>
+                            <button type="button" class="btn-settings-primary" onclick="abrirModalConfigCaixinha()">Nova caixinha</button>
+                            <button type="button" class="btn-settings-secondary" onclick="abrirModalCaixinha('entrada', 'geral')">Adicionar</button>
+                            <button type="button" class="btn-settings-ghost" onclick="abrirModalTransferenciaCaixinha()">Transferir</button>
                         </div>
                     </div>
 
                     <div class="caixinha-balance-card">
-                        <span>Saldo guardado</span>
+                        <span>Total guardado em todas as caixinhas</span>
                         <strong id="caixinha-saldo-principal">R$ 0,00</strong>
                     </div>
 
+                    <div class="caixinhas-section-head">
+                        <div>
+                            <span>Organização</span>
+                            <strong>Caixinha Geral e secundárias</strong>
+                        </div>
+                    </div>
+                    <div id="visual-grid-caixinhas" class="caixinhas-grid"></div>
+
+                    <div class="caixinha-detail-plans">
+                        <section class="caixinha-detail-section">
+                            <div class="caixinhas-section-head">
+                                <div>
+                                    <span>Planos futuros</span>
+                                    <strong>Lista de desejos</strong>
+                                </div>
+                                <button type="button" class="btn-settings-secondary" onclick="abrirModalDesejo()">Novo desejo</button>
+                            </div>
+                            <p class="caixinha-detail-intro">Acompanhe seus desejos e transforme qualquer um deles em uma caixinha com meta.</p>
+                            <div id="visual-caixinha-desejos" class="caixinha-detail-list"></div>
+                        </section>
+
+                        <section class="caixinha-detail-section" id="visual-caixinha-metas-section">
+                            <div class="caixinhas-section-head">
+                                <div>
+                                    <span>Organização anterior</span>
+                                    <strong>Metas antigas</strong>
+                                </div>
+                            </div>
+                            <p class="caixinha-detail-intro">Converta metas antigas em caixinhas sem adicionar ou duplicar saldo.</p>
+                            <div id="visual-caixinha-metas-antigas" class="caixinha-detail-list"></div>
+                        </section>
+                    </div>
+
+                    <div class="caixinhas-section-head is-history">
+                        <div>
+                            <span>Histórico</span>
+                            <strong>Movimentações recentes</strong>
+                        </div>
+                    </div>
                     <div class="visual-list" id="visual-lista-caixinha"></div>
                 </div>
             </div>
@@ -1108,8 +1211,8 @@
 
                             <div class="settings-toggle-row">
                                 <div>
-                                    <strong>Saldo da caixinha na dashboard</strong>
-                                    <span>Mostra o dinheiro guardado junto dos indicadores principais.</span>
+                                    <strong>Destacar caixinha nos indicadores principais</strong>
+                                    <span>Além da visão rápida, fixa o saldo junto dos indicadores do topo.</span>
                                 </div>
                                 <label class="switch">
                                     <input type="checkbox" id="settings-show-caixinha-dashboard" onchange="salvarPreferenciasApp()">
@@ -1249,7 +1352,10 @@
                                     </div>
                                 </div>
                                 <div class="settings-google-status-row">
-                                    <div><span>Armazenamento de comprovantes</span><small id="settings-drive-folder">Pasta GugetFin / Comprovantes</small></div>
+                                    <div>
+                                        <span>Armazenamento de comprovantes</span>
+                                        <small id="settings-drive-folder">Pasta GugetFin / Comprovantes</small>
+                                    </div>
                                     <span class="settings-google-pill" id="settings-drive-status-pill">Não conectado</span>
                                 </div>
                                 <div class="settings-google-actions">
@@ -2213,8 +2319,12 @@
 
         <div class="settings-form-grid">
             <label class="settings-field settings-field-wide">
-                <span>Nome</span>
-                <input type="text" id="caixinha-nome" placeholder="Ex: Reserva de emergência">
+                <span>Caixinha</span>
+                <select id="caixinha-destino"></select>
+            </label>
+            <label class="settings-field settings-field-wide">
+                <span>Nome do movimento</span>
+                <input type="text" id="caixinha-nome" placeholder="Ex: Valor guardado do salário">
             </label>
             <label class="settings-field">
                 <span>Valor</span>
@@ -2241,6 +2351,215 @@
         </div>
 
         <button type="button" class="btn-settings-primary btn-caixinha-save" id="btn-save-caixinha" onclick="salvarMovimentoCaixinha()">Salvar movimento</button>
+    </div>
+</dialog>
+
+<dialog id="modal-config-caixinha" class="modal-estilizado modal-caixinha modal-config-caixinha">
+    <div class="modal-content modal-caixinha-content">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+        <div class="modal-caixinha-header">
+            <span>Organizar reserva</span>
+            <h3 id="config-caixinha-title">Nova caixinha</h3>
+            <p>Crie uma reserva separada. A meta de valor é opcional.</p>
+        </div>
+
+        <input type="hidden" id="config-caixinha-id" value="">
+
+        <div class="settings-form-grid">
+            <label class="settings-field settings-field-wide">
+                <span>Nome da caixinha</span>
+                <input type="text" id="config-caixinha-nome" placeholder="Ex: Viagem, impostos ou dinheiro extra">
+            </label>
+            <label class="settings-field">
+                <span>Meta opcional</span>
+                <input type="text" id="config-caixinha-meta" placeholder="Sem meta" onblur="formatarMoeda(this)">
+            </label>
+            <label class="settings-field">
+                <span>Vincular a um desejo</span>
+                <select id="config-caixinha-desejo">
+                    <option value="">Nenhum desejo</option>
+                </select>
+            </label>
+            <label class="settings-field settings-field-wide">
+                <span>Descrição</span>
+                <input type="text" id="config-caixinha-descricao" placeholder="Para que você quer separar este dinheiro?">
+            </label>
+        </div>
+
+        <div class="divida-modal-actions">
+            <button type="button" class="btn-settings-ghost" onclick="document.getElementById('modal-config-caixinha').close()">Cancelar</button>
+            <button type="button" class="btn-settings-primary" id="btn-save-config-caixinha" onclick="salvarConfigCaixinha()">Salvar caixinha</button>
+        </div>
+    </div>
+</dialog>
+
+<dialog id="modal-transferir-caixinha" class="modal-estilizado modal-caixinha modal-transferir-caixinha">
+    <div class="modal-content modal-caixinha-content">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+        <div class="modal-caixinha-header">
+            <span>Movimento interno</span>
+            <h3>Transferir entre caixinhas</h3>
+            <p>A transferência reorganiza sua reserva sem alterar o total guardado ou criar um gasto.</p>
+        </div>
+
+        <div class="settings-form-grid">
+            <label class="settings-field">
+                <span>De</span>
+                <select id="transferencia-caixinha-origem" onchange="atualizarResumoTransferenciaCaixinha()"></select>
+            </label>
+            <label class="settings-field">
+                <span>Para</span>
+                <select id="transferencia-caixinha-destino"></select>
+            </label>
+            <label class="settings-field">
+                <span>Valor</span>
+                <input type="text" id="transferencia-caixinha-valor" placeholder="R$ 0,00" onblur="formatarMoeda(this)">
+            </label>
+            <label class="settings-field">
+                <span>Data</span>
+                <input type="date" id="transferencia-caixinha-data">
+            </label>
+            <label class="settings-field settings-field-wide">
+                <span>Observação</span>
+                <input type="text" id="transferencia-caixinha-descricao" placeholder="Observação opcional">
+            </label>
+        </div>
+
+        <div class="transferencia-caixinha-balance" id="transferencia-caixinha-balance">Saldo disponível: R$ 0,00</div>
+
+        <div class="divida-modal-actions">
+            <button type="button" class="btn-settings-ghost" onclick="document.getElementById('modal-transferir-caixinha').close()">Cancelar</button>
+            <button type="button" class="btn-settings-primary" onclick="salvarTransferenciaCaixinha()">Transferir</button>
+        </div>
+    </div>
+</dialog>
+
+<dialog id="modal-divida-manual" class="modal-estilizado modal-divida-manual">
+    <div class="modal-content modal-divida-content">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+        <div class="modal-divida-header">
+            <span>Dívidas a pagar</span>
+            <h3 id="modal-divida-title">Nova dívida</h3>
+            <p>Registre a obrigação agora. Ela só entrará nos seus gastos quando um pagamento for realizado.</p>
+        </div>
+
+        <input type="hidden" id="divida-id" value="">
+
+        <div class="divida-form-grid">
+            <label class="settings-field">
+                <span>Para quem devo</span>
+                <input type="text" id="divida-credor" placeholder="Ex: Pai, Ana ou Loja">
+            </label>
+            <label class="settings-field">
+                <span>Descrição</span>
+                <input type="text" id="divida-nome" placeholder="Ex: Notebook no cartão do meu pai">
+            </label>
+            <label class="settings-field">
+                <span>Tipo de dívida</span>
+                <select id="divida-tipo">
+                    <option value="cartao-terceiro">Compra no cartão de outra pessoa</option>
+                    <option value="pix-pendente">Pix ou transferência pendente</option>
+                    <option value="emprestimo">Dinheiro emprestado</option>
+                    <option value="conta-pendente">Conta pendente</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </label>
+            <label class="settings-field">
+                <span>Valor total</span>
+                <input type="text" id="divida-valor-total" placeholder="R$ 0,00" onblur="formatarMoeda(this)">
+            </label>
+            <label class="settings-field">
+                <span>Forma de pagamento</span>
+                <select id="divida-forma" onchange="atualizarCamposDividaManual()">
+                    <option value="parcelado">Parcelado</option>
+                    <option value="unico">Pagamento único</option>
+                </select>
+            </label>
+            <label class="settings-field" id="divida-campo-parcelas">
+                <span>Quantidade de parcelas</span>
+                <input type="number" id="divida-parcelas" min="1" value="2">
+            </label>
+            <label class="settings-field" id="divida-campo-pagas">
+                <span>Parcelas já pagas</span>
+                <input type="number" id="divida-parcelas-pagas" min="0" value="0">
+                <small>Use apenas ao cadastrar uma dívida que já estava em andamento.</small>
+            </label>
+            <label class="settings-field">
+                <span>Primeiro vencimento</span>
+                <input type="date" id="divida-primeiro-vencimento">
+            </label>
+            <label class="settings-field">
+                <span>Periodicidade</span>
+                <select id="divida-periodicidade">
+                    <option value="mensal">Mensal</option>
+                    <option value="quinzenal">Quinzenal</option>
+                    <option value="semanal">Semanal</option>
+                </select>
+            </label>
+            <label class="settings-field divida-field-wide">
+                <span>Observação</span>
+                <textarea id="divida-observacao" rows="3" placeholder="Acordo, contexto ou informação importante"></textarea>
+            </label>
+        </div>
+
+        <div class="divida-modal-actions">
+            <button type="button" class="btn-settings-ghost" onclick="document.getElementById('modal-divida-manual').close()">Cancelar</button>
+            <button type="button" class="btn-settings-primary" onclick="salvarDividaManual()">Salvar dívida</button>
+        </div>
+    </div>
+</dialog>
+
+<dialog id="modal-pagamento-divida" class="modal-estilizado modal-pagamento-divida">
+    <div class="modal-content modal-divida-content">
+        <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
+        <div class="modal-divida-header">
+            <span>Registrar pagamento</span>
+            <h3 id="pagamento-divida-title">Pagamento da dívida</h3>
+            <p id="pagamento-divida-resumo">O valor pago será registrado automaticamente como gasto.</p>
+        </div>
+
+        <input type="hidden" id="pagamento-divida-id" value="">
+        <input type="hidden" id="pagamento-divida-parcela" value="">
+
+        <div class="divida-form-grid">
+            <label class="settings-field">
+                <span>Valor pago</span>
+                <input type="text" id="pagamento-divida-valor" placeholder="R$ 0,00" onblur="formatarMoeda(this)">
+            </label>
+            <label class="settings-field">
+                <span>Data do pagamento</span>
+                <input type="date" id="pagamento-divida-data">
+            </label>
+            <label class="settings-field">
+                <span>Forma</span>
+                <select id="pagamento-divida-forma">
+                    <option value="PIX">PIX</option>
+                    <option value="Débito">Cartão de débito</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Transferência">Transferência</option>
+                    <option value="Outro">Outro</option>
+                </select>
+            </label>
+            <label class="settings-field">
+                <span>Conta utilizada</span>
+                <input type="text" id="pagamento-divida-conta" list="pagamento-divida-contas" placeholder="Ex: Nubank">
+                <datalist id="pagamento-divida-contas"></datalist>
+            </label>
+            <label class="settings-field divida-field-wide">
+                <span>Observação</span>
+                <textarea id="pagamento-divida-observacao" rows="3" placeholder="Observação opcional"></textarea>
+            </label>
+        </div>
+
+        <div class="pagamento-divida-notice">
+            <i class="fi fi-rr-receipt"></i>
+            <span>Ao confirmar, o pagamento reduz a dívida e aparece em Gastos na data informada.</span>
+        </div>
+
+        <div class="divida-modal-actions">
+            <button type="button" class="btn-settings-ghost" onclick="document.getElementById('modal-pagamento-divida').close()">Cancelar</button>
+            <button type="button" class="btn-settings-primary" onclick="salvarPagamentoDividaManual()">Confirmar pagamento</button>
+        </div>
     </div>
 </dialog>
 	
@@ -2359,31 +2678,14 @@
 	<script src="js/core.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/transacoes.js?v=20260805-4"></script>
-    <script src="js/ui.js?v=20260805-4"></script>
-    <script src="js/modulos.js"></script>
+    <script src="js/ui.js?v=20260808-1"></script>
+    <script src="js/modulos.js?v=20260808-1"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260805-4"></script>
+    <script src="js/dividas.js?v=20260809-1"></script>
+    <script src="js/caixinhas.js?v=20260810-3"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

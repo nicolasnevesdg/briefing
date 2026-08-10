@@ -234,7 +234,9 @@ function criarDadosFallback(user) {
         entradas: [],
         transacoes: [],
         metas: [],
-        caixinha: []
+        caixinha: [],
+        caixinhas: [],
+        desejos: []
     };
 }
 

@@ -1404,7 +1404,7 @@ function obterGastosDoMesCalendario(mes, ano, filtro = 'todos') {
 
             if (filtro === 'terceiros' && !isTerceiro) return null;
             if (filtro === 'gastos' && isTerceiro) return null;
-            if (filtro === 'entradas') return null;
+            if (filtro === 'entradas' || filtro === 'vencimentos') return null;
 
             return {
                 index,
@@ -1420,6 +1420,39 @@ function obterGastosDoMesCalendario(mes, ano, filtro = 'todos') {
         .filter(Boolean);
 }
 
+function obterVencimentosDividasDoMesCalendario(mes, ano) {
+    const dividas = typeof garantirEstruturaDividasManuais === 'function'
+        ? garantirEstruturaDividasManuais()
+        : [];
+
+    return dividas.flatMap(divida => (divida.agenda || []).map(parcela => {
+        const data = criarDataLocalCalendario(parcela.vencimento);
+        if (!data || data.getMonth() !== mes || data.getFullYear() !== ano) return null;
+
+        const restante = typeof obterRestanteParcelaDivida === 'function'
+            ? obterRestanteParcelaDivida(parcela)
+            : Number(parcela.valorPrevisto || 0);
+        if (restante <= 0.005) return null;
+
+        const status = typeof obterStatusParcelaDivida === 'function'
+            ? obterStatusParcelaDivida(parcela)
+            : 'futura';
+
+        return {
+            index: divida.id,
+            parcelaNumero: parcela.numero,
+            nome: `${divida.nome || 'Dívida'} · ${parcela.numero}/${divida.parcelas || 1}`,
+            valor: restante,
+            banco: divida.credor || '',
+            categoria: 'Vencimento de dívida',
+            data,
+            dia: data.getDate(),
+            tipo: 'vencimento-divida',
+            status
+        };
+    })).filter(Boolean);
+}
+
 function obterItensDoMesCalendario(mes, ano) {
     if (!salsiData) return [];
     const filtro = filtroCalendarioFinanceiro || 'todos';
@@ -1429,8 +1462,11 @@ function obterItensDoMesCalendario(mes, ano) {
     const gastos = filtro === 'entradas'
         ? []
         : obterGastosDoMesCalendario(mes, ano, filtro);
+    const vencimentos = filtro === 'todos' || filtro === 'vencimentos'
+        ? obterVencimentosDividasDoMesCalendario(mes, ano)
+        : [];
 
-    return [...gastos, ...entradas].sort((itemA, itemB) => {
+    return [...gastos, ...entradas, ...vencimentos].sort((itemA, itemB) => {
         const dataDiff = itemA.data - itemB.data;
         if (dataDiff !== 0) return dataDiff;
         return String(itemA.nome || '').localeCompare(String(itemB.nome || ''), 'pt-BR');
@@ -1485,6 +1521,12 @@ function obterMetaFiltroCalendario() {
             total: 'Total de entradas',
             mais: 'entrada',
             vazio: 'Nenhuma entrada neste dia.'
+        },
+        vencimentos: {
+            titulo: 'Vencimentos',
+            total: 'Total a vencer',
+            mais: 'vencimento',
+            vazio: 'Nenhuma dívida vence neste dia.'
         }
     };
 
@@ -1492,7 +1534,7 @@ function obterMetaFiltroCalendario() {
 }
 
 function selecionarFiltroCalendario(filtro) {
-    const filtrosValidos = ['todos', 'gastos', 'terceiros', 'entradas'];
+    const filtrosValidos = ['todos', 'gastos', 'terceiros', 'entradas', 'vencimentos'];
     filtroCalendarioFinanceiro = filtrosValidos.includes(filtro) ? filtro : 'todos';
     calendarioTodosDiasAbertos = false;
 
@@ -1523,6 +1565,12 @@ function alternarTodosDiasCalendario() {
 }
 
 function abrirItemCalendario(itemTipo, index) {
+    if (itemTipo === 'vencimento-divida') {
+        if (typeof irParaVisualizacoes === 'function') irParaVisualizacoes('dividas');
+        if (typeof abrirDividaPeloParcelado === 'function') abrirDividaPeloParcelado(index);
+        return;
+    }
+
     if (itemTipo === 'entrada') {
         if (typeof verDetalhesEntrada === 'function') verDetalhesEntrada(index);
         return;
@@ -1587,10 +1635,13 @@ function renderizarCalendarioFinanceiro(mes, ano) {
     for (let dia = 1; dia <= totalDias; dia++) {
         const itens = itensPorDia[dia] || [];
         const totalGastosDia = itens
-            .filter(item => item.tipo !== 'entrada' && item.tipo !== 'terceiro')
+            .filter(item => item.tipo !== 'entrada' && item.tipo !== 'terceiro' && item.tipo !== 'vencimento-divida')
             .reduce((acc, item) => acc + item.valor, 0);
         const totalEntradasDia = itens
             .filter(item => item.tipo === 'entrada')
+            .reduce((acc, item) => acc + item.valor, 0);
+        const totalDividasDia = itens
+            .filter(item => item.tipo === 'vencimento-divida')
             .reduce((acc, item) => acc + item.valor, 0);
         const isToday = isMesAtual && hoje.getDate() === dia;
 
@@ -1605,19 +1656,20 @@ html += `
     >
         <div class="calendar-day-header">
             <span class="calendar-day-number">${dia}</span>
-            ${(totalGastosDia > 0 || totalEntradasDia > 0) ? `
+            ${(totalGastosDia > 0 || totalEntradasDia > 0 || totalDividasDia > 0) ? `
                 <span class="calendar-day-totals">
                     ${totalGastosDia > 0 ? `<span class="calendar-day-total calendar-day-total-expense">${formatarMoedaCalendario(totalGastosDia)}</span>` : ''}
                     ${totalEntradasDia > 0 ? `<span class="calendar-day-total calendar-day-total-income">${formatarMoedaCalendario(totalEntradasDia)}</span>` : ''}
+                    ${totalDividasDia > 0 ? `<span class="calendar-day-total calendar-day-total-debt">${formatarMoedaCalendario(totalDividasDia)}</span>` : ''}
                 </span>
             ` : ''}
         </div>
 
         <div class="calendar-items">
             ${itens.map((item, itemIndex) => `
-                <div 
-                    class="calendar-item calendar-item-${item.tipo} ${itemIndex >= 3 ? 'calendar-item-extra' : ''}" 
-                    onclick="event.stopPropagation(); abrirItemCalendario('${item.tipo}', ${item.index})" 
+                <div
+                    class="calendar-item calendar-item-${item.tipo} ${item.status ? `is-${item.status}` : ''} ${itemIndex >= 3 ? 'calendar-item-extra' : ''}"
+                    onclick="event.stopPropagation(); abrirItemCalendario('${item.tipo}', ${item.tipo === 'vencimento-divida' ? `'${item.index}'` : item.index})"
                     title="${item.nome}"
                 >
                     <span class="calendar-item-name">${item.nome}</span>

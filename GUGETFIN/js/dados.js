@@ -18,5 +18,9 @@ const bancoInicial = {
   },
   "entradas": [],
   "transacoes": [],
-  "metas": []
+  "dividasManuais": [],
+  "metas": [],
+  "caixinha": [],
+  "caixinhas": [],
+  "desejos": []
 };

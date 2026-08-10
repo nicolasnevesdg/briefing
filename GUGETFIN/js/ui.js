@@ -688,7 +688,7 @@ async function limparTudo() {
                     { nome: "Cadastre seus cartões!", fechamento: 10, vencimento: 20 }
                 ]
             },
-            entradas: [], transacoes: [], metas: []
+            entradas: [], transacoes: [], metas: [], caixinha: [], caixinhas: [], desejos: []
         };
         
         // Manda o esqueleto vazio pra nuvem
@@ -1212,6 +1212,7 @@ function analisarParceladosVisual(parcelados) {
             valor: 0,
             valorProprio: 0,
             valorTerceiros: 0,
+            valorDividas: 0,
             ativos: 0,
             finalizam: [],
             alivioProximoMes: 0
@@ -1219,6 +1220,36 @@ function analisarParceladosVisual(parcelados) {
     });
 
     parcelados.forEach(item => {
+        if (item.origemDividaManual) {
+            const parcelasAbertas = (item.divida?.agenda || []).filter(parcela => obterRestanteParcelaDivida(parcela) > 0.005);
+            const ultimaParcela = parcelasAbertas[parcelasAbertas.length - 1] || null;
+            const finalizaEm = ultimaParcela
+                ? new Date(`${ultimaParcela.vencimento}T12:00:00`)
+                : adicionarMesVisual(item.inicio, item.total - 1);
+            const aliviaEm = adicionarMesVisual(finalizaEm, 1);
+            item.finalizaEm = finalizaEm;
+            item.aliviaEm = aliviaEm;
+
+            meses.forEach(mes => {
+                const parcelasDoMes = parcelasAbertas.filter(parcela => {
+                    const vencimento = new Date(`${parcela.vencimento}T12:00:00`);
+                    return vencimento.getMonth() === mes.data.getMonth() && vencimento.getFullYear() === mes.data.getFullYear();
+                });
+                const valorMes = parcelasDoMes.reduce((total, parcela) => total + obterRestanteParcelaDivida(parcela), 0);
+                if (valorMes > 0) {
+                    mes.valor += valorMes;
+                    mes.valorDividas += valorMes;
+                    mes.ativos += 1;
+                }
+
+                if (ultimaParcela && chaveMesVisual(finalizaEm) === mes.chave && !item.finalizado) {
+                    mes.finalizam.push(item);
+                    mes.alivioProximoMes += obterRestanteParcelaDivida(ultimaParcela);
+                }
+            });
+            return;
+        }
+
         const valorParcela = obterValorParcelaVisual(item.t, item.total);
         const finalizaEm = adicionarMesVisual(item.inicio, item.total - 1);
         const aliviaEm = adicionarMesVisual(item.inicio, item.total);
@@ -1262,7 +1293,9 @@ function analisarParceladosVisual(parcelados) {
         proximoAlivio,
         mesMaisLeve,
         maiorValor,
-        totalAberto: parcelados.reduce((total, item) => total + Math.max(0, item.faltam) * obterValorParcelaVisual(item.t, item.total), 0),
+        totalAberto: parcelados.reduce((total, item) => total + (item.origemDividaManual
+            ? Number(item.valorRestante || 0)
+            : Math.max(0, item.faltam) * obterValorParcelaVisual(item.t, item.total)), 0),
         totalAbertoTerceiros: parcelados.reduce((total, item) => item.t.eDeTerceiro
             ? total + Math.max(0, item.faltam) * obterValorParcelaVisual(item.t, item.total)
             : total, 0)
@@ -1307,9 +1340,14 @@ function renderizarResumoParceladosVisual(parcelados) {
                 <small>${atual?.ativos || 0} parcelamento${(atual?.ativos || 0) === 1 ? '' : 's'} ativo${(atual?.ativos || 0) === 1 ? '' : 's'}</small>
             </div>
             <div class="parcelados-radar-card">
-                <span>Seu gasto real</span>
+                <span>Suas compras</span>
                 <strong>${moedaVisual(atual?.valorProprio || 0)}</strong>
                 <small>${atual?.valorTerceiros ? `${moedaVisual(atual.valorTerceiros)} são de terceiros` : 'Sem parcelas de terceiros neste mês'}</small>
+            </div>
+            <div class="parcelados-radar-card is-debt">
+                <span>Parcelas de dívidas</span>
+                <strong>${moedaVisual(atual?.valorDividas || 0)}</strong>
+                <small>${atual?.valorDividas ? 'Obrigações suas em cartões ou contas de outras pessoas' : 'Sem dívidas parceladas neste mês'}</small>
             </div>
             <div class="parcelados-radar-card">
                 <span>Próximo alívio</span>
@@ -1341,6 +1379,7 @@ function renderizarResumoParceladosVisual(parcelados) {
                 <div class="parcelados-chart-legend">
                     <span><i class="own"></i> Seus parcelados</span>
                     <span><i class="third"></i> Terceiros</span>
+                    <span><i class="debt"></i> Dívidas</span>
                     <span><i class="relief"></i> Finalizações</span>
                 </div>
             </div>
@@ -1354,13 +1393,15 @@ function renderizarResumoParceladosVisual(parcelados) {
                     ${analise.meses.slice(0, 8).map(mes => {
                         const altura = mes.valor > 0 ? Math.max(10, Math.round((mes.valor / analise.maiorValor) * 100)) : 2;
                         const proprioPct = mes.valor > 0 ? Math.max(0, Math.round((mes.valorProprio / mes.valor) * 100)) : 0;
-                        const terceiroPct = mes.valor > 0 ? Math.max(0, 100 - proprioPct) : 0;
+                        const terceiroPct = mes.valor > 0 ? Math.max(0, Math.round((mes.valorTerceiros / mes.valor) * 100)) : 0;
+                        const dividaPct = mes.valor > 0 ? Math.max(0, 100 - proprioPct - terceiroPct) : 0;
                         const alivia = mes.finalizam.length > 0;
                         return `
                             <div class="parcelados-chart-month ${alivia ? 'has-relief' : ''}">
                                 <div class="parcelados-chart-column">
                                     <div class="parcelados-chart-bar" style="height:${altura}%">
                                         ${terceiroPct ? `<span class="third" style="height:${terceiroPct}%"></span>` : ''}
+                                        ${dividaPct ? `<span class="debt" style="height:${dividaPct}%"></span>` : ''}
                                         ${proprioPct ? `<span class="own" style="height:${proprioPct}%"></span>` : ''}
                                     </div>
                                 </div>
@@ -2036,11 +2077,53 @@ function renderizarVisualParcelados() {
     const lista = document.getElementById('visual-lista-parcelados');
     if (!lista) return;
 
-    const parcelados = (salsiData.transacoes || [])
+    const parceladosGastos = (salsiData.transacoes || [])
         .filter(t => Number(t.parcelas || 1) > 1)
         .map(t => {
             return { t, ...calcularParcelasPorMesVisual(t) };
-        })
+        });
+
+    const mesBase = obterMesVisualizacao();
+    const parceladosDividas = (typeof garantirEstruturaDividasManuais === 'function'
+        ? garantirEstruturaDividasManuais()
+        : [])
+        .filter(divida => Number(divida.parcelas || 1) > 1)
+        .map(divida => {
+            const agenda = divida.agenda || [];
+            const abertas = agenda.filter(parcela => obterRestanteParcelaDivida(parcela) > 0.005);
+            const proxima = abertas[0] || null;
+            const inicio = new Date(`${divida.primeiroVencimento}T12:00:00`);
+            const diffMeses = (mesBase.getFullYear() - inicio.getFullYear()) * 12 + (mesBase.getMonth() - inicio.getMonth());
+            const valorRestante = abertas.reduce((total, parcela) => total + obterRestanteParcelaDivida(parcela), 0);
+            const totalPago = typeof obterPagoDividaManual === 'function' ? obterPagoDividaManual(divida) : 0;
+            const total = Math.max(1, Number(divida.parcelas || 1));
+
+            return {
+                t: {
+                    nome: divida.nome,
+                    parcelas: total,
+                    valorParcela: Number(divida.valorParcela || 0),
+                    valorTotal: Number(divida.valorTotal || 0),
+                    dataCompra: divida.primeiroVencimento,
+                    banco: `Dívida · ${divida.credor || 'Credor'}`,
+                    origemDividaManual: true,
+                    dividaManualId: divida.id
+                },
+                divida,
+                origemDividaManual: true,
+                total,
+                inicio,
+                mesBase,
+                diffMeses,
+                parcelaAtual: proxima ? proxima.numero : total,
+                faltam: abertas.length,
+                finalizado: abertas.length === 0,
+                progresso: divida.valorTotal > 0 ? Math.min(100, Math.round((totalPago / divida.valorTotal) * 100)) : 0,
+                valorRestante
+            };
+        });
+
+    const parcelados = [...parceladosGastos, ...parceladosDividas]
         .sort((a, b) => {
             if (a.finalizado !== b.finalizado) return a.finalizado ? 1 : -1;
             if (a.faltam !== b.faltam) return a.faltam - b.faltam;
@@ -2050,6 +2133,45 @@ function renderizarVisualParcelados() {
     renderizarResumoParceladosVisual(parcelados);
 
     lista.innerHTML = parcelados.length ? parcelados.map(item => {
+        if (item.origemDividaManual) {
+            const divida = item.divida;
+            const proxima = obterProximaParcelaDivida(divida);
+            const finalizado = item.finalizado;
+            const finalizaEm = item.finalizaEm || adicionarMesVisual(item.inicio, item.total - 1);
+            const aliviaEm = item.aliviaEm || adicionarMesVisual(finalizaEm, 1);
+            const valorMensal = proxima ? obterRestanteParcelaDivida(proxima) : 0;
+            const textoFinalizacao = finalizado ? 'Dívida quitada' : `Termina em ${labelMesVisual(finalizaEm, 'long')}`;
+            const textoAlivio = finalizado
+                ? 'Este compromisso já saiu da previsão'
+                : `Libera até ${moedaVisual(valorMensal)}/mês a partir de ${labelMesVisual(aliviaEm, 'long')}`;
+
+            return `
+                <div class="visual-card parcelado-card is-debt-installment">
+                    <div class="visual-card-main">
+                        <span class="visual-item-kicker">Dívida parcelada · Para ${escaparHtmlCarteira(divida.credor || 'Credor')}</span>
+                        <div class="visual-card-title">
+                            <span>${escaparHtmlCarteira(divida.nome || 'Dívida parcelada')}</span>
+                            <small class="visual-badge debt">Dívida</small>
+                            <small class="visual-badge ${finalizado ? '' : 'warn'}">${finalizado ? 'Quitada' : `${item.faltam} restante${item.faltam === 1 ? '' : 's'}`}</small>
+                        </div>
+                        <div class="visual-card-meta parcelado-meta-grid">
+                            <span class="parcelado-meta-chip"><small>Parcela</small><strong>${proxima ? `${proxima.numero}/${item.total}` : `${item.total}/${item.total}`}</strong></span>
+                            <span class="parcelado-meta-chip"><small>Próximo valor</small><strong>${moedaVisual(valorMensal)}</strong></span>
+                            <span class="parcelado-meta-chip"><small>Vencimento</small><strong>${proxima ? dataVisual(proxima.vencimento) : 'Quitada'}</strong></span>
+                            <span class="parcelado-meta-chip"><small>Finalização</small><strong>${textoFinalizacao}</strong></span>
+                            <span class="parcelado-meta-chip"><small>Alívio</small><strong>${textoAlivio}</strong></span>
+                        </div>
+                    </div>
+                    <div class="visual-card-value">
+                        <span class="parcelado-value-label">Ainda falta</span>
+                        <strong>${moedaVisual(item.valorRestante)}</strong>
+                        <div class="visual-progress" title="${item.progresso}% quitado"><span style="width:${item.progresso}%"></span></div>
+                        <button type="button" class="visual-mini-btn" onclick="abrirDividaPeloParcelado('${divida.id}')">Ver dívida</button>
+                    </div>
+                </div>
+            `;
+        }
+
         const { t, parcelaAtual, faltam, total, finalizado, progresso, finalizaEm, aliviaEm } = item;
         const idx = salsiData.transacoes.indexOf(t);
         const valorParcela = obterValorParcelaVisual(t, total);
@@ -2095,7 +2217,7 @@ function renderizarVisualParcelados() {
                 </div>
             </div>
         `;
-    }).join('') : '<div class="visual-empty">Nenhum gasto parcelado cadastrado ainda.</div>';
+    }).join('') : '<div class="visual-empty">Nenhum compromisso parcelado cadastrado ainda.</div>';
 }
 
 function renderizarVisualCaixinha() {

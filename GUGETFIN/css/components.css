@@ -7,6 +7,643 @@
     text-align: center;
     border: 1px solid var(--border);
 }
+
+/* ========================================================= */
+/* CAIXINHAS MULTIPLAS E PLANOS                               */
+/* ========================================================= */
+
+.caixinhas-section-head,
+.plans-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.caixinhas-section-head {
+    margin: 30px 0 14px;
+}
+
+.caixinhas-section-head.is-history {
+    margin-top: 36px;
+}
+
+.caixinhas-section-head span,
+.plans-section-head span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--acc-green);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+}
+
+.caixinhas-section-head strong,
+.plans-section-head strong {
+    display: block;
+    color: var(--text-main);
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.caixinhas-grid,
+.plans-caixinhas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+}
+
+.caixinha-account-card,
+.plan-caixinha-card {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--sidebar-bg);
+    box-sizing: border-box;
+}
+
+.caixinha-account-card.is-general {
+    background: linear-gradient(145deg, rgba(0, 181, 105, .12), rgba(0, 181, 105, .035));
+    border-color: rgba(0, 181, 105, .28);
+}
+
+.caixinha-account-top,
+.plan-caixinha-head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.caixinha-account-icon,
+.plan-caixinha-head > span {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    color: var(--dark-green);
+    background: rgba(0, 181, 105, .12);
+}
+
+.caixinha-account-top div,
+.plan-caixinha-head div {
+    min-width: 0;
+}
+
+.caixinha-account-top small,
+.plan-caixinha-head small {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--text-sec);
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.caixinha-account-top strong,
+.plan-caixinha-head strong {
+    display: block;
+    overflow: hidden;
+    color: var(--text-main);
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.caixinha-account-value {
+    margin: 21px 0 16px;
+}
+
+.caixinha-account-value span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.caixinha-account-value strong,
+.plan-caixinha-value {
+    display: block;
+    color: var(--text-main);
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -.035em;
+}
+
+.caixinha-goal > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.caixinha-goal-track,
+.plan-caixinha-progress {
+    height: 7px;
+    margin: 8px 0;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(127, 142, 135, .16);
+}
+
+.caixinha-goal-track span,
+.plan-caixinha-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--dark-green), var(--acc-green));
+}
+
+.caixinha-goal > small,
+.caixinha-account-desc,
+.plan-caixinha-card > small {
+    color: var(--text-sec);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.caixinha-account-desc {
+    min-height: 29px;
+    margin: 0;
+}
+
+.caixinha-account-actions,
+.plan-caixinha-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 17px;
+}
+
+.caixinha-account-actions button,
+.plan-caixinha-actions button,
+.plans-section-head button,
+.plans-empty button,
+.plans-wishes-list button,
+.legacy-goals button,
+.wish-plan-row button {
+    min-height: 31px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: var(--dark-green);
+    background: transparent;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.caixinha-account-actions button:first-child,
+.plans-empty button {
+    border-color: transparent;
+    color: #fff;
+    background: var(--dark-green);
+}
+
+.caixinha-account-actions button.danger,
+.plan-caixinha-actions button.danger,
+.wish-plan-row button.danger {
+    color: var(--acc-red);
+}
+
+.caixinha-history-card .visual-card-value > strong:empty::after {
+    content: "Interna";
+    color: var(--text-sec);
+    font-size: 11px;
+}
+
+#card-metas-acordeon.expanded .chart-content-wrapper {
+    max-height: 10000px;
+}
+
+.plans-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.plans-summary > div {
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: rgba(0, 181, 105, .055);
+}
+
+.plans-summary span,
+.plans-summary strong {
+    display: block;
+}
+
+.plans-summary span {
+    min-height: 25px;
+    color: var(--text-sec);
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.plans-summary strong {
+    margin-top: 4px;
+    color: var(--text-main);
+    font-size: 17px;
+}
+
+.plan-caixinha-card {
+    padding: 15px;
+}
+
+.plan-caixinha-value {
+    margin: 18px 0 10px;
+    font-size: 19px;
+}
+
+.plan-caixinha-actions button {
+    flex: 1 1 auto;
+    padding-inline: 8px;
+}
+
+.plans-empty {
+    padding: 28px 20px;
+    border: 1px dashed rgba(0, 181, 105, .32);
+    border-radius: 16px;
+    text-align: center;
+    background: rgba(0, 181, 105, .035);
+}
+
+.plans-empty > i {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--acc-green);
+    font-size: 25px;
+}
+
+.plans-empty strong {
+    display: block;
+    color: var(--text-main);
+    font-size: 14px;
+}
+
+.plans-empty p,
+.plans-wishes-empty {
+    margin: 7px auto 14px;
+    color: var(--text-sec);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.plans-wishes,
+.legacy-goals {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+
+.plans-wishes-list,
+.legacy-goals {
+    display: grid;
+    gap: 8px;
+}
+
+.plans-wishes-list {
+    margin-top: 12px;
+}
+
+.plans-wishes-list > div,
+.legacy-goals > div:not(.plans-section-head),
+.wish-plan-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(127, 142, 135, .045);
+}
+
+.plans-wishes-list span,
+.legacy-goals span,
+.wish-plan-row > div:first-child {
+    min-width: 0;
+}
+
+.plans-wishes-list strong,
+.plans-wishes-list small,
+.legacy-goals strong,
+.legacy-goals small,
+.wish-plan-row strong,
+.wish-plan-row span,
+.wish-plan-row small {
+    display: block;
+}
+
+.plans-wishes-list strong,
+.legacy-goals strong,
+.wish-plan-row strong {
+    color: var(--text-main);
+    font-size: 11px;
+}
+
+.plans-wishes-list small,
+.legacy-goals small,
+.wish-plan-row span,
+.wish-plan-row small {
+    margin-top: 3px;
+    color: var(--text-sec);
+    font-size: 9px;
+}
+
+.wish-plan-row > div:last-child {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 6px;
+}
+
+.plans-dashboard-preview {
+    display: grid;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.plans-dashboard-item {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(127, 142, 135, .04);
+}
+
+.plans-dashboard-icon {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    color: var(--dark-green);
+    background: rgba(0, 181, 105, .1);
+}
+
+.plans-dashboard-item div {
+    min-width: 0;
+}
+
+.plans-dashboard-item small,
+.plans-dashboard-item strong {
+    display: block;
+}
+
+.plans-dashboard-item small {
+    margin-bottom: 2px;
+    color: var(--text-sec);
+    font-size: 9px;
+}
+
+.plans-dashboard-item strong {
+    overflow: hidden;
+    color: var(--text-main);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.plans-dashboard-item b {
+    color: var(--text-main);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.plans-dashboard-more {
+    display: block;
+    padding: 2px 4px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.plans-dashboard-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 15px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+}
+
+.plans-dashboard-footer span {
+    color: var(--text-sec);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+.plans-dashboard-footer button,
+.caixinha-detail-item-actions button,
+.caixinha-detail-empty button {
+    min-height: 32px;
+    padding: 7px 11px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: var(--dark-green);
+    background: transparent;
+    font-size: 10px;
+    font-weight: 850;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.plans-dashboard-footer button {
+    border-color: transparent;
+    color: #fff;
+    background: var(--dark-green);
+}
+
+.caixinha-detail-plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-top: 34px;
+}
+
+.caixinha-detail-section {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--sidebar-bg);
+}
+
+.caixinha-detail-section .caixinhas-section-head {
+    margin: 0;
+}
+
+.caixinha-detail-intro {
+    margin: 8px 0 15px;
+    color: var(--text-sec);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.caixinha-detail-list {
+    display: grid;
+    gap: 9px;
+}
+
+.caixinha-detail-item {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 11px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: rgba(127, 142, 135, .035);
+}
+
+.caixinha-detail-item-icon {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    color: var(--dark-green);
+    background: rgba(0, 181, 105, .1);
+}
+
+.caixinha-detail-item-icon.is-legacy {
+    color: #8a6b16;
+    background: rgba(218, 172, 42, .12);
+}
+
+.caixinha-detail-item-copy {
+    min-width: 0;
+}
+
+.caixinha-detail-item-copy small,
+.caixinha-detail-item-copy strong,
+.caixinha-detail-item-copy span {
+    display: block;
+}
+
+.caixinha-detail-item-copy small {
+    margin-bottom: 3px;
+    color: var(--acc-green);
+    font-size: 8px;
+    font-weight: 850;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.caixinha-detail-item-copy strong {
+    overflow: hidden;
+    color: var(--text-main);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.caixinha-detail-item-copy span {
+    margin-top: 3px;
+    color: var(--text-sec);
+    font-size: 9px;
+}
+
+.caixinha-detail-item-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.caixinha-detail-item-actions button.danger {
+    color: var(--acc-red);
+}
+
+.caixinha-detail-empty {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px;
+    border: 1px dashed rgba(0, 181, 105, .26);
+    border-radius: 12px;
+    color: var(--text-sec);
+    font-size: 11px;
+}
+
+@media (max-width: 720px) {
+    .caixinhas-grid,
+    .plans-caixinhas-grid,
+    .plans-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .plans-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .plans-summary > div {
+        padding: 10px;
+    }
+
+    .plans-summary strong {
+        font-size: 14px;
+    }
+
+    .plans-section-head,
+    .plans-wishes-list > div,
+    .legacy-goals > div:not(.plans-section-head),
+    .wish-plan-row {
+        align-items: flex-start;
+    }
+
+    .plans-wishes-list > div,
+    .legacy-goals > div:not(.plans-section-head) {
+        flex-direction: column;
+    }
+
+    .plans-dashboard-footer,
+    .caixinha-detail-empty {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .plans-dashboard-footer button {
+        width: 100%;
+    }
+
+    .caixinha-detail-plans {
+        grid-template-columns: 1fr;
+    }
+
+    .caixinha-detail-item {
+        grid-template-columns: 36px minmax(0, 1fr);
+    }
+
+    .caixinha-detail-item-actions {
+        grid-column: 1 / -1;
+        justify-content: stretch;
+    }
+
+    .caixinha-detail-item-actions button {
+        flex: 1 1 auto;
+    }
+}
 .mascot-emoji { font-size: 40px; margin-bottom: 8px; transition: transform 0.3s ease; }
 .mascot-text { font-size: 11.5px; font-weight: 600; color: var(--dark-green); font-style: italic; margin: 0; line-height: 1.4; }
 
@@ -1884,6 +2521,254 @@ body.valores-ocultos canvas {
 }
 
 /* ========================================================= */
+/* DASHBOARD - COMPROMISSOS E RESERVAS                       */
+/* ========================================================= */
+
+.dashboard-commitments {
+    margin: 22px 0 26px;
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--sidebar-bg);
+}
+
+.dashboard-commitments-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+.dashboard-commitments-kicker {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--dark-green);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.dashboard-commitments-head h2 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 21px;
+    line-height: 1.1;
+    font-weight: 950;
+    letter-spacing: -0.035em;
+}
+
+.dashboard-commitments-head p {
+    margin: 7px 0 0;
+    color: var(--text-sec);
+    font-size: 11px;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.dashboard-commitments-all {
+    min-height: 38px;
+    flex: 0 0 auto;
+    padding: 0 13px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-app);
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 850;
+    cursor: pointer;
+}
+
+.dashboard-commitments-all:hover {
+    border-color: rgba(108, 192, 128, 0.38);
+    color: var(--dark-green);
+}
+
+.dashboard-commitments-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.dashboard-commitment-card {
+    min-width: 0;
+    min-height: 154px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: var(--bg-app);
+    color: var(--text-main);
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    grid-template-rows: 1fr auto;
+    gap: 12px 10px;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.dashboard-commitment-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(108, 192, 128, 0.34);
+    box-shadow: 0 10px 24px rgba(16, 52, 43, 0.07);
+}
+
+.dashboard-commitment-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+}
+
+.dashboard-commitment-card.is-debt .dashboard-commitment-icon {
+    background: rgba(245, 158, 11, 0.13);
+    color: #b45309;
+}
+
+.dashboard-commitment-card.is-installments .dashboard-commitment-icon {
+    background: rgba(108, 192, 128, 0.14);
+    color: var(--dark-green);
+}
+
+.dashboard-commitment-card.is-third-party .dashboard-commitment-icon {
+    background: rgba(96, 165, 250, 0.14);
+    color: var(--terceiros);
+}
+
+.dashboard-commitment-card.is-savings .dashboard-commitment-icon {
+    background: rgba(16, 185, 129, 0.13);
+    color: #059669;
+}
+
+.dashboard-commitment-card.is-debt.has-alert {
+    border-color: rgba(239, 68, 68, 0.34);
+    background: rgba(239, 68, 68, 0.035);
+}
+
+.dashboard-commitment-card.is-debt.has-alert .dashboard-commitment-icon {
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+}
+
+.dashboard-commitment-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.dashboard-commitment-copy small {
+    margin-bottom: 7px;
+    color: var(--text-sec);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.dashboard-commitment-copy strong {
+    max-width: 100%;
+    color: var(--text-main);
+    font-size: 19px;
+    line-height: 1.08;
+    font-weight: 950;
+    letter-spacing: -0.035em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dashboard-commitment-copy > span {
+    margin-top: 7px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.dashboard-commitment-link {
+    grid-column: 1 / -1;
+    padding-top: 10px;
+    border-top: 1px solid rgba(127,127,127,0.11);
+    color: var(--dark-green);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-commitments {
+        margin: 16px 0 20px;
+        padding: 17px 14px;
+        border-radius: 18px;
+    }
+
+    .dashboard-commitments-head {
+        display: grid;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .dashboard-commitments-head h2 {
+        font-size: 19px;
+    }
+
+    .dashboard-commitments-head p {
+        font-size: 10px;
+    }
+
+    .dashboard-commitments-all {
+        width: fit-content;
+        min-height: 34px;
+        padding: 0 11px;
+    }
+
+    .dashboard-commitments-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .dashboard-commitment-card {
+        min-height: 164px;
+        padding: 13px;
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 10px 8px;
+    }
+
+    .dashboard-commitment-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 11px;
+        font-size: 14px;
+    }
+
+    .dashboard-commitment-copy strong {
+        font-size: 17px;
+    }
+
+    .dashboard-commitment-copy > span {
+        font-size: 9px;
+    }
+
+    .dashboard-commitment-link {
+        font-size: 8px;
+    }
+}
+
+/* ========================================================= */
 /* VISUALIZACOES - TERCEIROS, PARCELADOS E CAIXINHA          */
 /* ========================================================= */
 
@@ -2275,6 +3160,102 @@ body.valores-ocultos canvas {
     background: var(--dark-green);
 }
 
+.dividas-overview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.dividas-radar-card {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-app);
+}
+
+.dividas-radar-card.is-primary {
+    border-color: transparent;
+    background: var(--dark-green);
+}
+
+.dividas-radar-card.has-danger {
+    border-color: rgba(239, 68, 68, 0.28);
+    background: rgba(239, 68, 68, 0.06);
+}
+
+.dividas-radar-card > span,
+.dividas-radar-card > small {
+    display: block;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.dividas-radar-card > span {
+    margin-bottom: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.dividas-radar-card > strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-main);
+    font-size: 22px;
+    font-weight: 950;
+}
+
+.dividas-radar-card.is-primary > span,
+.dividas-radar-card.is-primary > small {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.dividas-radar-card.is-primary > strong {
+    color: #ffffff;
+}
+
+.visual-section-label.is-danger {
+    color: #dc2626;
+}
+
+.divida-manual-card {
+    border-left: 4px solid #f59e0b;
+}
+
+.divida-manual-card.is-overdue {
+    border-color: rgba(239, 68, 68, 0.5);
+    border-left-color: #ef4444;
+}
+
+.divida-recebida-card {
+    border-left: 4px solid #60a5fa;
+}
+
+.divida-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 12px;
+}
+
+.divida-card-note {
+    margin: 10px 0 0;
+    color: var(--text-sec);
+    font-size: 11px;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.visual-badge.debt {
+    background: rgba(245, 158, 11, 0.13);
+    color: #b45309;
+}
+
+.parcelado-card.is-debt-installment {
+    border-left: 4px solid #f59e0b;
+}
+
 .parcelados-overview {
     display: grid;
     gap: 22px;
@@ -2283,7 +3264,7 @@ body.valores-ocultos canvas {
 
 .parcelados-radar {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
 }
 
@@ -2303,6 +3284,11 @@ body.valores-ocultos canvas {
     background: var(--dark-green);
     border-color: var(--dark-green);
     color: #ffffff;
+}
+
+.parcelados-radar-card.is-debt {
+    border-color: rgba(245, 158, 11, 0.28);
+    background: rgba(245, 158, 11, 0.06);
 }
 
 .parcelados-radar-card span {
@@ -2444,6 +3430,10 @@ body.valores-ocultos canvas {
     background: var(--terceiros);
 }
 
+.parcelados-chart-legend i.debt {
+    background: #f59e0b;
+}
+
 .parcelados-chart-legend i.relief {
     background: rgba(245, 158, 11, 0.9);
 }
@@ -2532,6 +3522,10 @@ body.valores-ocultos canvas {
 
 .parcelados-chart-bar span.third {
     background: var(--terceiros);
+}
+
+.parcelados-chart-bar span.debt {
+    background: #f59e0b;
 }
 
 .parcelados-chart-label {
@@ -3324,6 +4318,41 @@ body.valores-ocultos canvas {
 }
 
 @media (max-width: 1024px) {
+    .dividas-overview {
+        width: calc(100% + 24px);
+        margin: 0 -12px 26px;
+        padding: 0 12px 4px;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        box-sizing: border-box;
+    }
+
+    .dividas-overview::-webkit-scrollbar {
+        display: none;
+    }
+
+    .dividas-radar-card {
+        flex: 0 0 210px;
+        scroll-snap-align: start;
+    }
+
+    .divida-meta-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .divida-manual-card .visual-card-title,
+    .divida-recebida-card .visual-card-title {
+        flex-wrap: wrap;
+    }
+
+    .divida-manual-card .visual-card-title > span,
+    .divida-recebida-card .visual-card-title > span {
+        flex-basis: 100%;
+        white-space: normal;
+    }
+
     .parcelados-overview {
         margin: 0px 0 40px 0;
         gap: 20px;
