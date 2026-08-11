@@ -2012,3 +2012,78 @@ body.dark-theme .fatura-preview-alerta.is-info {
         font-size: 24px;
     }
 }
+
+/* ========================================================= */
+/* ROLAGEM E BLOQUEIO GLOBAL DOS POP-UPS                     */
+/* ========================================================= */
+
+body.modal-scroll-locked {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+}
+
+body.modal-scroll-locked > *:not(dialog) {
+    pointer-events: none !important;
+    user-select: none !important;
+}
+
+body.modal-scroll-locked dialog[open] {
+    pointer-events: auto !important;
+    user-select: auto !important;
+}
+
+body.modal-scroll-locked main,
+body.modal-scroll-locked .settings-view,
+body.modal-scroll-locked .visualizations-view {
+    overscroll-behavior: none !important;
+}
+
+dialog[open] {
+    overscroll-behavior: contain;
+}
+
+dialog[open]::backdrop {
+    touch-action: none;
+    overscroll-behavior: none;
+}
+
+@media (max-width: 1024px) {
+    body.modal-scroll-locked {
+        position: fixed !important;
+        right: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+    }
+
+    dialog[open] {
+        position: fixed !important;
+        inset: 0 !important;
+        max-width: calc(100vw - 20px);
+        max-height: calc(100dvh - 20px) !important;
+        margin: auto !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        box-sizing: border-box;
+        scrollbar-width: thin;
+    }
+
+    dialog[open] > .modal-content {
+        max-height: none !important;
+        box-sizing: border-box !important;
+    }
+
+    /* A carteira já possui uma área interna própria de rolagem. */
+    dialog#modal-cartoes[open] {
+        overflow: hidden !important;
+    }
+
+    dialog#modal-cartoes[open] > .modal-carteira-content {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+        -webkit-overflow-scrolling: touch;
+    }
+}
