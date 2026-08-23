@@ -3,6 +3,7 @@
 /* ========================================================= */
 
 const CAIXINHA_GERAL_ID = 'geral';
+const CATEGORIA_RESGATE_CAIXINHA = 'Resgate de caixinha';
 let sincronizacaoCaixinhasTimer = null;
 let sincronizacaoCaixinhasEmAndamento = false;
 let sincronizacaoCaixinhasPendente = false;
@@ -10,6 +11,85 @@ let salvandoConfigCaixinha = false;
 
 function gerarIdCaixinha(prefixo = 'cx') {
     return `${prefixo}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function entradaEhResgateCaixinha(entrada) {
+    return entrada?.tipoEntrada === 'resgate_caixinha'
+        || (entrada?.origemCaixinha === true && !!entrada?.movimentoCaixinhaId);
+}
+
+function obterEntradaResgatePorMovimento(movimento) {
+    if (!movimento || !Array.isArray(salsiData.entradas)) return null;
+    return salsiData.entradas.find(entrada => {
+        if (!entradaEhResgateCaixinha(entrada)) return false;
+        if (movimento.entradaVinculadaId && String(entrada.id) === String(movimento.entradaVinculadaId)) return true;
+        return String(entrada.movimentoCaixinhaId) === String(movimento.id);
+    }) || null;
+}
+
+function removerEntradaResgateVinculada(movimento) {
+    if (!movimento || !Array.isArray(salsiData.entradas)) return;
+    salsiData.entradas = salsiData.entradas.filter(entrada => {
+        if (!entradaEhResgateCaixinha(entrada)) return true;
+        if (movimento.entradaVinculadaId && String(entrada.id) === String(movimento.entradaVinculadaId)) return false;
+        return String(entrada.movimentoCaixinhaId) !== String(movimento.id);
+    });
+}
+
+function sincronizarEntradaResgateCaixinha(movimento) {
+    if (!movimento || movimento.tipo !== 'saida' || movimento.finalidadeSaida !== 'saldo') return null;
+    if (!Array.isArray(salsiData.entradas)) salsiData.entradas = [];
+
+    const caixinha = obterCaixinhaPorId(movimento.caixinhaId);
+    const data = movimento.data || new Date().toISOString().split('T')[0];
+    const partesData = data.split('-').map(Number);
+    const entradaExistente = obterEntradaResgatePorMovimento(movimento);
+    const idEntrada = entradaExistente?.id || movimento.entradaVinculadaId || gerarIdCaixinha('ent_resgate');
+    const entrada = {
+        ...(entradaExistente || {}),
+        id: idEntrada,
+        nome: `Resgate — ${caixinha.nome}`,
+        cliente: caixinha.nome,
+        categoria: CATEGORIA_RESGATE_CAIXINHA,
+        observacao: movimento.descricao || 'Valor resgatado da caixinha e devolvido ao saldo mensal.',
+        valor: Number(movimento.valor || 0),
+        mes: Math.max(0, Number(partesData[1] || 1) - 1),
+        ano: Number(partesData[0] || new Date().getFullYear()),
+        dataRecebimento: data,
+        projetoId: '',
+        valorTotalProjeto: Number(movimento.valor || 0),
+        parcelaAtual: 1,
+        totalParcelas: 1,
+        comprovanteUrl: movimento.comprovanteUrl || '',
+        origemCaixinha: true,
+        tipoEntrada: 'resgate_caixinha',
+        movimentoCaixinhaId: movimento.id,
+        caixinhaId: movimento.caixinhaId,
+        automatica: true
+    };
+
+    if (entradaExistente) {
+        salsiData.entradas[salsiData.entradas.indexOf(entradaExistente)] = entrada;
+    } else {
+        salsiData.entradas.push(entrada);
+    }
+
+    movimento.entradaVinculadaId = idEntrada;
+    return entrada;
+}
+
+function excluirResgateCaixinhaPorEntrada(entrada) {
+    if (!entradaEhResgateCaixinha(entrada)) return false;
+    const movimentoId = entrada.movimentoCaixinhaId;
+    const movimento = (salsiData.caixinha || []).find(item => String(item.id) === String(movimentoId));
+    if (movimento) removerEntradaResgateVinculada(movimento);
+    else salsiData.entradas = (salsiData.entradas || []).filter(item => item !== entrada);
+    salsiData.caixinha = (salsiData.caixinha || []).filter(item => String(item.id) !== String(movimentoId));
+    persistirCaixinhas();
+    if (typeof renderizar === 'function') renderizar();
+    if (typeof renderizarVisualizacoes === 'function') renderizarVisualizacoes();
+    if (typeof mostrarToast === 'function') mostrarToast('Entrada e retirada vinculadas foram apagadas.');
+    return true;
 }
 
 function agendarPersistenciaEstruturaCaixinhas() {
@@ -205,10 +285,15 @@ function renderizarVisualCaixinha() {
 
     lista.innerHTML = movimentos.length ? movimentos.map(movimento => {
         const transferencia = movimento.tipo === 'transferencia-saida';
+        const resgateParaSaldo = movimento.tipo === 'saida' && movimento.finalidadeSaida === 'saldo';
         const caixinha = obterCaixinhaPorId(movimento.caixinhaId);
         const destino = transferencia ? obterCaixinhaPorId(movimento.caixinhaDestinoId) : null;
         const entrada = movimentoSomaNaCaixinha(movimento);
-        const kicker = transferencia ? 'Transferência interna' : (entrada ? 'Valor guardado' : 'Retirada');
+        const kicker = transferencia
+            ? 'Transferência interna'
+            : (entrada
+                ? 'Valor guardado'
+                : (resgateParaSaldo ? 'Resgate para o saldo' : (movimento.finalidadeSaida === 'uso' ? 'Uso da reserva' : 'Retirada')));
         const badge = transferencia ? `${caixinha.nome} → ${destino?.nome || 'Outra caixinha'}` : caixinha.nome;
 
         return `
@@ -250,6 +335,10 @@ function abrirModalCaixinha(tipo = 'entrada', caixinhaId = CAIXINHA_GERAL_ID) {
 
     document.getElementById('caixinha-tipo').value = isSaida ? 'saida' : 'entrada';
     document.getElementById('caixinha-id').value = '';
+    const finalidadeField = document.getElementById('caixinha-finalidade-field');
+    const finalidadeSelect = document.getElementById('caixinha-finalidade-saida');
+    if (finalidadeField) finalidadeField.style.display = isSaida ? 'flex' : 'none';
+    if (finalidadeSelect) finalidadeSelect.value = 'saldo';
     preencherSelectCaixinhas('caixinha-destino', caixinha.id);
     document.getElementById('caixinha-destino').disabled = false;
     document.getElementById('caixinha-nome').value = '';
@@ -262,12 +351,33 @@ function abrirModalCaixinha(tipo = 'entrada', caixinhaId = CAIXINHA_GERAL_ID) {
     if (status) status.textContent = 'Nenhum comprovante anexado';
     document.getElementById('caixinha-modal-kicker').textContent = isSaida ? 'Resgatar reserva' : 'Guardar dinheiro';
     document.getElementById('caixinha-modal-title').textContent = isSaida ? `Retirar de ${caixinha.nome}` : `Adicionar a ${caixinha.nome}`;
-    document.getElementById('caixinha-modal-desc').textContent = isSaida
-        ? `Saldo disponível: ${moedaVisual(calcularSaldoCaixinha(caixinha.id))}. O resgate não cria um gasto.`
-        : 'O valor guardado reduz o dinheiro disponível do mês e aumenta o saldo desta caixinha.';
+    if (isSaida) atualizarFinalidadeRetiradaCaixinha();
+    else document.getElementById('caixinha-modal-desc').textContent = 'O valor guardado reduz o dinheiro disponível do mês e aumenta o saldo desta caixinha.';
     document.getElementById('btn-save-caixinha').textContent = isSaida ? 'Salvar retirada' : 'Guardar valor';
     modal.showModal();
     document.getElementById('caixinha-nome')?.focus();
+}
+
+function atualizarFinalidadeRetiradaCaixinha() {
+    const tipo = document.getElementById('caixinha-tipo')?.value;
+    if (tipo !== 'saida') {
+        const descricaoEntrada = document.getElementById('caixinha-modal-desc');
+        if (descricaoEntrada) descricaoEntrada.textContent = 'O valor guardado reduz o dinheiro disponível do mês e aumenta o saldo desta caixinha.';
+        return;
+    }
+
+    const finalidade = document.getElementById('caixinha-finalidade-saida')?.value === 'uso' ? 'uso' : 'saldo';
+    const caixinhaId = document.getElementById('caixinha-destino')?.value || CAIXINHA_GERAL_ID;
+    const descricao = document.getElementById('caixinha-modal-desc');
+    const ajuda = document.getElementById('caixinha-finalidade-ajuda');
+
+    if (finalidade === 'saldo') {
+        if (descricao) descricao.textContent = `Saldo disponível: ${moedaVisual(calcularSaldoCaixinha(caixinhaId))}. O valor voltará ao saldo do mês.`;
+        if (ajuda) ajuda.textContent = 'Cria uma entrada automática vinculada a esta retirada.';
+    } else {
+        if (descricao) descricao.textContent = `Saldo disponível: ${moedaVisual(calcularSaldoCaixinha(caixinhaId))}. O valor será usado sem voltar ao saldo mensal.`;
+        if (ajuda) ajuda.textContent = 'Registra somente a retirada, pois o dinheiro já havia sido separado.';
+    }
 }
 
 function editarMovimentoCaixinha(id) {
@@ -279,6 +389,14 @@ function editarMovimentoCaixinha(id) {
 
     document.getElementById('caixinha-id').value = movimento.id;
     document.getElementById('caixinha-tipo').value = movimento.tipo;
+    const finalidadeField = document.getElementById('caixinha-finalidade-field');
+    const finalidadeSelect = document.getElementById('caixinha-finalidade-saida');
+    if (finalidadeField) finalidadeField.style.display = isSaida ? 'flex' : 'none';
+    if (finalidadeSelect) {
+        finalidadeSelect.value = isSaida
+            ? (movimento.finalidadeSaida || (movimento.entradaVinculadaId ? 'saldo' : 'uso'))
+            : 'saldo';
+    }
     preencherSelectCaixinhas('caixinha-destino', movimento.caixinhaId || CAIXINHA_GERAL_ID);
     document.getElementById('caixinha-destino').disabled = false;
     document.getElementById('caixinha-nome').value = movimento.nome || '';
@@ -291,9 +409,8 @@ function editarMovimentoCaixinha(id) {
     if (status) status.textContent = movimento.comprovanteUrl ? 'Comprovante atual mantido' : 'Nenhum comprovante anexado';
     document.getElementById('caixinha-modal-kicker').textContent = 'Editar movimento';
     document.getElementById('caixinha-modal-title').textContent = isSaida ? 'Editar retirada' : 'Editar valor guardado';
-    document.getElementById('caixinha-modal-desc').textContent = isSaida
-        ? 'Ajuste a retirada ou a caixinha de origem.'
-        : 'Ajuste o registro e o gasto vinculado.';
+    if (isSaida) atualizarFinalidadeRetiradaCaixinha();
+    else document.getElementById('caixinha-modal-desc').textContent = 'Ajuste o registro e o gasto vinculado.';
     document.getElementById('btn-save-caixinha').textContent = 'Salvar alterações';
     modal.showModal();
 }
@@ -359,6 +476,9 @@ function salvarMovimentoCaixinhaAPartirDoGasto({ nome, valor, data, descricao = 
 async function salvarMovimentoCaixinha() {
     garantirEstruturaCaixinhas();
     const tipo = document.getElementById('caixinha-tipo')?.value === 'saida' ? 'saida' : 'entrada';
+    const finalidadeSaida = tipo === 'saida' && document.getElementById('caixinha-finalidade-saida')?.value === 'uso'
+        ? 'uso'
+        : (tipo === 'saida' ? 'saldo' : null);
     const idEdit = document.getElementById('caixinha-id')?.value || '';
     const indexEdit = salsiData.caixinha.findIndex(item => String(item.id) === String(idEdit));
     const anterior = indexEdit >= 0 ? salsiData.caixinha[indexEdit] : null;
@@ -392,16 +512,29 @@ async function salvarMovimentoCaixinha() {
         const movimento = {
             id,
             tipo,
+            finalidadeSaida,
             caixinhaId,
             nome,
             valor,
             data,
             descricao,
             comprovanteUrl,
-            criadoEm: anterior?.criadoEm || id
+            criadoEm: anterior?.criadoEm || id,
+            entradaVinculadaId: anterior?.entradaVinculadaId || null
         };
+
+        if (anterior && !(tipo === 'saida' && finalidadeSaida === 'saldo')) {
+            removerEntradaResgateVinculada(anterior);
+            movimento.entradaVinculadaId = null;
+        }
+
         if (indexEdit >= 0) salsiData.caixinha[indexEdit] = movimento;
         else salsiData.caixinha.push(movimento);
+
+        if (tipo === 'saida' && finalidadeSaida === 'saldo') {
+            sincronizarEntradaResgateCaixinha(movimento);
+        }
+
         sincronizarTransacaoMovimentoCaixinha(movimento);
         await persistirCaixinhas();
         document.getElementById('modal-caixinha')?.close();
@@ -419,7 +552,11 @@ async function salvarMovimentoCaixinha() {
 async function excluirMovimentoCaixinha(id) {
     garantirEstruturaCaixinhas();
     const movimento = salsiData.caixinha.find(item => String(item.id) === String(id));
-    if (!movimento || !confirm(`Apagar "${movimento.nome || 'movimento da caixinha'}"?`)) return;
+    const complemento = movimento?.finalidadeSaida === 'saldo'
+        ? ' A entrada vinculada também será apagada.'
+        : '';
+    if (!movimento || !confirm(`Apagar "${movimento.nome || 'movimento da caixinha'}"?${complemento}`)) return;
+    removerEntradaResgateVinculada(movimento);
     salsiData.caixinha = salsiData.caixinha.filter(item => String(item.id) !== String(id));
     salsiData.transacoes = (salsiData.transacoes || []).filter(item => !(item.origemCaixinha && String(item.caixinhaId) === String(id)));
     await persistirCaixinhas();
@@ -496,6 +633,15 @@ async function salvarConfigCaixinha() {
         };
         if (existente) caixinhas[caixinhas.indexOf(existente)] = dados;
         else caixinhas.push(dados);
+
+        if (existente) {
+            (salsiData.caixinha || [])
+                .filter(movimento => movimento.tipo === 'saida'
+                    && movimento.finalidadeSaida === 'saldo'
+                    && String(movimento.caixinhaId) === String(dados.id))
+                .forEach(sincronizarEntradaResgateCaixinha);
+        }
+
         persistirCaixinhas();
         concluiu = true;
         document.getElementById('modal-config-caixinha').close();

@@ -2320,7 +2320,15 @@
         <div class="settings-form-grid">
             <label class="settings-field settings-field-wide">
                 <span>Caixinha</span>
-                <select id="caixinha-destino"></select>
+                <select id="caixinha-destino" onchange="atualizarFinalidadeRetiradaCaixinha()"></select>
+            </label>
+            <label class="settings-field settings-field-wide" id="caixinha-finalidade-field" style="display:none;">
+                <span>O que fazer com o dinheiro?</span>
+                <select id="caixinha-finalidade-saida" onchange="atualizarFinalidadeRetiradaCaixinha()">
+                    <option value="saldo">Voltar para o saldo mensal</option>
+                    <option value="uso">Usar diretamente da caixinha</option>
+                </select>
+                <small id="caixinha-finalidade-ajuda">Cria uma entrada automática vinculada a esta retirada.</small>
             </label>
             <label class="settings-field settings-field-wide">
                 <span>Nome do movimento</span>
@@ -2675,21 +2683,18 @@
     })();
 </script>
 
-	<script src="js/core.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/transacoes.js?v=20260805-4"></script>
-    <script src="js/ui.js?v=20260808-1"></script>
+	<script src="js/core.js?v=20260822-1"></script>
+    <script src="js/auth.js?v=20260822-1"></script>
+    <script src="js/transacoes.js?v=20260822-1"></script>
+    <script src="js/ui.js?v=20260822-1"></script>
     <script src="js/modulos.js?v=20260808-1"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260805-4"></script>
     <script src="js/dividas.js?v=20260809-1"></script>
-    <script src="js/caixinhas.js?v=20260810-3"></script>
+    <script src="js/caixinhas.js?v=20260822-1"></script>
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
 </body>
 </html>
-
-
-
 
 
 
