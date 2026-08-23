@@ -161,12 +161,63 @@ async function fazerLoginGoogle() {
     }
 }
 
+let cadastroEmAndamento = false;
+
+function obterMensagemErroCadastro(error) {
+    if (error?.code === 'auth/email-already-in-use') {
+        return 'Este e-mail já possui uma conta. Entre com sua senha ou use a recuperação de acesso.';
+    }
+    if (error?.code === 'auth/invalid-email') {
+        return 'Digite um e-mail válido.';
+    }
+    if (error?.code === 'auth/weak-password') {
+        return 'Escolha uma senha mais forte, com pelo menos 6 caracteres.';
+    }
+    if (error?.code === 'auth/network-request-failed') {
+        return 'Não foi possível conectar ao servidor. Confira sua internet e tente novamente.';
+    }
+    if (String(error?.message || '').includes('Missing or insufficient permissions')) {
+        return 'Não foi possível concluir o cadastro com segurança. Tente novamente em alguns instantes.';
+    }
+
+    return error?.message || 'Não foi possível concluir o cadastro.';
+}
+
+async function desfazerCadastroIncompleto(user, username, usernameReservado) {
+    if (!user) return;
+
+    if (usernameReservado) {
+        try {
+            await removerUsernameReservado(username);
+        } catch (error) {
+            console.warn('Não foi possível liberar o username do cadastro incompleto:', error);
+        }
+    }
+
+    try {
+        if (window.deleteUser) await window.deleteUser(user);
+    } catch (error) {
+        console.warn('Não foi possível remover a autenticação incompleta:', error);
+        try {
+            await window.signOut(window.auth);
+        } catch (signOutError) {
+            console.warn('Não foi possível encerrar a sessão incompleta:', signOutError);
+        }
+    }
+}
+
 // Função de Registro Real (Mantenha apenas ESTA versão)
 async function fazerCadastro() {
+    let usuarioCriado = null;
+    let usernameReservado = false;
+    let cadastroPersistido = false;
+    let usernameCadastro = '';
+
     try {
         const nome = document.getElementById('register-nome').value.trim();
         const sobrenome = document.getElementById('register-sobrenome')?.value.trim() || '';
         const username = normalizarUsernamePerfil(document.getElementById('register-username')?.value || '');
+        usernameCadastro = username;
         const email = document.getElementById('register-email').value.trim().toLowerCase();
         const emailConf = document.getElementById('register-email-conf')?.value.trim().toLowerCase() || '';
         const senha = document.getElementById('register-senha').value;
@@ -202,30 +253,39 @@ async function fazerCadastro() {
         if (form) form.style.display = 'none';
         if (loader) loader.style.display = 'block';
 
-        // Cria a conta e atualiza o nome
-        await validarUsernameDisponivelCadastro(username);
-
+        // Primeiro autentica. As regras do Firestore não permitem consultar
+        // a disponibilidade do username enquanto o visitante ainda é anônimo.
+        cadastroEmAndamento = true;
         const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, senha);
-        await window.updateProfile(userCredential.user, { displayName: nomeCompleto });
+        usuarioCriado = userCredential.user;
+        await window.updateProfile(usuarioCriado, { displayName: nomeCompleto });
 
         const perfilPublico = {
-            uid: userCredential.user.uid,
+            uid: usuarioCriado.uid,
             nome: nomeCompleto,
             username,
             usernameBusca: username,
-            avatar: userCredential.user.photoURL || '',
+            avatar: usuarioCriado.photoURL || '',
             atualizadoEm: new Date().toISOString()
         };
 
         salsiData = criarEstruturaInicialUsuario(nome, sobrenome, username, email);
         await reservarUsernameUnico(username, '', perfilPublico, true);
+        usernameReservado = true;
         await window.setDoc(
-            window.doc(window.db, 'usuarios', userCredential.user.uid),
+            window.doc(window.db, 'usuarios', usuarioCriado.uid),
             { dados: salsiData, perfilPublico },
             { merge: true }
         );
-        localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
-        await enviarConfirmacaoEmailUsuario({ user: userCredential.user, silencioso: true });
+        cadastroPersistido = true;
+
+        try {
+            localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+        } catch (error) {
+            console.warn('Não foi possível criar o cache inicial do cadastro:', error);
+        }
+
+        await enviarConfirmacaoEmailUsuario({ user: usuarioCriado, silencioso: true });
 			
 			// 👇 CÓDIGO NOVO: RECOMPENSA DA INDICAÇÃO FICA AQUI 👇
         const amigoQueIndicou = sessionStorage.getItem('referral_uid');
@@ -242,10 +302,20 @@ async function fazerCadastro() {
             });
             sessionStorage.removeItem('referral_uid'); 
         }
+
+        cadastroEmAndamento = false;
+        mostrarSplashInicial('Abrindo configuração inicial...');
+        window.location.href = 'onboarding.html';
         
     } catch (error) {
         console.error("Erro no cadastro:", error);
-        alert("Erro ao cadastrar: " + error.message);
+
+        if (usuarioCriado && !cadastroPersistido) {
+            await desfazerCadastroIncompleto(usuarioCriado, usernameCadastro, usernameReservado);
+        }
+
+        cadastroEmAndamento = false;
+        alert("Erro ao cadastrar: " + obterMensagemErroCadastro(error));
         
         // Se der erro (ex: e-mail já existe), ele remove o loader e devolve o formulário
         if (typeof esconderSplashInicial === 'function') esconderSplashInicial();
@@ -324,6 +394,14 @@ window.iniciarVigia = function() {
         const authScreen = document.getElementById('auth-screen');
         
         if (user) {
+            // O próprio fluxo de cadastro está reservando o username e criando
+            // o documento inicial. O vigia retoma após o redirecionamento.
+            if (cadastroEmAndamento) {
+                if (authScreen) authScreen.style.display = 'none';
+                mostrarSplashInicial('Criando sua conta...');
+                return;
+            }
+
             // --- USUÁRIO LOGADO ---
             authScreen.style.display = 'none'; 
             

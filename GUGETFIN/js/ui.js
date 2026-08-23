@@ -21,8 +21,11 @@ function atualizarGraficoAnual() {
         let entradasDoMes = salsiData.entradas
             .filter(e => e.mes === m && e.ano === ano)
             .reduce((acc, curr) => acc + curr.valor, 0);
+        let rendaDoMes = salsiData.entradas
+            .filter(e => e.mes === m && e.ano === ano && e.tipoEntrada !== 'resgate_caixinha')
+            .reduce((acc, curr) => acc + curr.valor, 0);
         
-        anEnt += entradasDoMes; // Soma pro painel
+        anEnt += rendaDoMes; // Resgates voltam ao saldo, mas não inflam a renda anual.
 
         let gastosDoMes = 0;
 
@@ -50,7 +53,7 @@ function atualizarGraficoAnual() {
 
         // Decide a linha
         if (tipoVisao === 'entradas') {
-            dados[m] = entradasDoMes;
+            dados[m] = rendaDoMes;
         } else if (tipoVisao === 'saidas') {
             dados[m] = gastosDoMes;
         } else {
@@ -707,14 +710,30 @@ function limparMesAtual() {
     const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
     if (confirm(`Deseja apagar todos os gastos e entradas de ${mesesNomes[m]} de ${a}?`)) {
+        const movimentosCaixinhaRemovidos = new Set();
+
         // Filtra as transações para manter apenas o que NÃO for do mês/ano atual
         salsiData.transacoes = salsiData.transacoes.filter(t => {
             const d = new Date(t.dataCompra + "T00:00:00");
-            return !(d.getMonth() === m && d.getFullYear() === a);
+            const remover = d.getMonth() === m && d.getFullYear() === a;
+            if (remover && t.origemCaixinha && t.caixinhaId) movimentosCaixinhaRemovidos.add(String(t.caixinhaId));
+            return !remover;
         });
 
         // Filtra as entradas também
-        salsiData.entradas = salsiData.entradas.filter(e => !(e.mes === m && e.ano === a));
+        salsiData.entradas = salsiData.entradas.filter(e => {
+            const remover = e.mes === m && e.ano === a;
+            if (remover && e.tipoEntrada === 'resgate_caixinha' && e.movimentoCaixinhaId) {
+                movimentosCaixinhaRemovidos.add(String(e.movimentoCaixinhaId));
+            }
+            return !remover;
+        });
+
+        if (movimentosCaixinhaRemovidos.size && Array.isArray(salsiData.caixinha)) {
+            salsiData.caixinha = salsiData.caixinha.filter(movimento => {
+                return !movimentosCaixinhaRemovidos.has(String(movimento.id));
+            });
+        }
 
         renderizar(); // Atualiza a tela e salva no cache
     }

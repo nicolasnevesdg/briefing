@@ -550,6 +550,16 @@ function editarEntrada(index) {
     const entrada = salsiData.entradas[index];
     if (!entrada) return;
 
+    if (entrada.tipoEntrada === 'resgate_caixinha' && entrada.movimentoCaixinhaId
+        && typeof editarMovimentoCaixinha === 'function') {
+        const movimentoExiste = Array.isArray(salsiData.caixinha)
+            && salsiData.caixinha.some(item => String(item.id) === String(entrada.movimentoCaixinhaId));
+        if (movimentoExiste) {
+            editarMovimentoCaixinha(entrada.movimentoCaixinhaId);
+            return;
+        }
+    }
+
     if (typeof limparFormularioEntrada === 'function') limparFormularioEntrada();
 
     document.getElementById('modal-titulo-entrada').innerText = 'Editar Parcela';
@@ -743,7 +753,21 @@ function excluirGasto(idx) {
     renderizar();
     if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
 }
-function excluirEntrada(idx) { if(confirm("Apagar?")) { salsiData.entradas.splice(idx,1); renderizar(); } }
+function excluirEntrada(idx) {
+    const entrada = salsiData.entradas[idx];
+    if (!entrada) return;
+
+    if (entrada.tipoEntrada === 'resgate_caixinha' && typeof excluirResgateCaixinhaPorEntrada === 'function') {
+        if (!confirm('Apagar esta entrada e a retirada correspondente da caixinha?')) return;
+        excluirResgateCaixinhaPorEntrada(entrada);
+        return;
+    }
+
+    if (confirm('Apagar?')) {
+        salsiData.entradas.splice(idx, 1);
+        renderizar();
+    }
+}
 function mudarMes(n) { dataFiltro.setMonth(dataFiltro.getMonth() + n); renderizar(); }
 // 1. DATA AUTOMÁTICA E RESET AO ABRIR (MODO CRIAÇÃO)
 function abrirModalGasto() {

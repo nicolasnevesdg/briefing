@@ -622,6 +622,9 @@ function renderizar() {
     // 1. Entradas (Sidebar + Aba Mobile)
     const entMes = salsiData.entradas.filter(e => e.mes === m && e.ano === a);
     const totalEnt = entMes.reduce((acc, curr) => acc + curr.valor, 0);
+    const totalEntRenda = entMes
+        .filter(entrada => entrada.tipoEntrada !== 'resgate_caixinha')
+        .reduce((acc, curr) => acc + curr.valor, 0);
 
     // RENDER PC (Sidebar - Apenas o X estiloso)
     const listaEntradasSidebar = document.getElementById('lista-entradas');
@@ -1132,7 +1135,7 @@ if (typeof renderizarGraficoCategorias === 'function') {
     const saldoFinal = totalEnt - totalGastoMes;
     document.getElementById('resumo-saldo').innerText = `R$ ${saldoFinal.toFixed(2)}`;
     document.getElementById('resumo-cartao').innerText = `R$ ${totalCartMes.toFixed(2)}`;
-    document.getElementById('resumo-porcentagem').innerText = `${totalEnt > 0 ? ((totalGastoMes/totalEnt)*100).toFixed(1) : 0}%`;
+    document.getElementById('resumo-porcentagem').innerText = `${totalEntRenda > 0 ? ((totalGastoMes/totalEntRenda)*100).toFixed(1) : 0}%`;
     atualizarCardCaixinhaDashboard();
     if (typeof renderizarResumoCompromissosDashboard === 'function') renderizarResumoCompromissosDashboard();
     if (typeof renderizarPlanejadorFaturas === 'function') renderizarPlanejadorFaturas();
