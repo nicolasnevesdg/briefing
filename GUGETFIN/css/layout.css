@@ -591,7 +591,14 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 
 /* --- RESPONSIVIDADE TOTAL --- */
 @media (max-width: 1024px) {
-    body { flex-direction: column; overflow-y: auto; height: auto; }
+    body {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        background-color: var(--bg-app);
+    }
     
     /* Sidebar vira um cabeçalho fixo compacto */
     .sidebar {
@@ -676,7 +683,14 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
     }
 
     /* Main ocupa a largura total */
-    main { padding: 15px; width: 100%; box-sizing: border-box; }
+    main {
+        width: 100%;
+        min-height: calc(100vh - 60px);
+        min-height: calc(100dvh - 60px);
+        padding: 15px;
+        box-sizing: border-box;
+        background-color: var(--bg-app);
+    }
     .stats-grid { grid-template-columns: 1fr; gap: 10px; }
     .tables-row { flex-direction: column; gap: 0px; }
     .card-stack, .tables-row .card { width: 100% !important; max-width: 100%; gap: 0;}
