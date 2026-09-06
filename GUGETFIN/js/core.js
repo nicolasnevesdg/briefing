@@ -518,6 +518,363 @@ function calcularCompetenciaInicialGasto(t) {
     return calcularCompetenciaPorVencimentoFatura(dataCompra, fechamento, vencimento);
 }
 
+/* ========================================================= */
+/* BUSCA DE GASTOS NA DASHBOARD                              */
+/* ========================================================= */
+
+function normalizarTextoBuscaGasto(valor) {
+    return String(valor || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function escaparHtmlBuscaGasto(valor) {
+    return String(valor ?? '').replace(/[&<>"']/g, caractere => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    })[caractere]);
+}
+
+function obterTipoBuscaGasto(gasto) {
+    if (gasto?.eDeTerceiro) return { chave: 'terceiros', rotulo: 'Terceiros' };
+    if (gasto?.tipo === 'fixo') return { chave: 'fixo', rotulo: 'Fixo' };
+    if (gasto?.tipo === 'cartao') return { chave: 'cartao', rotulo: 'Crédito' };
+    return { chave: 'debito', rotulo: 'Débito' };
+}
+
+function obterCompetenciaBuscaGasto(gasto) {
+    let competencia = null;
+
+    try {
+        competencia = calcularCompetenciaInicialGasto(gasto);
+    } catch (error) {
+        competencia = new Date(`${gasto?.dataCompra || ''}T12:00:00`);
+    }
+
+    if (!(competencia instanceof Date) || Number.isNaN(competencia.getTime())) {
+        competencia = new Date();
+    }
+
+    return new Date(competencia.getFullYear(), competencia.getMonth(), 1);
+}
+
+function formatarCompetenciaBuscaGasto(data) {
+    const texto = data.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+function fecharBuscasGastosDashboard({ limpar = false } = {}) {
+    document.querySelectorAll('[data-dashboard-expense-search]').forEach(container => {
+        container.classList.remove('is-open');
+        const input = container.querySelector('.dashboard-expense-search-input');
+        const resultados = container.querySelector('[data-dashboard-expense-results]');
+        if (input) {
+            input.setAttribute('aria-expanded', 'false');
+            if (limpar) input.value = '';
+        }
+        if (resultados) resultados.innerHTML = '';
+        if (limpar) container.classList.remove('has-value');
+    });
+}
+
+function abrirBuscaGastosDashboard(input) {
+    const container = input?.closest('[data-dashboard-expense-search]');
+    if (!container) return;
+
+    document.querySelectorAll('[data-dashboard-expense-search].is-open').forEach(outro => {
+        if (outro !== container) {
+            outro.classList.remove('is-open');
+            outro.querySelector('.dashboard-expense-search-input')?.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    container.classList.add('is-open');
+    input.setAttribute('aria-expanded', 'true');
+    pesquisarGastosDashboard(input);
+}
+
+function pesquisarGastosDashboard(input) {
+    const container = input?.closest('[data-dashboard-expense-search]');
+    const painel = container?.querySelector('[data-dashboard-expense-results]');
+    if (!container || !painel) return;
+
+    const termoOriginal = input.value || '';
+    const termo = normalizarTextoBuscaGasto(termoOriginal);
+    const termos = termo.split(' ').filter(Boolean);
+    container.classList.toggle('has-value', termoOriginal.length > 0);
+    container.classList.add('is-open');
+    input.setAttribute('aria-expanded', 'true');
+
+    if (termo.length < 2) {
+        painel.innerHTML = '<div class="dashboard-expense-search-state">Digite pelo menos 2 letras para pesquisar.</div>';
+        return;
+    }
+
+    const resultados = (Array.isArray(salsiData?.transacoes) ? salsiData.transacoes : [])
+        .map((gasto, indice) => {
+            const nomeNormalizado = normalizarTextoBuscaGasto(gasto?.nome);
+            const tipoValido = gasto?.tipo === 'fixo' || gasto?.tipo === 'cartao' || gasto?.tipo === 'debito' || gasto?.eDeTerceiro;
+            const arquivado = gasto?.eDeTerceiro && gasto?.terceiro?.status === 'arquivado';
+            const corresponde = termos.every(parte => nomeNormalizado.includes(parte));
+            if (!tipoValido || arquivado || !nomeNormalizado || !corresponde) return null;
+
+            const competencia = obterCompetenciaBuscaGasto(gasto);
+            const pontuacao = nomeNormalizado === termo ? 0 : (nomeNormalizado.startsWith(termo) ? 1 : 2);
+            return { gasto, indice, competencia, pontuacao };
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.pontuacao - b.pontuacao || b.competencia - a.competencia);
+
+    if (!resultados.length) {
+        painel.innerHTML = `
+            <div class="dashboard-expense-search-state">
+                <strong>Nenhum gasto encontrado</strong>
+                <span>Tente pesquisar outra parte do nome.</span>
+            </div>`;
+        return;
+    }
+
+    const resumo = `${resultados.length} gasto${resultados.length === 1 ? '' : 's'} encontrado${resultados.length === 1 ? '' : 's'}`;
+    painel.innerHTML = `
+        <div class="dashboard-expense-search-count">${resumo}</div>
+        <div class="dashboard-expense-search-list">
+            ${resultados.map(({ gasto, indice, competencia }) => {
+                const tipo = obterTipoBuscaGasto(gasto);
+                const valor = gasto.tipo === 'cartao'
+                    ? Number(gasto.valorParcela || gasto.valorTotal || 0)
+                    : Number(gasto.valorTotal || 0);
+                const detalheParcelas = Number(gasto.parcelas || 1) > 1
+                    ? ` · ${Number(gasto.parcelas)} parcelas`
+                    : '';
+                const terceiro = gasto.eDeTerceiro && gasto.nomeTerceiro
+                    ? ` · ${escaparHtmlBuscaGasto(gasto.nomeTerceiro)}`
+                    : '';
+
+                return `
+                    <button type="button" class="dashboard-expense-search-result" role="option" onclick="irParaGastoPesquisado(${indice})">
+                        <span class="dashboard-expense-result-icon is-${tipo.chave}"><i class="fi fi-rr-receipt" aria-hidden="true"></i></span>
+                        <span class="dashboard-expense-result-copy">
+                            <strong>${escaparHtmlBuscaGasto(gasto.nome || 'Gasto')}</strong>
+                            <small>${tipo.rotulo} · ${formatarCompetenciaBuscaGasto(competencia)}${detalheParcelas}${terceiro}</small>
+                        </span>
+                        <span class="dashboard-expense-result-value">${valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    </button>`;
+            }).join('')}
+        </div>`;
+}
+
+function limparBuscaGastosDashboard(botao) {
+    const container = botao?.closest('[data-dashboard-expense-search]');
+    const input = container?.querySelector('.dashboard-expense-search-input');
+    if (!input) return;
+
+    input.value = '';
+    container.classList.remove('has-value');
+    input.focus();
+    pesquisarGastosDashboard(input);
+}
+
+function controlarTeclasBuscaGastosDashboard(event, input) {
+    const container = input?.closest('[data-dashboard-expense-search]');
+    if (!container) return;
+
+    if (event.key === 'Escape') {
+        event.preventDefault();
+        fecharBuscasGastosDashboard();
+        input.blur();
+        return;
+    }
+
+    if (event.key === 'Enter' || event.key === 'ArrowDown') {
+        const primeiroResultado = container.querySelector('.dashboard-expense-search-result');
+        if (!primeiroResultado) return;
+        event.preventDefault();
+        if (event.key === 'Enter') primeiroResultado.click();
+        else primeiroResultado.focus();
+    }
+}
+
+function redefinirFiltrosParaGastoPesquisado(gasto) {
+    const tipo = obterTipoBuscaGasto(gasto).chave;
+    const filtrosPorTipo = {
+        fixo: [['filtro-fixos', 'Status']],
+        cartao: [['filtro-cred-banco', 'Cartões'], ['filtro-cred-cat', 'Categorias']],
+        debito: [['filtro-deb-forma', 'Formas'], ['filtro-deb-cat', 'Categorias']],
+        terceiros: [['filtro-terc-nome', 'Nomes'], ['filtro-terc-banco', 'Cartões']]
+    };
+
+    (filtrosPorTipo[tipo] || []).forEach(([id, rotulo]) => {
+        const filtro = document.getElementById(id);
+        if (!filtro) return;
+        filtro.setAttribute('data-value', 'Todos');
+        const texto = filtro.querySelector('.dropdown-trigger span');
+        if (texto) texto.textContent = rotulo;
+        filtro.querySelectorAll('.dropdown-item').forEach(item => {
+            item.classList.toggle('selected', normalizarTextoBuscaGasto(item.textContent) === 'todos');
+        });
+    });
+}
+
+function destacarGastoPesquisado(gasto) {
+    const indice = Array.isArray(salsiData?.transacoes) ? salsiData.transacoes.indexOf(gasto) : -1;
+    if (indice < 0) return;
+    const candidatos = Array.from(document.querySelectorAll(`[data-gasto-index="${indice}"]`));
+    const alvo = candidatos.find(elemento => elemento.getClientRects().length > 0) || candidatos[0];
+
+    if (!alvo) {
+        if (typeof mostrarToast === 'function') mostrarToast('O gasto foi encontrado, mas não pôde ser exibido nesta visualização.');
+        return;
+    }
+
+    alvo.classList.remove('gasto-localizado');
+    void alvo.offsetWidth;
+    alvo.classList.add('gasto-localizado');
+    alvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => alvo.classList.remove('gasto-localizado'), 3200);
+}
+
+function irParaGastoPesquisado(indice) {
+    const gasto = Array.isArray(salsiData?.transacoes) ? salsiData.transacoes[indice] : null;
+    if (!gasto) return;
+
+    const competencia = obterCompetenciaBuscaGasto(gasto);
+    const tipo = obterTipoBuscaGasto(gasto).chave;
+    dataFiltro = new Date(competencia.getFullYear(), competencia.getMonth(), 1);
+    redefinirFiltrosParaGastoPesquisado(gasto);
+    fecharBuscasGastosDashboard({ limpar: true });
+
+    if (window.innerWidth > 1024) {
+        irParaDashboard();
+    } else if (tipo === 'terceiros') {
+        irParaDashboard();
+        if (typeof toggleSubAba === 'function') toggleSubAba('terceiros');
+    } else {
+        if (typeof renderizar === 'function') renderizar();
+        const aba = tipo === 'fixo' ? 'fixos' : tipo;
+        if (typeof navegar === 'function') navegar(aba);
+        if (tipo === 'cartao' && typeof toggleSubCartao === 'function') toggleSubCartao('credito');
+        if (tipo === 'debito' && typeof toggleSubCartao === 'function') toggleSubCartao('debito');
+    }
+
+    setTimeout(() => destacarGastoPesquisado(gasto), window.innerWidth > 1024 ? 320 : 160);
+}
+
+document.addEventListener('click', event => {
+    if (!event.target.closest('[data-dashboard-expense-search]')) {
+        fecharBuscasGastosDashboard();
+    }
+});
+
+/* ========================================================= */
+/* CARROSSEL MANUAL DO RESUMO - SOMENTE MOBILE               */
+/* ========================================================= */
+
+let dashboardResumoSlideAtual = 0;
+let dashboardResumoScrollFrame = null;
+let dashboardResumoResizeObserver = null;
+let dashboardResumoSnapTimer = null;
+
+function obterPosicoesSlidesResumoDashboard(slides) {
+    const primeiraPosicao = slides[0]?.offsetLeft || 0;
+    return slides.map(slide => Math.max(0, slide.offsetLeft - primeiraPosicao));
+}
+
+function atualizarCarrosselResumoDashboard() {
+    const viewport = document.getElementById('dashboard-summary-carousel-viewport');
+    const slides = Array.from(document.querySelectorAll('[data-dashboard-summary-slide]'));
+    const dots = Array.from(document.querySelectorAll('[data-dashboard-summary-dot]'));
+    if (!viewport || slides.length < 2) return;
+
+    if (window.innerWidth > 1024) {
+        viewport.style.height = '';
+        viewport.scrollLeft = 0;
+        slides.forEach(slide => slide.removeAttribute('aria-current'));
+        dots.forEach((dot, indice) => dot.classList.toggle('active', indice === 0));
+        return;
+    }
+
+    const posicoes = obterPosicoesSlidesResumoDashboard(slides);
+    const distanciaEntreSlides = posicoes[1] - posicoes[0];
+    if (!distanciaEntreSlides) return;
+
+    const progresso = Math.max(0, Math.min(slides.length - 1, viewport.scrollLeft / distanciaEntreSlides));
+    const indiceInicial = Math.floor(progresso);
+    const indiceFinal = Math.min(slides.length - 1, Math.ceil(progresso));
+    const fracao = progresso - indiceInicial;
+    const alturaInicial = slides[indiceInicial]?.scrollHeight || 0;
+    const alturaFinal = slides[indiceFinal]?.scrollHeight || alturaInicial;
+    const alturaInterpolada = alturaInicial + ((alturaFinal - alturaInicial) * fracao);
+
+    if (alturaInterpolada > 0) viewport.style.height = `${Math.ceil(alturaInterpolada)}px`;
+
+    dashboardResumoSlideAtual = Math.round(progresso);
+    dots.forEach((dot, indice) => dot.classList.toggle('active', indice === dashboardResumoSlideAtual));
+    slides.forEach((slide, indice) => {
+        if (indice === dashboardResumoSlideAtual) slide.setAttribute('aria-current', 'true');
+        else slide.removeAttribute('aria-current');
+    });
+}
+
+function alinharCarrosselResumoDashboard() {
+    if (window.innerWidth > 1024) return;
+
+    const viewport = document.getElementById('dashboard-summary-carousel-viewport');
+    const slides = Array.from(document.querySelectorAll('[data-dashboard-summary-slide]'));
+    if (!viewport || slides.length < 2) return;
+
+    const posicoes = obterPosicoesSlidesResumoDashboard(slides);
+    const destino = Math.round(posicoes[dashboardResumoSlideAtual] || 0);
+
+    if (Math.abs(viewport.scrollLeft - destino) > 0.5) {
+        viewport.scrollTo({ left: destino, behavior: 'auto' });
+    }
+}
+
+function agendarAtualizacaoCarrosselResumoDashboard() {
+    if (dashboardResumoScrollFrame) cancelAnimationFrame(dashboardResumoScrollFrame);
+    dashboardResumoScrollFrame = requestAnimationFrame(() => {
+        dashboardResumoScrollFrame = null;
+        atualizarCarrosselResumoDashboard();
+    });
+}
+
+function aoRolarCarrosselResumoDashboard() {
+    agendarAtualizacaoCarrosselResumoDashboard();
+    clearTimeout(dashboardResumoSnapTimer);
+    dashboardResumoSnapTimer = setTimeout(alinharCarrosselResumoDashboard, 140);
+}
+
+function iniciarCarrosselResumoDashboard() {
+    const viewport = document.getElementById('dashboard-summary-carousel-viewport');
+    const slides = Array.from(document.querySelectorAll('[data-dashboard-summary-slide]'));
+    if (!viewport || slides.length < 2 || viewport.dataset.carouselReady === 'true') return;
+
+    viewport.dataset.carouselReady = 'true';
+    viewport.addEventListener('scroll', aoRolarCarrosselResumoDashboard, { passive: true });
+    window.addEventListener('resize', () => {
+        if (window.innerWidth <= 1024) {
+            const posicoes = obterPosicoesSlidesResumoDashboard(slides);
+            viewport.scrollTo({ left: posicoes[dashboardResumoSlideAtual] || 0, behavior: 'auto' });
+        }
+        agendarAtualizacaoCarrosselResumoDashboard();
+    });
+
+    if (typeof ResizeObserver === 'function') {
+        dashboardResumoResizeObserver = new ResizeObserver(agendarAtualizacaoCarrosselResumoDashboard);
+        slides.forEach(slide => dashboardResumoResizeObserver.observe(slide));
+    }
+
+    requestAnimationFrame(atualizarCarrosselResumoDashboard);
+}
+
+document.addEventListener('DOMContentLoaded', iniciarCarrosselResumoDashboard);
+
 function calcularSaldoCaixinhaDashboard() {
     if (typeof calcularSaldoCaixinha === 'function') {
         return calcularSaldoCaixinha();
@@ -824,7 +1181,7 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
                     // Visual da linha e Checkbox
                     const estiloPCTerceiro = estaParcelaPaga ? '' : 'style="opacity: 0.5; font-style: italic;"';
                     tTable.innerHTML += `
-                        <tr class="desktop-only-row" ${estiloPCTerceiro}>
+                        <tr class="desktop-only-row" data-gasto-index="${idx}" ${estiloPCTerceiro}>
                             <td>${dataSutil}</td>
                             <td style="cursor: pointer; font-weight: 500;" onclick="verDetalhes(${idx})">${t.nome} ${tagNovo}</td>
                             <td><span class="badge-tag">${t.nomeTerceiro}</span></td>
@@ -844,7 +1201,7 @@ const diff = (a - anoRef) * 12 + (m - mesRef);
                         : `<span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 9px;">PENDENTE</span>`;
 
                     mTerceiros.innerHTML += `
-                        <div class="cartao-item-mobile${classeNovo}" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
+                        <div class="cartao-item-mobile${classeNovo}" data-gasto-index="${idx}" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
                             <div class="cartao-info-principal">
                                 <div class="cartao-nome-grupo">
                                     <strong>${t.nome}</strong>
@@ -891,7 +1248,7 @@ ${tagNovo}
                     const estiloPC = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
                     if(fTable) {
                         fTable.innerHTML += `
-                            <tr ${estiloPC} class="desktop-only-row">
+                            <tr ${estiloPC} class="desktop-only-row" data-gasto-index="${idx}">
                                 <td style="cursor: pointer; font-weight: 500; width: 50%;" onclick="verDetalhes(${idx})">${t.nome} ${tagNovo}</td>
                                 <td style="width: 25%;">R$ ${val.toFixed(2)}</td>
                                 <td style="text-align: center; width: 15%;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
@@ -906,7 +1263,7 @@ ${tagNovo}
                             : `<span class="badge-tag" style="background: #f0f2f1; color: #7a8b87; font-size: 9px;">PENDENTE</span>`;
 
                         fMobile.innerHTML += `
-                            <div class="cartao-item-mobile${classeNovo}" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
+                            <div class="cartao-item-mobile${classeNovo}" data-gasto-index="${idx}" onclick="verDetalhes(${idx})" style="cursor: pointer; opacity: ${opacidadeMob}; transition: 0.2s;">
                                 <div class="cartao-info-principal">
                                     <div class="cartao-nome-grupo">
                                         <strong>${t.nome}</strong>
@@ -933,7 +1290,7 @@ ${tagNovo}
                     
                     if(dTable) {
                         dTable.innerHTML += `
-                            <tr class="desktop-only-row${classeNovo}">
+                            <tr class="desktop-only-row${classeNovo}" data-gasto-index="${idx}">
                                 <td>${dataSutil}</td>
                                 <td style="cursor:pointer; line-height: 1.4;" onclick="verDetalhes(${idx})">
                                     <div style="font-weight: 600; color: var(--text-main);">${t.nome} ${tagNovo}</div>
@@ -949,7 +1306,7 @@ ${tagNovo}
 
                     if (dMobile) {
                         dMobile.innerHTML += `
-                            <div class="cartao-item-mobile${classeNovo}" onclick="verDetalhes(${idx})" style="cursor: pointer;">
+                            <div class="cartao-item-mobile${classeNovo}" data-gasto-index="${idx}" onclick="verDetalhes(${idx})" style="cursor: pointer;">
                                 <div class="cartao-info-principal">
                                     <div class="cartao-nome-grupo">
                                         <strong>${t.nome}</strong>
@@ -972,7 +1329,7 @@ ${tagNovo}
 
                     if(cTable) {
                         cTable.innerHTML += `
-                            <tr class="desktop-only-row${classeNovo}">
+                            <tr class="desktop-only-row${classeNovo}" data-gasto-index="${idx}">
                                 <td>${dataSutil}</td>
                                 <td style="font-weight: 500; cursor: pointer;" onclick="verDetalhes(${idx})">${t.nome} ${tagNovo}</td>
                                 <td style="color: var(--text-sec); font-size: 11px; text-align: center;">${diff + 1}/${t.parcelas}</td>
@@ -984,7 +1341,7 @@ ${tagNovo}
 
                     if (cMobile) {
                         cMobile.innerHTML += `
-                            <div class="cartao-item-mobile${classeNovo}" onclick="verDetalhes(${idx})" style="cursor: pointer;">
+                            <div class="cartao-item-mobile${classeNovo}" data-gasto-index="${idx}" onclick="verDetalhes(${idx})" style="cursor: pointer;">
                                 <div class="cartao-info-principal">
                                     <div class="cartao-nome-grupo">
                                         <strong>${t.nome}</strong>
@@ -1196,6 +1553,10 @@ if (main && main.classList.contains('calendar-mode')) {
 if (main && main.classList.contains('visualizacoes-mode') && typeof renderizarVisualizacoes === 'function') {
     renderizarVisualizacoes();
 }
+
+if (typeof agendarAtualizacaoCarrosselResumoDashboard === 'function') {
+    agendarAtualizacaoCarrosselResumoDashboard();
+}
 }
 
 /* ========================================================= */
@@ -1225,6 +1586,9 @@ function marcarViewSidebar(view) {
 }
 
 function irParaDashboard() {
+    const main = document.querySelector('main');
+    if (main) main.classList.add('dashboard-mode');
+
     if (typeof abrirDashboardFinanceira === 'function') {
         abrirDashboardFinanceira();
     }
@@ -1285,6 +1649,7 @@ function ocultarAbasDashboardParaView() {
 }
 
 function irParaCalendario() {
+    document.querySelector('main')?.classList.remove('dashboard-mode');
     ocultarAbasDashboardParaView();
 
     marcarPrimeiroPassoDashboard('calendario');
@@ -1307,6 +1672,7 @@ function irParaConfiguracoes(aba = 'perfil') {
 
     main.classList.remove('calendar-mode');
     main.classList.remove('visualizacoes-mode');
+    main.classList.remove('dashboard-mode');
     main.classList.add('settings-mode');
 
     marcarViewSidebar('settings');
@@ -1332,6 +1698,7 @@ function irParaVisualizacoes(aba = 'terceiros') {
 
     main.classList.remove('calendar-mode');
     main.classList.remove('settings-mode');
+    main.classList.remove('dashboard-mode');
     main.classList.add('visualizacoes-mode');
 
     marcarViewSidebar('visualizacoes');

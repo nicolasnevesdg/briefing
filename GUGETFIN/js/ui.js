@@ -2752,6 +2752,7 @@ function navegar(abaId) {
         main.classList.remove('calendar-mode');
         main.classList.remove('visualizacoes-mode');
         main.classList.remove('settings-mode');
+        main.classList.toggle('dashboard-mode', abaId === 'home');
     }
 
     document.querySelectorAll('.sidebar-view-nav .sidebar-view-btn').forEach(botao => botao.classList.remove('active'));

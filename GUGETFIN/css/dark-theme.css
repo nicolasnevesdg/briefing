@@ -921,6 +921,35 @@ body.dark-theme .btn-ver-mais-entradas:hover {
     border-color: rgba(95, 211, 162, 0.28);
 }
 
+body.dark-theme .dashboard-expense-search-input,
+body.dark-theme .dashboard-expense-search-results {
+    background: #171a20;
+    border-color: var(--border);
+}
+
+body.dark-theme .dashboard-expense-search-input {
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+}
+
+body.dark-theme .dashboard-expense-search:focus-within .dashboard-expense-search-input {
+    border-color: rgba(95, 211, 162, 0.45);
+    box-shadow: 0 0 0 3px rgba(95, 211, 162, 0.10), 0 10px 25px rgba(0, 0, 0, 0.24);
+}
+
+body.dark-theme .dashboard-expense-search-results {
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+body.dark-theme .dashboard-expense-search-result:hover,
+body.dark-theme .dashboard-expense-search-result:focus-visible {
+    background: rgba(95, 211, 162, 0.10);
+}
+
+body.dark-theme tr.gasto-localizado > td,
+body.dark-theme .cartao-item-mobile.gasto-localizado {
+    background: rgba(95, 211, 162, 0.13) !important;
+}
+
 body.dark-theme .sidebar-entrada-item {
     border-bottom-color: var(--border);
 }
@@ -938,16 +967,24 @@ body.dark-theme .resumo-categorias-chart-block {
     border-color: var(--border);
 }
 
-body.dark-theme .dashboard-commitments,
-body.dark-theme .dashboard-commitment-card,
-body.dark-theme .dashboard-commitments-all {
+body.dark-theme .dashboard-commitments {
     background: #171a20;
     border-color: var(--border);
 }
 
+body.dark-theme .dashboard-commitment-card,
+body.dark-theme .dashboard-commitments-all {
+    background: transparent;
+    border-color: rgba(255,255,255,0.08);
+}
+
+body.dark-theme .dashboard-commitments-grid {
+    border-color: rgba(255,255,255,0.08);
+}
+
 body.dark-theme .dashboard-commitment-card:hover {
-    border-color: rgba(108, 192, 128, 0.34);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    background: rgba(95, 211, 162, 0.08);
+    box-shadow: none;
 }
 
 body.dark-theme .dashboard-commitment-card.is-debt.has-alert {

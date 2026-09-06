@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20260810-3">
+    <link rel="stylesheet" href="css/style.css?v=20260906-8">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -385,7 +385,7 @@
             </div>
 		</aside>
 
-    <main>
+    <main class="dashboard-mode">
 		<header class="month-nav" style="flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 20px;">
 			
             <div class="header-left desktop-only" style="flex: 1; display: flex; align-items: center;">
@@ -527,13 +527,19 @@
 		
 		<section id="aba-home" class="tab-content active">
 		<div id="greeting-mobile" class="greeting-box mobile-only" style="display: none;"></div>
+		<div class="dashboard-summary-carousel" id="dashboard-summary-carousel" aria-label="Resumo financeiro">
+			<div class="dashboard-summary-carousel-viewport" id="dashboard-summary-carousel-viewport">
+				<div class="dashboard-summary-carousel-track">
+					<div class="dashboard-summary-slide" data-dashboard-summary-slide="0" role="group" aria-label="Resumo mensal, slide 1 de 2">
 			<div class="stats-grid">
 				<div class="stat-card"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
 				<div class="stat-card"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
 				<div class="stat-card"><small>% da Renda</small><h2 id="resumo-porcentagem">0%</h2></div>
 				<div class="stat-card stat-caixinha" id="stat-caixinha-dashboard"><small>Saldo da Caixinha</small><h2 id="resumo-caixinha">R$ 0,00</h2></div>
 			</div>
+					</div>
 
+					<div class="dashboard-summary-slide" data-dashboard-summary-slide="1" role="group" aria-label="Compromissos e reservas, slide 2 de 2">
             <section class="dashboard-commitments" id="dashboard-commitments" aria-labelledby="dashboard-commitments-title">
                 <div class="dashboard-commitments-head">
                     <div>
@@ -541,8 +547,8 @@
                         <h2 id="dashboard-commitments-title">Compromissos e reservas</h2>
                         <p id="dashboard-commitments-period">Acompanhe o que precisa da sua atenção.</p>
                     </div>
-                    <button type="button" class="dashboard-commitments-all" onclick="abrirDetalhesCompromissosDashboard('dividas')">
-                        Ver todos os detalhes
+                    <button type="button" class="dashboard-commitments-all" onclick="abrirDetalhesCompromissosDashboard('dividas')" aria-label="Ver todos os detalhes">
+                        <span>Ver todos os detalhes</span>
                         <i class="fi fi-rr-arrow-small-right" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -589,6 +595,14 @@
                     </button>
                 </div>
             </section>
+					</div>
+				</div>
+			</div>
+			<div class="dashboard-summary-carousel-indicators" aria-hidden="true">
+				<span class="dashboard-summary-carousel-dot active" data-dashboard-summary-dot="0"></span>
+				<span class="dashboard-summary-carousel-dot" data-dashboard-summary-dot="1"></span>
+			</div>
+		</div>
 
 		</section>
 
@@ -2683,10 +2697,10 @@
     })();
 </script>
 
-	<script src="js/core.js?v=20260822-1"></script>
-    <script src="js/auth.js?v=20260822-1"></script>
+    <script src="js/core.js?v=20260906-3"></script>
+    <script src="js/auth.js?v=20260906-1"></script>
     <script src="js/transacoes.js?v=20260822-1"></script>
-    <script src="js/ui.js?v=20260822-1"></script>
+    <script src="js/ui.js?v=20260906-1"></script>
     <script src="js/modulos.js?v=20260808-1"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260805-4"></script>
@@ -2695,16 +2709,6 @@
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
 
 
 

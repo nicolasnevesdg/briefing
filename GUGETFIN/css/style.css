@@ -1,7 +1,7 @@
 @import url("./base.css");
 @import url("./auth-onb.css");
-@import url("./layout.css");
-@import url("./components.css");
+@import url("./layout.css?v=20260906-1");
+@import url("./components.css?v=20260906-7");
 @import url("./modals.css");
 @import url("./dark-theme.css");
 @import url("./faturas.css?v=20260805-3");

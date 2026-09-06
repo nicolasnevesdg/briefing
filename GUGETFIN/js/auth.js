@@ -638,6 +638,35 @@ function atualizarSaudacao(nomeCompleto) {
         saudacaoRandom = opcoes[Math.floor(Math.random() * opcoes.length)];
     }
 
+    const criarBuscaGastosDashboard = (sufixo, classeExtra = '') => `
+        <div class="dashboard-expense-search ${classeExtra}" data-dashboard-expense-search>
+            <i class="fi fi-rr-search dashboard-expense-search-icon" aria-hidden="true"></i>
+            <input
+                type="search"
+                id="dashboard-expense-search-${sufixo}"
+                class="dashboard-expense-search-input"
+                placeholder="Pesquisar gastos..."
+                aria-label="Pesquisar gastos por nome"
+                aria-controls="dashboard-expense-results-${sufixo}"
+                aria-expanded="false"
+                autocomplete="off"
+                onfocus="abrirBuscaGastosDashboard(this)"
+                oninput="pesquisarGastosDashboard(this)"
+                onkeydown="controlarTeclasBuscaGastosDashboard(event, this)"
+            >
+            <button type="button" class="dashboard-expense-search-clear" onclick="limparBuscaGastosDashboard(this)" aria-label="Limpar pesquisa">
+                <i class="fi fi-rr-cross-small" aria-hidden="true"></i>
+            </button>
+            <div
+                id="dashboard-expense-results-${sufixo}"
+                class="dashboard-expense-search-results"
+                data-dashboard-expense-results
+                role="listbox"
+                aria-live="polite"
+            ></div>
+        </div>
+    `;
+
     const htmlBasePC = `
     <div class="greeting-desktop-wrapper">
         <div class="greeting-desktop-title">
@@ -655,10 +684,7 @@ function atualizarSaudacao(nomeCompleto) {
             <i class="fi fi-rr-eye"></i>
         </button>
 
-        <button type="button" class="guget-ai-trigger guget-ai-trigger-desktop desktop-only" onclick="abrirAssistente()">
-            <span class="guget-ai-icon">✨</span>
-            <span class="guget-ai-text">Me pergunte algo...</span>
-        </button>
+        ${criarBuscaGastosDashboard('desktop', 'dashboard-expense-search-desktop desktop-only')}
     </div>
 `;
 
@@ -679,10 +705,7 @@ function atualizarSaudacao(nomeCompleto) {
             </button>
         </div>
 
-        <button type="button" class="guget-ai-trigger guget-ai-trigger-mobile mobile-only" onclick="abrirAssistente()">
-            <span class="guget-ai-icon">✨</span>
-            <span class="guget-ai-text">Me pergunte algo...</span>
-        </button>
+        ${criarBuscaGastosDashboard('mobile', 'dashboard-expense-search-mobile mobile-only')}
     </div>
 `;
 
