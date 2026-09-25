@@ -8,16 +8,16 @@
           "summary": "Cadastre entradas e saídas no GugetFin usando a voz.",
           "description": "A Skill GugetFin permite cadastrar entradas e saídas por meio de uma conversa guiada. Ela consulta as contas e categorias da conta vinculada, repete o resumo e somente salva o lançamento depois da confirmação do usuário.",
           "examplePhrases": [
-            "Alexa, abra Guget Fin",
-            "Alexa, peça ao Guget Fin para cadastrar uma saída",
-            "Alexa, peça ao Guget Fin para cadastrar uma entrada"
+            "Alexa, abra meu controle financeiro",
+            "Alexa, peça ao meu controle financeiro para cadastrar uma saída",
+            "Alexa, peça ao meu controle financeiro para cadastrar uma entrada"
           ],
           "keywords": ["finanças", "gastos", "entradas", "controle financeiro", "GugetFin"]
         }
       },
       "isAvailableWorldwide": false,
       "testingInstructions": "Vincule uma conta de teste do GugetFin. Abra a Skill, escolha entrada ou saída, responda aos campos e confirme o resumo final.",
-      "category": "PERSONAL_FINANCE",
+      "category": "BUSINESS_AND_FINANCE",
       "distributionCountries": ["BR"]
     },
     "apis": {
