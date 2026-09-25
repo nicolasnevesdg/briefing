@@ -32,7 +32,7 @@
             { "name": "nome", "type": "GU_NOME_LANCAMENTO", "samples": ["{nome}"] },
             { "name": "valor", "type": "AMAZON.NUMBER", "samples": ["{valor}"] },
             { "name": "data", "type": "AMAZON.DATE", "samples": ["{data}", "foi {data}"] },
-            { "name": "categoria", "type": "GU_CATEGORIA_ENTRADA", "samples": ["{categoria}", "categoria {categoria}"] },
+            { "name": "categoriaEntrada", "type": "GU_CATEGORIA_ENTRADA", "samples": ["{categoriaEntrada}", "categoria {categoriaEntrada}"] },
             { "name": "origem", "type": "GU_ORIGEM", "samples": ["{origem}", "veio de {origem}"] },
             { "name": "descricao", "type": "GU_DESCRICAO", "samples": ["{descricao}", "descrição {descricao}"] }
           ],
@@ -146,7 +146,7 @@
             { "name": "nome", "type": "GU_NOME_LANCAMENTO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarNomeEntrada" } },
             { "name": "valor", "type": "AMAZON.NUMBER", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarValorEntrada" } },
             { "name": "data", "type": "AMAZON.DATE", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarDataEntrada" } },
-            { "name": "categoria", "type": "GU_CATEGORIA_ENTRADA", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarCategoriaEntrada" } },
+            { "name": "categoriaEntrada", "type": "GU_CATEGORIA_ENTRADA", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarCategoriaEntrada" } },
             { "name": "origem", "type": "GU_ORIGEM", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarOrigemEntrada" } },
             { "name": "descricao", "type": "GU_DESCRICAO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarDescricao" } }
           ]
@@ -168,7 +168,7 @@
       { "id": "PerguntarDataEntrada", "variations": [{ "type": "PlainText", "value": "Em que dia você recebeu?" }] },
       { "id": "PerguntarCategoriaEntrada", "variations": [{ "type": "PlainText", "value": "A categoria é projetos e serviços, fixo e contrato, ou renda extra?" }] },
       { "id": "PerguntarOrigemEntrada", "variations": [{ "type": "PlainText", "value": "De onde veio esse dinheiro?" }] },
-      { "id": "ConfirmarEntrada", "variations": [{ "type": "PlainText", "value": "Vou cadastrar a entrada {nome}, no valor de {valor} reais, na data {data}, categoria {categoria}, recebida de {origem}. Posso confirmar?" }] }
+      { "id": "ConfirmarEntrada", "variations": [{ "type": "PlainText", "value": "Vou cadastrar a entrada {nome}, no valor de {valor} reais, na data {data}, categoria {categoriaEntrada}, recebida de {origem}. Posso confirmar?" }] }
     ]
   }
 }

@@ -249,7 +249,7 @@ const CadastrarEntradaIntentHandler = {
                 name: slot(intent, 'nome'),
                 amount: valorNumero(slot(intent, 'valor')),
                 date: data,
-                category: categoriaEntrada(slot(intent, 'categoria')),
+                category: categoriaEntrada(slot(intent, 'categoriaEntrada')),
                 source: slot(intent, 'origem'),
                 description: descricao(slot(intent, 'descricao'))
             });
