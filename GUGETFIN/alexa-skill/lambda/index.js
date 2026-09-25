@@ -104,10 +104,20 @@ function valorNumero(valor) {
     return Number.isFinite(numero) ? numero : 0;
 }
 
+function escaparTextoFalavel(valor) {
+    return String(valor || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+}
+
 function listaFalavel(valores) {
     const itens = [...new Set((valores || [])
         .map(valor => String(valor || '').trim())
-        .filter(Boolean))];
+        .filter(Boolean))]
+        .map(escaparTextoFalavel);
     if (!itens.length) return '';
     if (itens.length === 1) return itens[0];
     if (itens.length === 2) return `${itens[0]} e ${itens[1]}`;
@@ -191,7 +201,6 @@ async function obterOpcoes(handlerInput) {
 
 async function elicitarOpcaoSaida(handlerInput, intent, nomeSlot) {
     const { contas, categorias } = await obterOpcoes(handlerInput);
-    const diretiva = diretivaEntidades(contas, categorias);
     const nomesContas = contas.map(item => item.name).filter(Boolean);
     const opcoes = nomeSlot === 'conta' ? nomesContas : categorias;
     const lista = listaFalavel(opcoes);
@@ -202,9 +211,10 @@ async function elicitarOpcaoSaida(handlerInput, intent, nomeSlot) {
         : (lista
             ? `Suas categorias cadastradas são ${lista}. Qual é a categoria?`
             : 'Não encontrei categorias cadastradas. Qual é a categoria?');
-    const builder = handlerInput.responseBuilder.speak(pergunta);
-    if (diretiva) builder.addDirective(diretiva);
-    return builder.addElicitSlotDirective(nomeSlot, intent).getResponse();
+    return handlerInput.responseBuilder
+        .speak(pergunta)
+        .addElicitSlotDirective(nomeSlot, intent)
+        .getResponse();
 }
 
 function mensagemErroApi(error) {
@@ -439,6 +449,7 @@ exports._test = {
     categoriaEntrada,
     dataValida,
     descricao,
+    escaparTextoFalavel,
     formaPagamento,
     listaFalavel,
     normalizar,

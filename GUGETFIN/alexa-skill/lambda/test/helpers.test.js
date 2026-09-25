@@ -34,6 +34,7 @@ test('monta listas naturais para a Alexa falar', () => {
     assert.equal(_test.listaFalavel(['Nubank']), 'Nubank');
     assert.equal(_test.listaFalavel(['Nubank', 'Inter']), 'Nubank e Inter');
     assert.equal(_test.listaFalavel(['Nubank', 'Inter', 'Itaú']), 'Nubank, Inter e Itaú');
+    assert.equal(_test.listaFalavel(['Banco A&B', 'Inter']), 'Banco A&amp;B e Inter');
 });
 
 test('encontra o próximo campo ainda não respondido', () => {
