@@ -1,7 +1,7 @@
 {
   "interactionModel": {
     "languageModel": {
-      "invocationName": "guget fin",
+      "invocationName": "meu controle financeiro",
       "intents": [
         {
           "name": "CadastrarSaidaIntent",
