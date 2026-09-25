@@ -6,7 +6,7 @@
         {
           "name": "CadastrarSaidaIntent",
           "slots": [
-            { "name": "nome", "type": "GU_NOME_LANCAMENTO", "samples": ["{nome}"] },
+            { "name": "nome", "type": "AMAZON.SearchQuery", "samples": ["{nome}"] },
             { "name": "valor", "type": "AMAZON.NUMBER", "samples": ["{valor}"] },
             { "name": "data", "type": "AMAZON.DATE", "samples": ["{data}", "foi {data}"] },
             { "name": "formaPagamento", "type": "GU_FORMA_PAGAMENTO", "samples": ["{formaPagamento}", "foi no {formaPagamento}"] },
@@ -22,14 +22,14 @@
             "adicionar saída",
             "cadastrar um gasto",
             "adicionar um gasto",
-            "gastei {valor} em {nome}",
-            "cadastrar {nome} como saída"
+            "gastei {valor}",
+            "cadastrar gasto chamado {nome}"
           ]
         },
         {
           "name": "CadastrarEntradaIntent",
           "slots": [
-            { "name": "nome", "type": "GU_NOME_LANCAMENTO", "samples": ["{nome}"] },
+            { "name": "nome", "type": "AMAZON.SearchQuery", "samples": ["{nome}"] },
             { "name": "valor", "type": "AMAZON.NUMBER", "samples": ["{valor}"] },
             { "name": "data", "type": "AMAZON.DATE", "samples": ["{data}", "foi {data}"] },
             { "name": "categoriaEntrada", "type": "GU_CATEGORIA_ENTRADA", "samples": ["{categoriaEntrada}", "categoria {categoriaEntrada}"] },
@@ -43,7 +43,7 @@
             "adicionar entrada",
             "cadastrar um recebimento",
             "recebi {valor} de {origem}",
-            "cadastrar {nome} como entrada"
+            "cadastrar entrada chamada {nome}"
           ]
         },
         { "name": "AMAZON.CancelIntent", "samples": [] },
@@ -53,17 +53,6 @@
         { "name": "AMAZON.NavigateHomeIntent", "samples": [] }
       ],
       "types": [
-        {
-          "name": "GU_NOME_LANCAMENTO",
-          "values": [
-            { "name": { "value": "mercado" } },
-            { "name": { "value": "almoço" } },
-            { "name": { "value": "combustível" } },
-            { "name": { "value": "salário" } },
-            { "name": { "value": "freelance" } },
-            { "name": { "value": "conta de luz" } }
-          ]
-        },
         {
           "name": "GU_FORMA_PAGAMENTO",
           "values": [
@@ -128,7 +117,7 @@
           "confirmationRequired": true,
           "prompts": { "confirmation": "ConfirmarSaida" },
           "slots": [
-            { "name": "nome", "type": "GU_NOME_LANCAMENTO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarNomeSaida" } },
+            { "name": "nome", "type": "AMAZON.SearchQuery", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarNomeSaida" } },
             { "name": "valor", "type": "AMAZON.NUMBER", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarValorSaida" } },
             { "name": "data", "type": "AMAZON.DATE", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarDataSaida" } },
             { "name": "formaPagamento", "type": "GU_FORMA_PAGAMENTO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarFormaPagamento" } },
@@ -143,7 +132,7 @@
           "confirmationRequired": true,
           "prompts": { "confirmation": "ConfirmarEntrada" },
           "slots": [
-            { "name": "nome", "type": "GU_NOME_LANCAMENTO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarNomeEntrada" } },
+            { "name": "nome", "type": "AMAZON.SearchQuery", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarNomeEntrada" } },
             { "name": "valor", "type": "AMAZON.NUMBER", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarValorEntrada" } },
             { "name": "data", "type": "AMAZON.DATE", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarDataEntrada" } },
             { "name": "categoriaEntrada", "type": "GU_CATEGORIA_ENTRADA", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarCategoriaEntrada" } },
