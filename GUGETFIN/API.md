@@ -104,7 +104,7 @@ A Skill usa OAuth 2.0 Authorization Code com PKCE. A pessoa entra na própria co
 
 ```text
 Authorization URI
-https://www.nicolasneves.com.br/alexa-link.html
+https://nicolasneves.com.br/GUGETFIN/alexa-link.html
 
 Access Token URI
 https://southamerica-east1-guget-fin.cloudfunctions.net/api/v1/oauth/token

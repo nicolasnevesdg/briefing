@@ -11,7 +11,7 @@ Esta pasta contém a Skill em português do Brasil e o backend para Alexa-hosted
 
 ## Vinculação de conta
 
-- Authorization URI: `https://www.nicolasneves.com.br/alexa-link.html`
+- Authorization URI: `https://nicolasneves.com.br/GUGETFIN/alexa-link.html`
 - Access Token URI: `https://southamerica-east1-guget-fin.cloudfunctions.net/api/v1/oauth/token`
 - Client ID: `gugetfin-alexa`
 - Authentication Scheme: `HTTP Basic`
