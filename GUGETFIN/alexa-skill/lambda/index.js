@@ -48,7 +48,12 @@ async function api(handlerInput, method, path, data) {
 }
 
 function slot(intent, nome) {
-    return intent?.slots?.[nome]?.value || '';
+    const dado = intent?.slots?.[nome];
+    const autoridades = dado?.resolutions?.resolutionsPerAuthority || [];
+    const resolvida = autoridades
+        .find(item => item?.status?.code === 'ER_SUCCESS_MATCH')
+        ?.values?.[0]?.value?.name;
+    return resolvida || dado?.value || '';
 }
 
 function normalizar(valor) {
@@ -86,8 +91,31 @@ function dataValida(valor) {
 }
 
 function valorNumero(valor) {
-    const numero = Number(String(valor || '').replace(',', '.'));
+    const texto = normalizar(valor).replace(/r\$/g, '').trim();
+    const reais = texto.match(/(-?\d+(?:[.,]\d+)?)\s*reais?/);
+    const centavos = texto.match(/(\d+)\s*centavos?/);
+    if (reais) {
+        const inteiro = Number(reais[1].replace(',', '.'));
+        const fracao = centavos ? Number(centavos[1]) / 100 : 0;
+        return Number.isFinite(inteiro + fracao) ? inteiro + fracao : 0;
+    }
+    const limpo = texto.replace(/[^\d,.-]/g, '');
+    const numero = Number(limpo.replace(',', '.'));
     return Number.isFinite(numero) ? numero : 0;
+}
+
+function listaFalavel(valores) {
+    const itens = [...new Set((valores || [])
+        .map(valor => String(valor || '').trim())
+        .filter(Boolean))];
+    if (!itens.length) return '';
+    if (itens.length === 1) return itens[0];
+    if (itens.length === 2) return `${itens[0]} e ${itens[1]}`;
+    return `${itens.slice(0, -1).join(', ')} e ${itens[itens.length - 1]}`;
+}
+
+function primeiroSlotAusente(intent, ordem) {
+    return ordem.find(nome => !slot(intent, nome)) || '';
 }
 
 function definirSlot(intent, nome, valor) {
@@ -132,6 +160,53 @@ function diretivaEntidades(contas, categorias) {
     } : null;
 }
 
+function guardarOpcoes(handlerInput, contas, categorias) {
+    const atributos = handlerInput.attributesManager.getSessionAttributes();
+    handlerInput.attributesManager.setSessionAttributes({
+        ...atributos,
+        gugetfinContas: contas || [],
+        gugetfinCategorias: categorias || []
+    });
+}
+
+async function obterOpcoes(handlerInput) {
+    const atributos = handlerInput.attributesManager.getSessionAttributes();
+    if (Array.isArray(atributos.gugetfinContas) && Array.isArray(atributos.gugetfinCategorias)) {
+        return {
+            contas: atributos.gugetfinContas,
+            categorias: atributos.gugetfinCategorias
+        };
+    }
+    const [contas, categorias] = await Promise.all([
+        api(handlerInput, 'GET', '/accounts'),
+        api(handlerInput, 'GET', '/categories')
+    ]);
+    const opcoes = {
+        contas: contas || [],
+        categorias: categorias?.expenses || []
+    };
+    guardarOpcoes(handlerInput, opcoes.contas, opcoes.categorias);
+    return opcoes;
+}
+
+async function elicitarOpcaoSaida(handlerInput, intent, nomeSlot) {
+    const { contas, categorias } = await obterOpcoes(handlerInput);
+    const diretiva = diretivaEntidades(contas, categorias);
+    const nomesContas = contas.map(item => item.name).filter(Boolean);
+    const opcoes = nomeSlot === 'conta' ? nomesContas : categorias;
+    const lista = listaFalavel(opcoes);
+    const pergunta = nomeSlot === 'conta'
+        ? (lista
+            ? `Seus cartões e contas cadastrados são ${lista}. Qual você usou?`
+            : 'Não encontrei cartões ou contas cadastrados. Qual conta você usou?')
+        : (lista
+            ? `Suas categorias cadastradas são ${lista}. Qual é a categoria?`
+            : 'Não encontrei categorias cadastradas. Qual é a categoria?');
+    const builder = handlerInput.responseBuilder.speak(pergunta);
+    if (diretiva) builder.addDirective(diretiva);
+    return builder.addElicitSlotDirective(nomeSlot, intent).getResponse();
+}
+
 function mensagemErroApi(error) {
     if (error.code === 'unknown_account') {
         const opcoes = error.details?.available?.slice(0, 5).join(', ');
@@ -160,7 +235,9 @@ const LaunchRequestHandler = {
                 api(handlerInput, 'GET', '/categories')
             ]);
             const nome = String(perfil?.name || '').split(' ')[0];
-            const diretiva = diretivaEntidades(contas, categorias?.expenses);
+            const categoriasDespesas = categorias?.expenses || [];
+            guardarOpcoes(handlerInput, contas || [], categoriasDespesas);
+            const diretiva = diretivaEntidades(contas, categoriasDespesas);
             const builder = handlerInput.responseBuilder
                 .speak(`Olá${nome ? `, ${nome}` : ''}! Você quer cadastrar uma entrada ou uma saída?`)
                 .reprompt('Diga entrada ou saída.');
@@ -186,6 +263,29 @@ const CadastrarSaidaIntentHandler = {
         const request = handlerInput.requestEnvelope.request;
         const intent = prepararSaida(request.intent);
         if (request.dialogState !== 'COMPLETED') {
+            const proximoSlot = primeiroSlotAusente(intent, [
+                'nome',
+                'valor',
+                'data',
+                'formaPagamento',
+                'parcelas',
+                'conta',
+                'categoria',
+                'descricao'
+            ]);
+            if (proximoSlot === 'conta' || proximoSlot === 'categoria') {
+                try {
+                    return await elicitarOpcaoSaida(handlerInput, intent, proximoSlot);
+                } catch (error) {
+                    if (['account_not_linked', 'invalid_token', 'expired_token'].includes(error.code)) {
+                        return respostaVincular(handlerInput);
+                    }
+                    return handlerInput.responseBuilder
+                        .speak(mensagemErroApi(error))
+                        .addElicitSlotDirective(proximoSlot, intent)
+                        .getResponse();
+                }
+            }
             return handlerInput.responseBuilder.addDelegateDirective(intent).getResponse();
         }
 
@@ -340,6 +440,9 @@ exports._test = {
     dataValida,
     descricao,
     formaPagamento,
+    listaFalavel,
     normalizar,
+    primeiroSlotAusente,
+    slot,
     valorNumero
 };

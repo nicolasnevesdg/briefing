@@ -7,7 +7,7 @@
           "name": "CadastrarSaidaIntent",
           "slots": [
             { "name": "nome", "type": "AMAZON.SearchQuery", "samples": ["{nome}"] },
-            { "name": "valor", "type": "AMAZON.NUMBER", "samples": ["{valor}"] },
+            { "name": "valor", "type": "AMAZON.NUMBER", "samples": ["{valor}", "{valor} real", "{valor} reais", "valor de {valor} reais"] },
             { "name": "data", "type": "AMAZON.DATE", "samples": ["{data}", "foi {data}"] },
             { "name": "formaPagamento", "type": "GU_FORMA_PAGAMENTO", "samples": ["{formaPagamento}", "foi no {formaPagamento}"] },
             { "name": "parcelas", "type": "AMAZON.NUMBER", "samples": ["{parcelas}", "em {parcelas} vezes"] },
@@ -23,6 +23,7 @@
             "cadastrar um gasto",
             "adicionar um gasto",
             "gastei {valor}",
+            "gastei {valor} reais",
             "cadastrar gasto chamado {nome}"
           ]
         },
@@ -30,7 +31,7 @@
           "name": "CadastrarEntradaIntent",
           "slots": [
             { "name": "nome", "type": "AMAZON.SearchQuery", "samples": ["{nome}"] },
-            { "name": "valor", "type": "AMAZON.NUMBER", "samples": ["{valor}"] },
+            { "name": "valor", "type": "AMAZON.NUMBER", "samples": ["{valor}", "{valor} real", "{valor} reais", "valor de {valor} reais"] },
             { "name": "data", "type": "AMAZON.DATE", "samples": ["{data}", "foi {data}"] },
             { "name": "categoriaEntrada", "type": "GU_CATEGORIA_ENTRADA", "samples": ["{categoriaEntrada}", "categoria {categoriaEntrada}"] },
             { "name": "origem", "type": "GU_ORIGEM", "samples": ["{origem}", "veio de {origem}"] },
@@ -43,6 +44,7 @@
             "adicionar entrada",
             "cadastrar um recebimento",
             "recebi {valor} de {origem}",
+            "recebi {valor} reais",
             "cadastrar entrada chamada {nome}"
           ]
         },
@@ -144,7 +146,7 @@
     },
     "prompts": [
       { "id": "PerguntarNomeSaida", "variations": [{ "type": "PlainText", "value": "Qual é o nome do gasto?" }] },
-      { "id": "PerguntarValorSaida", "variations": [{ "type": "PlainText", "value": "Qual foi o valor?" }] },
+      { "id": "PerguntarValorSaida", "variations": [{ "type": "PlainText", "value": "Qual foi o valor? Você pode dizer um real ou dois reais." }] },
       { "id": "PerguntarDataSaida", "variations": [{ "type": "PlainText", "value": "Em que dia foi a compra?" }] },
       { "id": "PerguntarFormaPagamento", "variations": [{ "type": "PlainText", "value": "Foi no crédito, débito, Pix, dinheiro ou é um gasto fixo?" }] },
       { "id": "PerguntarParcelas", "variations": [{ "type": "PlainText", "value": "Em quantas parcelas? Diga um para compra à vista." }] },
@@ -153,7 +155,7 @@
       { "id": "PerguntarDescricao", "variations": [{ "type": "PlainText", "value": "Quer adicionar uma descrição? Se não quiser, diga sem descrição." }] },
       { "id": "ConfirmarSaida", "variations": [{ "type": "PlainText", "value": "Vou cadastrar a saída {nome}, no valor de {valor} reais, na data {data}, usando {formaPagamento}, na conta {conta}, categoria {categoria}. Posso confirmar?" }] },
       { "id": "PerguntarNomeEntrada", "variations": [{ "type": "PlainText", "value": "Qual é o nome da entrada?" }] },
-      { "id": "PerguntarValorEntrada", "variations": [{ "type": "PlainText", "value": "Qual foi o valor recebido?" }] },
+      { "id": "PerguntarValorEntrada", "variations": [{ "type": "PlainText", "value": "Qual foi o valor recebido? Você pode dizer um real ou dois reais." }] },
       { "id": "PerguntarDataEntrada", "variations": [{ "type": "PlainText", "value": "Em que dia você recebeu?" }] },
       { "id": "PerguntarCategoriaEntrada", "variations": [{ "type": "PlainText", "value": "A categoria é projetos e serviços, fixo e contrato, ou renda extra?" }] },
       { "id": "PerguntarOrigemEntrada", "variations": [{ "type": "PlainText", "value": "De onde veio esse dinheiro?" }] },
