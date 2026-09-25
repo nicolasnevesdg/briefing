@@ -1732,6 +1732,10 @@ function selecionarAbaConfiguracoes(aba = 'perfil') {
     if (aba === 'organizacao' && typeof renderizarConfiguracoesOrganizacao === 'function') {
         renderizarConfiguracoesOrganizacao();
     }
+
+    if (aba === 'integracoes' && typeof carregarIntegracoesApiGugetFin === 'function') {
+        carregarIntegracoesApiGugetFin();
+    }
 }
 
 function toggleEntradasSidebar() {

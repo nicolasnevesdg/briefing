@@ -1,0 +1,98 @@
+:root {
+    color-scheme: dark;
+    --bg: #080c10;
+    --surface: #11171d;
+    --surface-soft: #161e25;
+    --border: #25313a;
+    --text: #f7fafc;
+    --muted: #9cacb7;
+    --green: #22e58d;
+    --green-dark: #08764c;
+    --danger: #ff7d7d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(34, 229, 141, .12), transparent 34rem),
+        var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button, input { font: inherit; }
+
+.alexa-shell {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px;
+}
+
+.alexa-card {
+    width: min(100%, 470px);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: rgba(17, 23, 29, .97);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .38);
+}
+
+.alexa-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 72px;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+}
+
+.alexa-brand img { width: 124px; max-height: 36px; object-fit: contain; object-position: left center; }
+.alexa-badge { padding: 7px 11px; border: 1px solid #2c91b7; border-radius: 999px; color: #62cff4; font-size: 12px; font-weight: 800; }
+
+.alexa-heading { padding: 26px 24px 18px; }
+.alexa-heading p { margin: 10px 0 5px; color: var(--green); font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.alexa-heading h1 { margin: 0 0 9px; font-size: clamp(25px, 7vw, 34px); line-height: 1.06; letter-spacing: -.04em; }
+.alexa-heading > span:last-child { display: block; color: var(--muted); font-size: 14px; line-height: 1.5; }
+.alexa-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: rgba(34, 229, 141, .13); color: var(--green); font-size: 20px; }
+
+#alexa-content { padding: 0 24px 24px; }
+.alexa-permissions { padding: 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-soft); font-size: 13px; line-height: 1.5; }
+.alexa-permissions strong { display: block; margin-bottom: 7px; }
+.alexa-permissions ul { margin: 0; padding-left: 20px; color: #d8e1e7; }
+.alexa-permissions li + li { margin-top: 5px; }
+.alexa-permissions p { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted); }
+
+.alexa-form { display: grid; gap: 13px; margin-top: 18px; }
+.alexa-form label { display: grid; gap: 7px; }
+.alexa-form label span, .alexa-session > span { color: var(--muted); font-size: 12px; font-weight: 750; }
+.alexa-form input { width: 100%; height: 48px; padding: 0 14px; border: 1px solid var(--border); border-radius: 13px; outline: none; background: #0c1217; color: var(--text); }
+.alexa-form input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(34, 229, 141, .11); }
+
+.alexa-button { width: 100%; min-height: 48px; border: 0; border-radius: 13px; cursor: pointer; font-weight: 850; transition: transform .15s ease, opacity .15s ease; }
+.alexa-button:active { transform: scale(.985); }
+.alexa-button:disabled { cursor: wait; opacity: .62; }
+.alexa-button.is-primary { margin-top: 4px; background: var(--green); color: #032b1b; }
+.alexa-button.is-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
+.alexa-session { display: grid; gap: 10px; margin-top: 18px; padding: 16px; border: 1px solid rgba(34, 229, 141, .28); border-radius: 16px; background: rgba(34, 229, 141, .07); }
+.alexa-session strong { margin-bottom: 4px; overflow-wrap: anywhere; }
+.alexa-status { min-height: 20px; margin: 13px 0 0; color: var(--muted); font-size: 13px; text-align: center; }
+.alexa-status.is-error { color: var(--danger); }
+.alexa-status.is-success { color: var(--green); }
+.alexa-cancel { display: block; margin: 2px auto 0; padding: 8px 12px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+
+.alexa-message { margin: 0 24px 24px; padding: 14px; border-radius: 14px; font-size: 14px; line-height: 1.45; }
+.alexa-message.is-error { border: 1px solid rgba(255, 125, 125, .3); background: rgba(255, 125, 125, .09); color: #ffc1c1; }
+
+.alexa-card footer { padding: 16px 24px; border-top: 1px solid var(--border); color: #71818d; font-size: 11px; line-height: 1.45; text-align: center; }
+
+@media (max-width: 520px) {
+    .alexa-shell { align-items: start; padding: 0; }
+    .alexa-card { min-height: 100vh; border: 0; border-radius: 0; }
+    .alexa-brand { padding-inline: 20px; }
+    .alexa-heading, #alexa-content { padding-inline: 20px; }
+}

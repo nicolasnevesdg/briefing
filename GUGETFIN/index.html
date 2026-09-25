@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20260906-8">
+    <link rel="stylesheet" href="css/style.css?v=20260920-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1092,6 +1092,10 @@
                         <i class="fi fi-rr-shield-check"></i>
                         <span>Conta e segurança</span>
                     </button>
+                    <button type="button" class="settings-tab" data-settings-tab="integracoes" onclick="selecionarAbaConfiguracoes('integracoes')">
+                        <i class="fi fi-rr-link-alt"></i>
+                        <span>Integrações</span>
+                    </button>
                     <button type="button" class="settings-tab" data-settings-tab="organizacao" onclick="selecionarAbaConfiguracoes('organizacao')">
                         <i class="fi fi-rr-apps-sort"></i>
                         <span>Organização</span>
@@ -1393,6 +1397,67 @@
                                 <small>O status online usa um sinal enviado pelo app a cada poucos segundos. Se um navegador for fechado de forma brusca, ele pode levar cerca de 1 minuto para sair de online.</small>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="settings-panel" data-settings-panel="integracoes">
+                        <div class="settings-panel-head">
+                            <span>Conexões externas</span>
+                            <h3>API e integrações</h3>
+                            <p>Conecte relógios, atalhos e aplicativos sem compartilhar sua senha do GugetFin.</p>
+                        </div>
+
+                        <div class="settings-api-grid">
+                            <section class="settings-api-card settings-api-overview">
+                                <div class="settings-security-card-head">
+                                    <i class="fi fi-rr-cloud-check"></i>
+                                    <div>
+                                        <strong>API GugetFin</strong>
+                                        <span>Uma única API para relógio, Alexa e futuras automações.</span>
+                                    </div>
+                                </div>
+                                <div class="settings-api-status-row">
+                                    <div>
+                                        <span>Endereço da API</span>
+                                        <code id="settings-api-url">Carregando...</code>
+                                    </div>
+                                    <span class="settings-status-pill" id="settings-api-status">Verificar</span>
+                                </div>
+                                <button type="button" class="btn-settings-secondary" onclick="testarApiGugetFin()">Testar conexão</button>
+                            </section>
+
+                            <section class="settings-api-card">
+                                <div class="settings-security-card-head">
+                                    <i class="fi fi-rr-key"></i>
+                                    <div>
+                                        <strong>Nova chave de acesso</strong>
+                                        <span>Crie uma chave diferente para cada dispositivo.</span>
+                                    </div>
+                                </div>
+                                <label class="settings-field">
+                                    <span>Nome do dispositivo ou aplicativo</span>
+                                    <input type="text" id="settings-api-key-name" maxlength="60" placeholder="Ex: Amazfit T-Rex 3">
+                                </label>
+                                <div class="settings-api-permissions" aria-label="Permissões concedidas">
+                                    <span>Consulta de perfil</span>
+                                    <span>Leitura de lançamentos</span>
+                                    <span>Criação e exclusão via API</span>
+                                </div>
+                                <button type="button" class="btn-settings-primary" id="btn-create-api-key" onclick="criarChaveApiGugetFin()">Criar chave</button>
+                            </section>
+                        </div>
+
+                        <section class="settings-api-list-card">
+                            <div class="settings-org-card-head">
+                                <div>
+                                    <span>Dispositivos autorizados</span>
+                                    <h4>Integrações ativas</h4>
+                                </div>
+                                <strong id="settings-api-key-count">0</strong>
+                            </div>
+                            <div class="settings-api-key-list" id="settings-api-key-list">
+                                <div class="settings-session-empty">Abra esta aba para carregar as integrações.</div>
+                            </div>
+                        </section>
                     </div>
 
                     <div class="settings-panel" data-settings-panel="organizacao">
@@ -2584,6 +2649,29 @@
         </div>
     </div>
 </dialog>
+
+<dialog id="modal-api-key" class="modal-estilizado modal-api-key">
+    <div class="modal-content api-key-modal-content">
+        <button class="btn-close-modal" onclick="fecharModalChaveApi()">×</button>
+        <div class="modal-divida-header">
+            <span>Integração criada</span>
+            <h3>Copie sua chave agora</h3>
+            <p>Por segurança, o GugetFin não mostrará esta chave novamente.</p>
+        </div>
+        <div class="api-key-secret-wrap">
+            <code id="api-key-secret-value"></code>
+            <button type="button" class="btn-settings-secondary" onclick="copiarChaveApiGugetFin()">
+                <i class="fi fi-rr-copy"></i>
+                Copiar chave
+            </button>
+        </div>
+        <div class="api-key-warning">
+            <i class="fi fi-rr-shield-exclamation"></i>
+            <span>Guarde a chave no aplicativo do dispositivo. Não envie por mensagem e não publique em código.</span>
+        </div>
+        <button type="button" class="btn-settings-primary" onclick="fecharModalChaveApi()">Já guardei a chave</button>
+    </div>
+</dialog>
 	
 	<div id="toast-notificacao">
         <i class="fi fi-rr-check-circle"></i>
@@ -2697,8 +2785,9 @@
     })();
 </script>
 
-    <script src="js/core.js?v=20260906-3"></script>
+    <script src="js/core.js?v=20260920-1"></script>
     <script src="js/auth.js?v=20260906-1"></script>
+    <script src="js/api-integrations.js?v=20260920-1"></script>
     <script src="js/transacoes.js?v=20260822-1"></script>
     <script src="js/ui.js?v=20260906-1"></script>
     <script src="js/modulos.js?v=20260808-1"></script>
@@ -2709,7 +2798,6 @@
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
 </body>
 </html>
-
 
 
 

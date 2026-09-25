@@ -3261,6 +3261,268 @@ main.settings-mode #settings-view {
     font-weight: 600;
 }
 
+/* ========================================================= */
+/* CONFIGURACOES - API E INTEGRACOES                         */
+/* ========================================================= */
+
+.settings-api-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    align-items: stretch;
+}
+
+.settings-api-card,
+.settings-api-list-card {
+    min-width: 0;
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg-app);
+    box-sizing: border-box;
+}
+
+.settings-api-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-api-card .btn-settings-primary,
+.settings-api-card .btn-settings-secondary {
+    align-self: flex-start;
+}
+
+.settings-api-status-row {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: var(--sidebar-bg);
+}
+
+.settings-api-status-row > div {
+    min-width: 0;
+}
+
+.settings-api-status-row span,
+.settings-api-status-row code {
+    display: block;
+}
+
+.settings-api-status-row > div > span {
+    margin-bottom: 5px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.settings-api-status-row code {
+    overflow: hidden;
+    color: var(--text-main);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.settings-api-permissions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.settings-api-permissions span {
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(0, 181, 105, 0.09);
+    color: var(--dark-green);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.settings-api-list-card {
+    margin-top: 18px;
+}
+
+.settings-api-key-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.settings-api-key-item {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 13px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--sidebar-bg);
+}
+
+.settings-api-key-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: rgba(0, 181, 105, 0.10);
+    color: var(--dark-green);
+}
+
+.settings-api-key-copy {
+    min-width: 0;
+}
+
+.settings-api-key-copy strong,
+.settings-api-key-copy code,
+.settings-api-key-copy span {
+    display: block;
+}
+
+.settings-api-key-copy strong {
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.settings-api-key-copy code {
+    margin-top: 3px;
+    color: var(--dark-green);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 10px;
+}
+
+.settings-api-key-copy span {
+    margin-top: 5px;
+    color: var(--text-sec);
+    font-size: 9.5px;
+    line-height: 1.4;
+}
+
+.settings-api-revoke {
+    color: #d04f4f !important;
+}
+
+.settings-api-empty,
+.settings-api-error {
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 20px;
+    border: 1px dashed var(--border);
+    border-radius: 16px;
+    color: var(--text-sec);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.settings-api-empty i {
+    color: var(--dark-green);
+    font-size: 22px;
+}
+
+.settings-api-empty strong {
+    color: var(--text-main);
+    font-size: 13px;
+}
+
+.settings-api-empty span,
+.settings-api-error {
+    font-size: 11px;
+}
+
+.modal-api-key {
+    width: min(520px, calc(100vw - 24px));
+}
+
+.api-key-modal-content {
+    display: grid;
+    gap: 18px;
+}
+
+.api-key-secret-wrap {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid rgba(0, 181, 105, 0.28);
+    border-radius: 16px;
+    background: rgba(0, 181, 105, 0.07);
+}
+
+.api-key-secret-wrap code {
+    overflow-wrap: anywhere;
+    color: var(--text-main);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    user-select: all;
+}
+
+.api-key-secret-wrap .btn-settings-secondary {
+    justify-self: start;
+}
+
+.api-key-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 14px;
+    border-radius: 14px;
+    background: rgba(245, 158, 11, 0.10);
+    color: var(--text-sec);
+}
+
+.api-key-warning i {
+    color: #d99916;
+    font-size: 17px;
+}
+
+.api-key-warning span {
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+    .settings-api-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-api-card,
+    .settings-api-list-card {
+        padding: 17px;
+    }
+
+    .settings-api-card .btn-settings-primary,
+    .settings-api-card .btn-settings-secondary {
+        width: 100%;
+    }
+
+    .settings-api-status-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .settings-api-key-item {
+        grid-template-columns: 40px minmax(0, 1fr);
+    }
+
+    .settings-api-revoke {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
+
 .settings-google-card {
     gap: 18px;
 }

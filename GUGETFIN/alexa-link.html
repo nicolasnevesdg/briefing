@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="theme-color" content="#0b0f14">
+    <title>Conectar Alexa — GugetFin</title>
+    <link rel="icon" href="./assets/favicon.png">
+    <link rel="stylesheet" href="./css/alexa-link.css?v=20260924-1">
+</head>
+<body>
+    <main class="alexa-shell">
+        <section class="alexa-card" aria-labelledby="alexa-title">
+            <header class="alexa-brand">
+                <img src="./assets/logo-negative.svg" alt="GugetFin">
+                <span class="alexa-badge">Alexa</span>
+            </header>
+
+            <div class="alexa-heading">
+                <span class="alexa-icon" aria-hidden="true">✦</span>
+                <p>Vinculação de conta</p>
+                <h1 id="alexa-title">Conecte sua Alexa ao GugetFin</h1>
+                <span>Autorize a Skill a consultar suas opções e cadastrar lançamentos por voz.</span>
+            </div>
+
+            <div id="alexa-invalid" class="alexa-message is-error" hidden>
+                Este pedido de conexão não é válido. Volte ao aplicativo Alexa e tente novamente.
+            </div>
+
+            <div id="alexa-content">
+                <div class="alexa-permissions">
+                    <strong>A Alexa poderá:</strong>
+                    <ul>
+                        <li>Consultar seus cartões, contas e categorias.</li>
+                        <li>Cadastrar entradas e saídas após sua confirmação.</li>
+                        <li>Consultar os lançamentos necessários para responder às suas perguntas.</li>
+                    </ul>
+                    <p>Ela não terá acesso à sua senha e não se conecta a bancos ou Open Finance.</p>
+                </div>
+
+                <form id="alexa-login-form" class="alexa-form" novalidate>
+                    <label>
+                        <span>E-mail do GugetFin</span>
+                        <input id="alexa-email" type="email" autocomplete="email" required placeholder="seuemail@exemplo.com">
+                    </label>
+                    <label>
+                        <span>Senha</span>
+                        <input id="alexa-password" type="password" autocomplete="current-password" required placeholder="Sua senha">
+                    </label>
+                    <button id="alexa-login-button" class="alexa-button is-primary" type="submit">Entrar e continuar</button>
+                </form>
+
+                <div id="alexa-session" class="alexa-session" hidden>
+                    <span>Conta conectada</span>
+                    <strong id="alexa-session-email"></strong>
+                    <button id="alexa-authorize-button" class="alexa-button is-primary" type="button">Autorizar conexão</button>
+                    <button id="alexa-change-account" class="alexa-button is-ghost" type="button">Usar outra conta</button>
+                </div>
+
+                <p id="alexa-status" class="alexa-status" role="status" aria-live="polite"></p>
+                <button id="alexa-cancel-button" class="alexa-cancel" type="button">Cancelar</button>
+            </div>
+
+            <footer>
+                <span>Você poderá revogar essa integração nas configurações do GugetFin.</span>
+            </footer>
+        </section>
+    </main>
+
+    <script type="module" src="./js/alexa-link.js?v=20260924-1"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "guget fin",
+      "intents": [
+        {
+          "name": "CadastrarSaidaIntent",
+          "slots": [
+            { "name": "nome", "type": "GU_NOME_LANCAMENTO", "samples": ["{nome}"] },
+            { "name": "valor", "type": "AMAZON.NUMBER", "samples": ["{valor}"] },
+            { "name": "data", "type": "AMAZON.DATE", "samples": ["{data}", "foi {data}"] },
+            { "name": "formaPagamento", "type": "GU_FORMA_PAGAMENTO", "samples": ["{formaPagamento}", "foi no {formaPagamento}"] },
+            { "name": "parcelas", "type": "AMAZON.NUMBER", "samples": ["{parcelas}", "em {parcelas} vezes"] },
+            { "name": "conta", "type": "GU_CONTA", "samples": ["{conta}", "no {conta}"] },
+            { "name": "categoria", "type": "GU_CATEGORIA", "samples": ["{categoria}", "categoria {categoria}"] },
+            { "name": "descricao", "type": "GU_DESCRICAO", "samples": ["{descricao}", "descrição {descricao}"] }
+          ],
+          "samples": [
+            "saída",
+            "uma saída",
+            "cadastrar saída",
+            "adicionar saída",
+            "cadastrar um gasto",
+            "adicionar um gasto",
+            "gastei {valor} em {nome}",
+            "cadastrar {nome} como saída"
+          ]
+        },
+        {
+          "name": "CadastrarEntradaIntent",
+          "slots": [
+            { "name": "nome", "type": "GU_NOME_LANCAMENTO", "samples": ["{nome}"] },
+            { "name": "valor", "type": "AMAZON.NUMBER", "samples": ["{valor}"] },
+            { "name": "data", "type": "AMAZON.DATE", "samples": ["{data}", "foi {data}"] },
+            { "name": "categoria", "type": "GU_CATEGORIA_ENTRADA", "samples": ["{categoria}", "categoria {categoria}"] },
+            { "name": "origem", "type": "GU_ORIGEM", "samples": ["{origem}", "veio de {origem}"] },
+            { "name": "descricao", "type": "GU_DESCRICAO", "samples": ["{descricao}", "descrição {descricao}"] }
+          ],
+          "samples": [
+            "entrada",
+            "uma entrada",
+            "cadastrar entrada",
+            "adicionar entrada",
+            "cadastrar um recebimento",
+            "recebi {valor} de {origem}",
+            "cadastrar {nome} como entrada"
+          ]
+        },
+        { "name": "AMAZON.CancelIntent", "samples": [] },
+        { "name": "AMAZON.HelpIntent", "samples": [] },
+        { "name": "AMAZON.StopIntent", "samples": [] },
+        { "name": "AMAZON.FallbackIntent", "samples": [] },
+        { "name": "AMAZON.NavigateHomeIntent", "samples": [] }
+      ],
+      "types": [
+        {
+          "name": "GU_NOME_LANCAMENTO",
+          "values": [
+            { "name": { "value": "mercado" } },
+            { "name": { "value": "almoço" } },
+            { "name": { "value": "combustível" } },
+            { "name": { "value": "salário" } },
+            { "name": { "value": "freelance" } },
+            { "name": { "value": "conta de luz" } }
+          ]
+        },
+        {
+          "name": "GU_FORMA_PAGAMENTO",
+          "values": [
+            { "name": { "value": "crédito", "synonyms": ["cartão", "cartão de crédito", "no crédito"] } },
+            { "name": { "value": "débito", "synonyms": ["cartão de débito", "no débito"] } },
+            { "name": { "value": "Pix", "synonyms": ["pelo Pix", "no Pix"] } },
+            { "name": { "value": "dinheiro", "synonyms": ["em espécie", "à vista em dinheiro"] } },
+            { "name": { "value": "fixo", "synonyms": ["gasto fixo", "conta fixa"] } }
+          ]
+        },
+        {
+          "name": "GU_CONTA",
+          "values": [
+            { "name": { "value": "Nubank" } },
+            { "name": { "value": "Inter" } },
+            { "name": { "value": "Itaú" } },
+            { "name": { "value": "Dinheiro" } }
+          ]
+        },
+        {
+          "name": "GU_CATEGORIA",
+          "values": [
+            { "name": { "value": "Alimentação" } },
+            { "name": { "value": "Transporte" } },
+            { "name": { "value": "Casa" } },
+            { "name": { "value": "Lazer" } },
+            { "name": { "value": "Saúde" } }
+          ]
+        },
+        {
+          "name": "GU_CATEGORIA_ENTRADA",
+          "values": [
+            { "name": { "value": "Projetos e Serviços", "synonyms": ["projetos", "serviços", "projetos e serviços"] } },
+            { "name": { "value": "Fixo e Contrato", "synonyms": ["fixo", "contrato", "fixo e contrato"] } },
+            { "name": { "value": "Renda Extra", "synonyms": ["extra", "renda extra"] } }
+          ]
+        },
+        {
+          "name": "GU_ORIGEM",
+          "values": [
+            { "name": { "value": "empresa" } },
+            { "name": { "value": "cliente" } },
+            { "name": { "value": "trabalho" } },
+            { "name": { "value": "venda" } }
+          ]
+        },
+        {
+          "name": "GU_DESCRICAO",
+          "values": [
+            { "name": { "value": "sem descrição", "synonyms": ["não", "nenhuma", "sem", "não quero"] } },
+            { "name": { "value": "compra do mês" } },
+            { "name": { "value": "pagamento do projeto" } }
+          ]
+        }
+      ]
+    },
+    "dialog": {
+      "delegationStrategy": "SKILL_RESPONSE",
+      "intents": [
+        {
+          "name": "CadastrarSaidaIntent",
+          "confirmationRequired": true,
+          "prompts": { "confirmation": "ConfirmarSaida" },
+          "slots": [
+            { "name": "nome", "type": "GU_NOME_LANCAMENTO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarNomeSaida" } },
+            { "name": "valor", "type": "AMAZON.NUMBER", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarValorSaida" } },
+            { "name": "data", "type": "AMAZON.DATE", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarDataSaida" } },
+            { "name": "formaPagamento", "type": "GU_FORMA_PAGAMENTO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarFormaPagamento" } },
+            { "name": "parcelas", "type": "AMAZON.NUMBER", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarParcelas" } },
+            { "name": "conta", "type": "GU_CONTA", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarConta" } },
+            { "name": "categoria", "type": "GU_CATEGORIA", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarCategoriaSaida" } },
+            { "name": "descricao", "type": "GU_DESCRICAO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarDescricao" } }
+          ]
+        },
+        {
+          "name": "CadastrarEntradaIntent",
+          "confirmationRequired": true,
+          "prompts": { "confirmation": "ConfirmarEntrada" },
+          "slots": [
+            { "name": "nome", "type": "GU_NOME_LANCAMENTO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarNomeEntrada" } },
+            { "name": "valor", "type": "AMAZON.NUMBER", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarValorEntrada" } },
+            { "name": "data", "type": "AMAZON.DATE", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarDataEntrada" } },
+            { "name": "categoria", "type": "GU_CATEGORIA_ENTRADA", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarCategoriaEntrada" } },
+            { "name": "origem", "type": "GU_ORIGEM", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarOrigemEntrada" } },
+            { "name": "descricao", "type": "GU_DESCRICAO", "elicitationRequired": true, "confirmationRequired": false, "prompts": { "elicitation": "PerguntarDescricao" } }
+          ]
+        }
+      ]
+    },
+    "prompts": [
+      { "id": "PerguntarNomeSaida", "variations": [{ "type": "PlainText", "value": "Qual é o nome do gasto?" }] },
+      { "id": "PerguntarValorSaida", "variations": [{ "type": "PlainText", "value": "Qual foi o valor?" }] },
+      { "id": "PerguntarDataSaida", "variations": [{ "type": "PlainText", "value": "Em que dia foi a compra?" }] },
+      { "id": "PerguntarFormaPagamento", "variations": [{ "type": "PlainText", "value": "Foi no crédito, débito, Pix, dinheiro ou é um gasto fixo?" }] },
+      { "id": "PerguntarParcelas", "variations": [{ "type": "PlainText", "value": "Em quantas parcelas? Diga um para compra à vista." }] },
+      { "id": "PerguntarConta", "variations": [{ "type": "PlainText", "value": "Qual cartão ou conta você usou?" }] },
+      { "id": "PerguntarCategoriaSaida", "variations": [{ "type": "PlainText", "value": "Qual é a categoria?" }] },
+      { "id": "PerguntarDescricao", "variations": [{ "type": "PlainText", "value": "Quer adicionar uma descrição? Se não quiser, diga sem descrição." }] },
+      { "id": "ConfirmarSaida", "variations": [{ "type": "PlainText", "value": "Vou cadastrar a saída {nome}, no valor de {valor} reais, na data {data}, usando {formaPagamento}, na conta {conta}, categoria {categoria}. Posso confirmar?" }] },
+      { "id": "PerguntarNomeEntrada", "variations": [{ "type": "PlainText", "value": "Qual é o nome da entrada?" }] },
+      { "id": "PerguntarValorEntrada", "variations": [{ "type": "PlainText", "value": "Qual foi o valor recebido?" }] },
+      { "id": "PerguntarDataEntrada", "variations": [{ "type": "PlainText", "value": "Em que dia você recebeu?" }] },
+      { "id": "PerguntarCategoriaEntrada", "variations": [{ "type": "PlainText", "value": "A categoria é projetos e serviços, fixo e contrato, ou renda extra?" }] },
+      { "id": "PerguntarOrigemEntrada", "variations": [{ "type": "PlainText", "value": "De onde veio esse dinheiro?" }] },
+      { "id": "ConfirmarEntrada", "variations": [{ "type": "PlainText", "value": "Vou cadastrar a entrada {nome}, no valor de {valor} reais, na data {data}, categoria {categoria}, recebida de {origem}. Posso confirmar?" }] }
+    ]
+  }
+}
