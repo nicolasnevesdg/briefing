@@ -13,8 +13,14 @@ const {
     autorizarAlexa,
     endpointTokenAlexa
 } = require('./oauth');
+const {
+    CAMINHO_WEBHOOK,
+    autorizarWhatsApp,
+    receberWebhook,
+    verificarWebhook
+} = require('./whatsapp');
 
-const API_VERSION = '1.1.0';
+const API_VERSION = '1.3.0';
 const COLECAO_CHAVES = '_gugetApiKeys';
 const SUBCOLECAO_INTEGRACOES = 'integracoesApi';
 const SUBCOLECAO_AUDITORIA = 'apiAuditoria';
@@ -369,13 +375,29 @@ function criarManipuladorApi(servicos) {
                 return endpointTokenAlexa(servicos, req, res);
             }
 
-            const somenteFirebase = path.startsWith('/v1/integrations/keys') || path === '/v1/oauth/authorize';
+            if (path === CAMINHO_WEBHOOK && req.method === 'GET') {
+                return verificarWebhook(servicos, req, res);
+            }
+
+            if (path === CAMINHO_WEBHOOK && req.method === 'POST') {
+                return receberWebhook(servicos, req, res);
+            }
+
+            const somenteFirebase = path.startsWith('/v1/integrations/keys')
+                || path === '/v1/oauth/authorize'
+                || path === '/v1/whatsapp/link';
             const contexto = await autenticar(req, servicos, somenteFirebase);
 
             if (req.method === 'POST' && path === '/v1/oauth/authorize') {
                 const autorizacao = await autorizarAlexa(servicos, contexto, req.body || {});
                 await registrarAuditoria(servicos, contexto, 'alexa.authorization.created', {});
                 return resposta(res, 201, { success: true, data: autorizacao }, requestId);
+            }
+
+            if (req.method === 'POST' && path === '/v1/whatsapp/link') {
+                const vinculacao = await autorizarWhatsApp(servicos, contexto, req.body || {});
+                await registrarAuditoria(servicos, contexto, 'whatsapp.authorization.created', {});
+                return resposta(res, 201, { success: true, data: vinculacao }, requestId);
             }
 
             if (req.method === 'GET' && path === '/v1/me') {

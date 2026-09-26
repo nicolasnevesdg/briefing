@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="theme-color" content="#0b0f14">
+    <title>Conectar WhatsApp — GugetFin</title>
+    <link rel="icon" href="./assets/favicon.png">
+    <link rel="stylesheet" href="./css/alexa-link.css?v=20260926-1">
+</head>
+<body>
+    <main class="alexa-shell">
+        <section class="alexa-card" aria-labelledby="whatsapp-title">
+            <header class="alexa-brand">
+                <img src="./assets/logo-negative.svg" alt="GugetFin">
+                <span class="alexa-badge" style="border-color:#22e58d;color:#22e58d">WhatsApp</span>
+            </header>
+
+            <div class="alexa-heading">
+                <span class="alexa-icon" aria-hidden="true">✓</span>
+                <p>Vinculação segura</p>
+                <h1 id="whatsapp-title">Conecte seu WhatsApp ao GugetFin</h1>
+                <span>Depois de autorizar, você poderá cadastrar entradas e saídas conversando com o GugetFin.</span>
+            </div>
+
+            <div id="whatsapp-invalid" class="alexa-message is-error" hidden>
+                Este link não é válido ou expirou. Envie uma nova mensagem para o GugetFin no WhatsApp.
+            </div>
+
+            <div id="alexa-content">
+                <div class="alexa-permissions">
+                    <strong>Ao conectar, o WhatsApp poderá:</strong>
+                    <ul>
+                        <li>Consultar seus cartões, contas e categorias.</li>
+                        <li>Cadastrar um lançamento somente depois da sua confirmação.</li>
+                        <li>Manter uma conversa curta enquanto você preenche as informações.</li>
+                    </ul>
+                    <p>Sua senha não é enviada à Meta e o GugetFin não se conecta a bancos ou Open Finance.</p>
+                </div>
+
+                <form id="whatsapp-login-form" class="alexa-form" novalidate>
+                    <label>
+                        <span>E-mail do GugetFin</span>
+                        <input id="whatsapp-email" type="email" autocomplete="email" required placeholder="seuemail@exemplo.com">
+                    </label>
+                    <label>
+                        <span>Senha</span>
+                        <input id="whatsapp-password" type="password" autocomplete="current-password" required placeholder="Sua senha">
+                    </label>
+                    <button id="whatsapp-login-button" class="alexa-button is-primary" type="submit">Entrar e continuar</button>
+                </form>
+
+                <div id="whatsapp-session" class="alexa-session" hidden>
+                    <span>Conta que será conectada</span>
+                    <strong id="whatsapp-session-email"></strong>
+                    <button id="whatsapp-authorize-button" class="alexa-button is-primary" type="button">Conectar ao WhatsApp</button>
+                    <button id="whatsapp-change-account" class="alexa-button is-ghost" type="button">Usar outra conta</button>
+                </div>
+
+                <p id="whatsapp-status" class="alexa-status" role="status" aria-live="polite"></p>
+                <button id="whatsapp-cancel-button" class="alexa-cancel" type="button">Cancelar</button>
+            </div>
+
+            <footer>
+                <span>Você poderá revogar a integração depois nas configurações do GugetFin.</span>
+            </footer>
+        </section>
+    </main>
+
+    <script type="module" src="./js/whatsapp-link.js?v=20260926-1"></script>
+</body>
+</html>

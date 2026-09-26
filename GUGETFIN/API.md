@@ -122,6 +122,28 @@ POST /oauth/token
 
 O endpoint de autorização exige uma sessão Firebase válida. O endpoint de token aceita somente a Amazon autenticada pelo segredo guardado no Firebase Secret Manager.
 
+## WhatsApp
+
+O WhatsApp usa o mesmo serviço para consultar as opções da conta e cadastrar lançamentos. A conversa coleta uma informação por vez, mostra um resumo e só grava depois da confirmação.
+
+```text
+Callback URL
+https://southamerica-east1-guget-fin.cloudfunctions.net/api/v1/whatsapp/webhook
+
+Página de vinculação
+https://nicolasneves.com.br/GUGETFIN/whatsapp-link.html
+```
+
+Rotas internas:
+
+```http
+GET  /whatsapp/webhook
+POST /whatsapp/webhook
+POST /whatsapp/link
+```
+
+O webhook valida a assinatura `X-Hub-Signature-256`, ignora mensagens repetidas e não registra o texto recebido nos logs. O link de vinculação expira em 15 minutos e só pode ser usado uma vez.
+
 ## Segurança
 
 - O token completo nunca é armazenado.
@@ -132,6 +154,8 @@ O endpoint de autorização exige uma sessão Firebase válida. O endpoint de to
 - Tokens da Alexa expiram em uma hora e são renovados por um refresh token revogável.
 - Códigos de autorização da Alexa expiram em cinco minutos e só podem ser usados uma vez.
 - A vinculação aceita apenas os endereços oficiais de retorno da Alexa.
+- Mensagens do WhatsApp são aceitas somente quando assinadas pelo app oficial da Meta.
+- Um lançamento recebido pelo WhatsApp só é gravado depois de a pessoa responder `confirmar`.
 - Rotas de criação e revogação de chaves exigem uma sessão Firebase válida do site.
 
 ## Publicação

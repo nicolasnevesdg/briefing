@@ -10,6 +10,9 @@ const { criarManipuladorApi } = require('./src/api');
 initializeApp();
 
 const alexaOAuthClientSecret = defineSecret('ALEXA_OAUTH_CLIENT_SECRET');
+const whatsappVerifyToken = defineSecret('WHATSAPP_VERIFY_TOKEN');
+const whatsappAppSecret = defineSecret('WHATSAPP_APP_SECRET');
+const whatsappAccessToken = defineSecret('WHATSAPP_ACCESS_TOKEN');
 
 setGlobalOptions({
     region: 'southamerica-east1',
@@ -23,10 +26,15 @@ const manipulador = criarManipuladorApi({
     db: getFirestore(),
     auth: getAuth(),
     logger,
-    getAlexaClientSecret: () => alexaOAuthClientSecret.value()
+    getAlexaClientSecret: () => alexaOAuthClientSecret.value(),
+    getWhatsAppVerifyToken: () => whatsappVerifyToken.value(),
+    getWhatsAppAppSecret: () => whatsappAppSecret.value(),
+    getWhatsAppAccessToken: () => whatsappAccessToken.value(),
+    whatsAppPhoneNumberId: '1244702925390116',
+    publicSiteUrl: 'https://nicolasneves.com.br/GUGETFIN'
 });
 
 exports.api = onRequest({
     cors: false,
-    secrets: [alexaOAuthClientSecret]
+    secrets: [alexaOAuthClientSecret, whatsappVerifyToken, whatsappAppSecret, whatsappAccessToken]
 }, manipulador);
