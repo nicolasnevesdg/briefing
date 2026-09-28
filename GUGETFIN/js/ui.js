@@ -928,9 +928,9 @@ function verDetalhes(index) {
 
     const btnExcluir = document.getElementById('btn-excluir-dinamico');
     if (btnExcluir) {
-        btnExcluir.onclick = () => { 
-            // Substitua 'excluirGasto' pelo nome exato da sua função de excluir, se for diferente
-            excluirGasto(index); 
+        btnExcluir.onclick = async () => {
+            const apagou = await excluirGasto(index);
+            if (!apagou) return;
             document.getElementById('modal-detalhes').close(); 
             renderizar();
         };
@@ -1697,14 +1697,14 @@ async function apagarGastoTerceiroContestado(index) {
 
 async function apagarGastoTerceiroEnviado(index) {
     const gasto = salsiData.transacoes[index];
-    if (!gasto) return;
+    if (!gasto) return false;
 
     const vinculado = gasto.terceiro?.tipo === 'usuario';
     const mensagem = vinculado
         ? `Apagar "${gasto.nome || 'gasto'}" e remover da conta da outra pessoa?`
         : `Apagar "${gasto.nome || 'gasto'}" dos seus gastos de terceiros?`;
 
-    if (!confirm(mensagem)) return;
+    if (!confirm(mensagem)) return false;
 
     try {
         const solicitacao = await obterSolicitacaoDoGasto(gasto);
@@ -1725,9 +1725,11 @@ async function apagarGastoTerceiroEnviado(index) {
         renderizarVisualDividas();
 
         if (typeof mostrarToast === 'function') mostrarToast('Gasto apagado e solicitação removida.');
+        return true;
     } catch (error) {
         console.error('Erro ao apagar gasto de terceiro:', error);
         if (typeof mostrarToast === 'function') mostrarToast('Não foi possível apagar agora.');
+        return false;
     }
 }
 

@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20260920-1">
+    <link rel="stylesheet" href="css/style.css?v=20260926-2">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1366,13 +1366,13 @@
                                     </span>
                                     <div>
                                         <strong>Google Drive</strong>
-                                        <span id="settings-drive-status-text">Salve comprovantes no seu próprio Drive.</span>
+                                        <span id="settings-drive-status-text">Salve comprovantes e backups no seu próprio Drive.</span>
                                     </div>
                                 </div>
                                 <div class="settings-google-status-row">
                                     <div>
-                                        <span>Armazenamento de comprovantes</span>
-                                        <small id="settings-drive-folder">Pasta GugetFin / Comprovantes</small>
+                                        <span>Comprovantes e proteção dos dados</span>
+                                        <small id="settings-drive-folder">Pastas GugetFin / Comprovantes e Backups</small>
                                     </div>
                                     <span class="settings-google-pill" id="settings-drive-status-pill">Não conectado</span>
                                 </div>
@@ -1380,7 +1380,7 @@
                                     <button type="button" class="btn-settings-primary" id="btn-connect-drive" onclick="conectarGoogleDrive()">Conectar Google Drive</button>
                                     <button type="button" class="btn-settings-secondary" id="btn-disconnect-drive" style="display:none" onclick="desconectarGoogleDrive()">Desconectar Drive</button>
                                 </div>
-                                <small>O GugetFin acessa somente os arquivos criados por ele. Seus outros arquivos permanecem privados.</small>
+                                <small>A conexão permanece ativa e cria um backup semanal. O GugetFin acessa somente os arquivos criados por ele; seus outros arquivos permanecem privados.</small>
                             </div>
 
                             <div class="settings-security-card settings-security-wide">
@@ -1449,7 +1449,7 @@
                         <section class="settings-api-list-card">
                             <div class="settings-org-card-head">
                                 <div>
-                                    <span>Dispositivos autorizados</span>
+                                    <span>Acessos autorizados</span>
                                     <h4>Integrações ativas</h4>
                                 </div>
                                 <strong id="settings-api-key-count">0</strong>
@@ -2787,20 +2787,17 @@
 
     <script src="js/core.js?v=20260920-1"></script>
     <script src="js/auth.js?v=20260906-1"></script>
-    <script src="js/api-integrations.js?v=20260920-1"></script>
-    <script src="js/transacoes.js?v=20260822-1"></script>
-    <script src="js/ui.js?v=20260906-1"></script>
+    <script src="js/api-integrations.js?v=20260926-2"></script>
+    <script src="js/transacoes.js?v=20260927-1"></script>
+    <script src="js/ui.js?v=20260927-1"></script>
     <script src="js/modulos.js?v=20260808-1"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
-    <script src="js/drive.js?v=20260805-4"></script>
+    <script src="js/drive.js?v=20260926-1"></script>
     <script src="js/dividas.js?v=20260809-1"></script>
     <script src="js/caixinhas.js?v=20260822-1"></script>
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
 </body>
 </html>
-
-
-
 
 
 

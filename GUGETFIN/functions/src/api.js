@@ -3,6 +3,7 @@ const { FieldValue } = require('firebase-admin/firestore');
 const {
     ApiError,
     CATEGORIAS_ENTRADA,
+    calcularResumoMensal,
     criarLancamentoApi,
     obterCategorias,
     obterContas,
@@ -14,13 +15,23 @@ const {
     endpointTokenAlexa
 } = require('./oauth');
 const {
+    concluirOAuthDrive,
+    criarBackupDrive,
+    desconectarDrive,
+    iniciarOAuthDrive,
+    obterAccessTokenDrive,
+    obterStatusDrive
+} = require('./drive');
+const {
     CAMINHO_WEBHOOK,
     autorizarWhatsApp,
+    desconectarWhatsApp,
+    obterStatusWhatsApp,
     receberWebhook,
     verificarWebhook
 } = require('./whatsapp');
 
-const API_VERSION = '1.3.0';
+const API_VERSION = '1.7.0';
 const COLECAO_CHAVES = '_gugetApiKeys';
 const SUBCOLECAO_INTEGRACOES = 'integracoesApi';
 const SUBCOLECAO_AUDITORIA = 'apiAuditoria';
@@ -375,6 +386,13 @@ function criarManipuladorApi(servicos) {
                 return endpointTokenAlexa(servicos, req, res);
             }
 
+            if (req.method === 'GET' && path === '/v1/drive/oauth/callback') {
+                const retorno = await concluirOAuthDrive(servicos, req.query || {});
+                return res.status(retorno.status)
+                    .set('Content-Type', 'text/html; charset=utf-8')
+                    .send(retorno.html);
+            }
+
             if (path === CAMINHO_WEBHOOK && req.method === 'GET') {
                 return verificarWebhook(servicos, req, res);
             }
@@ -385,8 +403,37 @@ function criarManipuladorApi(servicos) {
 
             const somenteFirebase = path.startsWith('/v1/integrations/keys')
                 || path === '/v1/oauth/authorize'
-                || path === '/v1/whatsapp/link';
+                || path === '/v1/whatsapp/link'
+                || path === '/v1/whatsapp/status'
+                || path === '/v1/whatsapp/connection'
+                || path.startsWith('/v1/drive/');
             const contexto = await autenticar(req, servicos, somenteFirebase);
+
+            if (req.method === 'POST' && path === '/v1/drive/oauth/start') {
+                const inicio = await iniciarOAuthDrive(servicos, contexto, req.body || {});
+                await registrarAuditoria(servicos, contexto, 'drive.authorization.started', {});
+                return resposta(res, 201, { success: true, data: inicio }, requestId);
+            }
+
+            if (req.method === 'GET' && path === '/v1/drive/status') {
+                return resposta(res, 200, { success: true, data: await obterStatusDrive(servicos, contexto) }, requestId);
+            }
+
+            if (req.method === 'POST' && path === '/v1/drive/token') {
+                return resposta(res, 200, { success: true, data: await obterAccessTokenDrive(servicos, contexto) }, requestId);
+            }
+
+            if (req.method === 'POST' && path === '/v1/drive/backup') {
+                const backup = await criarBackupDrive(servicos, contexto);
+                await registrarAuditoria(servicos, contexto, 'drive.backup.created', { name: backup.name });
+                return resposta(res, 201, { success: true, data: backup }, requestId);
+            }
+
+            if (req.method === 'DELETE' && path === '/v1/drive/connection') {
+                const desconectado = await desconectarDrive(servicos, contexto);
+                await registrarAuditoria(servicos, contexto, 'drive.authorization.revoked', {});
+                return resposta(res, 200, { success: true, data: desconectado }, requestId);
+            }
 
             if (req.method === 'POST' && path === '/v1/oauth/authorize') {
                 const autorizacao = await autorizarAlexa(servicos, contexto, req.body || {});
@@ -398,6 +445,16 @@ function criarManipuladorApi(servicos) {
                 const vinculacao = await autorizarWhatsApp(servicos, contexto, req.body || {});
                 await registrarAuditoria(servicos, contexto, 'whatsapp.authorization.created', {});
                 return resposta(res, 201, { success: true, data: vinculacao }, requestId);
+            }
+
+            if (req.method === 'GET' && path === '/v1/whatsapp/status') {
+                return resposta(res, 200, { success: true, data: await obterStatusWhatsApp(servicos, contexto) }, requestId);
+            }
+
+            if (req.method === 'DELETE' && path === '/v1/whatsapp/connection') {
+                const desconectado = await desconectarWhatsApp(servicos, contexto);
+                await registrarAuditoria(servicos, contexto, 'whatsapp.authorization.revoked', {});
+                return resposta(res, 200, { success: true, data: desconectado }, requestId);
             }
 
             if (req.method === 'GET' && path === '/v1/me') {
@@ -438,6 +495,13 @@ function criarManipuladorApi(servicos) {
                 const usuario = await carregarUsuario(servicos.db, contexto.uid);
                 const limite = Math.max(1, Math.min(100, Number.parseInt(req.query?.limit, 10) || 25));
                 return resposta(res, 200, { success: true, data: listarTransacoes(usuario.dados, limite) }, requestId);
+            }
+
+            if (req.method === 'GET' && path === '/v1/watch/summary') {
+                exigirEscopo(contexto, 'transactions:read');
+                const usuario = await carregarUsuario(servicos.db, contexto.uid);
+                const summary = calcularResumoMensal(usuario.dados, req.query || {});
+                return resposta(res, 200, { success: true, data: summary }, requestId);
             }
 
             if (req.method === 'POST' && path === '/v1/transactions') {

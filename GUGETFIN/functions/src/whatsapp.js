@@ -1,7 +1,7 @@
 const { createHash, createHmac, randomBytes, randomUUID, timingSafeEqual } = require('node:crypto');
 const { FieldValue } = require('firebase-admin/firestore');
 const { ApiError, criarLancamentoApi, texto } = require('./domain');
-const { avancarConversa, inicio } = require('./whatsapp-conversation');
+const { avancarConversa, inicio, interacaoInicio } = require('./whatsapp-conversation');
 
 const CAMINHO_WEBHOOK = '/v1/whatsapp/webhook';
 const COLECAO_LINKS = '_gugetWhatsappLinks';
@@ -56,11 +56,13 @@ function extrairMensagens(body) {
             if (alteracao?.field !== 'messages') continue;
             const value = alteracao.value || {};
             for (const mensagem of Array.isArray(value.messages) ? value.messages : []) {
+                const respostaInterativa = mensagem?.interactive?.button_reply || mensagem?.interactive?.list_reply;
                 mensagens.push({
                     id: texto(mensagem?.id, 180),
                     from: texto(mensagem?.from, 40),
                     type: texto(mensagem?.type, 30),
-                    text: texto(mensagem?.text?.body, 1000),
+                    text: texto(mensagem?.text?.body || respostaInterativa?.id, 1000),
+                    choiceTitle: texto(respostaInterativa?.title, 120),
                     phoneNumberId: texto(value?.metadata?.phone_number_id, 40)
                 });
             }
@@ -69,7 +71,58 @@ function extrairMensagens(body) {
     return mensagens.filter(item => item.id && item.from);
 }
 
-async function enviarTexto(servicos, destino, mensagem, phoneNumberId) {
+function montarPayloadWhatsApp(destino, mensagem, interacao = null) {
+    if (interacao?.type === 'buttons') {
+        return {
+            messaging_product: 'whatsapp',
+            recipient_type: 'individual',
+            to: destino,
+            type: 'interactive',
+            interactive: {
+                type: 'button',
+                body: { text: texto(interacao.body || mensagem, 1024) },
+                action: {
+                    buttons: (interacao.buttons || []).slice(0, 3).map(botao => ({
+                        type: 'reply',
+                        reply: { id: texto(botao.id, 256), title: texto(botao.title, 20) }
+                    }))
+                }
+            }
+        };
+    }
+    if (interacao?.type === 'list') {
+        return {
+            messaging_product: 'whatsapp',
+            recipient_type: 'individual',
+            to: destino,
+            type: 'interactive',
+            interactive: {
+                type: 'list',
+                body: { text: texto(interacao.body || mensagem, 1024) },
+                action: {
+                    button: texto(interacao.button || 'Ver opções', 20),
+                    sections: [{
+                        title: texto(interacao.sectionTitle || 'Escolha uma opção', 24),
+                        rows: (interacao.rows || []).slice(0, 10).map(item => ({
+                            id: texto(item.id, 200),
+                            title: texto(item.title, 24),
+                            ...(item.description ? { description: texto(item.description, 72) } : {})
+                        }))
+                    }]
+                }
+            }
+        };
+    }
+    return {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: destino,
+        type: 'text',
+        text: { preview_url: false, body: texto(mensagem, 4096) }
+    };
+}
+
+async function enviarPayload(servicos, destino, payload, phoneNumberId) {
     const accessToken = segredo(servicos, 'getWhatsAppAccessToken');
     const esperado = texto(servicos.whatsAppPhoneNumberId, 40);
     if (!accessToken) throw new Error('Token de acesso do WhatsApp não configurado.');
@@ -78,17 +131,29 @@ async function enviarTexto(servicos, destino, mensagem, phoneNumberId) {
     const response = await fetch(`https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(phoneNumberId)}/messages`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            recipient_type: 'individual',
-            to: destino,
-            type: 'text',
-            text: { preview_url: false, body: texto(mensagem, 4096) }
-        })
+        body: JSON.stringify(payload)
     });
     if (!response.ok) {
         const payload = await response.json().catch(() => ({}));
         throw new Error(`WhatsApp recusou a mensagem (${payload?.error?.code || response.status}).`);
+    }
+}
+
+async function enviarTexto(servicos, destino, mensagem, phoneNumberId) {
+    return enviarPayload(servicos, destino, montarPayloadWhatsApp(destino, mensagem), phoneNumberId);
+}
+
+async function enviarResultado(servicos, destino, resultado, phoneNumberId) {
+    const payload = montarPayloadWhatsApp(destino, resultado.resposta, resultado.interacao);
+    try {
+        await enviarPayload(servicos, destino, payload, phoneNumberId);
+    } catch (error) {
+        if (!resultado.interacao) throw error;
+        servicos.logger.warn('Mensagem interativa recusada; usando texto como alternativa.', {
+            type: resultado.interacao.type,
+            error: error?.message || 'unknown_error'
+        });
+        await enviarTexto(servicos, destino, resultado.resposta, phoneNumberId);
     }
 }
 
@@ -145,8 +210,8 @@ async function cadastrarLancamento(servicos, uid, body, messageId) {
 
 async function processarMensagem(servicos, mensagem) {
     if (!(await reservarMensagem(servicos, mensagem.id))) return;
-    if (mensagem.type !== 'text' || !mensagem.text) {
-        await enviarTexto(servicos, mensagem.from, 'Por enquanto, envie sua resposta em texto.', mensagem.phoneNumberId);
+    if (!['text', 'interactive'].includes(mensagem.type) || !mensagem.text) {
+        await enviarTexto(servicos, mensagem.from, 'Envie uma resposta em texto ou use uma das opções exibidas.', mensagem.phoneNumberId);
         return;
     }
 
@@ -172,7 +237,12 @@ async function processarMensagem(servicos, mensagem) {
     if (resultado.lancamento) {
         await cadastrarLancamento(servicos, uid, resultado.lancamento, mensagem.id);
         await sessaoRef.delete();
-        await enviarTexto(servicos, mensagem.from, `Pronto! O lançamento foi cadastrado no GugetFin.\n\n${inicio()}`, mensagem.phoneNumberId);
+        const interacao = interacaoInicio();
+        interacao.body = `Pronto! O lançamento foi cadastrado no GugetFin.\n\nVocê quer cadastrar uma entrada ou uma saída?`;
+        await enviarResultado(servicos, mensagem.from, {
+            resposta: `Pronto! O lançamento foi cadastrado no GugetFin.\n\n${inicio()}`,
+            interacao
+        }, mensagem.phoneNumberId);
         return;
     }
     if (resultado.sessao) {
@@ -180,7 +250,7 @@ async function processarMensagem(servicos, mensagem) {
     } else {
         await sessaoRef.delete().catch(() => null);
     }
-    await enviarTexto(servicos, mensagem.from, resultado.resposta, mensagem.phoneNumberId);
+    await enviarResultado(servicos, mensagem.from, resultado, mensagem.phoneNumberId);
 }
 
 async function receberWebhook(servicos, req, res) {
@@ -214,18 +284,77 @@ async function autorizarWhatsApp(servicos, contexto, body) {
         }
         const linkRef = servicos.db.collection(COLECAO_LINKS).doc(dadosToken.waIdHash);
         const integracaoRef = servicos.db.collection('usuarios').doc(contexto.uid).collection('integracoesWhatsapp').doc('principal');
+        const linkAtualSnap = await transaction.get(linkRef);
+        const uidAnterior = linkAtualSnap.exists ? String(linkAtualSnap.data()?.uid || '') : '';
+        if (uidAnterior && uidAnterior !== contexto.uid) {
+            const integracaoAnteriorRef = servicos.db.collection('usuarios').doc(uidAnterior).collection('integracoesWhatsapp').doc('principal');
+            transaction.delete(integracaoAnteriorRef);
+        }
         transaction.set(linkRef, { uid: contexto.uid, waId: dadosToken.waId, linkedAt: FieldValue.serverTimestamp() });
-        transaction.set(integracaoRef, { waIdHash: dadosToken.waIdHash, linkedAt: FieldValue.serverTimestamp() });
+        transaction.set(integracaoRef, {
+            waIdHash: dadosToken.waIdHash,
+            waIdLast4: String(dadosToken.waId || '').slice(-4),
+            linkedAt: FieldValue.serverTimestamp()
+        });
         transaction.update(tokenRef, { usedAt: FieldValue.serverTimestamp(), uid: contexto.uid });
         return { linked: true };
     });
+}
+
+function timestampIso(valor) {
+    if (!valor) return null;
+    if (typeof valor.toDate === 'function') return valor.toDate().toISOString();
+    if (valor instanceof Date) return valor.toISOString();
+    return null;
+}
+
+function telefoneMascarado(valor) {
+    const ultimos = String(valor || '').replace(/\D/g, '').slice(-4);
+    return ultimos ? `•••• ${ultimos}` : 'Número vinculado';
+}
+
+async function obterStatusWhatsApp(servicos, contexto) {
+    const integracaoRef = servicos.db.collection('usuarios').doc(contexto.uid).collection('integracoesWhatsapp').doc('principal');
+    const integracaoSnap = await integracaoRef.get();
+    if (!integracaoSnap.exists || !integracaoSnap.data()?.waIdHash) return { connected: false };
+
+    const dados = integracaoSnap.data();
+    const linkSnap = await servicos.db.collection(COLECAO_LINKS).doc(dados.waIdHash).get();
+    if (!linkSnap.exists || linkSnap.data()?.uid !== contexto.uid) return { connected: false };
+
+    return {
+        connected: true,
+        phone: telefoneMascarado(linkSnap.data()?.waId || dados.waIdLast4),
+        linkedAt: timestampIso(dados.linkedAt || linkSnap.data()?.linkedAt)
+    };
+}
+
+async function desconectarWhatsApp(servicos, contexto) {
+    const integracaoRef = servicos.db.collection('usuarios').doc(contexto.uid).collection('integracoesWhatsapp').doc('principal');
+    const integracaoSnap = await integracaoRef.get();
+    if (!integracaoSnap.exists || !integracaoSnap.data()?.waIdHash) {
+        return { disconnected: true };
+    }
+
+    const waIdHash = integracaoSnap.data().waIdHash;
+    const linkRef = servicos.db.collection(COLECAO_LINKS).doc(waIdHash);
+    const linkSnap = await linkRef.get();
+    const batch = servicos.db.batch();
+    batch.delete(integracaoRef);
+    batch.delete(servicos.db.collection(COLECAO_SESSOES).doc(waIdHash));
+    if (linkSnap.exists && linkSnap.data()?.uid === contexto.uid) batch.delete(linkRef);
+    await batch.commit();
+    return { disconnected: true };
 }
 
 module.exports = {
     CAMINHO_WEBHOOK,
     assinaturaValida,
     autorizarWhatsApp,
+    desconectarWhatsApp,
     extrairMensagens,
+    montarPayloadWhatsApp,
+    obterStatusWhatsApp,
     receberWebhook,
     verificarWebhook
 };

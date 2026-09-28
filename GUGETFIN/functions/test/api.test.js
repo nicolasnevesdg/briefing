@@ -51,7 +51,7 @@ test('health responde sem autenticação', async () => {
     assert.equal(res.statusCode, 200);
     assert.equal(res.body.success, true);
     assert.equal(res.body.data.status, 'ok');
-    assert.equal(res.headers['X-GugetFin-Api-Version'], '1.3.0');
+    assert.equal(res.headers['X-GugetFin-Api-Version'], '1.7.0');
 });
 
 test('Meta consegue validar o webhook do WhatsApp', async () => {
@@ -157,4 +157,44 @@ test('rejeita corpo maior que 32 KB', async () => {
 
     assert.equal(res.statusCode, 413);
     assert.equal(res.body.error.code, 'payload_too_large');
+});
+
+test('rota do relógio devolve o resumo mensal completo', async () => {
+    const dados = {
+        entradas: [{ nome: 'Salário', valor: 1000, mes: 8, ano: 2026, dataRecebimento: '2026-09-05' }],
+        transacoes: [{ nome: 'Mercado', tipo: 'debito', valorTotal: 250, parcelas: 1, dataCompra: '2026-09-10' }],
+        caixinha: [{ tipo: 'entrada', caixinhaId: 'geral', valor: 100, data: '2026-09-06' }],
+        caixinhas: [{ id: 'geral', nome: 'Caixinha Geral', geral: true }]
+    };
+    const handler = criarManipuladorApi({
+        ...servicos,
+        auth: { verifyIdToken: async () => ({ uid: 'usuario-1' }) },
+        db: {
+            collection(nome) {
+                assert.equal(nome, 'usuarios');
+                return {
+                    doc(id) {
+                        assert.equal(id, 'usuario-1');
+                        return { get: async () => ({ exists: true, data: () => ({ dados }) }) };
+                    }
+                };
+            }
+        }
+    });
+    const req = {
+        method: 'GET',
+        path: '/v1/watch/summary',
+        headers: { authorization: 'Bearer firebase-token' },
+        query: { month: '2026-09' }
+    };
+    const res = respostaMock();
+
+    await handler(req, res);
+
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body.success, true);
+    assert.equal(res.body.data.balance, 750);
+    assert.equal(res.body.data.income, 1000);
+    assert.equal(res.body.data.expenses, 250);
+    assert.equal(res.body.data.savings.total, 100);
 });

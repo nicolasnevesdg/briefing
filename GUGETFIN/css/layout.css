@@ -3377,6 +3377,11 @@ main.settings-mode #settings-view {
     color: var(--dark-green);
 }
 
+.settings-integration-whatsapp .settings-api-key-icon {
+    background: rgba(37, 211, 102, 0.13);
+    color: #16a85a;
+}
+
 .settings-api-key-copy {
     min-width: 0;
 }

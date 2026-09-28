@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "node --test",
-    "check": "node --check index.js && node --check src/api.js && node --check src/domain.js && node --check src/oauth.js && node --check src/whatsapp.js && node --check src/whatsapp-conversation.js"
+    "check": "node --check index.js && node --check src/api.js && node --check src/domain.js && node --check src/drive.js && node --check src/oauth.js && node --check src/whatsapp.js && node --check src/whatsapp-conversation.js"
   },
   "dependencies": {
     "firebase-admin": "14.4.0",

@@ -52,6 +52,36 @@ GET /accounts
 GET /transactions?limit=25
 ```
 
+### Resumo mensal para relógios
+
+```http
+GET /watch/summary?month=2026-09
+```
+
+Também aceita `month=09&year=2026`. Sem parâmetros, usa o mês atual no horário de São Paulo.
+
+A resposta usa os mesmos critérios do painel: competência da fatura para compras no crédito, somente gastos fixos pagos, gastos de terceiros separados do saldo e resgates de caixinha contabilizados como entrada. Ela também devolve o saldo total e a lista das caixinhas.
+
+```json
+{
+  "success": true,
+  "data": {
+    "period": "2026-09",
+    "balance": 65.62,
+    "income": 1926.55,
+    "expenses": 1860.93,
+    "cardTotal": 1280.40,
+    "incomePercentage": 96.6,
+    "savings": {
+      "total": 850,
+      "monthlyMovement": 100,
+      "count": 2,
+      "boxes": []
+    }
+  }
+}
+```
+
 ### Cadastrar saída
 
 ```http
@@ -126,6 +156,8 @@ O endpoint de autorização exige uma sessão Firebase válida. O endpoint de to
 
 O WhatsApp usa o mesmo serviço para consultar as opções da conta e cadastrar lançamentos. A conversa coleta uma informação por vez, mostra um resumo e só grava depois da confirmação.
 
+As escolhas fechadas usam componentes interativos nativos do WhatsApp: botões para entrada/saída, data, descrição e confirmação; listas para forma de pagamento, contas, cartões e categorias. Nome, valor, parcelas, data personalizada e descrição continuam sendo digitados. Todas as etapas também aceitam texto como alternativa.
+
 ```text
 Callback URL
 https://southamerica-east1-guget-fin.cloudfunctions.net/api/v1/whatsapp/webhook
@@ -140,7 +172,11 @@ Rotas internas:
 GET  /whatsapp/webhook
 POST /whatsapp/webhook
 POST /whatsapp/link
+GET  /whatsapp/status
+DELETE /whatsapp/connection
 ```
+
+Depois da vinculação, o WhatsApp aparece em **Configurações → Integrações** com o número mascarado. A pessoa pode desconectá-lo por ali; a revogação remove o vínculo e a conversa em andamento imediatamente, sem apagar lançamentos já cadastrados.
 
 O webhook valida a assinatura `X-Hub-Signature-256`, ignora mensagens repetidas e não registra o texto recebido nos logs. O link de vinculação expira em 15 minutos e só pode ser usado uma vez.
 

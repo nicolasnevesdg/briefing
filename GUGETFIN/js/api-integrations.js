@@ -71,24 +71,25 @@ async function testarApiGugetFin() {
     }
 }
 
-function renderizarChavesApiGugetFin(chaves) {
+function renderizarChavesApiGugetFin(chaves, whatsapp = { connected: false }) {
     const lista = document.getElementById('settings-api-key-list');
     const contador = document.getElementById('settings-api-key-count');
     if (!lista || !contador) return;
 
-    contador.textContent = String(chaves.length);
-    if (!chaves.length) {
+    const total = chaves.length + (whatsapp.connected ? 1 : 0);
+    contador.textContent = String(total);
+    if (!total) {
         lista.innerHTML = `
             <div class="settings-api-empty">
                 <i class="fi fi-rr-link-alt"></i>
                 <strong>Nenhuma integração conectada</strong>
-                <span>Crie uma chave para conectar seu primeiro dispositivo.</span>
+                <span>Crie uma chave ou conecte seu WhatsApp para começar.</span>
             </div>
         `;
         return;
     }
 
-    lista.innerHTML = chaves.map(chave => `
+    const itens = chaves.map(chave => `
         <article class="settings-api-key-item">
             <div class="settings-api-key-icon"><i class="fi fi-rr-device-mobile"></i></div>
             <div class="settings-api-key-copy">
@@ -98,7 +99,23 @@ function renderizarChavesApiGugetFin(chaves) {
             </div>
             <button type="button" class="btn-settings-ghost settings-api-revoke" onclick="revogarChaveApiGugetFin('${escaparHtmlIntegracao(chave.id)}')">Revogar</button>
         </article>
-    `).join('');
+    `);
+
+    if (whatsapp.connected) {
+        itens.unshift(`
+            <article class="settings-api-key-item settings-integration-whatsapp">
+                <div class="settings-api-key-icon"><i class="fi fi-rr-comment-alt"></i></div>
+                <div class="settings-api-key-copy">
+                    <strong>WhatsApp GugetFin</strong>
+                    <code>${escaparHtmlIntegracao(whatsapp.phone || 'Número vinculado')}</code>
+                    <span>Conectado em ${formatarDataIntegracao(whatsapp.linkedAt)} · Pode consultar opções e cadastrar lançamentos</span>
+                </div>
+                <button type="button" class="btn-settings-ghost settings-api-revoke" onclick="revogarWhatsAppGugetFin()">Desconectar</button>
+            </article>
+        `);
+    }
+
+    lista.innerHTML = itens.join('');
 }
 
 async function carregarIntegracoesApiGugetFin() {
@@ -110,8 +127,11 @@ async function carregarIntegracoesApiGugetFin() {
     gugetApiCarregando = true;
     lista.innerHTML = '<div class="settings-session-empty">Carregando integrações...</div>';
     try {
-        const chaves = await requisicaoApiGugetFin('/integrations/keys');
-        renderizarChavesApiGugetFin(Array.isArray(chaves) ? chaves : []);
+        const [chaves, whatsapp] = await Promise.all([
+            requisicaoApiGugetFin('/integrations/keys'),
+            requisicaoApiGugetFin('/whatsapp/status')
+        ]);
+        renderizarChavesApiGugetFin(Array.isArray(chaves) ? chaves : [], whatsapp || { connected: false });
         atualizarStatusApiGugetFin('online', 'Online');
     } catch (error) {
         const mensagem = error.status === 404 || error.status >= 500 || error.name === 'TypeError'
@@ -165,6 +185,18 @@ async function revogarChaveApiGugetFin(id) {
     try {
         await requisicaoApiGugetFin(`/integrations/keys/${encodeURIComponent(id)}`, { method: 'DELETE' });
         if (typeof mostrarToast === 'function') mostrarToast('Integração revogada.');
+        await carregarIntegracoesApiGugetFin();
+    } catch (error) {
+        if (typeof mostrarToast === 'function') mostrarToast(error.message);
+    }
+}
+
+async function revogarWhatsAppGugetFin() {
+    const confirmou = confirm('Desconectar o WhatsApp? Esse número deixará de consultar e cadastrar lançamentos imediatamente. Seus dados já cadastrados não serão apagados.');
+    if (!confirmou) return;
+    try {
+        await requisicaoApiGugetFin('/whatsapp/connection', { method: 'DELETE' });
+        if (typeof mostrarToast === 'function') mostrarToast('WhatsApp desconectado do GugetFin.');
         await carregarIntegracoesApiGugetFin();
     } catch (error) {
         if (typeof mostrarToast === 'function') mostrarToast(error.message);

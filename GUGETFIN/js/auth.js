@@ -492,6 +492,9 @@ window.iniciarVigia = function() {
             if (typeof carregarConfiguracoesPerfil === 'function') {
                 carregarConfiguracoesPerfil();
             }
+            if (typeof atualizarInterfaceGoogleDrive === 'function') {
+                atualizarInterfaceGoogleDrive();
+            }
             atualizarStatusSegurancaConta(user);
             registrarSessaoAtual(user).catch(error => console.warn('Nao foi possivel registrar a sessao atual:', error));
             setTimeout(esconderSplashInicial, 180);

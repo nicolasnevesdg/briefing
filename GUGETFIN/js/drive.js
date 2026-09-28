@@ -1,14 +1,16 @@
 (function () {
-    const CLIENT_ID = '626285959649-a7e0faqjb43psugsbmqt9ptfjo63nvp3.apps.googleusercontent.com';
-    const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
     const DRIVE_PREFIX = 'drive://';
-    let tokenClient = null;
+    const DRIVE_API_ORIGIN = 'https://southamerica-east1-guget-fin.cloudfunctions.net';
     let accessToken = '';
     let tokenExpiresAt = 0;
+    let statusCarregadoEm = 0;
+    let carregandoStatus = null;
 
     function configDrive() {
         if (!salsiData.config) salsiData.config = {};
-        if (!salsiData.config.googleDrive) salsiData.config.googleDrive = { conectado: false, pastaId: '' };
+        if (!salsiData.config.googleDrive) {
+            salsiData.config.googleDrive = { conectado: false, pastaId: '', email: '' };
+        }
         return salsiData.config.googleDrive;
     }
 
@@ -17,35 +19,77 @@
         if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
     }
 
-    function aguardarGoogleIdentity() {
-        return new Promise((resolve, reject) => {
-            let tentativas = 0;
-            const verificar = () => {
-                if (window.google?.accounts?.oauth2) return resolve();
-                if (++tentativas > 80) return reject(new Error('O serviço de autorização do Google não carregou.'));
-                setTimeout(verificar, 100);
-            };
-            verificar();
+    async function requisicaoDriveGugetFin(caminho, opcoes = {}) {
+        if (typeof requisicaoApiGugetFin === 'function') {
+            return requisicaoApiGugetFin(caminho, opcoes);
+        }
+        const usuario = window.auth?.currentUser;
+        if (!usuario) throw new Error('Entre novamente para acessar o Google Drive.');
+        const token = await usuario.getIdToken(true);
+        const resposta = await fetch(`https://southamerica-east1-guget-fin.cloudfunctions.net/api/v1${caminho}`, {
+            ...opcoes,
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                ...(opcoes.headers || {})
+            }
         });
+        const payload = await resposta.json().catch(() => ({}));
+        if (!resposta.ok || payload.success === false) {
+            throw new Error(payload?.error?.message || 'Não foi possível acessar a integração com o Drive.');
+        }
+        return payload.data;
     }
 
-    async function obterTokenDrive(forcarConsentimento = false) {
-        if (accessToken && Date.now() < tokenExpiresAt - 60000) return accessToken;
-        await aguardarGoogleIdentity();
-        return new Promise((resolve, reject) => {
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: CLIENT_ID,
-                scope: DRIVE_SCOPE,
-                callback: resposta => {
-                    if (resposta?.error) return reject(new Error(resposta.error_description || resposta.error));
-                    accessToken = resposta.access_token;
-                    tokenExpiresAt = Date.now() + (Number(resposta.expires_in || 3600) * 1000);
-                    resolve(accessToken);
-                },
-                error_callback: erro => reject(new Error(erro?.message || 'Autorização do Google cancelada.'))
-            });
-            tokenClient.requestAccessToken({ prompt: forcarConsentimento ? 'consent' : '' });
+    async function carregarStatusDrive(forcar = false) {
+        if (!window.auth?.currentUser) return { connected: false };
+        if (!forcar && Date.now() - statusCarregadoEm < 30000) {
+            const config = configDrive();
+            return { connected: config.conectado, email: config.email || '' };
+        }
+        if (carregandoStatus) return carregandoStatus;
+        carregandoStatus = requisicaoDriveGugetFin('/drive/status')
+            .then(status => {
+                statusCarregadoEm = Date.now();
+                const config = configDrive();
+                const conectado = status?.connected === true;
+                const email = conectado ? String(status.email || '') : '';
+                const mudou = config.conectado !== conectado || config.email !== email;
+                config.conectado = conectado;
+                config.email = email;
+                if (!conectado) config.pastaId = '';
+                if (mudou) persistirDrive();
+                renderizarStatusDrive();
+                return status;
+            })
+            .catch(error => {
+                console.warn('Não foi possível consultar o status do Google Drive:', error);
+                if (error?.code === 'drive_not_connected' || error?.status === 404) {
+                    const config = configDrive();
+                    config.conectado = false;
+                    config.pastaId = '';
+                    config.email = '';
+                    persistirDrive();
+                }
+                renderizarStatusDrive();
+                return { connected: configDrive().conectado === true, unavailable: true };
+            })
+            .finally(() => { carregandoStatus = null; });
+        return carregandoStatus;
+    }
+
+    async function obterTokenDrive(forcar = false) {
+        if (!forcar && accessToken && Date.now() < tokenExpiresAt - 60000) return accessToken;
+        const resposta = await requisicaoDriveGugetFin('/drive/token', {
+            method: 'POST',
+            body: '{}'
         });
+        accessToken = resposta.accessToken;
+        tokenExpiresAt = Date.now() + (Number(resposta.expiresIn || 3600) * 1000);
+        const config = configDrive();
+        config.conectado = true;
+        if (resposta.receiptsFolderId) config.pastaId = resposta.receiptsFolderId;
+        return accessToken;
     }
 
     async function driveFetch(url, opcoes = {}, repetir = true) {
@@ -65,28 +109,13 @@
         return resposta;
     }
 
-    async function criarPasta(nome, parentId = 'root') {
-        const resposta = await driveFetch('https://www.googleapis.com/drive/v3/files?fields=id,name', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: nome, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] })
-        });
-        return resposta.json();
-    }
-
     async function garantirPastaComprovantes() {
         const config = configDrive();
-        if (config.pastaId) {
-            try {
-                await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(config.pastaId)}?fields=id`);
-                return config.pastaId;
-            } catch (_) { config.pastaId = ''; }
-        }
-        const raiz = await criarPasta('GugetFin');
-        const comprovantes = await criarPasta('Comprovantes', raiz.id);
-        config.pastaId = comprovantes.id;
+        if (config.pastaId) return config.pastaId;
+        await obterTokenDrive(true);
+        if (!config.pastaId) throw new Error('A pasta de comprovantes não foi encontrada. Reconecte o Google Drive.');
         persistirDrive();
-        return comprovantes.id;
+        return config.pastaId;
     }
 
     function nomeSeguroArquivo(file, contexto) {
@@ -111,6 +140,53 @@
             body: corpo
         });
         return resposta.json();
+    }
+
+    function aguardarRetornoOAuth(popup) {
+        return new Promise((resolve, reject) => {
+            let concluido = false;
+            let limite = null;
+            const encerrar = (erro, resultado) => {
+                if (concluido) return;
+                concluido = true;
+                window.removeEventListener('message', aoReceberMensagem);
+                clearInterval(vigia);
+                clearTimeout(limite);
+                erro ? reject(erro) : resolve(resultado);
+            };
+            const aoReceberMensagem = event => {
+                if (event.origin !== DRIVE_API_ORIGIN || event.data?.type !== 'gugetfin-drive-oauth') return;
+                if (event.data.success) encerrar(null, event.data);
+                else encerrar(new Error(event.data.message || 'A autorização do Google Drive não foi concluída.'));
+            };
+            window.addEventListener('message', aoReceberMensagem);
+            const vigia = setInterval(() => {
+                if (popup?.closed) encerrar(new Error('A janela de autorização foi fechada.'));
+            }, 500);
+            limite = setTimeout(() => encerrar(new Error('A autorização demorou mais que o esperado.')), 10 * 60 * 1000);
+        });
+    }
+
+    function renderizarStatusDrive() {
+        const config = configDrive();
+        const conectado = config.conectado === true;
+        const pill = document.getElementById('settings-drive-status-pill');
+        const texto = document.getElementById('settings-drive-status-text');
+        const conectar = document.getElementById('btn-connect-drive');
+        const desconectar = document.getElementById('btn-disconnect-drive');
+        if (pill) {
+            pill.textContent = conectado ? 'Conectado' : 'Não conectado';
+            pill.classList.toggle('is-connected', conectado);
+        }
+        if (texto) {
+            texto.textContent = conectado
+                ? `Conectado como ${config.email || window.auth?.currentUser?.email || 'conta Google'}`
+                : 'Salve comprovantes e backups no seu próprio Drive.';
+        }
+        const pasta = document.getElementById('settings-drive-folder');
+        if (pasta) pasta.textContent = 'Pastas GugetFin / Comprovantes e Backups';
+        if (conectar) conectar.style.display = conectado ? 'none' : '';
+        if (desconectar) desconectar.style.display = conectado ? '' : 'none';
     }
 
     window.usarGoogleDriveComprovantes = function () {
@@ -147,42 +223,67 @@
 
     window.conectarGoogleDrive = async function () {
         const botao = document.getElementById('btn-connect-drive');
+        const popup = window.open('about:blank', 'gugetfin_drive_oauth', 'width=520,height=720,resizable=yes,scrollbars=yes');
         try {
             if (botao) { botao.disabled = true; botao.textContent = 'Conectando...'; }
+            const inicio = await requisicaoDriveGugetFin('/drive/oauth/start', {
+                method: 'POST',
+                body: JSON.stringify({ origin: window.location.origin })
+            });
+            if (!popup) {
+                window.location.assign(inicio.authorizationUrl);
+                return;
+            }
+            popup.location.replace(inicio.authorizationUrl);
+            await aguardarRetornoOAuth(popup);
+            accessToken = '';
+            tokenExpiresAt = 0;
+            statusCarregadoEm = 0;
+            await carregarStatusDrive(true);
             await obterTokenDrive(true);
-            await garantirPastaComprovantes();
-            configDrive().conectado = true;
             persistirDrive();
-            atualizarInterfaceGoogleDrive();
-            if (typeof mostrarToast === 'function') mostrarToast('Google Drive conectado com sucesso!');
+            renderizarStatusDrive();
+            if (typeof mostrarToast === 'function') mostrarToast('Google Drive conectado de forma permanente!');
         } catch (erro) {
+            if (popup && !popup.closed) popup.close();
             alert('Não foi possível conectar o Google Drive: ' + erro.message);
         } finally {
             if (botao) { botao.disabled = false; botao.textContent = 'Conectar Google Drive'; }
         }
     };
 
-    window.desconectarGoogleDrive = function () {
-        if (!confirm('Desconectar o Google Drive? Os comprovantes já enviados não serão apagados.')) return;
-        if (accessToken && window.google?.accounts?.oauth2) google.accounts.oauth2.revoke(accessToken);
-        accessToken = '';
-        tokenExpiresAt = 0;
-        configDrive().conectado = false;
-        persistirDrive();
-        atualizarInterfaceGoogleDrive();
+    window.desconectarGoogleDrive = async function () {
+        if (!confirm('Desconectar o Google Drive? Os comprovantes e backups já enviados não serão apagados.')) return;
+        const botao = document.getElementById('btn-disconnect-drive');
+        try {
+            if (botao) { botao.disabled = true; botao.textContent = 'Desconectando...'; }
+            await requisicaoDriveGugetFin('/drive/connection', { method: 'DELETE' });
+            accessToken = '';
+            tokenExpiresAt = 0;
+            statusCarregadoEm = Date.now();
+            const config = configDrive();
+            config.conectado = false;
+            config.pastaId = '';
+            config.email = '';
+            persistirDrive();
+            renderizarStatusDrive();
+            if (typeof mostrarToast === 'function') mostrarToast('Google Drive desconectado.');
+        } catch (erro) {
+            alert('Não foi possível desconectar o Google Drive: ' + erro.message);
+        } finally {
+            if (botao) { botao.disabled = false; botao.textContent = 'Desconectar Drive'; }
+        }
+    };
+
+    window.criarBackupGoogleDriveAgora = async function () {
+        if (configDrive().conectado !== true) return null;
+        return requisicaoDriveGugetFin('/drive/backup', { method: 'POST', body: '{}' });
     };
 
     window.atualizarInterfaceGoogleDrive = function () {
-        const conectado = configDrive().conectado === true;
-        const pill = document.getElementById('settings-drive-status-pill');
-        const texto = document.getElementById('settings-drive-status-text');
-        const conectar = document.getElementById('btn-connect-drive');
-        const desconectar = document.getElementById('btn-disconnect-drive');
-        if (pill) { pill.textContent = conectado ? 'Conectado' : 'Não conectado'; pill.classList.toggle('is-connected', conectado); }
-        if (texto) texto.textContent = conectado ? `Conectado como ${window.auth?.currentUser?.email || 'conta Google'}` : 'Salve comprovantes no seu próprio Drive.';
-        if (conectar) conectar.style.display = conectado ? 'none' : '';
-        if (desconectar) desconectar.style.display = conectado ? '' : 'none';
+        renderizarStatusDrive();
+        carregarStatusDrive(false);
     };
 
-    document.addEventListener('DOMContentLoaded', atualizarInterfaceGoogleDrive);
+    document.addEventListener('DOMContentLoaded', renderizarStatusDrive);
 })();

@@ -293,7 +293,9 @@ function alternarStatusPago(index, parcelaIndex = null) {
 function salvarAlteracoes() {
     // Registra o backup para sumir com o banner de aviso
     localStorage.setItem('salsifin_ultimo_backup', new Date().getTime());
-	salvarNoFirebase();
+    const salvamentoNaNuvem = typeof salvarNoFirebase === 'function'
+        ? Promise.resolve(salvarNoFirebase())
+        : Promise.resolve();
 
     // Gera um nome de arquivo único com data e hora: SalsiFin_Backup_2026-02-18_01h45.js
     const agora = new Date();
@@ -305,9 +307,27 @@ function salvarAlteracoes() {
     const blob = new Blob([conteudo], { type: "text/javascript" });
     const a = document.createElement("a");
     
-    a.href = URL.createObjectURL(blob); 
+    a.href = URL.createObjectURL(blob);
     a.download = nomeArquivo; // O navegador usará este nome sugerido
     a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+
+    salvamentoNaNuvem
+        .then(async () => {
+            if (typeof criarBackupGoogleDriveAgora !== 'function') return null;
+            return criarBackupGoogleDriveAgora();
+        })
+        .then(resultado => {
+            if (resultado?.created && typeof mostrarToast === 'function') {
+                mostrarToast('Backup salvo no computador e no Google Drive.');
+            }
+        })
+        .catch(erro => {
+            console.warn('O backup local foi criado, mas não foi possível copiá-lo para o Google Drive:', erro);
+            if (typeof mostrarToast === 'function') {
+                mostrarToast('Backup salvo no computador. Não foi possível enviar ao Drive.');
+            }
+        });
 }
 
 async function confirmarEntrada() {
@@ -723,9 +743,10 @@ function verDetalhesEntrada(index) {
 
     const btnExcluir = document.getElementById('btn-excluir-entrada-dinamico');
     if (btnExcluir) {
-        btnExcluir.onclick = () => { 
-            excluirEntrada(index); 
-            document.getElementById('modal-detalhes-entrada').close(); 
+        btnExcluir.onclick = () => {
+            const apagou = excluirEntrada(index);
+            if (!apagou) return;
+            document.getElementById('modal-detalhes-entrada').close();
             renderizar();
         };
     }
@@ -733,13 +754,20 @@ function verDetalhesEntrada(index) {
     document.getElementById('modal-detalhes-entrada').showModal();
 }
 
-function excluirGasto(idx) {
+async function excluirGasto(idx) {
     const gasto = salsiData.transacoes[idx];
+    if (!gasto) return false;
 
     if (gasto?.eDeTerceiro && typeof apagarGastoTerceiroEnviado === 'function') {
-        apagarGastoTerceiroEnviado(idx);
-        return;
+        return apagarGastoTerceiroEnviado(idx);
     }
+
+    const consequencias = [];
+    if (gasto.origemDividaManual) consequencias.push('O pagamento voltará a ficar pendente na dívida.');
+    if (gasto.origemCaixinha && gasto.caixinhaId) consequencias.push('O movimento vinculado na caixinha também será apagado.');
+    const complemento = consequencias.length ? `\n\n${consequencias.join(' ')}` : '';
+    const nome = gasto.nome || 'esta saída';
+    if (!confirm(`Excluir a saída "${nome}"? Esta ação não pode ser desfeita.${complemento}`)) return false;
 
     if (gasto?.origemDividaManual && typeof reverterPagamentoDividaManualPorGasto === 'function') {
         reverterPagamentoDividaManualPorGasto(gasto);
@@ -752,21 +780,23 @@ function excluirGasto(idx) {
     salsiData.transacoes.splice(idx, 1);
     renderizar();
     if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
+    return true;
 }
 function excluirEntrada(idx) {
     const entrada = salsiData.entradas[idx];
-    if (!entrada) return;
+    if (!entrada) return false;
 
     if (entrada.tipoEntrada === 'resgate_caixinha' && typeof excluirResgateCaixinhaPorEntrada === 'function') {
-        if (!confirm('Apagar esta entrada e a retirada correspondente da caixinha?')) return;
-        excluirResgateCaixinhaPorEntrada(entrada);
-        return;
+        if (!confirm(`Excluir a entrada "${entrada.nome || 'resgate da caixinha'}"? A retirada correspondente da caixinha também será apagada.`)) return false;
+        return excluirResgateCaixinhaPorEntrada(entrada);
     }
 
-    if (confirm('Apagar?')) {
-        salsiData.entradas.splice(idx, 1);
-        renderizar();
-    }
+    const nome = entrada.nome || 'esta entrada';
+    if (!confirm(`Excluir a entrada "${nome}"? Esta ação não pode ser desfeita.`)) return false;
+    salsiData.entradas.splice(idx, 1);
+    renderizar();
+    if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
+    return true;
 }
 function mudarMes(n) { dataFiltro.setMonth(dataFiltro.getMonth() + n); renderizar(); }
 // 1. DATA AUTOMÁTICA E RESET AO ABRIR (MODO CRIAÇÃO)
