@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20260926-2">
+    <link rel="stylesheet" href="css/style.css?v=20260928-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +27,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-	<link rel="manifest" href="manifest.json">
+	<link rel="manifest" href="manifest.json?v=20260928-1">
 	<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css'>
 </head>
 
@@ -320,6 +320,16 @@
                                         <span id="mobile-menu-user-email">Sua conta</span>
                                     </div>
                                 </div>
+
+                                <section id="mobile-install-app" class="mobile-install-app" aria-label="Instalar GugetFin" hidden>
+                                    <img src="assets/icon-192.png" alt="" aria-hidden="true">
+                                    <div class="mobile-install-app-copy">
+                                        <strong>Instalar GugetFin</strong>
+                                        <span>Acesso rápido pela tela inicial</span>
+                                    </div>
+                                    <button id="btn-mobile-install-app" type="button">Instalar</button>
+                                    <p id="mobile-install-app-help" hidden></p>
+                                </section>
 
                                 <div class="mobile-menu-section">
                                     <span>Conta</span>
@@ -2672,6 +2682,22 @@
         <button type="button" class="btn-settings-primary" onclick="fecharModalChaveApi()">Já guardei a chave</button>
     </div>
 </dialog>
+
+<dialog id="modal-whatsapp-invite" class="whatsapp-invite-dialog" aria-labelledby="whatsapp-invite-title">
+    <div class="whatsapp-invite-content">
+        <button id="btn-close-whatsapp-invite" class="whatsapp-invite-close" type="button" aria-label="Fechar">×</button>
+        <img class="whatsapp-invite-icon" src="assets/whatsapp-profile.svg" alt="" aria-hidden="true">
+        <div class="whatsapp-invite-copy">
+            <span>Novo no GugetFin</span>
+            <h3 id="whatsapp-invite-title">Anote gastos pelo WhatsApp</h3>
+            <p>Converse com o GugetFin e registre entradas e saídas sem precisar abrir a plataforma.</p>
+        </div>
+        <a id="btn-connect-whatsapp-invite" class="whatsapp-invite-primary" href="https://wa.me/5521951017378?text=Oi%21%20Quero%20conectar%20minha%20conta%20do%20GugetFin." target="_blank" rel="noopener noreferrer">
+            Conectar meu WhatsApp
+        </a>
+        <button id="btn-skip-whatsapp-invite" class="whatsapp-invite-skip" type="button">Agora não</button>
+    </div>
+</dialog>
 	
 	<div id="toast-notificacao">
         <i class="fi fi-rr-check-circle"></i>
@@ -2786,8 +2812,9 @@
 </script>
 
     <script src="js/core.js?v=20260920-1"></script>
-    <script src="js/auth.js?v=20260906-1"></script>
-    <script src="js/api-integrations.js?v=20260926-2"></script>
+    <script src="js/auth.js?v=20260928-1"></script>
+    <script src="js/api-integrations.js?v=20260928-1"></script>
+    <script src="js/install-app.js?v=20260928-1"></script>
     <script src="js/transacoes.js?v=20260927-1"></script>
     <script src="js/ui.js?v=20260927-1"></script>
     <script src="js/modulos.js?v=20260808-1"></script>
@@ -2798,9 +2825,6 @@
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
 </body>
 </html>
-
-
-
 
 
 

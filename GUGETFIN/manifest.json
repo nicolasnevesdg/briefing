@@ -1,7 +1,10 @@
 {
   "name": "Guget Fin",
   "short_name": "GugetFin",
+  "description": "Seu controle financeiro simples, visual e sempre por perto.",
+  "id": "./",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f9f7f8",
   "theme_color": "#025638",

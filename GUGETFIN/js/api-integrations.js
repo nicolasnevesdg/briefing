@@ -6,6 +6,7 @@ const GUGETFIN_API_BASE_URL = window.GUGETFIN_API_BASE_URL
     || 'https://southamerica-east1-guget-fin.cloudfunctions.net/api/v1';
 
 let gugetApiCarregando = false;
+let conviteWhatsAppUsuario = '';
 
 function escaparHtmlIntegracao(valor) {
     return String(valor ?? '')
@@ -47,6 +48,71 @@ async function requisicaoApiGugetFin(caminho, opcoes = {}) {
         throw erro;
     }
     return payload.data;
+}
+
+function guardarPausaConviteWhatsApp(uid, dias) {
+    if (!uid) return;
+    const ate = Date.now() + (dias * 24 * 60 * 60 * 1000);
+    localStorage.setItem(`gugetfin_whatsapp_invite_${uid}`, String(ate));
+}
+
+function fecharConviteWhatsApp(uid, dias = 14) {
+    guardarPausaConviteWhatsApp(uid, dias);
+    const modal = document.getElementById('modal-whatsapp-invite');
+    if (modal?.open) modal.close();
+}
+
+async function iniciarConviteWhatsAppGugetFin(usuario = window.auth?.currentUser) {
+    if (!usuario?.uid || conviteWhatsAppUsuario === usuario.uid) return;
+    conviteWhatsAppUsuario = usuario.uid;
+
+    const modal = document.getElementById('modal-whatsapp-invite');
+    const conectar = document.getElementById('btn-connect-whatsapp-invite');
+    const ignorar = document.getElementById('btn-skip-whatsapp-invite');
+    const fechar = document.getElementById('btn-close-whatsapp-invite');
+    if (!modal || !conectar || !ignorar || !fechar) return;
+
+    const pausaAte = Number(localStorage.getItem(`gugetfin_whatsapp_invite_${usuario.uid}`) || 0);
+    if (pausaAte > Date.now()) return;
+
+    try {
+        const status = await requisicaoApiGugetFin('/whatsapp/status');
+        if (status?.connected) {
+            localStorage.removeItem(`gugetfin_whatsapp_invite_${usuario.uid}`);
+            return;
+        }
+    } catch (error) {
+        console.warn('Não foi possível verificar a conexão do WhatsApp:', error);
+        conviteWhatsAppUsuario = '';
+        return;
+    }
+
+    ignorar.onclick = () => fecharConviteWhatsApp(usuario.uid, 14);
+    fechar.onclick = () => fecharConviteWhatsApp(usuario.uid, 14);
+    conectar.onclick = () => {
+        guardarPausaConviteWhatsApp(usuario.uid, 1);
+        if (modal.open) modal.close();
+    };
+    modal.addEventListener('cancel', event => {
+        event.preventDefault();
+        fecharConviteWhatsApp(usuario.uid, 14);
+    }, { once: true });
+
+    let tentativas = 0;
+    const exibirQuandoLivre = () => {
+        tentativas += 1;
+        const outroModalAberto = Array.from(document.querySelectorAll('dialog[open]'))
+            .some(dialog => dialog !== modal);
+        const menuAberto = document.getElementById('menu-dropdown')?.classList.contains('active');
+
+        if ((outroModalAberto || menuAberto) && tentativas < 12) {
+            window.setTimeout(exibirQuandoLivre, 1000);
+            return;
+        }
+        if (!outroModalAberto && !menuAberto && !modal.open) modal.showModal();
+    };
+
+    window.setTimeout(exibirQuandoLivre, 900);
 }
 
 function atualizarStatusApiGugetFin(status, texto) {
@@ -196,6 +262,8 @@ async function revogarWhatsAppGugetFin() {
     if (!confirmou) return;
     try {
         await requisicaoApiGugetFin('/whatsapp/connection', { method: 'DELETE' });
+        const usuario = window.auth?.currentUser;
+        if (usuario?.uid) localStorage.removeItem(`gugetfin_whatsapp_invite_${usuario.uid}`);
         if (typeof mostrarToast === 'function') mostrarToast('WhatsApp desconectado do GugetFin.');
         await carregarIntegracoesApiGugetFin();
     } catch (error) {
@@ -225,3 +293,5 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = document.getElementById('settings-api-url');
     if (url) url.textContent = GUGETFIN_API_BASE_URL;
 });
+
+window.iniciarConviteWhatsAppGugetFin = iniciarConviteWhatsAppGugetFin;

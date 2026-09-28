@@ -495,6 +495,9 @@ window.iniciarVigia = function() {
             if (typeof atualizarInterfaceGoogleDrive === 'function') {
                 atualizarInterfaceGoogleDrive();
             }
+            if (typeof iniciarConviteWhatsAppGugetFin === 'function') {
+                iniciarConviteWhatsAppGugetFin(user);
+            }
             atualizarStatusSegurancaConta(user);
             registrarSessaoAtual(user).catch(error => console.warn('Nao foi possivel registrar a sessao atual:', error));
             setTimeout(esconderSplashInicial, 180);

@@ -1777,6 +1777,156 @@ body.dark-theme .fatura-preview-alerta.is-info {
 }
 
 /* ========================================================= */
+/* CONVITE COMPACTO DO WHATSAPP                              */
+/* ========================================================= */
+
+.whatsapp-invite-dialog {
+    width: min(calc(100vw - 32px), 420px);
+    max-width: 420px;
+    margin: auto;
+    padding: 0;
+    overflow: visible;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: var(--sidebar-bg);
+    color: var(--text-main);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .28);
+}
+
+.whatsapp-invite-dialog::backdrop {
+    background: rgba(5, 10, 14, .64);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.whatsapp-invite-content {
+    position: relative;
+    padding: 24px 24px 18px;
+    display: grid;
+    grid-template-columns: 50px minmax(0, 1fr);
+    gap: 0 14px;
+}
+
+.whatsapp-invite-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-sec);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.whatsapp-invite-close:hover {
+    background: var(--bg-app);
+    color: var(--text-main);
+}
+
+.whatsapp-invite-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.whatsapp-invite-copy {
+    min-width: 0;
+    padding-right: 18px;
+}
+
+.whatsapp-invite-copy > span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--dark-green);
+    font-size: 9.5px;
+    font-weight: 950;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+}
+
+.whatsapp-invite-copy h3 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 19px;
+    line-height: 1.15;
+    letter-spacing: -.025em;
+}
+
+.whatsapp-invite-copy p {
+    margin: 7px 0 0;
+    color: var(--text-sec);
+    font-size: 12px;
+    font-weight: 620;
+    line-height: 1.42;
+}
+
+.whatsapp-invite-primary {
+    grid-column: 1 / -1;
+    min-height: 46px;
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: var(--dark-green);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    text-decoration: none;
+    transition: transform .15s ease, filter .15s ease;
+}
+
+.whatsapp-invite-primary:hover {
+    filter: brightness(1.06);
+}
+
+.whatsapp-invite-primary:active {
+    transform: scale(.985);
+}
+
+.whatsapp-invite-skip {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-top: 7px;
+    padding: 6px 12px;
+    border: 0;
+    background: transparent;
+    color: var(--text-sec);
+    font-size: 10.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+@media (max-width: 520px) {
+    .whatsapp-invite-dialog {
+        width: calc(100vw - 28px);
+        max-width: calc(100vw - 28px);
+        border-radius: 20px;
+    }
+
+    .whatsapp-invite-content {
+        padding: 22px 20px 16px;
+        grid-template-columns: 46px minmax(0, 1fr);
+        gap: 0 12px;
+    }
+
+    .whatsapp-invite-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+    }
+
+    .whatsapp-invite-copy h3 {
+        font-size: 18px;
+    }
+}
+
+/* ========================================================= */
 /* DÍVIDAS - CADASTRO E PAGAMENTO                           */
 /* ========================================================= */
 

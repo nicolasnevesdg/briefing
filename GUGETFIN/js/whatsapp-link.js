@@ -2,8 +2,10 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebas
 import {
     browserLocalPersistence,
     getAuth,
+    GoogleAuthProvider,
     onAuthStateChanged,
     setPersistence,
+    signInWithPopup,
     signInWithEmailAndPassword,
     signOut
 } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
@@ -23,10 +25,12 @@ const auth = getAuth(app);
 auth.languageCode = 'pt-BR';
 
 const token = new URLSearchParams(window.location.search).get('token') || '';
+const loginStep = document.getElementById('whatsapp-login-step');
 const loginForm = document.getElementById('whatsapp-login-form');
 const session = document.getElementById('whatsapp-session');
 const sessionEmail = document.getElementById('whatsapp-session-email');
 const loginButton = document.getElementById('whatsapp-login-button');
+const googleButton = document.getElementById('whatsapp-google-button');
 const authorizeButton = document.getElementById('whatsapp-authorize-button');
 const changeAccountButton = document.getElementById('whatsapp-change-account');
 const cancelButton = document.getElementById('whatsapp-cancel-button');
@@ -44,6 +48,9 @@ function erroLogin(error) {
     if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) return 'E-mail ou senha incorretos.';
     if (code.includes('too-many-requests')) return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
     if (code.includes('network-request-failed')) return 'Não foi possível conectar. Confira sua internet.';
+    if (code.includes('popup-closed-by-user')) return '';
+    if (code.includes('popup-blocked')) return 'O navegador bloqueou a janela do Google. Libere pop-ups e tente novamente.';
+    if (code.includes('account-exists-with-different-credential')) return 'Essa conta já usa outro método de entrada. Entre com e-mail e senha.';
     return 'Não foi possível entrar na sua conta.';
 }
 
@@ -77,9 +84,9 @@ if (token.length < 32) {
     invalid.hidden = false;
     content.hidden = true;
 } else {
-    setPersistence(auth, browserLocalPersistence).catch(() => null);
+    const persistenceReady = setPersistence(auth, browserLocalPersistence).catch(() => null);
     onAuthStateChanged(auth, user => {
-        loginForm.hidden = Boolean(user);
+        loginStep.hidden = Boolean(user);
         session.hidden = !user;
         sessionEmail.textContent = user?.email || user?.displayName || '';
         mostrarStatus('');
@@ -93,11 +100,27 @@ if (token.length < 32) {
         loginButton.disabled = true;
         mostrarStatus('Entrando na sua conta...');
         try {
+            await persistenceReady;
             await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
             mostrarStatus(erroLogin(error), 'error');
         } finally {
             loginButton.disabled = false;
+        }
+    });
+
+    googleButton.addEventListener('click', async () => {
+        googleButton.disabled = true;
+        mostrarStatus('Abrindo o Google...');
+        try {
+            await persistenceReady;
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            mostrarStatus(erroLogin(error), 'error');
+        } finally {
+            googleButton.disabled = false;
         }
     });
 

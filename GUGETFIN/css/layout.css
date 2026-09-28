@@ -4885,6 +4885,81 @@ main.settings-mode #settings-view {
         word-break: break-word;
     }
 
+    .mobile-install-app[hidden],
+    #mobile-install-app-help[hidden] {
+        display: none !important;
+    }
+
+    .mobile-install-app {
+        margin: -10px 0 24px;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 11px;
+        border: 1px solid rgba(0, 166, 111, .25);
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(0, 181, 105, .10), rgba(0, 181, 105, .035));
+    }
+
+    .mobile-install-app > img {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: 0 5px 14px rgba(0, 92, 57, .12);
+    }
+
+    .mobile-install-app-copy {
+        min-width: 0;
+    }
+
+    .mobile-install-app-copy strong,
+    .mobile-install-app-copy span {
+        display: block;
+    }
+
+    .mobile-install-app-copy strong {
+        color: var(--text-main);
+        font-size: 13px;
+        font-weight: 900;
+    }
+
+    .mobile-install-app-copy span {
+        margin-top: 3px;
+        color: var(--text-sec);
+        font-size: 10.5px;
+        font-weight: 650;
+        line-height: 1.25;
+    }
+
+    #btn-mobile-install-app {
+        min-height: 34px;
+        padding: 0 13px;
+        border: 0;
+        border-radius: 999px;
+        background: var(--dark-green);
+        color: #fff;
+        font-size: 10.5px;
+        font-weight: 900;
+        cursor: pointer;
+    }
+
+    #btn-mobile-install-app:active {
+        transform: scale(.97);
+    }
+
+    #mobile-install-app-help {
+        grid-column: 1 / -1;
+        margin: 0;
+        padding: 10px 11px 1px;
+        border-top: 1px solid rgba(0, 166, 111, .18);
+        color: var(--text-sec);
+        font-size: 10.5px;
+        font-weight: 650;
+        line-height: 1.45;
+    }
+
     .mobile-menu-section {
         display: grid;
         gap: 5px;
