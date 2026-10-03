@@ -41,7 +41,11 @@ function insightsAdicionarMes(data, quantidade) {
 function insightsCompetenciaTransacao(transacao) {
     try {
         if (typeof calcularCompetenciaInicialGasto === 'function') {
-            return calcularCompetenciaInicialGasto(transacao);
+            const competencia = calcularCompetenciaInicialGasto(transacao);
+            if (competencia instanceof Date && !Number.isNaN(competencia.getTime())) {
+                return competencia;
+            }
+            return null;
         }
     } catch (error) {
         // A data original continua sendo um fallback seguro para registros antigos.

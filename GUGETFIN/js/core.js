@@ -1752,6 +1752,10 @@ if (main && main.classList.contains('insights-mode') && typeof renderizarGugetIn
     renderizarGugetInsights();
 }
 
+if (main && main.classList.contains('settings-mode') && typeof renderizarIntegridadeDados === 'function') {
+    renderizarIntegridadeDados();
+}
+
 if (typeof agendarAtualizacaoCarrosselResumoDashboard === 'function') {
     agendarAtualizacaoCarrosselResumoDashboard();
 }
@@ -1939,6 +1943,10 @@ function selecionarAbaConfiguracoes(aba = 'perfil') {
 
     if (aba === 'integracoes' && typeof carregarIntegracoesApiGugetFin === 'function') {
         carregarIntegracoesApiGugetFin();
+    }
+
+    if (aba === 'dados' && typeof renderizarIntegridadeDados === 'function') {
+        renderizarIntegridadeDados();
     }
 }
 

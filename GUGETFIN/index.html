@@ -20,6 +20,7 @@
     </style>
     <link rel="stylesheet" href="css/style.css?v=20261003-1">
     <link rel="stylesheet" href="css/insights.css?v=20261003-1">
+    <link rel="stylesheet" href="css/data-integrity.css?v=20261003-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -362,6 +363,7 @@
 
                                 <div class="mobile-menu-section">
                                     <span>Dados e suporte</span>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => abrirIntegridadeDados())"><i class="fi fi-rr-shield-check"></i> Integridade dos dados</button>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => document.getElementById('input-import-extrato').click())"><i class="fi fi-rr-file-invoice-dollar"></i> Importar extrato</button>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => document.getElementById('input-import-js').click())"><i class="fi fi-rr-download"></i> Importar backup</button>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => salvarAlteracoes())"><i class="fi fi-rr-disk"></i> Criar backup</button>
@@ -1841,6 +1843,34 @@
                                 <span>Apague os dados locais e comece do zero.</span>
                             </button>
                         </div>
+
+                        <section class="data-integrity-card" aria-labelledby="data-integrity-title">
+                            <div class="data-integrity-head">
+                                <span class="data-integrity-icon"><i class="fi fi-rr-shield-check" aria-hidden="true"></i></span>
+                                <div>
+                                    <small>Manutenção avançada</small>
+                                    <h4 id="data-integrity-title">Integridade dos dados</h4>
+                                    <p>Encontre lançamentos antigos ou incompletos que podem ficar ocultos e afetar cálculos.</p>
+                                </div>
+                                <span id="data-integrity-status" class="data-integrity-status is-checking">Verificando</span>
+                            </div>
+
+                            <div class="data-integrity-summary">
+                                <div>
+                                    <strong id="data-integrity-count">Analisando seus lançamentos...</strong>
+                                    <span id="data-integrity-description">Nenhum dado é alterado automaticamente.</span>
+                                </div>
+                                <button id="data-integrity-toggle" type="button" class="btn-settings-secondary" onclick="alternarListaIntegridadeDados()" hidden>Ver lançamentos</button>
+                            </div>
+
+                            <div id="data-integrity-details" class="data-integrity-details" hidden>
+                                <div class="data-integrity-list-head">
+                                    <strong>Lançamentos para revisar</strong>
+                                    <small>Abra cada item e complete as informações indicadas.</small>
+                                </div>
+                                <div id="data-integrity-list" class="data-integrity-list"></div>
+                            </div>
+                        </section>
                     </div>
                 </div>
             </div>
@@ -3029,7 +3059,7 @@
     })();
 </script>
 
-    <script src="js/core.js?v=20261003-2"></script>
+    <script src="js/core.js?v=20261003-3"></script>
     <script src="js/auth.js?v=20261002-1"></script>
     <script src="js/api-integrations.js?v=20260928-1"></script>
     <script src="js/install-app.js?v=20260928-1"></script>
@@ -3039,7 +3069,8 @@
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260926-1"></script>
     <script src="js/dividas.js?v=20261003-1"></script>
-    <script src="js/insights.js?v=20261003-2"></script>
+    <script src="js/insights.js?v=20261003-3"></script>
+    <script src="js/data-integrity.js?v=20261003-1"></script>
     <script src="js/caixinhas.js?v=20260822-1"></script>
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
 </body>
