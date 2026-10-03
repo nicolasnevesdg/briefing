@@ -19,7 +19,7 @@
         }
     </style>
     <link rel="stylesheet" href="css/style.css?v=20261003-1">
-    <link rel="stylesheet" href="css/insights.css?v=20261003-1">
+    <link rel="stylesheet" href="css/insights.css?v=20261003-2">
     <link rel="stylesheet" href="css/data-integrity.css?v=20261003-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1102,74 +1102,72 @@
             </div>
 
             <div id="insights-content" class="insights-content">
-                <div class="insights-overview-grid">
-                    <article class="insights-balance-card" id="insights-balance-card">
-                        <div>
-                            <span>Leitura do mês</span>
-                            <strong id="insights-status-title">Calculando...</strong>
-                            <p id="insights-status-text">Analisando entradas, gastos e compromissos.</p>
+                <div class="insights-signal-grid">
+                    <article class="insights-signal-card is-comparison" id="insights-comparison-card">
+                        <div class="insights-signal-top">
+                            <span>Ritmo do mês</span>
+                            <i class="fi fi-rr-chart-line-up" aria-hidden="true"></i>
                         </div>
-                        <div class="insights-balance-value">
-                            <small>Saldo registrado</small>
-                            <b id="insights-balance-value">R$ 0,00</b>
-                            <span id="insights-balance-detail">Entradas menos saídas realizadas</span>
-                        </div>
+                        <strong id="insights-comparison-value">Calculando...</strong>
+                        <h3 id="insights-comparison-title">Comparando com seu histórico</h3>
+                        <p id="insights-comparison-detail">Usamos o mesmo período dos meses anteriores para evitar comparações injustas.</p>
+                        <small id="insights-comparison-context">Histórico dos últimos três meses</small>
                     </article>
 
-                    <div class="insights-kpi-grid">
-                        <article class="insights-kpi">
-                            <span>Entradas</span>
-                            <strong id="insights-income-value">R$ 0,00</strong>
-                            <small id="insights-income-detail">No mês</small>
-                        </article>
-                        <article class="insights-kpi">
-                            <span>Saídas realizadas</span>
-                            <strong id="insights-expense-value">R$ 0,00</strong>
-                            <small id="insights-expense-detail">No mês</small>
-                        </article>
-                        <article class="insights-kpi">
-                            <span>Comprometimento</span>
-                            <strong id="insights-ratio-value">0%</strong>
-                            <small id="insights-ratio-detail">Das entradas recorrentes</small>
-                        </article>
-                        <article class="insights-kpi">
-                            <span>Ainda previsto</span>
-                            <strong id="insights-pending-value">R$ 0,00</strong>
-                            <small id="insights-pending-detail">Compromissos em aberto</small>
-                        </article>
-                    </div>
+                    <article class="insights-signal-card is-projection" id="insights-projection-card">
+                        <div class="insights-signal-top">
+                            <span>Previsão</span>
+                            <i class="fi fi-rr-crystal-ball" aria-hidden="true"></i>
+                        </div>
+                        <strong id="insights-projection-value">R$ 0,00</strong>
+                        <h3 id="insights-projection-title">Possível fechamento do mês</h3>
+                        <p id="insights-projection-detail">Estimativa baseada no ritmo atual e nos compromissos já cadastrados.</p>
+                        <small id="insights-projection-context">A projeção muda a cada novo lançamento</small>
+                    </article>
+
+                    <article class="insights-signal-card is-relief" id="insights-relief-card">
+                        <div class="insights-signal-top">
+                            <span>Alívio futuro</span>
+                            <i class="fi fi-rr-calendar-clock" aria-hidden="true"></i>
+                        </div>
+                        <strong id="insights-relief-value">R$ 0,00</strong>
+                        <h3 id="insights-relief-title">Parcelas terminando</h3>
+                        <p id="insights-relief-detail">Buscando reduções nos compromissos dos próximos meses.</p>
+                        <small id="insights-relief-context">Considera apenas parcelas já cadastradas</small>
+                    </article>
                 </div>
 
                 <div class="insights-main-grid">
                     <section class="insights-card insights-history-card">
                         <div class="insights-card-head">
                             <div>
-                                <span>Evolução</span>
-                                <h3>Últimos 6 meses</h3>
+                                <span>Comparação</span>
+                                <h3 id="insights-history-title">Evolução dos gastos</h3>
                             </div>
-                            <div class="insights-legend"><i></i> Entradas <i></i> Saídas</div>
+                            <div class="insights-legend"><i></i> Realizado <i></i> Projeção</div>
                         </div>
                         <div id="insights-history-chart" class="insights-history-chart"></div>
+                        <p id="insights-history-context" class="insights-chart-context">Comparando os últimos meses.</p>
                     </section>
 
-                    <section class="insights-card insights-categories-card">
+                    <section class="insights-card insights-changes-card">
                         <div class="insights-card-head">
                             <div>
-                                <span>Distribuição</span>
-                                <h3>Principais categorias</h3>
+                                <span>O que mudou</span>
+                                <h3>Categorias em movimento</h3>
                             </div>
                         </div>
-                        <div id="insights-categories-list" class="insights-categories-list"></div>
+                        <div id="insights-category-changes" class="insights-category-changes"></div>
                     </section>
                 </div>
 
                 <section class="insights-card insights-reading-card">
                     <div class="insights-card-head">
                         <div>
-                            <span>Leitura automática</span>
-                            <h3>Destaques e alertas</h3>
+                            <span>Detecção automática</span>
+                            <h3>O que merece sua atenção</h3>
                         </div>
-                        <small>Gerados por regras, sem inteligência artificial</small>
+                        <small>O GugetFin seleciona apenas sinais relevantes</small>
                     </div>
                     <div id="insights-reading-list" class="insights-reading-list"></div>
                 </section>
@@ -1178,11 +1176,11 @@
                     <div class="insights-card-head">
                         <div>
                             <span>Próximos meses</span>
-                            <h3>Compromissos já cadastrados</h3>
+                            <h3>Linha do tempo dos compromissos</h3>
                         </div>
                         <button type="button" onclick="irParaVisualizacoes('parcelados')">Ver parcelamentos <i class="fi fi-rr-arrow-small-right"></i></button>
                     </div>
-                    <p class="insights-card-description">Considera cartões, gastos fixos pendentes e parcelas de dívidas registradas. Não é uma previsão de novos gastos.</p>
+                    <p id="insights-forecast-description" class="insights-card-description">Veja quando seus compromissos mensais aumentam ou diminuem com o fim das parcelas.</p>
                     <div id="insights-forecast-list" class="insights-forecast-list"></div>
                 </section>
 
@@ -3069,7 +3067,7 @@
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260926-1"></script>
     <script src="js/dividas.js?v=20261003-1"></script>
-    <script src="js/insights.js?v=20261003-3"></script>
+    <script src="js/insights.js?v=20261003-4"></script>
     <script src="js/data-integrity.js?v=20261003-1"></script>
     <script src="js/caixinhas.js?v=20260822-1"></script>
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
