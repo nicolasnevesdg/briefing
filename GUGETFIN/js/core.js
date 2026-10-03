@@ -888,6 +888,145 @@ function calcularSaldoCaixinhaDashboard() {
     }, 0);
 }
 
+let ultimoSaldoMensalDashboard = 0;
+
+function atualizarLayoutIndicadoresDashboard() {
+    const grid = document.querySelector('#aba-home .stats-grid');
+    if (!grid) return;
+
+    const mostrarPrevisto = salsiData?.config?.mostrarSaldoPrevistoDashboard === true;
+    const mostrarCaixinha = salsiData?.config?.mostrarCaixinhaDashboard === true;
+    const cards = Array.from(grid.querySelectorAll(':scope > .stat-card'));
+    const ativos = cards.filter(card => {
+        if (card.id === 'stat-previsto-dashboard') return mostrarPrevisto;
+        if (card.id === 'stat-caixinha-dashboard') return mostrarCaixinha;
+        return true;
+    });
+
+    cards.forEach(card => card.classList.remove('dashboard-stat-span-all'));
+    grid.className = grid.className
+        .replace(/\bdashboard-stats-count-\d+\b/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    grid.classList.add(`dashboard-stats-count-${ativos.length}`);
+    grid.style.setProperty('--dashboard-stat-columns', String(Math.min(4, Math.max(1, ativos.length))));
+
+    if (ativos.length % 2 === 1) {
+        const cardExpandido = ativos.length <= 3 ? ativos[0] : ativos[ativos.length - 1];
+        if (cardExpandido) cardExpandido.classList.add('dashboard-stat-span-all');
+    }
+}
+
+function calcularFixosPendentesSaldoPrevisto(mes, ano) {
+    return (salsiData?.transacoes || []).reduce((total, transacao) => {
+        if (transacao?.tipo !== 'fixo' || transacao.eDeTerceiro || transacao.pago === true) return total;
+
+        let competencia;
+        try {
+            competencia = calcularCompetenciaInicialGasto(transacao);
+        } catch (error) {
+            competencia = new Date(`${transacao.dataCompra || ''}T12:00:00`);
+        }
+
+        if (!(competencia instanceof Date) || Number.isNaN(competencia.getTime())) return total;
+        const diferenca = (ano - competencia.getFullYear()) * 12 + (mes - competencia.getMonth());
+        const parcelas = Math.max(1, Number(transacao.parcelas || 1));
+        if (diferenca < 0 || diferenca >= parcelas) return total;
+
+        return total + Number(transacao.valorTotal || transacao.valorParcela || 0);
+    }, 0);
+}
+
+function calcularDividasManuaisPendentesSaldoPrevisto(mes, ano) {
+    if (typeof garantirEstruturaDividasManuais !== 'function') return 0;
+
+    return garantirEstruturaDividasManuais().reduce((total, divida) => {
+        const parcelasMes = (divida.agenda || []).reduce((subtotal, parcela) => {
+            const vencimento = typeof dataLocalDivida === 'function'
+                ? dataLocalDivida(parcela.vencimento)
+                : new Date(`${parcela.vencimento || ''}T12:00:00`);
+            if (!(vencimento instanceof Date) || Number.isNaN(vencimento.getTime())) return subtotal;
+            if (vencimento.getMonth() !== mes || vencimento.getFullYear() !== ano) return subtotal;
+
+            const restante = typeof obterRestanteParcelaDivida === 'function'
+                ? obterRestanteParcelaDivida(parcela)
+                : Number(parcela.valorPrevisto || 0);
+            return subtotal + Math.max(0, Number(restante || 0));
+        }, 0);
+        return total + parcelasMes;
+    }, 0);
+}
+
+function calcularDividasCompartilhadasPendentesSaldoPrevisto(mes, ano, recebidas = []) {
+    return (Array.isArray(recebidas) ? recebidas : []).reduce((total, divida) => {
+        if (!['pendente', 'aceito'].includes(divida?.status || 'pendente')) return total;
+
+        const inicio = new Date(`${divida.dataCompra || ''}T12:00:00`);
+        if (Number.isNaN(inicio.getTime())) return total;
+
+        const diferenca = (ano - inicio.getFullYear()) * 12 + (mes - inicio.getMonth());
+        const parcelas = Math.max(1, Number(divida.parcelas || 1));
+        if (diferenca < 0 || diferenca >= parcelas) return total;
+
+        const valorParcela = Number(divida.valorParcela || 0)
+            || (Number(divida.valor || 0) / parcelas);
+        return total + Math.max(0, valorParcela);
+    }, 0);
+}
+
+function calcularResumoSaldoPrevistoDashboard(saldoMensal, mes, ano, recebidas = []) {
+    const fixos = calcularFixosPendentesSaldoPrevisto(mes, ano);
+    const dividas = calcularDividasManuaisPendentesSaldoPrevisto(mes, ano);
+    const compartilhadas = calcularDividasCompartilhadasPendentesSaldoPrevisto(mes, ano, recebidas);
+    const pendente = fixos + dividas + compartilhadas;
+
+    return {
+        saldo: Number(saldoMensal || 0) - pendente,
+        pendente,
+        fixos,
+        dividas,
+        compartilhadas
+    };
+}
+
+function atualizarCardSaldoPrevistoDashboard(saldoMensal, mes, ano, recebidas = null) {
+    if (Number.isFinite(Number(saldoMensal))) ultimoSaldoMensalDashboard = Number(saldoMensal);
+    const mesReferencia = Number.isInteger(mes) ? mes : dataFiltro.getMonth();
+    const anoReferencia = Number.isInteger(ano) ? ano : dataFiltro.getFullYear();
+    const dividasRecebidas = Array.isArray(recebidas)
+        ? recebidas
+        : (typeof dashboardDividasRecebidas !== 'undefined' ? dashboardDividasRecebidas : []);
+    const mostrar = salsiData?.config?.mostrarSaldoPrevistoDashboard === true;
+    const card = document.getElementById('stat-previsto-dashboard');
+    const valor = document.getElementById('resumo-previsto');
+    const resumo = calcularResumoSaldoPrevistoDashboard(
+        ultimoSaldoMensalDashboard,
+        mesReferencia,
+        anoReferencia,
+        dividasRecebidas
+    );
+
+    document.body.classList.toggle('dashboard-previsto-enabled', mostrar);
+    if (card) {
+        card.style.removeProperty('display');
+        card.title = resumo.pendente > 0.005
+            ? `Saldo mensal menos R$ ${resumo.pendente.toFixed(2)} em compromissos pendentes do mês.`
+            : 'Nenhum compromisso pendente adicional neste mês.';
+    }
+    if (valor) valor.innerText = `R$ ${resumo.saldo.toFixed(2)}`;
+    atualizarLayoutIndicadoresDashboard();
+    return resumo;
+}
+
+function atualizarSaldoPrevistoComDividasRecebidas(recebidas = []) {
+    return atualizarCardSaldoPrevistoDashboard(
+        ultimoSaldoMensalDashboard,
+        dataFiltro.getMonth(),
+        dataFiltro.getFullYear(),
+        recebidas
+    );
+}
+
 function atualizarCardCaixinhaDashboard() {
     const card = document.getElementById('stat-caixinha-dashboard');
     const valor = document.getElementById('resumo-caixinha');
@@ -897,6 +1036,7 @@ function atualizarCardCaixinhaDashboard() {
 
     if (card) card.style.removeProperty('display');
     if (valor) valor.innerText = `R$ ${calcularSaldoCaixinhaDashboard().toFixed(2)}`;
+    atualizarLayoutIndicadoresDashboard();
 }
 
 function gastoEstaNovo(t) {
@@ -1493,6 +1633,7 @@ if (typeof renderizarGraficoCategorias === 'function') {
     document.getElementById('resumo-saldo').innerText = `R$ ${saldoFinal.toFixed(2)}`;
     document.getElementById('resumo-cartao').innerText = `R$ ${totalCartMes.toFixed(2)}`;
     document.getElementById('resumo-porcentagem').innerText = `${totalEntRenda > 0 ? ((totalGastoMes/totalEntRenda)*100).toFixed(1) : 0}%`;
+    atualizarCardSaldoPrevistoDashboard(saldoFinal, m, a);
     atualizarCardCaixinhaDashboard();
     if (typeof renderizarResumoCompromissosDashboard === 'function') renderizarResumoCompromissosDashboard();
     if (typeof renderizarPlanejadorFaturas === 'function') renderizarPlanejadorFaturas();

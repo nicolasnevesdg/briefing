@@ -425,6 +425,9 @@ window.iniciarVigia = function() {
                     if (typeof salsiData.config.mostrarCaixinhaDashboard === 'undefined') {
                         salsiData.config.mostrarCaixinhaDashboard = false;
                     }
+                    if (typeof salsiData.config.mostrarSaldoPrevistoDashboard === 'undefined') {
+                        salsiData.config.mostrarSaldoPrevistoDashboard = false;
+                    }
 
                     const usernameCriado = await garantirUsernamePerfilLegado(user);
                     if (usernameCriado) {
@@ -508,6 +511,7 @@ window.iniciarVigia = function() {
                     const dados = docSnap.data();
                     if (dados.dados?.config) {
                         aplicarPreferenciaCaixinhaDashboardRemota(dados.dados.config.mostrarCaixinhaDashboard);
+                        aplicarPreferenciaSaldoPrevistoDashboardRemota(dados.dados.config.mostrarSaldoPrevistoDashboard);
                     }
 
                     if (Array.isArray(dados.segurancaSessoes) && !window.gugetSecuritySessionsLiveEnabled) {
@@ -880,6 +884,7 @@ function criarEstruturaInicialUsuario(nome = '', sobrenome = '', username = '', 
                 { nome: "Cadastre seus cartões!", fechamento: 10, vencimento: 20 }
             ],
             mostrarCaixinhaDashboard: false,
+            mostrarSaldoPrevistoDashboard: false,
             onboardingConcluido: false,
             tutorialVisto: false
         },
@@ -1059,6 +1064,9 @@ function carregarConfiguracoesPerfil() {
 
     const caixinhaToggle = document.getElementById('settings-show-caixinha-dashboard');
     if (caixinhaToggle) caixinhaToggle.checked = salsiData.config?.mostrarCaixinhaDashboard === true;
+    const saldoPrevistoToggle = document.getElementById('settings-show-saldo-previsto');
+    if (saldoPrevistoToggle) saldoPrevistoToggle.checked = salsiData.config?.mostrarSaldoPrevistoDashboard === true;
+    if (typeof atualizarCardSaldoPrevistoDashboard === 'function') atualizarCardSaldoPrevistoDashboard();
     if (typeof atualizarCardCaixinhaDashboard === 'function') atualizarCardCaixinhaDashboard();
 
     atualizarStatusGoogleConta();
@@ -1082,6 +1090,24 @@ function aplicarPreferenciaCaixinhaDashboardRemota(valorRemoto) {
     if (caixinhaToggle) caixinhaToggle.checked = valorNormalizado;
 
     if (typeof atualizarCardCaixinhaDashboard === 'function') atualizarCardCaixinhaDashboard();
+}
+
+function aplicarPreferenciaSaldoPrevistoDashboardRemota(valorRemoto) {
+    if (!salsiData.config) salsiData.config = {};
+
+    const valorNormalizado = valorRemoto === true;
+    if (salsiData.config.mostrarSaldoPrevistoDashboard === valorNormalizado) {
+        if (typeof atualizarCardSaldoPrevistoDashboard === 'function') atualizarCardSaldoPrevistoDashboard();
+        return;
+    }
+
+    salsiData.config.mostrarSaldoPrevistoDashboard = valorNormalizado;
+    localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
+
+    const saldoPrevistoToggle = document.getElementById('settings-show-saldo-previsto');
+    if (saldoPrevistoToggle) saldoPrevistoToggle.checked = valorNormalizado;
+
+    if (typeof atualizarCardSaldoPrevistoDashboard === 'function') atualizarCardSaldoPrevistoDashboard();
 }
 
 function obterConexaoGoogleUsuario(user = window.auth?.currentUser) {
@@ -1256,11 +1282,15 @@ async function salvarPreferenciasApp() {
     const novoModoIA = selectModoNovo ? selectModoNovo.value : 'calendario';
     const caixinhaToggle = document.getElementById('settings-show-caixinha-dashboard');
     const mostrarCaixinhaDashboard = caixinhaToggle ? caixinhaToggle.checked : false;
+    const saldoPrevistoToggle = document.getElementById('settings-show-saldo-previsto');
+    const mostrarSaldoPrevistoDashboard = saldoPrevistoToggle ? saldoPrevistoToggle.checked : false;
 
     salsiData.config.modoIA = novoModoIA;
     salsiData.config.mostrarCaixinhaDashboard = mostrarCaixinhaDashboard;
+    salsiData.config.mostrarSaldoPrevistoDashboard = mostrarSaldoPrevistoDashboard;
 
     if (selectModoAntigo) selectModoAntigo.value = novoModoIA;
+    if (typeof atualizarCardSaldoPrevistoDashboard === 'function') atualizarCardSaldoPrevistoDashboard();
     if (typeof atualizarCardCaixinhaDashboard === 'function') atualizarCardCaixinhaDashboard();
 
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
@@ -1269,7 +1299,8 @@ async function salvarPreferenciasApp() {
         try {
             await window.updateDoc(window.doc(window.db, 'usuarios', window.auth.currentUser.uid), {
                 'dados.config.modoIA': novoModoIA,
-                'dados.config.mostrarCaixinhaDashboard': mostrarCaixinhaDashboard
+                'dados.config.mostrarCaixinhaDashboard': mostrarCaixinhaDashboard,
+                'dados.config.mostrarSaldoPrevistoDashboard': mostrarSaldoPrevistoDashboard
             });
             return;
         } catch (error) {

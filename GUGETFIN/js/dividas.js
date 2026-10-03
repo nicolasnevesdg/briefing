@@ -813,5 +813,10 @@ function renderizarResumoCompromissosDashboard() {
     );
 
     aplicarResumoDividasDashboard();
-    carregarDividasRecebidasDashboard().then(aplicarResumoDividasDashboard);
+    carregarDividasRecebidasDashboard().then(recebidas => {
+        aplicarResumoDividasDashboard(recebidas);
+        if (typeof atualizarSaldoPrevistoComDividasRecebidas === 'function') {
+            atualizarSaldoPrevistoComDividasRecebidas(recebidas);
+        }
+    });
 }

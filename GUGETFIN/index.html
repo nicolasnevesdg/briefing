@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20261002-1">
+    <link rel="stylesheet" href="css/style.css?v=20261002-2">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -542,10 +542,11 @@
 				<div class="dashboard-summary-carousel-track">
 					<div class="dashboard-summary-slide" data-dashboard-summary-slide="0" role="group" aria-label="Resumo mensal, slide 1 de 2">
 			<div class="stats-grid">
-				<div class="stat-card"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
-				<div class="stat-card"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
-				<div class="stat-card"><small>% da Renda</small><h2 id="resumo-porcentagem">0%</h2></div>
-				<div class="stat-card stat-caixinha" id="stat-caixinha-dashboard"><small>Saldo da Caixinha</small><h2 id="resumo-caixinha">R$ 0,00</h2></div>
+				<div class="stat-card" data-dashboard-stat="saldo"><small>Saldo Mensal</small><h2 id="resumo-saldo">R$ 0,00</h2></div>
+				<div class="stat-card stat-previsto" id="stat-previsto-dashboard" data-dashboard-stat="previsto"><small>Saldo Previsto</small><h2 id="resumo-previsto">R$ 0,00</h2></div>
+				<div class="stat-card" data-dashboard-stat="cartao"><small>Total Cartão</small><h2 id="resumo-cartao">R$ 0,00</h2></div>
+				<div class="stat-card" data-dashboard-stat="renda"><small>% da Renda</small><h2 id="resumo-porcentagem">0%</h2></div>
+				<div class="stat-card stat-caixinha" id="stat-caixinha-dashboard" data-dashboard-stat="caixinha"><small>Saldo da Caixinha</small><h2 id="resumo-caixinha">R$ 0,00</h2></div>
 			</div>
 					</div>
 
@@ -1231,6 +1232,17 @@
                                     <option value="fatura">Mês seguinte / fatura</option>
                                 </select>
                             </label>
+
+                            <div class="settings-toggle-row">
+                                <div>
+                                    <strong>Exibir saldo previsto</strong>
+                                    <span>Mostra quanto restará após os compromissos pendentes do mês.</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="settings-show-saldo-previsto" onchange="salvarPreferenciasApp()">
+                                    <span class="slider-switch"></span>
+                                </label>
+                            </div>
 
                             <div class="settings-toggle-row">
                                 <div>
@@ -2838,8 +2850,8 @@
     })();
 </script>
 
-    <script src="js/core.js?v=20260920-1"></script>
-    <script src="js/auth.js?v=20260928-1"></script>
+    <script src="js/core.js?v=20261002-1"></script>
+    <script src="js/auth.js?v=20261002-1"></script>
     <script src="js/api-integrations.js?v=20260928-1"></script>
     <script src="js/install-app.js?v=20260928-1"></script>
     <script src="js/transacoes.js?v=20260927-1"></script>
@@ -2847,7 +2859,7 @@
     <script src="js/modulos.js?v=20260808-1"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260926-1"></script>
-    <script src="js/dividas.js?v=20260809-1"></script>
+    <script src="js/dividas.js?v=20261002-1"></script>
     <script src="js/caixinhas.js?v=20260822-1"></script>
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
 </body>
