@@ -4675,11 +4675,26 @@ main.settings-mode #settings-view {
     gap: 18px;
 }
 
-.subscription-status-card {
+.subscription-status-card,
+.subscription-plans-card,
+.subscription-coupon-card {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: var(--bg-app);
+    padding: 22px;
+}
+
+.subscription-access-card {
+    grid-column: 1 / -1;
     background:
         radial-gradient(circle at 90% 10%, rgba(108, 192, 128, 0.18), transparent 34%),
         var(--dark-green);
     color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
 }
 
 .subscription-badge {
@@ -4703,6 +4718,19 @@ main.settings-mode #settings-view {
     line-height: 1.05;
     font-weight: 900;
     letter-spacing: -0.04em;
+}
+
+.subscription-access-icon {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.12);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
 }
 
 .subscription-status-card p,
@@ -4733,6 +4761,263 @@ main.settings-mode #settings-view {
     color: rgba(255,255,255,0.84);
     font-size: 11px;
     font-weight: 800;
+}
+
+.subscription-card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.subscription-card-heading > div > span {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--dark-green);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.subscription-card-heading h4 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+}
+
+.subscription-card-heading > strong {
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(108, 192, 128, 0.12);
+    color: var(--dark-green);
+    display: inline-flex;
+    align-items: center;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.subscription-card-heading > i {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 13px;
+    background: rgba(108, 192, 128, 0.12);
+    color: var(--dark-green);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+}
+
+.subscription-offers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.subscription-offer-card {
+    min-width: 0;
+    padding: 17px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--sidebar-bg);
+}
+
+.subscription-offer-card.recommended {
+    border-color: color-mix(in srgb, var(--dark-green) 42%, var(--border));
+    background: color-mix(in srgb, var(--dark-green) 7%, var(--sidebar-bg));
+}
+
+.subscription-offer-title {
+    min-height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.subscription-offer-title span {
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.subscription-offer-title s {
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.subscription-offer-title b {
+    padding: 5px 7px;
+    border-radius: 999px;
+    background: var(--dark-green);
+    color: #ffffff;
+    font-size: 8px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.subscription-offer-price {
+    margin-top: 13px;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.subscription-offer-price strong {
+    color: var(--text-main);
+    font-size: clamp(23px, 2.2vw, 31px);
+    line-height: 1;
+    font-weight: 950;
+    letter-spacing: -0.055em;
+}
+
+.subscription-offer-price small {
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.subscription-offer-card p {
+    min-height: 42px;
+    margin: 10px 0 14px;
+    color: var(--text-sec);
+    font-size: 10px;
+    line-height: 1.4;
+    font-weight: 650;
+}
+
+.subscription-offer-card button {
+    width: 100%;
+    min-height: 39px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-app);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.subscription-offer-card.recommended button {
+    border-color: transparent;
+    background: var(--dark-green);
+    color: #ffffff;
+}
+
+.subscription-benefits {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.subscription-benefits span {
+    min-height: 31px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(127,127,127,0.065);
+    color: var(--text-sec);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.subscription-benefits i {
+    color: var(--dark-green);
+}
+
+.subscription-coupon-card > p {
+    margin: 0;
+    color: var(--text-sec);
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.subscription-coupon-form {
+    margin-top: 22px;
+}
+
+.subscription-coupon-form > label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--text-sec);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.subscription-coupon-form > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+}
+
+.subscription-coupon-form input {
+    min-width: 0;
+    min-height: 46px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--sidebar-bg);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    outline: none;
+}
+
+.subscription-coupon-form input:focus {
+    border-color: var(--dark-green);
+    box-shadow: 0 0 0 3px rgba(108, 192, 128, 0.12);
+}
+
+.subscription-coupon-form button {
+    min-width: 84px;
+    min-height: 46px;
+    padding: 0 15px;
+    border: none;
+    border-radius: 13px;
+    background: var(--dark-green);
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.subscription-coupon-form small {
+    display: block;
+    margin-top: 9px;
+    color: var(--text-sec);
+    font-size: 10px;
+    line-height: 1.4;
+    font-weight: 650;
+}
+
+.subscription-coupon-form small.is-saved {
+    color: var(--dark-green);
+}
+
+.subscription-invite-wide {
+    grid-column: 1 / -1;
 }
 
 .subscription-invite-card button {
@@ -4817,12 +5102,51 @@ main.settings-mode #settings-view {
         grid-template-columns: 1fr;
     }
 
+    .subscription-access-card,
+    .subscription-invite-wide {
+        grid-column: auto;
+    }
+
+    .subscription-offers {
+        grid-template-columns: 1fr 1fr;
+    }
+
     .settings-shortcut-list {
         grid-template-columns: 1fr;
     }
 
     .settings-category-form {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    .subscription-access-card {
+        align-items: flex-start;
+    }
+
+    .subscription-access-icon {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+        border-radius: 15px;
+        font-size: 20px;
+    }
+
+    .subscription-offers {
+        grid-template-columns: 1fr;
+    }
+
+    .subscription-offer-card p {
+        min-height: 0;
+    }
+
+    .subscription-coupon-form > div {
+        grid-template-columns: 1fr;
+    }
+
+    .subscription-coupon-form button {
+        width: 100%;
     }
 }
 

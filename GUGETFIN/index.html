@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20261002-2">
+    <link rel="stylesheet" href="css/style.css?v=20261003-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1563,24 +1563,79 @@
 
                     <div class="settings-panel" data-settings-panel="assinatura">
                         <div class="settings-panel-head">
-                            <span>Plano</span>
+                            <span>Planos</span>
                             <h3>Assinatura</h3>
-                            <p>Gerencie seu plano, convites e recursos avançados da plataforma.</p>
+                            <p>Conheça o GugetFin Pro e os valores preparados para o lançamento.</p>
                         </div>
 
                         <div class="settings-subscription-grid">
-                            <section class="subscription-status-card">
-                                <span class="subscription-badge">Em breve</span>
-                                <h4>Guget Pro está em desenvolvimento</h4>
-                                <p>Em breve você poderá controlar sua assinatura, formas de pagamento e benefícios direto por aqui.</p>
-                                <div class="subscription-mini-list">
-                                    <span>Relatórios avançados</span>
-                                    <span>Recursos colaborativos</span>
-                                    <span>Mais automações financeiras</span>
+                            <section class="subscription-status-card subscription-access-card">
+                                <div class="subscription-access-copy">
+                                    <span class="subscription-badge">Acesso liberado</span>
+                                    <h4>Por enquanto, tudo continua gratuito</h4>
+                                    <p>Estamos apenas preparando a apresentação dos planos. Nenhuma cobrança será feita e nenhum recurso será bloqueado nesta fase.</p>
+                                </div>
+                                <div class="subscription-access-icon" aria-hidden="true"><i class="fi fi-rr-unlock"></i></div>
+                            </section>
+
+                            <section class="subscription-plans-card">
+                                <div class="subscription-card-heading">
+                                    <div>
+                                        <span>GugetFin Pro</span>
+                                        <h4>Preços de lançamento</h4>
+                                    </div>
+                                    <strong>Em breve</strong>
+                                </div>
+
+                                <div class="subscription-offers">
+                                    <article class="subscription-offer-card">
+                                        <div class="subscription-offer-title">
+                                            <span>Mensal</span>
+                                            <s>R$ 9,90</s>
+                                        </div>
+                                        <div class="subscription-offer-price"><strong>R$ 7,90</strong><small>/mês</small></div>
+                                        <p>Flexibilidade para assinar mês a mês.</p>
+                                        <button type="button" onclick="avisarAssinaturasEmBreve('mensal')">Disponível em breve</button>
+                                    </article>
+
+                                    <article class="subscription-offer-card recommended">
+                                        <div class="subscription-offer-title">
+                                            <span>Anual</span>
+                                            <b>Melhor valor</b>
+                                        </div>
+                                        <div class="subscription-offer-price"><strong>R$ 69,90</strong><small>/ano</small></div>
+                                        <p>Equivale a R$ 5,83 por mês. Depois, R$ 89,90/ano.</p>
+                                        <button type="button" onclick="avisarAssinaturasEmBreve('anual')">Disponível em breve</button>
+                                    </article>
+                                </div>
+
+                                <div class="subscription-benefits">
+                                    <span><i class="fi fi-rr-sparkles"></i> IA e Guget Insights</span>
+                                    <span><i class="fi fi-rr-comment-alt"></i> Cadastro pelo WhatsApp</span>
+                                    <span><i class="fi fi-rr-bell"></i> Automações futuras</span>
                                 </div>
                             </section>
 
-                            <section class="subscription-invite-card">
+                            <section class="subscription-coupon-card">
+                                <div class="subscription-card-heading">
+                                    <div>
+                                        <span>Cupom</span>
+                                        <h4>Tem um código de desconto?</h4>
+                                    </div>
+                                    <i class="fi fi-rr-ticket"></i>
+                                </div>
+                                <p>Você já pode deixar o código preparado. A validação e o desconto só acontecerão quando o checkout for ativado.</p>
+                                <div class="subscription-coupon-form">
+                                    <label for="subscription-coupon-input">Código do cupom</label>
+                                    <div>
+                                        <input type="text" id="subscription-coupon-input" placeholder="Ex: GUGET10" maxlength="32" autocomplete="off">
+                                        <button type="button" onclick="prepararCupomAssinatura()">Guardar</button>
+                                    </div>
+                                    <small id="subscription-coupon-feedback">Nenhum cupom aplicado. As assinaturas ainda estão desativadas.</small>
+                                </div>
+                            </section>
+
+                            <section class="subscription-invite-card subscription-invite-wide">
                                 <div class="subscription-invite-top">
                                     <div>
                                         <span>Convites</span>
@@ -2855,7 +2910,7 @@
     <script src="js/api-integrations.js?v=20260928-1"></script>
     <script src="js/install-app.js?v=20260928-1"></script>
     <script src="js/transacoes.js?v=20260927-1"></script>
-    <script src="js/ui.js?v=20261002-1"></script>
+    <script src="js/ui.js?v=20261003-1"></script>
     <script src="js/modulos.js?v=20260808-1"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260926-1"></script>

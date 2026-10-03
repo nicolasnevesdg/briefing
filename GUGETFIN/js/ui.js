@@ -3211,6 +3211,64 @@ window.addEventListener('click', () => {
 window.addEventListener('DOMContentLoaded', preencherFiltrosDropdown);
 window.addEventListener('load', injetarAssinatura);
 
+function avisarAssinaturasEmBreve(ciclo) {
+    const nomeCiclo = ciclo === 'anual' ? 'anual' : 'mensal';
+    if (typeof mostrarToast === 'function') {
+        mostrarToast(`O plano ${nomeCiclo} será liberado em breve. Por enquanto, seu acesso continua gratuito.`);
+    }
+}
+
+function prepararCupomAssinatura() {
+    const input = document.getElementById('subscription-coupon-input');
+    const feedback = document.getElementById('subscription-coupon-feedback');
+    if (!input || !feedback) return;
+
+    const codigo = String(input.value || '')
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, '');
+
+    input.value = codigo;
+    feedback.classList.remove('is-saved');
+
+    if (!codigo) {
+        feedback.textContent = 'Digite um código antes de guardar.';
+        input.focus();
+        return;
+    }
+
+    localStorage.setItem('guget_cupom_preparado', codigo);
+    feedback.textContent = `Cupom ${codigo} guardado neste dispositivo. Ele será validado somente quando o checkout for ativado.`;
+    feedback.classList.add('is-saved');
+
+    if (typeof mostrarToast === 'function') {
+        mostrarToast('Cupom guardado para o futuro checkout.');
+    }
+}
+
+function carregarCupomAssinaturaPreparado() {
+    const input = document.getElementById('subscription-coupon-input');
+    const feedback = document.getElementById('subscription-coupon-feedback');
+    if (!input || !feedback) return;
+
+    const codigo = localStorage.getItem('guget_cupom_preparado');
+    if (!codigo) return;
+
+    input.value = codigo;
+    feedback.textContent = `Cupom ${codigo} guardado neste dispositivo. Ele ainda não foi validado.`;
+    feedback.classList.add('is-saved');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    carregarCupomAssinaturaPreparado();
+    document.getElementById('subscription-coupon-input')?.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            prepararCupomAssinatura();
+        }
+    });
+});
+
 function injetarAssinatura() {
     const segredo = "YXBwIHdlYiBjcmlhZG8gcG9yIDxhIGhyZWY9Imh0dHA6Ly93d3cubmljb2xhc25ldmVzLmNvbS5iciIgdGFyZ2V0PSJfYmxhbmsiPk7DrWNvbGFzIE5ldmVzPC9hPg==";
     
