@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20260928-1">
+    <link rel="stylesheet" href="css/style.css?v=20261002-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -810,11 +810,6 @@
 			<div class="card">
 				<div class="meta-header-mobile">
 					<h3 style="margin:0;">Entradas</h3>
-					<div class="header-alinhado-direita">
-						<button onclick="abrirModalEntrada()" class="btn-novo-gasto">
-							+ ADD
-						</button>
-					</div>
 				</div>
 				
 				<div id="lista-entradas-mobile">
@@ -1662,6 +1657,30 @@
 
     </main>
 
+<button
+    type="button"
+    id="mobile-quick-actions-overlay"
+    class="mobile-quick-actions-overlay"
+    onclick="fecharMenuAcoesMobile()"
+    aria-label="Fechar ações rápidas"
+    tabindex="-1"
+></button>
+
+<div id="mobile-quick-actions" class="mobile-quick-actions" aria-hidden="true">
+    <button type="button" class="mobile-quick-action mobile-quick-action-debt" onclick="executarAcaoRapidaMobile('divida', event)" tabindex="-1">
+        <span class="mobile-quick-action-icon"><i class="fi fi-rr-hand-holding-usd" aria-hidden="true"></i></span>
+        <span>Dívida</span>
+    </button>
+    <button type="button" class="mobile-quick-action mobile-quick-action-income" onclick="executarAcaoRapidaMobile('entrada', event)" tabindex="-1">
+        <span class="mobile-quick-action-icon"><i class="fi fi-rr-usd-circle" aria-hidden="true"></i></span>
+        <span>Entrada</span>
+    </button>
+    <button type="button" class="mobile-quick-action mobile-quick-action-expense" onclick="executarAcaoRapidaMobile('saida', event)" tabindex="-1">
+        <span class="mobile-quick-action-icon"><i class="fi fi-rr-receipt" aria-hidden="true"></i></span>
+        <span>Saída</span>
+    </button>
+</div>
+
 <nav class="mobile-tab-bar">
     <button class="tab-btn active" onclick="navegar('home')">
         <i class="fi fi-rr-house-blank"></i>
@@ -1685,7 +1704,15 @@
         <i class="fi fi-rr-receipt"></i>
     </button>
     
-    <button class="fab-btn" onclick="abrirModalGasto()">
+    <button
+        type="button"
+        id="mobile-quick-actions-trigger"
+        class="fab-btn"
+        onclick="alternarMenuAcoesMobile(event)"
+        aria-label="Abrir ações rápidas"
+        aria-controls="mobile-quick-actions"
+        aria-expanded="false"
+    >
         <i class="fi fi-rr-plus"></i>
     </button>
 </nav>
@@ -2816,7 +2843,7 @@
     <script src="js/api-integrations.js?v=20260928-1"></script>
     <script src="js/install-app.js?v=20260928-1"></script>
     <script src="js/transacoes.js?v=20260927-1"></script>
-    <script src="js/ui.js?v=20260927-1"></script>
+    <script src="js/ui.js?v=20261002-1"></script>
     <script src="js/modulos.js?v=20260808-1"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260926-1"></script>

@@ -2749,6 +2749,8 @@ function toggleMetas() {
 }
 
 function navegar(abaId) {
+    fecharMenuAcoesMobile();
+
     const main = document.querySelector('main');
     if (main) {
         main.classList.remove('calendar-mode');
@@ -2823,7 +2825,91 @@ function navegar(abaId) {
     });
 }
 
+// ==========================================
+// AÇÕES RÁPIDAS DO BOTÃO + (MOBILE)
+// ==========================================
+
+function menuAcoesMobileAberto() {
+    return document.body.classList.contains('mobile-quick-actions-open');
+}
+
+function atualizarEstadoMenuAcoesMobile(aberto) {
+    const trigger = document.getElementById('mobile-quick-actions-trigger');
+    const menu = document.getElementById('mobile-quick-actions');
+
+    document.body.classList.toggle('mobile-quick-actions-open', aberto);
+
+    if (trigger) {
+        trigger.setAttribute('aria-expanded', String(aberto));
+        trigger.setAttribute('aria-label', aberto ? 'Fechar ações rápidas' : 'Abrir ações rápidas');
+    }
+
+    if (menu) {
+        menu.setAttribute('aria-hidden', String(!aberto));
+        menu.querySelectorAll('button').forEach(botao => {
+            botao.tabIndex = aberto ? 0 : -1;
+        });
+    }
+}
+
+function fecharMenuAcoesMobile() {
+    atualizarEstadoMenuAcoesMobile(false);
+}
+
+function alternarMenuAcoesMobile(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    if (window.innerWidth > 1024) {
+        if (typeof abrirModalGasto === 'function') abrirModalGasto();
+        return;
+    }
+
+    atualizarEstadoMenuAcoesMobile(!menuAcoesMobileAberto());
+}
+
+function executarAcaoRapidaMobile(tipo, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    fecharMenuAcoesMobile();
+
+    window.setTimeout(() => {
+        if (tipo === 'entrada' && typeof abrirModalEntrada === 'function') {
+            abrirModalEntrada();
+            return;
+        }
+
+        if (tipo === 'divida' && typeof abrirModalDividaManual === 'function') {
+            abrirModalDividaManual();
+            return;
+        }
+
+        if (tipo === 'saida' && typeof abrirModalGasto === 'function') {
+            abrirModalGasto();
+        }
+    }, 120);
+}
+
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menuAcoesMobileAberto()) {
+        fecharMenuAcoesMobile();
+    }
+});
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 1024 && menuAcoesMobileAberto()) {
+        fecharMenuAcoesMobile();
+    }
+});
+
 function irParaVisualizacoesMobile(aba = 'terceiros') {
+    fecharMenuAcoesMobile();
+
     const main = document.querySelector('main');
     if (main) {
         main.classList.remove('calendar-mode');
