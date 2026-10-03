@@ -3,6 +3,57 @@ let subAbaCartaoAtiva = 'credito';
 let dataFiltro = new Date();
 dataFiltro.setDate(1);  
 
+// ==========================================
+// RESPOSTA TÁTIL NO MOBILE
+// ==========================================
+const gugetHapticsState = {
+    ultimaVibracao: 0
+};
+
+function feedbackTatil(tipo = 'leve') {
+    const dispositivoMovel = window.innerWidth <= 1024
+        || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    if (!dispositivoMovel || !navigator.vibrate) return false;
+
+    const padroes = {
+        leve: 8,
+        navegacao: 12,
+        modal: 14,
+        confirmacao: 45
+    };
+    const padrao = padroes[tipo] || padroes.leve;
+    const agora = performance.now();
+
+    // Evita vibrações duplicadas quando um botão de menu também abre um modal.
+    if (tipo !== 'confirmacao'
+        && agora - gugetHapticsState.ultimaVibracao < 90) {
+        return false;
+    }
+
+    gugetHapticsState.ultimaVibracao = agora;
+    try {
+        return navigator.vibrate(padrao);
+    } catch (error) {
+        return false;
+    }
+}
+
+window.feedbackTatil = feedbackTatil;
+
+document.addEventListener('click', event => {
+    const controleMobile = event.target.closest([
+        '.mobile-tab-bar .tab-btn',
+        '#mobile-quick-actions-trigger',
+        '.mobile-profile-trigger',
+        '#menu-dropdown .option-btn',
+        '#menu-dropdown .mobile-menu-close',
+        '.settings-tab',
+        '.visual-tab'
+    ].join(','));
+
+    if (controleMobile) feedbackTatil('navegacao');
+}, { passive: true });
+
 // 👇 CÓDIGO NOVO DA TRAVA DE SCROLL FICA AQUI 👇
 // ==========================================
 // TRAVA GLOBAL DE SCROLL PARA POP-UPS
@@ -11,6 +62,7 @@ const originalShowModal = HTMLDialogElement.prototype.showModal;
 const originalClose = HTMLDialogElement.prototype.close;
 
 HTMLDialogElement.prototype.showModal = function() {
+    if (!this.open) feedbackTatil('modal');
     document.body.style.overflow = 'hidden'; // Trava o fundo
     originalShowModal.apply(this, arguments);
 };

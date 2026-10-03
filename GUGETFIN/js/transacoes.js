@@ -227,7 +227,8 @@ const nomeTerceiroValor = document.getElementById('g-nome-terceiro').value || ""
         if (typeof mostrarToast === 'function') mostrarToast("Lançamento salvo com sucesso! 💸");
     }
     
-    renderizar(); 
+    renderizar();
+    if (indexEdit < 0 && typeof feedbackTatil === 'function') feedbackTatil('confirmacao');
     document.getElementById('modal-gasto').close();
 }
 
@@ -560,6 +561,7 @@ async function confirmarEntrada() {
     
     // 3. Só depois redesenha a tela
     if (typeof renderizar === 'function') renderizar();
+    if (indexEdit === -1 && typeof feedbackTatil === 'function') feedbackTatil('confirmacao');
 }
 
 // Função que faltava: Puxa os dados da entrada para o formulário e abre como Edição
@@ -798,7 +800,11 @@ function excluirEntrada(idx) {
     if (typeof salvarNoFirebase === 'function') salvarNoFirebase();
     return true;
 }
-function mudarMes(n) { dataFiltro.setMonth(dataFiltro.getMonth() + n); renderizar(); }
+function mudarMes(n) {
+    if (typeof feedbackTatil === 'function') feedbackTatil('leve');
+    dataFiltro.setMonth(dataFiltro.getMonth() + n);
+    renderizar();
+}
 // 1. DATA AUTOMÁTICA E RESET AO ABRIR (MODO CRIAÇÃO)
 function abrirModalGasto() {
     window.dividaEmPagamentoId = null;

@@ -264,6 +264,7 @@ function salvarDividaManual() {
     if (document.querySelector('main')?.classList.contains('calendar-mode') && typeof renderizarCalendarioFinanceiro === 'function') {
         renderizarCalendarioFinanceiro(window.calendarioMesAtual ?? new Date().getMonth(), window.calendarioAnoAtual ?? new Date().getFullYear());
     }
+    if (!existente && typeof feedbackTatil === 'function') feedbackTatil('confirmacao');
     if (typeof mostrarToast === 'function') mostrarToast(existente ? 'Dívida atualizada.' : 'Dívida adicionada ao planejamento.');
 }
 
