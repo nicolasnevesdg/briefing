@@ -111,6 +111,7 @@ function ajustarTelas() {
         if (main && (
             main.classList.contains('calendar-mode') ||
             main.classList.contains('visualizacoes-mode') ||
+            main.classList.contains('insights-mode') ||
             main.classList.contains('settings-mode')
         )) {
             return;
@@ -1747,6 +1748,10 @@ if (main && main.classList.contains('visualizacoes-mode') && typeof renderizarVi
     renderizarVisualizacoes();
 }
 
+if (main && main.classList.contains('insights-mode') && typeof renderizarGugetInsights === 'function') {
+    renderizarGugetInsights();
+}
+
 if (typeof agendarAtualizacaoCarrosselResumoDashboard === 'function') {
     agendarAtualizacaoCarrosselResumoDashboard();
 }
@@ -1770,6 +1775,7 @@ function marcarViewSidebar(view) {
         dashboard: 'btn-view-dashboard',
         calendario: 'btn-view-calendario',
         visualizacoes: 'btn-view-visualizacoes',
+        insights: 'btn-view-insights',
         settings: 'btn-view-settings'
     };
 
@@ -1780,7 +1786,10 @@ function marcarViewSidebar(view) {
 
 function irParaDashboard() {
     const main = document.querySelector('main');
-    if (main) main.classList.add('dashboard-mode');
+    if (main) {
+        main.classList.remove('insights-mode');
+        main.classList.add('dashboard-mode');
+    }
 
     if (typeof abrirDashboardFinanceira === 'function') {
         abrirDashboardFinanceira();
@@ -1842,7 +1851,7 @@ function ocultarAbasDashboardParaView() {
 }
 
 function irParaCalendario() {
-    document.querySelector('main')?.classList.remove('dashboard-mode');
+    document.querySelector('main')?.classList.remove('dashboard-mode', 'insights-mode');
     ocultarAbasDashboardParaView();
 
     marcarPrimeiroPassoDashboard('calendario');
@@ -1865,6 +1874,7 @@ function irParaConfiguracoes(aba = 'perfil') {
 
     main.classList.remove('calendar-mode');
     main.classList.remove('visualizacoes-mode');
+    main.classList.remove('insights-mode');
     main.classList.remove('dashboard-mode');
     main.classList.add('settings-mode');
 
@@ -1891,6 +1901,7 @@ function irParaVisualizacoes(aba = 'terceiros') {
 
     main.classList.remove('calendar-mode');
     main.classList.remove('settings-mode');
+    main.classList.remove('insights-mode');
     main.classList.remove('dashboard-mode');
     main.classList.add('visualizacoes-mode');
 

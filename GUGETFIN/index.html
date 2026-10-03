@@ -19,6 +19,7 @@
         }
     </style>
     <link rel="stylesheet" href="css/style.css?v=20261003-1">
+    <link rel="stylesheet" href="css/insights.css?v=20261003-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -273,6 +274,11 @@
         <span>Visualizações</span>
     </button>
 
+    <button class="sidebar-view-btn" id="btn-view-insights" onclick="irParaInsights()">
+        <i class="fi fi-rr-sparkles"></i>
+        <span>Guget Insights</span>
+    </button>
+
     <button class="sidebar-view-btn" id="btn-view-faturas" onclick="navegar('pagamento-faturas')">
         <i class="fi fi-rr-receipt"></i>
         <span>Pagamento de faturas</span>
@@ -348,6 +354,7 @@
 
                                 <div class="mobile-menu-section">
                                     <span>Organização</span>
+                                    <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaInsights())"><i class="fi fi-rr-sparkles"></i> Guget Insights</button>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('organizacao'))"><i class="fi fi-rr-credit-card"></i> Minha carteira</button>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('organizacao'))"><i class="fi fi-rr-tags"></i> Categorias</button>
                                     <button class="dropdown-item option-btn" onclick="executarOpcaoMenuMobile(() => irParaConfiguracoes('lembretes'))"><i class="fi fi-rr-bell"></i> Guias e atalhos</button>
@@ -1063,6 +1070,123 @@
                         </div>
                     </div>
                     <div class="visual-list" id="visual-lista-caixinha"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="insights-view" class="insights-view" aria-labelledby="insights-title">
+            <div class="insights-page-header">
+                <div>
+                    <span class="insights-kicker">Guget Insights</span>
+                    <h2 id="insights-title">O que seus números estão mostrando</h2>
+                    <p>Uma leitura automática do mês, feita somente com os dados cadastrados no GugetFin.</p>
+                </div>
+                <div class="insights-local-badge" title="Nenhum dado é enviado para serviços de inteligência artificial">
+                    <i class="fi fi-rr-shield-check" aria-hidden="true"></i>
+                    <span>Análise local</span>
+                    <small>Sem IA</small>
+                </div>
+            </div>
+
+            <div class="insights-period-row">
+                <span id="insights-period-label">Mês selecionado</span>
+                <small>Os resultados mudam junto com o seletor de mês acima.</small>
+            </div>
+
+            <div id="insights-empty" class="insights-empty" hidden>
+                <span class="insights-empty-icon"><i class="fi fi-rr-chart-histogram"></i></span>
+                <h3>Ainda não há dados suficientes</h3>
+                <p>Cadastre entradas e gastos para o Guget Insights encontrar padrões e oportunidades.</p>
+            </div>
+
+            <div id="insights-content" class="insights-content">
+                <div class="insights-overview-grid">
+                    <article class="insights-balance-card" id="insights-balance-card">
+                        <div>
+                            <span>Leitura do mês</span>
+                            <strong id="insights-status-title">Calculando...</strong>
+                            <p id="insights-status-text">Analisando entradas, gastos e compromissos.</p>
+                        </div>
+                        <div class="insights-balance-value">
+                            <small>Saldo registrado</small>
+                            <b id="insights-balance-value">R$ 0,00</b>
+                            <span id="insights-balance-detail">Entradas menos saídas realizadas</span>
+                        </div>
+                    </article>
+
+                    <div class="insights-kpi-grid">
+                        <article class="insights-kpi">
+                            <span>Entradas</span>
+                            <strong id="insights-income-value">R$ 0,00</strong>
+                            <small id="insights-income-detail">No mês</small>
+                        </article>
+                        <article class="insights-kpi">
+                            <span>Saídas realizadas</span>
+                            <strong id="insights-expense-value">R$ 0,00</strong>
+                            <small id="insights-expense-detail">No mês</small>
+                        </article>
+                        <article class="insights-kpi">
+                            <span>Comprometimento</span>
+                            <strong id="insights-ratio-value">0%</strong>
+                            <small id="insights-ratio-detail">Das entradas recorrentes</small>
+                        </article>
+                        <article class="insights-kpi">
+                            <span>Ainda previsto</span>
+                            <strong id="insights-pending-value">R$ 0,00</strong>
+                            <small id="insights-pending-detail">Compromissos em aberto</small>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="insights-main-grid">
+                    <section class="insights-card insights-history-card">
+                        <div class="insights-card-head">
+                            <div>
+                                <span>Evolução</span>
+                                <h3>Últimos 6 meses</h3>
+                            </div>
+                            <div class="insights-legend"><i></i> Entradas <i></i> Saídas</div>
+                        </div>
+                        <div id="insights-history-chart" class="insights-history-chart"></div>
+                    </section>
+
+                    <section class="insights-card insights-categories-card">
+                        <div class="insights-card-head">
+                            <div>
+                                <span>Distribuição</span>
+                                <h3>Principais categorias</h3>
+                            </div>
+                        </div>
+                        <div id="insights-categories-list" class="insights-categories-list"></div>
+                    </section>
+                </div>
+
+                <section class="insights-card insights-reading-card">
+                    <div class="insights-card-head">
+                        <div>
+                            <span>Leitura automática</span>
+                            <h3>Destaques e alertas</h3>
+                        </div>
+                        <small>Gerados por regras, sem inteligência artificial</small>
+                    </div>
+                    <div id="insights-reading-list" class="insights-reading-list"></div>
+                </section>
+
+                <section class="insights-card insights-forecast-card">
+                    <div class="insights-card-head">
+                        <div>
+                            <span>Próximos meses</span>
+                            <h3>Compromissos já cadastrados</h3>
+                        </div>
+                        <button type="button" onclick="irParaVisualizacoes('parcelados')">Ver parcelamentos <i class="fi fi-rr-arrow-small-right"></i></button>
+                    </div>
+                    <p class="insights-card-description">Considera cartões, gastos fixos pendentes e parcelas de dívidas registradas. Não é uma previsão de novos gastos.</p>
+                    <div id="insights-forecast-list" class="insights-forecast-list"></div>
+                </section>
+
+                <div class="insights-privacy-note">
+                    <i class="fi fi-rr-lock" aria-hidden="true"></i>
+                    <span><strong>Sem custo de IA:</strong> esta versão calcula tudo no próprio aplicativo e não envia suas transações para nenhum modelo externo.</span>
                 </div>
             </div>
         </section>
@@ -2905,16 +3029,17 @@
     })();
 </script>
 
-    <script src="js/core.js?v=20261003-1"></script>
+    <script src="js/core.js?v=20261003-2"></script>
     <script src="js/auth.js?v=20261002-1"></script>
     <script src="js/api-integrations.js?v=20260928-1"></script>
     <script src="js/install-app.js?v=20260928-1"></script>
     <script src="js/transacoes.js?v=20261003-1"></script>
-    <script src="js/ui.js?v=20261003-1"></script>
-    <script src="js/modulos.js?v=20260808-1"></script>
+    <script src="js/ui.js?v=20261003-2"></script>
+    <script src="js/modulos.js?v=20261003-1"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260926-1"></script>
     <script src="js/dividas.js?v=20261003-1"></script>
+    <script src="js/insights.js?v=20261003-2"></script>
     <script src="js/caixinhas.js?v=20260822-1"></script>
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
 </body>

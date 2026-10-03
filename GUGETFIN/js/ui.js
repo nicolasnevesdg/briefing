@@ -2756,6 +2756,7 @@ function navegar(abaId) {
         main.classList.remove('calendar-mode');
         main.classList.remove('visualizacoes-mode');
         main.classList.remove('settings-mode');
+        main.classList.remove('insights-mode');
         main.classList.toggle('dashboard-mode', abaId === 'home');
     }
 
@@ -2914,6 +2915,7 @@ function irParaVisualizacoesMobile(aba = 'terceiros') {
     if (main) {
         main.classList.remove('calendar-mode');
         main.classList.remove('settings-mode');
+        main.classList.remove('insights-mode');
         main.classList.add('visualizacoes-mode');
     }
 

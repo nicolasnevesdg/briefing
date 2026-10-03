@@ -1325,6 +1325,7 @@ function abrirCalendarioFinanceiro() {
 
     main.classList.remove('settings-mode');
     main.classList.remove('visualizacoes-mode');
+    main.classList.remove('insights-mode');
     main.classList.add('calendar-mode');
 
     const mes = typeof m !== 'undefined' ? m : new Date().getMonth();
@@ -1340,6 +1341,7 @@ function abrirDashboardFinanceira() {
     main.classList.remove('calendar-mode');
     main.classList.remove('settings-mode');
     main.classList.remove('visualizacoes-mode');
+    main.classList.remove('insights-mode');
 }
 
 function formatarMoedaCalendario(valor) {
