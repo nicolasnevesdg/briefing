@@ -1,0 +1,625 @@
+.guget-assistant-trigger {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    z-index: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 54px;
+    padding: 0 20px 0 17px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: #025638;
+    color: #ffffff;
+    box-shadow: 0 18px 44px rgba(2, 86, 56, 0.28), 0 7px 18px rgba(12, 25, 21, 0.16);
+    cursor: pointer;
+    isolation: isolate;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, bottom 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.guget-assistant-trigger:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 50px rgba(2, 86, 56, 0.34), 0 8px 20px rgba(12, 25, 21, 0.17);
+}
+
+.guget-assistant-trigger:active {
+    transform: scale(0.96);
+}
+
+.guget-assistant-trigger > i {
+    position: relative;
+    z-index: 1;
+    font-size: 20px;
+}
+
+.guget-assistant-trigger-label {
+    position: relative;
+    z-index: 1;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.guget-assistant-trigger-pulse {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: rgba(46, 232, 137, 0.35);
+    animation: guget-assistant-pulse 2.4s ease-out infinite;
+}
+
+@keyframes guget-assistant-pulse {
+    0%, 30% { opacity: 0; transform: scale(1); }
+    40% { opacity: 0.7; }
+    78%, 100% { opacity: 0; transform: scale(1.17); }
+}
+
+.guget-assistant-dialog {
+    width: min(560px, calc(100vw - 32px));
+    height: min(720px, calc(100dvh - 48px));
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: var(--bg-app);
+    color: var(--text-main);
+    box-shadow: 0 34px 90px rgba(8, 20, 16, 0.28);
+    overflow: hidden;
+}
+
+.guget-assistant-dialog::backdrop {
+    background: rgba(6, 14, 12, 0.52);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.guget-assistant-shell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 100% 0, rgba(46, 232, 137, 0.08), transparent 34%),
+        var(--bg-app);
+}
+
+.guget-assistant-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 17px 19px;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--sidebar-bg) 94%, transparent);
+}
+
+.guget-assistant-identity {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 11px;
+}
+
+.guget-assistant-avatar,
+.guget-assistant-message-avatar {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(46, 232, 137, 0.28);
+    border-radius: 50%;
+    background: rgba(46, 232, 137, 0.12);
+    color: var(--dark-green);
+    overflow: hidden;
+}
+
+.guget-assistant-avatar i,
+.guget-assistant-message-avatar i {
+    font-size: 16px;
+}
+
+.guget-assistant-identity h3 {
+    margin: 0 0 3px;
+    color: var(--text-main);
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+.guget-assistant-identity > div > span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-sec);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.guget-assistant-identity > div > span i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #13c87a;
+    box-shadow: 0 0 0 4px rgba(19, 200, 122, 0.11);
+}
+
+.guget-assistant-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text-sec);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.guget-assistant-close:hover {
+    background: rgba(128, 145, 139, 0.1);
+    color: var(--text-main);
+}
+
+.guget-assistant-close i {
+    font-size: 19px;
+}
+
+.guget-assistant-messages {
+    min-height: 0;
+    padding: 22px 20px 26px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+}
+
+.guget-assistant-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.guget-assistant-messages::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(128, 145, 139, 0.28);
+}
+
+.guget-assistant-message {
+    display: flex;
+    align-items: flex-end;
+    gap: 9px;
+    margin-bottom: 17px;
+    animation: guget-assistant-message-in 0.24s ease both;
+}
+
+.guget-assistant-message.is-user {
+    flex-direction: row-reverse;
+}
+
+@keyframes guget-assistant-message-in {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.guget-assistant-message-avatar {
+    width: 30px;
+    height: 30px;
+    background: var(--sidebar-bg);
+}
+
+.guget-assistant-message.is-user .guget-assistant-message-avatar {
+    border-color: var(--border);
+    background: #dfe8e4;
+}
+
+.guget-assistant-message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.guget-assistant-bubble {
+    max-width: min(82%, 420px);
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 17px 17px 17px 5px;
+    background: var(--sidebar-bg);
+    color: var(--text-main);
+    box-shadow: 0 4px 14px rgba(10, 24, 20, 0.045);
+}
+
+.guget-assistant-message.is-user .guget-assistant-bubble {
+    border-color: #025638;
+    border-radius: 17px 17px 5px 17px;
+    background: #025638;
+    color: #ffffff;
+}
+
+.guget-assistant-bubble p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.guget-assistant-bubble p + p {
+    margin-top: 8px;
+}
+
+.guget-assistant-bubble strong {
+    font-weight: 800;
+}
+
+.guget-assistant-typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 14px;
+}
+
+.guget-assistant-typing i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--text-sec);
+    animation: guget-assistant-dot 1s ease-in-out infinite;
+}
+
+.guget-assistant-typing i:nth-child(2) { animation-delay: 0.14s; }
+.guget-assistant-typing i:nth-child(3) { animation-delay: 0.28s; }
+
+@keyframes guget-assistant-dot {
+    0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-3px); }
+}
+
+.guget-assistant-result {
+    width: min(88%, 450px);
+    margin: -4px 0 19px 39px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--sidebar-bg);
+    box-shadow: 0 10px 28px rgba(8, 20, 16, 0.07);
+    animation: guget-assistant-message-in 0.28s ease both;
+}
+
+.guget-assistant-result.is-good { border-top: 3px solid #13c87a; }
+.guget-assistant-result.is-warning { border-top: 3px solid #e5a719; }
+.guget-assistant-result.is-danger { border-top: 3px solid #ef5a62; }
+.guget-assistant-result.is-neutral { border-top: 3px solid #7d8b86; }
+
+.guget-assistant-result-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 13px;
+}
+
+.guget-assistant-result-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 12px;
+    background: rgba(19, 200, 122, 0.12);
+    color: #08794e;
+}
+
+.is-warning .guget-assistant-result-icon { background: rgba(229, 167, 25, 0.13); color: #966600; }
+.is-danger .guget-assistant-result-icon { background: rgba(239, 90, 98, 0.12); color: #bf3039; }
+.is-neutral .guget-assistant-result-icon { background: rgba(125, 139, 134, 0.12); color: #66736e; }
+
+.guget-assistant-result-head h4 {
+    margin: 0 0 3px;
+    color: var(--text-main);
+    font-size: 15px;
+}
+
+.guget-assistant-result-head p {
+    margin: 0;
+    color: var(--text-sec);
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.guget-assistant-result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.guget-assistant-result-grid div {
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-app);
+}
+
+.guget-assistant-result-grid small {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-sec);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.guget-assistant-result-grid strong {
+    display: block;
+    overflow: hidden;
+    color: var(--text-main);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.guget-assistant-result-timeline {
+    display: grid;
+    gap: 7px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.guget-assistant-result-month {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+}
+
+.guget-assistant-result-month span {
+    color: var(--text-sec);
+}
+
+.guget-assistant-result-month strong {
+    color: var(--text-main);
+    font-size: 11px;
+}
+
+.guget-assistant-result-note {
+    margin: 12px 0 0;
+    color: var(--text-sec);
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.guget-assistant-composer {
+    display: grid;
+    gap: 10px;
+    padding: 13px 16px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--sidebar-bg);
+}
+
+.guget-assistant-options {
+    display: flex;
+    gap: 7px;
+    padding-bottom: 1px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.guget-assistant-options:empty {
+    display: none;
+}
+
+.guget-assistant-options::-webkit-scrollbar {
+    display: none;
+}
+
+.guget-assistant-option {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border: 1px solid rgba(2, 86, 56, 0.24);
+    border-radius: 999px;
+    background: rgba(46, 232, 137, 0.08);
+    color: var(--dark-green);
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.guget-assistant-option:hover {
+    border-color: var(--acc-green);
+    background: rgba(46, 232, 137, 0.15);
+}
+
+.guget-assistant-option:active {
+    transform: scale(0.97);
+}
+
+.guget-assistant-option.is-secondary {
+    border-color: var(--border);
+    background: transparent;
+    color: var(--text-sec);
+}
+
+.guget-assistant-input-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px;
+    align-items: center;
+    gap: 9px;
+}
+
+.guget-assistant-input-row input {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    box-sizing: border-box;
+    padding: 0 15px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    outline: none;
+    background: var(--bg-app);
+    color: var(--text-main);
+    font-size: 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.guget-assistant-input-row input:focus {
+    border-color: var(--acc-green);
+    box-shadow: 0 0 0 3px rgba(46, 232, 137, 0.11);
+}
+
+.guget-assistant-input-row input::placeholder {
+    color: var(--text-sec);
+}
+
+.guget-assistant-input-row button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 15px;
+    background: #025638;
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.guget-assistant-input-row button:active {
+    transform: scale(0.95);
+}
+
+.guget-assistant-input-row button:disabled,
+.guget-assistant-input-row input:disabled {
+    cursor: wait;
+    opacity: 0.58;
+}
+
+.guget-assistant-input-row button i {
+    font-size: 15px;
+}
+
+.guget-assistant-local-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: var(--text-sec);
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.guget-assistant-local-note i {
+    color: var(--acc-green);
+    font-size: 10px;
+}
+
+body.valores-ocultos .guget-assistant-result-grid strong,
+body.valores-ocultos .guget-assistant-result-month strong,
+body.valores-ocultos .guget-assistant-money {
+    filter: blur(7px);
+    user-select: none;
+}
+
+body.dark-theme .guget-assistant-trigger {
+    background: #0d6f4c;
+}
+
+body.dark-theme .guget-assistant-avatar,
+body.dark-theme .guget-assistant-message-avatar {
+    color: #42e6a2;
+}
+
+body.dark-theme .guget-assistant-option {
+    color: #42e6a2;
+}
+
+@media (max-width: 1024px) {
+    .guget-assistant-trigger {
+        right: 18px;
+        bottom: 103px;
+        width: 50px;
+        min-width: 50px;
+        height: 50px;
+        min-height: 50px;
+        padding: 0;
+        border-radius: 50%;
+        z-index: 997;
+    }
+
+    .guget-assistant-trigger-label {
+        display: none;
+    }
+
+    .mobile-quick-actions-open .guget-assistant-trigger {
+        opacity: 0;
+        transform: translateY(8px) scale(0.9);
+        pointer-events: none;
+    }
+
+    #mobile-back-top.visible + .guget-assistant-trigger {
+        bottom: 154px;
+    }
+
+    .guget-assistant-dialog {
+        width: calc(100vw - 20px);
+        height: min(720px, calc(100dvh - 24px));
+        border-radius: 22px;
+    }
+
+    .guget-assistant-messages {
+        padding: 18px 14px 22px;
+    }
+
+    .guget-assistant-result {
+        width: calc(100% - 39px);
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 430px) {
+    .guget-assistant-dialog {
+        width: 100vw;
+        height: 100dvh;
+        max-height: 100dvh;
+        inset: 0;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .guget-assistant-header {
+        padding: max(15px, env(safe-area-inset-top)) 16px 14px;
+    }
+
+    .guget-assistant-composer {
+        padding: 11px 12px max(12px, env(safe-area-inset-bottom));
+    }
+
+    .guget-assistant-bubble {
+        max-width: 80%;
+    }
+
+    .guget-assistant-result-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .guget-assistant-result-grid div:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .guget-assistant-trigger-pulse,
+    .guget-assistant-message,
+    .guget-assistant-result,
+    .guget-assistant-typing i {
+        animation: none;
+    }
+}

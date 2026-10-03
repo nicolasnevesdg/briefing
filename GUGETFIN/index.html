@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="css/style.css?v=20261003-1">
     <link rel="stylesheet" href="css/insights.css?v=20261003-3">
     <link rel="stylesheet" href="css/data-integrity.css?v=20261003-1">
+    <link rel="stylesheet" href="css/assistant.css?v=20261003-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1955,6 +1956,20 @@
     <i class="fi fi-rr-angle-small-up"></i>
 </button>
 
+<button
+    type="button"
+    id="guget-assistant-trigger"
+    class="guget-assistant-trigger"
+    onclick="abrirAssistente()"
+    aria-label="Abrir Guget Assistant"
+    aria-haspopup="dialog"
+    aria-controls="modal-assistente"
+>
+    <span class="guget-assistant-trigger-pulse" aria-hidden="true"></span>
+    <i class="fi fi-rr-comment-alt" aria-hidden="true"></i>
+    <span class="guget-assistant-trigger-label">Posso comprar?</span>
+</button>
+
     <dialog id="modal-gasto" class="modal-gasto-dialog">
     <div class="modal-content modal-gasto-content">
         <button class="btn-close-modal" onclick="this.closest('dialog').close()">×</button>
@@ -2583,37 +2598,41 @@
     </div>
 </dialog>
 
-<dialog id="modal-assistente" class="modal-estilizado" style="width: 90%; max-width: 550px; padding: 0; overflow: hidden;">
-    <div style="display: flex; flex-direction: column; height: 600px; max-height: 85vh;">
-        <div style="padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--sidebar-bg);">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <img src="https://cdn-icons-png.flaticon.com/512/10118/10118932.png" alt="Guget" style="width: 32px; height: 32px; object-fit: contain;">
-                
-                <div style="display: flex; flex-direction: column;">
-                    <h3 style="margin: 0; color: var(--dark-green); font-size: 15px;">Guget</h3>
-                    <span style="font-size: 10px; color: var(--text-sec);">Assistente Financeira AI</span>
+<dialog id="modal-assistente" class="guget-assistant-dialog" aria-labelledby="guget-assistant-title">
+    <div class="guget-assistant-shell">
+        <header class="guget-assistant-header">
+            <div class="guget-assistant-identity">
+                <span class="guget-assistant-avatar" aria-hidden="true">
+                    <i class="fi fi-rr-comment-alt"></i>
+                </span>
+                <div>
+                    <h3 id="guget-assistant-title">Guget Assistant</h3>
+                    <span><i aria-hidden="true"></i> Simulação local</span>
                 </div>
             </div>
-            <button class="btn-close-modal" onclick="document.getElementById('modal-assistente').close()" style="position: static; padding: 5px;">×</button>
-        </div>
-        
-        <div id="chat-messages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--bg-app);">
-            </div>
-        
-        <div style="padding: 15px; border-top: 1px solid var(--border); background: var(--sidebar-bg); display: flex; flex-direction: column; gap: 12px;">
-            
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; padding-bottom: 5px;">
-                <button onclick="enviarPerguntaPronta('Resumo do mês')" style="padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Resumo do mês</button>
-                <button onclick="enviarPerguntaPronta('Comparar com mês passado')" style="padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Comparar c/ Mês Passado</button>
-                <button onclick="enviarPerguntaPronta('Previsão próximo mês')" style="padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Previsão Próximo Mês</button>
-                <button onclick="enviarPerguntaPronta('Meus maiores vícios')" style="padding: 6px 12px; border-radius: 15px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); font-size: 11px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.borderColor='var(--acc-green)'" onmouseout="this.style.borderColor='var(--border)'">Meus maiores vícios</button>
-            </div>
+            <button type="button" class="guget-assistant-close" onclick="fecharAssistente()" aria-label="Fechar conversa">
+                <i class="fi fi-rr-cross-small" aria-hidden="true"></i>
+            </button>
+        </header>
 
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <input type="text" id="chat-input" placeholder="Pergunte algo para a Guget..." style="flex: 1; padding: 12px 15px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-app); color: var(--text-main); outline: none; font-size: 13px;" onkeypress="if(event.key === 'Enter') enviarMensagemAssistente()">
-                <button onclick="enviarMensagemAssistente()" style="background: var(--dark-green); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;">➔</button>
-            </div>
-        </div>
+        <div id="chat-messages" class="guget-assistant-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+
+        <footer class="guget-assistant-composer">
+            <div id="guget-assistant-options" class="guget-assistant-options" aria-label="Opções de resposta"></div>
+            <form class="guget-assistant-input-row" onsubmit="enviarMensagemAssistente(event)">
+                <input
+                    type="text"
+                    id="chat-input"
+                    placeholder="Digite sua resposta..."
+                    aria-label="Sua resposta"
+                    autocomplete="off"
+                >
+                <button type="submit" id="guget-assistant-send" aria-label="Enviar resposta">
+                    <i class="fi fi-rr-paper-plane-top" aria-hidden="true"></i>
+                </button>
+            </form>
+            <small class="guget-assistant-local-note"><i class="fi fi-rr-shield-check" aria-hidden="true"></i> Seus dados permanecem neste dispositivo.</small>
+        </footer>
     </div>
 </dialog>
 	
@@ -3083,6 +3102,7 @@
     <script src="js/drive.js?v=20260926-1"></script>
     <script src="js/dividas.js?v=20261003-1"></script>
     <script src="js/insights.js?v=20261003-6"></script>
+    <script src="js/assistant.js?v=20261003-1"></script>
     <script src="js/data-integrity.js?v=20261003-1"></script>
     <script src="js/caixinhas.js?v=20260822-1"></script>
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>
