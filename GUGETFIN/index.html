@@ -19,7 +19,7 @@
         }
     </style>
     <link rel="stylesheet" href="css/style.css?v=20261003-1">
-    <link rel="stylesheet" href="css/insights.css?v=20261003-2">
+    <link rel="stylesheet" href="css/insights.css?v=20261003-3">
     <link rel="stylesheet" href="css/data-integrity.css?v=20261003-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1136,6 +1136,21 @@
                         <small id="insights-relief-context">Considera apenas parcelas já cadastradas</small>
                     </article>
                 </div>
+
+                <section class="insights-card insights-pace-card">
+                    <div class="insights-card-head insights-pace-head">
+                        <div>
+                            <span>Ritmo em tempo real</span>
+                            <h3>Como o mês está avançando</h3>
+                        </div>
+                        <div class="insights-pace-legend" aria-label="Legenda do gráfico">
+                            <span><i class="is-current"></i>Mês selecionado</span>
+                            <span><i class="is-average"></i>Média de 3 meses</span>
+                        </div>
+                    </div>
+                    <div id="insights-pace-chart" class="insights-pace-chart" aria-live="polite"></div>
+                    <p id="insights-pace-context" class="insights-chart-context">Comparando o gasto acumulado por dia.</p>
+                </section>
 
                 <div class="insights-main-grid">
                     <section class="insights-card insights-history-card">
@@ -3067,7 +3082,7 @@
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260926-1"></script>
     <script src="js/dividas.js?v=20261003-1"></script>
-    <script src="js/insights.js?v=20261003-4"></script>
+    <script src="js/insights.js?v=20261003-5"></script>
     <script src="js/data-integrity.js?v=20261003-1"></script>
     <script src="js/caixinhas.js?v=20260822-1"></script>
     <script src="js/modal-scroll-lock.js?v=20260810-1"></script>

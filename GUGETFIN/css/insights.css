@@ -226,6 +226,187 @@ main.insights-mode #insights-view {
     line-height: 1.4;
 }
 
+.insights-pace-card {
+    overflow: hidden;
+}
+
+.insights-pace-head {
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.insights-pace-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--text-sec);
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.insights-pace-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.insights-pace-legend i,
+.insights-pace-tooltip i {
+    display: inline-block;
+    width: 14px;
+    height: 3px;
+    border-radius: 99px;
+    background: var(--acc-green);
+}
+
+.insights-pace-legend i.is-average,
+.insights-pace-tooltip i.is-average {
+    height: 0;
+    border-top: 2px dashed #9aa8a4;
+    border-radius: 0;
+    background: transparent;
+}
+
+.insights-pace-chart {
+    position: relative;
+    min-height: 260px;
+}
+
+.insights-pace-axis-label {
+    position: absolute;
+    top: 3px;
+    left: 0;
+    z-index: 2;
+    color: var(--text-sec);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+
+.insights-pace-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 260px;
+    overflow: visible;
+}
+
+.insights-pace-gridline line {
+    stroke: color-mix(in srgb, var(--border) 72%, transparent);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+.insights-pace-gridline text,
+.insights-pace-day {
+    fill: var(--text-sec);
+    font-family: inherit;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.insights-pace-line,
+.insights-pace-area {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+.insights-pace-area {
+    fill: url(#insights-pace-area-gradient);
+    stroke: none;
+}
+
+.insights-pace-line.is-average {
+    stroke: #9aa8a4;
+    stroke-width: 2;
+    stroke-dasharray: 7 7;
+}
+
+.insights-pace-line.is-current {
+    stroke: var(--acc-green);
+    stroke-width: 3;
+}
+
+.insights-pace-end {
+    fill: var(--sidebar-bg);
+    stroke: var(--acc-green);
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+}
+
+.insights-pace-hit {
+    fill: transparent;
+    stroke: transparent;
+    cursor: crosshair;
+    outline: none;
+}
+
+.insights-pace-hit:focus {
+    fill: color-mix(in srgb, var(--acc-green) 18%, transparent);
+    stroke: var(--acc-green);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+}
+
+.insights-pace-tooltip {
+    position: absolute;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 192px;
+    padding: 11px 12px;
+    border: 1px solid color-mix(in srgb, var(--text-main) 82%, var(--border));
+    border-radius: 12px;
+    background: var(--text-main);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .18);
+    color: var(--bg-app);
+    font-size: 9px;
+    line-height: 1.35;
+    transform: translate(-50%, calc(-100% - 12px));
+    pointer-events: none;
+}
+
+.insights-pace-tooltip[hidden] {
+    display: none;
+}
+
+.insights-pace-tooltip strong {
+    font-size: 10px;
+}
+
+.insights-pace-tooltip span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.insights-pace-tooltip .is-muted {
+    opacity: .68;
+}
+
+.insights-pace-tooltip em {
+    margin-top: 2px;
+    color: var(--bg-app);
+    font-size: 8px;
+    font-style: normal;
+    font-weight: 800;
+    opacity: .72;
+}
+
+.insights-pace-tooltip em.is-up {
+    color: #ff9b9b;
+    opacity: 1;
+}
+
+.insights-pace-tooltip em.is-down {
+    color: #64efba;
+    opacity: 1;
+}
+
 .insights-overview-grid {
     display: grid;
     grid-template-columns: minmax(330px, 1.12fr) minmax(460px, 1.88fr);
@@ -843,6 +1024,10 @@ body.valores-ocultos .insights-history-month small {
     user-select: none;
 }
 
+body.valores-ocultos .insights-pace-tooltip .insights-money {
+    filter: blur(5px);
+}
+
 @media (max-width: 1180px) {
     .insights-overview-grid,
     .insights-main-grid {
@@ -927,6 +1112,25 @@ body.valores-ocultos .insights-history-month small {
 
     .insights-signal-card > strong {
         font-size: 24px;
+    }
+
+    .insights-pace-head {
+        align-items: flex-start;
+    }
+
+    .insights-pace-legend {
+        flex-wrap: wrap;
+        gap: 8px 14px;
+    }
+
+    .insights-pace-chart,
+    .insights-pace-svg {
+        min-height: 250px;
+    }
+
+    .insights-pace-tooltip {
+        min-width: 176px;
+        padding: 10px;
     }
 
     .insights-balance-card {

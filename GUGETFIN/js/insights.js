@@ -338,6 +338,156 @@ function insightsRenderizarSinais(dados, alivios) {
     }
 }
 
+function insightsSerieAcumulada(resumo, totalDias) {
+    const valoresDiarios = Array.from({ length: totalDias }, () => 0);
+    (resumo?.itens || []).forEach(item => {
+        const dia = Math.max(1, Math.min(totalDias, Number(item.dia) || 1));
+        valoresDiarios[dia - 1] += Number(item.valor || 0);
+    });
+
+    let acumulado = 0;
+    return valoresDiarios.map(valor => {
+        acumulado += valor;
+        return acumulado;
+    });
+}
+
+function insightsRenderizarGraficoRitmo(dados) {
+    const container = document.getElementById('insights-pace-chart');
+    if (!container) return;
+
+    const referencia = dados.resumoCompleto.referencia;
+    const totalDias = insightsDiasNoMes(referencia);
+    const historicos = dados.anteriores.map(item => insightsSerieAcumulada(item.completo, totalDias));
+    const mediaMensal = Number(dados.mediaCompleta || 0);
+
+    if (!historicos.length || mediaMensal <= 0.005) {
+        container.innerHTML = '<div class="insights-list-empty">Ainda faltam meses anteriores para desenhar a curva média.</div>';
+        insightsDefinirTexto('insights-pace-context', 'O gráfico aparecerá quando houver histórico mensal suficiente para comparação.');
+        return;
+    }
+
+    const mediaAcumulada = Array.from({ length: totalDias }, (_, indice) =>
+        insightsMedia(historicos.map(serie => serie[indice] || 0))
+    );
+    const serieRealCompleta = insightsSerieAcumulada(dados.resumoPeriodo, totalDias);
+    const ultimoDiaReal = dados.estado === 'futuro'
+        ? 0
+        : (dados.estado === 'atual' ? Math.min(dados.limiteDia, totalDias) : totalDias);
+    const serieReal = serieRealCompleta.map((valor, indice) => indice < ultimoDiaReal ? valor : null);
+    const mediaPercentual = mediaAcumulada.map(valor => (valor / mediaMensal) * 100);
+    const realPercentual = serieReal.map(valor => valor === null ? null : (valor / mediaMensal) * 100);
+    const maiorPercentual = Math.max(100, ...mediaPercentual, ...realPercentual.filter(valor => valor !== null));
+    const limitePercentual = Math.max(100, Math.ceil((maiorPercentual * 1.08) / 25) * 25);
+
+    const larguraDisponivel = Math.round(container.getBoundingClientRect().width || 0);
+    const largura = Math.max(300, larguraDisponivel || 1000);
+    const compacto = largura < 520;
+    const altura = compacto ? 260 : 300;
+    const margem = compacto
+        ? { topo: 16, direita: 10, base: 34, esquerda: 44 }
+        : { topo: 16, direita: 22, base: 38, esquerda: 62 };
+    const larguraUtil = largura - margem.esquerda - margem.direita;
+    const alturaUtil = altura - margem.topo - margem.base;
+    const x = indice => margem.esquerda + (indice / Math.max(1, totalDias - 1)) * larguraUtil;
+    const y = percentual => margem.topo + alturaUtil - (Math.max(0, percentual) / limitePercentual) * alturaUtil;
+    const caminho = serie => serie.reduce((trecho, valor, indice) => {
+        if (valor === null || !Number.isFinite(valor)) return trecho;
+        return `${trecho}${trecho ? ' L' : 'M'} ${x(indice).toFixed(2)} ${y(valor).toFixed(2)}`;
+    }, '');
+    const caminhoMedia = caminho(mediaPercentual);
+    const caminhoReal = caminho(realPercentual);
+    const indiceFinalReal = Math.max(0, ultimoDiaReal - 1);
+    const areaReal = ultimoDiaReal > 0
+        ? `${caminhoReal} L ${x(indiceFinalReal).toFixed(2)} ${(margem.topo + alturaUtil).toFixed(2)} L ${x(0).toFixed(2)} ${(margem.topo + alturaUtil).toFixed(2)} Z`
+        : '';
+    const marcadoresY = Array.from({ length: Math.floor(limitePercentual / 25) + 1 }, (_, indice) => indice * 25);
+    const candidatosX = compacto ? [1, 10, 20, totalDias] : [1, 5, 10, 15, 20, 25, totalDias];
+    const marcadoresX = [...new Set(candidatosX.filter(dia => dia <= totalDias))];
+
+    const linhasY = marcadoresY.map(percentual => `
+        <g class="insights-pace-gridline">
+            <line x1="${margem.esquerda}" y1="${y(percentual)}" x2="${largura - margem.direita}" y2="${y(percentual)}"></line>
+            <text x="${margem.esquerda - 12}" y="${y(percentual) + 4}" text-anchor="end">${percentual}%</text>
+        </g>`).join('');
+    const rotulosX = marcadoresX.map(dia => `
+        <text class="insights-pace-day" x="${x(dia - 1)}" y="${altura - 10}" text-anchor="middle">${dia}</text>`).join('');
+    const pontosInterativos = Array.from({ length: totalDias }, (_, indice) => {
+        const atual = realPercentual[indice];
+        const media = mediaPercentual[indice];
+        const posicaoY = atual === null ? y(media) : y(atual);
+        const rotuloAtual = atual === null ? 'sem valor realizado' : `${insightsMoeda(serieReal[indice])}, ${insightsPercentual(atual)} da média mensal`;
+        return `<circle class="insights-pace-hit" tabindex="0" role="button" aria-label="Dia ${indice + 1}: ${rotuloAtual}; média ${insightsMoeda(mediaAcumulada[indice])}" cx="${x(indice)}" cy="${posicaoY}" r="13" data-day="${indice + 1}" data-current="${serieReal[indice] === null ? '' : serieReal[indice]}" data-current-percent="${atual === null ? '' : atual}" data-average="${mediaAcumulada[indice]}" data-average-percent="${media}"></circle>`;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="insights-pace-axis-label">% da média mensal</div>
+        <svg class="insights-pace-svg" viewBox="0 0 ${largura} ${altura}" role="img" aria-label="Comparação diária do gasto acumulado com a média dos três meses anteriores">
+            <defs>
+                <linearGradient id="insights-pace-area-gradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--acc-green)" stop-opacity=".22"></stop>
+                    <stop offset="100%" stop-color="var(--acc-green)" stop-opacity="0"></stop>
+                </linearGradient>
+            </defs>
+            ${linhasY}
+            ${rotulosX}
+            ${areaReal ? `<path class="insights-pace-area" d="${areaReal}"></path>` : ''}
+            <path class="insights-pace-line is-average" d="${caminhoMedia}"></path>
+            ${caminhoReal ? `<path class="insights-pace-line is-current" d="${caminhoReal}"></path>` : ''}
+            ${ultimoDiaReal > 0 ? `<circle class="insights-pace-end" cx="${x(indiceFinalReal)}" cy="${y(realPercentual[indiceFinalReal])}" r="5"></circle>` : ''}
+            ${pontosInterativos}
+        </svg>
+        <div class="insights-pace-tooltip" role="status" hidden></div>`;
+
+    const tooltip = container.querySelector('.insights-pace-tooltip');
+    const mostrarTooltip = alvo => {
+        if (!tooltip || !alvo) return;
+        const dia = Number(alvo.dataset.day || 0);
+        const atual = alvo.dataset.current === '' ? null : Number(alvo.dataset.current);
+        const atualPercentual = alvo.dataset.currentPercent === '' ? null : Number(alvo.dataset.currentPercent);
+        const media = Number(alvo.dataset.average || 0);
+        const mediaPercentualDia = Number(alvo.dataset.averagePercent || 0);
+        const diferenca = atual === null || media <= 0 ? null : ((atual - media) / media) * 100;
+        const linhaAtual = atual === null
+            ? '<span class="is-muted">O mês selecionado ainda não chegou a este dia.</span>'
+            : `<span><i class="is-current"></i>Mês: <b class="insights-money">${insightsMoeda(atual)}</b> · ${insightsPercentual(atualPercentual)}</span>`;
+        const linhaDiferenca = diferenca === null
+            ? ''
+            : `<em class="${diferenca > 0.5 ? 'is-up' : (diferenca < -0.5 ? 'is-down' : '')}">${Math.abs(diferenca) <= 0.5 ? 'Em linha com a média' : `${insightsPercentual(Math.abs(diferenca))} ${diferenca > 0 ? 'acima' : 'abaixo'} nesse dia`}</em>`;
+        tooltip.innerHTML = `<strong>Dia ${dia}</strong>${linhaAtual}<span><i class="is-average"></i>Média: <b class="insights-money">${insightsMoeda(media)}</b> · ${insightsPercentual(mediaPercentualDia)}</span>${linhaDiferenca}`;
+        tooltip.hidden = false;
+
+        const caixa = container.getBoundingClientRect();
+        const posicaoX = (Number(alvo.getAttribute('cx')) / largura) * caixa.width;
+        const posicaoY = (Number(alvo.getAttribute('cy')) / altura) * caixa.height;
+        tooltip.style.left = `${Math.max(96, Math.min(caixa.width - 96, posicaoX))}px`;
+        tooltip.style.top = `${Math.max(88, posicaoY)}px`;
+    };
+
+    container.querySelectorAll('.insights-pace-hit').forEach(ponto => {
+        ponto.addEventListener('pointerenter', () => mostrarTooltip(ponto));
+        ponto.addEventListener('pointermove', () => mostrarTooltip(ponto));
+        ponto.addEventListener('focus', () => mostrarTooltip(ponto));
+        ponto.addEventListener('click', () => mostrarTooltip(ponto));
+    });
+    container.addEventListener('pointerleave', evento => {
+        if (tooltip && !container.contains(document.activeElement) && evento.pointerType !== 'touch') tooltip.hidden = true;
+    });
+
+    if (dados.estado === 'atual') {
+        const comparacao = dados.diferenca > 0.005
+            ? `${insightsPercentual(Math.abs(dados.variacao || 0))} acima da média`
+            : (dados.diferenca < -0.005
+                ? `${insightsPercentual(Math.abs(dados.variacao || 0))} abaixo da média`
+                : 'em linha com a média');
+        insightsDefinirTexto('insights-pace-context', `Até o dia ${dados.limiteDia}, o mês acumula ${insightsMoeda(dados.resumoPeriodo.gastos)} — ${comparacao} no mesmo período.`);
+    } else if (dados.estado === 'passado') {
+        insightsDefinirTexto('insights-pace-context', `${insightsMes(referencia, 'long')} terminou em ${insightsMoeda(dados.resumoCompleto.gastos)}, contra uma média mensal de ${insightsMoeda(mediaMensal)}.`);
+    } else {
+        insightsDefinirTexto('insights-pace-context', 'A curva real surgirá conforme os gastos deste mês forem registrados. A média permanece como referência.');
+    }
+}
+
 function insightsRenderizarHistorico(dados) {
     const container = document.getElementById('insights-history-chart');
     if (!container) return;
@@ -646,6 +796,7 @@ function renderizarGugetInsights() {
     const dados = insightsDadosComparativos(referencia);
     const alivios = insightsEventosAlivio(referencia);
     insightsRenderizarSinais(dados, alivios);
+    insightsRenderizarGraficoRitmo(dados);
     insightsRenderizarHistorico(dados);
     const mudancas = insightsRenderizarMudancasCategorias(dados);
     insightsRenderizarLeituras(dados, mudancas, alivios);
