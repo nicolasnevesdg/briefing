@@ -39,7 +39,9 @@ const servicos = {
     getWhatsAppVerifyToken: () => whatsappVerifyToken.value(),
     getWhatsAppAppSecret: () => whatsappAppSecret.value(),
     getWhatsAppAccessToken: () => whatsappAccessToken.value(),
-    getGoogleDriveClientSecret: () => googleDriveClientSecret.value(),
+    // O Secret Manager pode preservar uma quebra de linha inserida ao colar o valor.
+    // O Google rejeita o segredo nesse caso, então normalizamos antes da troca OAuth.
+    getGoogleDriveClientSecret: () => String(googleDriveClientSecret.value() || '').trim(),
     getGoogleDriveEncryptionKey: () => googleDriveEncryptionKey.value(),
     googleDriveClientId: GOOGLE_DRIVE_CLIENT_ID,
     googleDriveRedirectUri: GOOGLE_DRIVE_REDIRECT_URI,
