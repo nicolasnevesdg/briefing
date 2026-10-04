@@ -1,0 +1,231 @@
+/* ========================================================= */
+/* MOVIMENTAÇÕES MOBILE - ENTRADAS, CRÉDITO, DÉBITO, FIXOS */
+/* ========================================================= */
+
+.mobile-transactions-tabs {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    main.mobile-transactions-mode:not(.calendar-mode):not(.visualizacoes-mode):not(.settings-mode):not(.insights-mode) > .mobile-transactions-tabs {
+        display: flex;
+    }
+
+    main.mobile-transactions-mode > .month-nav {
+        margin-bottom: 9px !important;
+    }
+
+    .mobile-transactions-tabs {
+        align-items: center;
+        width: 100%;
+        min-height: 58px;
+        box-sizing: border-box;
+        gap: 6px;
+        margin: 0 0 15px;
+        padding: 7px;
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow:
+            0 12px 30px rgba(9, 21, 18, 0.08),
+            0 4px 10px rgba(9, 21, 18, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        overflow: hidden;
+    }
+
+    .mobile-transactions-tabs button {
+        display: inline-flex;
+        flex: 0 0 42px;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        width: 42px;
+        min-width: 42px;
+        height: 42px;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: 15px;
+        outline: none;
+        background: transparent;
+        color: #93a29d;
+        cursor: pointer;
+        overflow: hidden;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+            flex 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+            width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+            background 0.22s ease,
+            color 0.22s ease,
+            border-color 0.22s ease,
+            transform 0.16s ease;
+    }
+
+    .mobile-transactions-tabs button:active {
+        transform: scale(0.96);
+    }
+
+    .mobile-transactions-tabs button > i {
+        display: inline-flex;
+        flex: 0 0 20px;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        font-size: 17px;
+        line-height: 1;
+    }
+
+    .mobile-transactions-tabs button > span {
+        display: block;
+        max-width: 0;
+        margin-left: 0;
+        opacity: 0;
+        overflow: hidden;
+        color: inherit;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transform: translateX(-6px);
+        transition:
+            max-width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+            margin-left 0.3s ease,
+            opacity 0.18s ease 0.06s,
+            transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mobile-transactions-tabs button.active {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        padding: 0 13px;
+        border-color: rgba(2, 86, 56, 0.12);
+        background: #e8f5e9;
+        color: #038356;
+        box-shadow: 0 5px 13px rgba(2, 86, 56, 0.08);
+    }
+
+    .mobile-transactions-tabs button.active > span {
+        max-width: 180px;
+        margin-left: 8px;
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .mobile-transactions-tabs button:focus-visible {
+        box-shadow: 0 0 0 3px rgba(46, 232, 137, 0.2);
+    }
+
+    main.mobile-transactions-mode #menu-cartoes {
+        display: none !important;
+    }
+
+    main.mobile-transactions-mode .cartoes-toggle {
+        display: none !important;
+    }
+
+    main.mobile-transactions-mode #sub-card-credito,
+    main.mobile-transactions-mode #sub-card-debito,
+    main.mobile-transactions-mode #aba-entradas > .card,
+    main.mobile-transactions-mode #aba-fixos > .card {
+        margin-top: 0 !important;
+        border-radius: 18px !important;
+    }
+
+    main.mobile-transactions-mode #aba-entradas > .card {
+        margin: 0 !important;
+    }
+
+    .mobile-transactions-content-enter {
+        animation: mobile-transaction-enter 0.32s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+    }
+
+    @keyframes mobile-transaction-enter {
+        from {
+            opacity: 0;
+            transform: translateY(9px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .mobile-tab-bar #mobile-transactions-nav.active {
+        background-color: #e8f5e9;
+        color: #038356;
+        transform: scale(1.05);
+    }
+}
+
+@media (max-width: 360px) {
+    .mobile-transactions-tabs {
+        gap: 4px;
+        padding: 6px;
+        border-radius: 20px;
+    }
+
+    .mobile-transactions-tabs button {
+        flex-basis: 39px;
+        width: 39px;
+        min-width: 39px;
+        height: 40px;
+        border-radius: 14px;
+    }
+
+    .mobile-transactions-tabs button.active {
+        padding: 0 10px;
+    }
+
+    .mobile-transactions-tabs button > span {
+        font-size: 9px;
+    }
+
+    .mobile-transactions-tabs button.active > span {
+        margin-left: 6px;
+    }
+}
+
+body.dark-theme .mobile-transactions-tabs {
+    border-color: var(--border);
+    background: rgba(23, 26, 32, 0.96);
+    box-shadow:
+        0 15px 34px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body.dark-theme .mobile-transactions-tabs button {
+    color: #81908e;
+}
+
+body.dark-theme .mobile-transactions-tabs button.active {
+    border-color: rgba(46, 232, 137, 0.16);
+    background: #1f2b27;
+    color: #42e6a2;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-theme .mobile-tab-bar #mobile-transactions-nav.active {
+    background-color: #1f242c !important;
+    color: #42e6a2 !important;
+}
+
+@media (hover: hover) and (pointer: fine) and (max-width: 1024px) {
+    .mobile-transactions-tabs button:hover:not(.active) {
+        background: rgba(2, 86, 56, 0.06);
+        color: var(--dark-green);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-transactions-tabs button,
+    .mobile-transactions-tabs button > span,
+    .mobile-transactions-content-enter {
+        animation: none !important;
+        transition: none !important;
+    }
+}

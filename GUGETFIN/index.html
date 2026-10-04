@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="css/insights.css?v=20261003-3">
     <link rel="stylesheet" href="css/data-integrity.css?v=20261003-1">
     <link rel="stylesheet" href="css/assistant.css?v=20261003-1">
+    <link rel="stylesheet" href="css/mobile-transactions.css?v=20261004-1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -446,6 +447,25 @@
 
             <div id="container-lembretes-fatura" class="mobile-only" style="display: flex; gap: 10px; flex-grow: 1; justify-content: flex-end; overflow-x: auto; padding-bottom: 5px;"></div>
 		</header>
+
+        <nav id="mobile-transactions-tabs" class="mobile-transactions-tabs" aria-label="Tipos de movimentação">
+            <button type="button" data-mobile-transaction="entradas" onclick="navegarMovimentacoesMobile('entradas')" aria-label="Entradas" aria-controls="aba-entradas" aria-selected="false">
+                <i class="fi fi-rr-usd-circle" aria-hidden="true"></i>
+                <span>Entradas</span>
+            </button>
+            <button type="button" data-mobile-transaction="credito" onclick="navegarMovimentacoesMobile('credito')" aria-label="Crédito" aria-controls="aba-cartao" aria-selected="false">
+                <i class="fi fi-rr-credit-card" aria-hidden="true"></i>
+                <span>Crédito</span>
+            </button>
+            <button type="button" data-mobile-transaction="debito" onclick="navegarMovimentacoesMobile('debito')" aria-label="Débito, Pix e dinheiro" aria-controls="aba-debito" aria-selected="false">
+                <i class="fi fi-rr-wallet" aria-hidden="true"></i>
+                <span>Débito / Pix / Dinheiro</span>
+            </button>
+            <button type="button" data-mobile-transaction="fixos" onclick="navegarMovimentacoesMobile('fixos')" aria-label="Gastos fixos" aria-controls="aba-fixos" aria-selected="false">
+                <i class="fi fi-rr-thumbtack" aria-hidden="true"></i>
+                <span>Fixos</span>
+            </button>
+        </nav>
 
         <section id="primeiros-passos-dashboard" class="first-steps-dashboard desktop-only" aria-label="Primeiros passos do GugetFin">
             <div class="first-steps-heading">
@@ -1920,14 +1940,8 @@
     <button class="tab-btn active" onclick="navegar('home')">
         <i class="fi fi-rr-house-blank"></i>
     </button>
-    <button class="tab-btn" onclick="navegar('entradas')">
-        <i class="fi fi-rr-usd-circle"></i>
-    </button>
-    <button class="tab-btn" onclick="navegar('cartao')">
-        <i class="fi fi-rr-credit-card"></i>
-    </button>
-    <button class="tab-btn" onclick="navegar('fixos')">
-        <i class="fi fi-rr-thumbtack"></i>
+    <button class="tab-btn" id="mobile-transactions-nav" onclick="navegarMovimentacoesMobile()" aria-label="Movimentações">
+        <i class="fi fi-rr-wallet"></i>
     </button>
     <button class="tab-btn" onclick="irParaVisualizacoesMobile('terceiros')">
         <i class="fi fi-rr-chart-pie-alt"></i>
@@ -3096,7 +3110,7 @@
     <script src="js/api-integrations.js?v=20260928-1"></script>
     <script src="js/install-app.js?v=20260928-1"></script>
     <script src="js/transacoes.js?v=20261003-1"></script>
-    <script src="js/ui.js?v=20261003-2"></script>
+    <script src="js/ui.js?v=20261004-1"></script>
     <script src="js/modulos.js?v=20261003-1"></script>
     <script src="js/faturas.js?v=20260805-3"></script>
     <script src="js/drive.js?v=20260926-1"></script>

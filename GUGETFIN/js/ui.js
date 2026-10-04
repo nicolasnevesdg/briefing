@@ -2748,8 +2748,68 @@ function toggleMetas() {
     }
 }
 
+let mobileMovimentacaoAtiva = 'entradas';
+
+function obterTipoMovimentacaoMobile(abaId) {
+    if (abaId === 'entradas') return 'entradas';
+    if (abaId === 'cartao') return 'credito';
+    if (abaId === 'debito') return 'debito';
+    if (abaId === 'fixos') return 'fixos';
+    return '';
+}
+
+function atualizarSeletorMovimentacoesMobile(tipo) {
+    if (!tipo) return;
+    mobileMovimentacaoAtiva = tipo;
+
+    document.querySelectorAll('[data-mobile-transaction]').forEach(botao => {
+        const ativo = botao.dataset.mobileTransaction === tipo;
+        botao.classList.toggle('active', ativo);
+        botao.setAttribute('aria-selected', String(ativo));
+    });
+
+    const atalho = document.getElementById('mobile-transactions-nav');
+    if (atalho) {
+        atalho.classList.add('active');
+        atalho.setAttribute('aria-current', 'page');
+    }
+}
+
+function animarConteudoMovimentacoesMobile(tipo) {
+    if (window.innerWidth > 1024) return;
+    const seletores = {
+        entradas: '#aba-entradas > .card',
+        credito: '#sub-card-credito',
+        debito: '#sub-card-debito',
+        fixos: '#aba-fixos > .card'
+    };
+    const seletor = seletores[tipo];
+    if (!seletor) return;
+    const conteudo = document.querySelector(seletor);
+    if (!conteudo) return;
+
+    conteudo.classList.remove('mobile-transactions-content-enter');
+    void conteudo.offsetWidth;
+    conteudo.classList.add('mobile-transactions-content-enter');
+    window.setTimeout(() => conteudo.classList.remove('mobile-transactions-content-enter'), 360);
+}
+
+function navegarMovimentacoesMobile(tipo = mobileMovimentacaoAtiva || 'entradas') {
+    const destinos = {
+        entradas: 'entradas',
+        credito: 'cartao',
+        debito: 'debito',
+        fixos: 'fixos'
+    };
+    const destino = destinos[tipo] || 'entradas';
+    if (typeof feedbackTatil === 'function') feedbackTatil('navegacao');
+    navegar(destino);
+}
+
 function navegar(abaId) {
     fecharMenuAcoesMobile();
+
+    const tipoMovimentacao = obterTipoMovimentacaoMobile(abaId);
 
     const main = document.querySelector('main');
     if (main) {
@@ -2758,6 +2818,7 @@ function navegar(abaId) {
         main.classList.remove('settings-mode');
         main.classList.remove('insights-mode');
         main.classList.toggle('dashboard-mode', abaId === 'home');
+        main.classList.toggle('mobile-transactions-mode', Boolean(tipoMovimentacao));
     }
 
     document.querySelectorAll('.sidebar-view-nav .sidebar-view-btn').forEach(botao => botao.classList.remove('active'));
@@ -2788,6 +2849,7 @@ function navegar(abaId) {
     else if (abaId === 'cartao' || abaId === 'debito') {
         const menuCartoes = document.getElementById('menu-cartoes');
         const abaConteudo = document.getElementById('aba-debito'); // Sua base de cartões
+        subAbaCartaoAtiva = abaId === 'debito' ? 'debito' : 'credito';
 
         if (menuCartoes) {
             menuCartoes.classList.add('active');
@@ -2820,10 +2882,17 @@ function navegar(abaId) {
     // 👇 MÁGICA VISUAL: Troca a cor da aba na barra flutuante inferior 👇
     document.querySelectorAll('.mobile-tab-bar .tab-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(abaId)) {
+        btn.removeAttribute('aria-current');
+        if (!tipoMovimentacao && btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(abaId)) {
             btn.classList.add('active');
+            btn.setAttribute('aria-current', 'page');
         }
     });
+
+    if (tipoMovimentacao) {
+        atualizarSeletorMovimentacoesMobile(tipoMovimentacao);
+        animarConteudoMovimentacoesMobile(tipoMovimentacao);
+    }
 }
 
 // ==========================================
@@ -2930,12 +2999,14 @@ function irParaVisualizacoesMobile(aba = 'terceiros') {
 
     document.querySelectorAll('.mobile-tab-bar .tab-btn').forEach(btn => {
         btn.classList.remove('active');
+        btn.removeAttribute('aria-current');
     });
 
     document.querySelectorAll('.mobile-tab-bar .tab-btn').forEach(btn => {
         const acao = btn.getAttribute('onclick') || '';
         if (acao.includes('irParaVisualizacoesMobile')) {
             btn.classList.add('active');
+            btn.setAttribute('aria-current', 'page');
         }
     });
 }
