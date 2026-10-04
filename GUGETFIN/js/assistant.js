@@ -89,9 +89,10 @@ function assistantCriarAvatar(tipo) {
         }, { once: true });
         avatar.appendChild(img);
     } else {
-        const icon = document.createElement('i');
-        icon.className = 'fi fi-rr-comment-alt';
-        avatar.appendChild(icon);
+        const img = document.createElement('img');
+        img.alt = '';
+        img.src = 'assets/guget-assistant-avatar.png?v=20261004-1';
+        avatar.appendChild(img);
     }
 
     return avatar;

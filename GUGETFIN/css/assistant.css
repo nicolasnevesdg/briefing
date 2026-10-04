@@ -120,9 +120,13 @@
     overflow: hidden;
 }
 
-.guget-assistant-avatar i,
-.guget-assistant-message-avatar i {
-    font-size: 16px;
+.guget-assistant-avatar img,
+.guget-assistant-message-avatar img {
+    width: 155%;
+    height: 155%;
+    max-width: none;
+    object-fit: cover;
+    transform: translateY(10%);
 }
 
 .guget-assistant-identity h3 {
@@ -217,10 +221,10 @@
     background: #dfe8e4;
 }
 
-.guget-assistant-message-avatar img {
+.guget-assistant-message.is-user .guget-assistant-message-avatar img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    transform: none;
 }
 
 .guget-assistant-bubble {
