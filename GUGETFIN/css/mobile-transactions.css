@@ -43,7 +43,7 @@
         height: 48px;
         padding: 0;
         border: 1px solid transparent;
-        border-bottom-color: var(--border);
+        border-bottom-color: transparent;
         border-radius: 16px 16px 0 0;
         outline: none;
         background: transparent;
@@ -147,6 +147,7 @@
     main.mobile-transactions-mode #aba-fixos > .card {
         margin-top: 0 !important;
         border: 1px solid #c8e6c9 !important;
+        border-top: 0 !important;
         border-radius: 18px !important;
         background: #e8f5e9 !important;
         box-shadow: none !important;
@@ -218,7 +219,7 @@
         padding: 0 !important;
         gap: 0;
         border: 1px solid transparent !important;
-        border-bottom-color: var(--border) !important;
+        border-bottom-color: transparent !important;
         border-radius: 16px 16px 0 0 !important;
         background: transparent !important;
         color: var(--text-sec) !important;
@@ -308,6 +309,7 @@
         margin-top: 0 !important;
         padding: 15px;
         border: 1px solid #c8e6c9 !important;
+        border-top: 0 !important;
         border-radius: 18px !important;
         background: #e8f5e9 !important;
         box-shadow: none !important;
@@ -323,6 +325,16 @@
 
     .mobile-fab-only-action {
         display: none !important;
+    }
+
+    /* Remove a linha residual sob as abas inativas e no topo da pasta. */
+    body #aba-resumo-home .home-toggle button:not(.active) {
+        border-bottom-color: transparent !important;
+    }
+
+    body #aba-resumo-home #card-resumo-conteudo,
+    body #aba-resumo-home #card-terceiros {
+        border-top: 0 !important;
     }
 }
 
