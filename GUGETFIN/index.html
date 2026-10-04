@@ -18,7 +18,7 @@
             color: #f8fafc;
         }
     </style>
-    <link rel="stylesheet" href="css/style.css?v=20261003-1">
+    <link rel="stylesheet" href="css/style.css?v=20261004-1">
     <link rel="stylesheet" href="css/insights.css?v=20261003-3">
     <link rel="stylesheet" href="css/data-integrity.css?v=20261003-1">
     <link rel="stylesheet" href="css/assistant.css?v=20261004-1">
@@ -563,6 +563,95 @@
 						</div>
 				</div>
 			</div>
+
+            <div class="card chart-card mobile-planning-card" id="card-faturas-acordeon">
+                <div class="card-header" onclick="toggleFaturasPlanejamentoMobile()">
+                    <div class="header-title-group">
+                        <span id="faturas-toggle-icon" class="chevron"></span>
+                        <h3>Pagamento de faturas</h3>
+                    </div>
+                </div>
+
+                <div class="chart-content-wrapper" id="faturas-mobile-body">
+                    <div class="invoice-planner-page mobile-invoice-planner" data-invoice-planner>
+                        <div class="invoice-planner-header">
+                            <div>
+                                <span class="invoice-planner-kicker">Organização mensal</span>
+                                <h2>Pagamento de faturas</h2>
+                                <p>Compare o previsto, o valor real e quanto já foi separado para cada cartão.</p>
+                            </div>
+                            <div class="invoice-planner-month" data-faturas-mes-referencia>Mês atual</div>
+                        </div>
+
+                        <div class="invoice-planner-summary">
+                            <article><small>Entradas do mês</small><strong data-faturas-total-entradas>R$ 0,00</strong><span>Disponível como referência</span></article>
+                            <article><small>Total real das faturas</small><strong data-faturas-total-real>R$ 0,00</strong><span>Previsto quando não informado</span></article>
+                            <article><small>Separado para pagar</small><strong data-faturas-total-separado>R$ 0,00</strong><span>Quanto você já reservou</span></article>
+                            <article data-faturas-card-saldo><small>Sobra / falta geral</small><strong data-faturas-saldo-geral>R$ 0,00</strong><span data-faturas-saldo-legenda>Após quitar as faturas</span></article>
+                        </div>
+
+                        <div class="invoice-planner-board">
+                            <div class="invoice-planner-board-head">
+                                <div><h3>Distribuição por fatura</h3><p>Os campos editáveis são salvos automaticamente.</p></div>
+                                <div class="invoice-planner-actions">
+                                    <span class="invoice-save-status is-saved" data-faturas-save-status>Tudo salvo</span>
+                                    <button type="button" class="invoice-save-btn" data-faturas-save-btn onclick="salvarPlanejamentoFaturas()">
+                                        <i class="fi fi-rr-disk"></i> Salvar planejamento
+                                    </button>
+                                    <button type="button" class="invoice-reset-btn" onclick="limparPlanejamentoFaturasMes()">Limpar valores do mês</button>
+                                </div>
+                            </div>
+                            <div class="invoice-table-wrap">
+                                <table class="invoice-table">
+                                    <thead><tr><th>Cartão</th><th>Previsto</th><th>Valor real</th><th>Separado</th><th>Falta / sobra</th><th>Status</th><th>Observação</th></tr></thead>
+                                    <tbody data-faturas-lista></tbody>
+                                </table>
+                            </div>
+                            <div class="invoice-empty" data-faturas-vazio hidden></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card chart-card mobile-planning-card" id="card-calendario-acordeon">
+                <div class="card-header" onclick="toggleCalendarioPlanejamentoMobile()">
+                    <div class="header-title-group">
+                        <span id="calendario-mobile-toggle-icon" class="chevron"></span>
+                        <h3>Calendário</h3>
+                    </div>
+                </div>
+
+                <div class="chart-content-wrapper" id="calendario-mobile-body">
+                    <div class="mobile-financial-calendar">
+                        <p class="mobile-calendar-selected-date" id="mobile-calendar-selected-date"></p>
+                        <div class="mobile-calendar-weekdays" aria-hidden="true">
+                            <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+                        </div>
+                        <div class="mobile-calendar-grid" id="mobile-financial-calendar-grid" aria-label="Calendário financeiro"></div>
+
+                        <div class="mobile-calendar-list-head">
+                            <div>
+                                <span>Movimentos do dia</span>
+                                <strong id="mobile-calendar-day-title">Hoje</strong>
+                            </div>
+                            <details class="mobile-calendar-filter" id="mobile-calendar-filter-menu">
+                                <summary aria-label="Filtrar movimentos do calendário">
+                                    <span id="mobile-calendar-filter-label">Tudo</span>
+                                    <i class="fi fi-rr-angle-small-down" aria-hidden="true"></i>
+                                </summary>
+                                <div class="mobile-calendar-filter-options">
+                                    <button type="button" data-mobile-calendar-filter="todos" onclick="selecionarFiltroCalendarioMobile('todos')">Tudo</button>
+                                    <button type="button" data-mobile-calendar-filter="gastos" onclick="selecionarFiltroCalendarioMobile('gastos')">Gastos</button>
+                                    <button type="button" data-mobile-calendar-filter="terceiros" onclick="selecionarFiltroCalendarioMobile('terceiros')">Terceiros</button>
+                                    <button type="button" data-mobile-calendar-filter="entradas" onclick="selecionarFiltroCalendarioMobile('entradas')">Entradas</button>
+                                    <button type="button" data-mobile-calendar-filter="vencimentos" onclick="selecionarFiltroCalendarioMobile('vencimentos')">Vencimentos</button>
+                                </div>
+                            </details>
+                        </div>
+                        <div class="mobile-calendar-day-list" id="mobile-calendar-day-list"></div>
+                    </div>
+                </div>
+            </div>
 		</section>	
 		
 		<section id="aba-home" class="tab-content active">
@@ -852,29 +941,29 @@
 			</div>
 		</section>
 
-        <section id="aba-pagamento-faturas" class="tab-content invoice-planner-page">
+        <section id="aba-pagamento-faturas" class="tab-content invoice-planner-page" data-invoice-planner>
             <div class="invoice-planner-header">
                 <div>
                     <span class="invoice-planner-kicker">Organização mensal</span>
                     <h2>Pagamento de faturas</h2>
                     <p>Compare as faturas previstas com os valores reais e distribua o dinheiro disponível sem alterar os cálculos do dashboard.</p>
                 </div>
-                <div class="invoice-planner-month" id="faturas-mes-referencia">Mês atual</div>
+                <div class="invoice-planner-month" id="faturas-mes-referencia" data-faturas-mes-referencia>Mês atual</div>
             </div>
 
             <div class="invoice-planner-summary">
-                <article><small>Entradas do mês</small><strong id="faturas-total-entradas">R$ 0,00</strong><span>Disponível como referência</span></article>
-                <article><small>Total real das faturas</small><strong id="faturas-total-real">R$ 0,00</strong><span>Previsto quando não informado</span></article>
-                <article><small>Separado para pagar</small><strong id="faturas-total-separado">R$ 0,00</strong><span>Quanto você já reservou</span></article>
-                <article id="faturas-card-saldo"><small>Sobra / falta geral</small><strong id="faturas-saldo-geral">R$ 0,00</strong><span id="faturas-saldo-legenda">Após quitar as faturas</span></article>
+                <article><small>Entradas do mês</small><strong id="faturas-total-entradas" data-faturas-total-entradas>R$ 0,00</strong><span>Disponível como referência</span></article>
+                <article><small>Total real das faturas</small><strong id="faturas-total-real" data-faturas-total-real>R$ 0,00</strong><span>Previsto quando não informado</span></article>
+                <article><small>Separado para pagar</small><strong id="faturas-total-separado" data-faturas-total-separado>R$ 0,00</strong><span>Quanto você já reservou</span></article>
+                <article id="faturas-card-saldo" data-faturas-card-saldo><small>Sobra / falta geral</small><strong id="faturas-saldo-geral" data-faturas-saldo-geral>R$ 0,00</strong><span id="faturas-saldo-legenda" data-faturas-saldo-legenda>Após quitar as faturas</span></article>
             </div>
 
             <div class="invoice-planner-board">
                 <div class="invoice-planner-board-head">
                     <div><h3>Distribuição por fatura</h3><p>Os campos editáveis são salvos automaticamente.</p></div>
                     <div class="invoice-planner-actions">
-                        <span class="invoice-save-status is-saved" id="faturas-save-status">Tudo salvo</span>
-                        <button type="button" class="invoice-save-btn" id="faturas-save-btn" onclick="salvarPlanejamentoFaturas()">
+                        <span class="invoice-save-status is-saved" id="faturas-save-status" data-faturas-save-status>Tudo salvo</span>
+                        <button type="button" class="invoice-save-btn" id="faturas-save-btn" data-faturas-save-btn onclick="salvarPlanejamentoFaturas()">
                             <i class="fi fi-rr-disk"></i> Salvar planejamento
                         </button>
                         <button type="button" class="invoice-reset-btn" onclick="limparPlanejamentoFaturasMes()">Limpar valores do mês</button>
@@ -883,10 +972,10 @@
                 <div class="invoice-table-wrap">
                     <table class="invoice-table">
                         <thead><tr><th>Cartão</th><th>Previsto</th><th>Valor real</th><th>Separado</th><th>Falta / sobra</th><th>Status</th><th>Observação</th></tr></thead>
-                        <tbody id="faturas-planejador-lista"></tbody>
+                        <tbody id="faturas-planejador-lista" data-faturas-lista></tbody>
                     </table>
                 </div>
-                <div id="faturas-planejador-vazio" class="invoice-empty" hidden></div>
+                <div id="faturas-planejador-vazio" class="invoice-empty" data-faturas-vazio hidden></div>
             </div>
         </section>
 		
@@ -1949,8 +2038,8 @@
     <button class="tab-btn" onclick="navegar('planejamento')">
         <i class="fi fi-rr-chart-simple"></i>
     </button>
-    <button class="tab-btn" onclick="navegar('pagamento-faturas')" aria-label="Pagamento de faturas">
-        <i class="fi fi-rr-receipt"></i>
+    <button class="tab-btn" id="mobile-insights-nav" onclick="irParaInsights()" aria-label="Guget Insights">
+        <i class="fi fi-rr-sparkles"></i>
     </button>
     
     <button
@@ -3105,17 +3194,18 @@
     })();
 </script>
 
-    <script src="js/core.js?v=20261003-3"></script>
+    <script src="js/core.js?v=20261004-1"></script>
     <script src="js/auth.js?v=20261002-1"></script>
     <script src="js/api-integrations.js?v=20260928-1"></script>
     <script src="js/install-app.js?v=20260928-1"></script>
     <script src="js/transacoes.js?v=20261003-1"></script>
-    <script src="js/ui.js?v=20261004-1"></script>
+    <script src="js/ui.js?v=20261004-2"></script>
     <script src="js/modulos.js?v=20261003-1"></script>
-    <script src="js/faturas.js?v=20260805-3"></script>
+    <script src="js/faturas.js?v=20261004-1"></script>
+    <script src="js/mobile-planning.js?v=20261004-1"></script>
     <script src="js/drive.js?v=20260926-1"></script>
     <script src="js/dividas.js?v=20261003-1"></script>
-    <script src="js/insights.js?v=20261003-6"></script>
+    <script src="js/insights.js?v=20261004-1"></script>
     <script src="js/assistant.js?v=20261004-1"></script>
     <script src="js/data-integrity.js?v=20261003-1"></script>
     <script src="js/caixinhas.js?v=20260822-1"></script>

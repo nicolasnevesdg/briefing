@@ -1690,6 +1690,7 @@ if (typeof renderizarGraficoCategorias === 'function') {
     atualizarCardCaixinhaDashboard();
     if (typeof renderizarResumoCompromissosDashboard === 'function') renderizarResumoCompromissosDashboard();
     if (typeof renderizarPlanejadorFaturas === 'function') renderizarPlanejadorFaturas();
+    if (typeof renderizarCalendarioFinanceiroMobile === 'function') renderizarCalendarioFinanceiroMobile();
 
     localStorage.setItem('salsifin_cache', JSON.stringify(salsiData));
 	salvarNoFirebase();

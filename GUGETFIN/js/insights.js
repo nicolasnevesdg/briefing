@@ -867,7 +867,15 @@ function irParaInsights() {
     main.classList.add('insights-mode');
 
     if (typeof marcarViewSidebar === 'function') marcarViewSidebar('insights');
-    document.querySelectorAll('.mobile-tab-bar .tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.mobile-tab-bar .tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.removeAttribute('aria-current');
+    });
+    const botaoInsightsMobile = document.getElementById('mobile-insights-nav');
+    if (botaoInsightsMobile) {
+        botaoInsightsMobile.classList.add('active');
+        botaoInsightsMobile.setAttribute('aria-current', 'page');
+    }
     renderizarGugetInsights();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }

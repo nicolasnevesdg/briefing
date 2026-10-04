@@ -244,7 +244,9 @@ function fecharOutrosPlanejamento(excecaoId) {
     const listas = [
         { id: 'card-grafico', icon: 'chart-toggle-icon' },
         { id: 'card-metas-acordeon', icon: 'meta-toggle-icon' },
-        { id: 'card-desejos-acordeon', icon: 'desejo-toggle-icon' }
+        { id: 'card-desejos-acordeon', icon: 'desejo-toggle-icon' },
+        { id: 'card-faturas-acordeon', icon: 'faturas-toggle-icon' },
+        { id: 'card-calendario-acordeon', icon: 'calendario-mobile-toggle-icon' }
     ];
 
     listas.forEach(item => {

@@ -62,14 +62,15 @@
     }
 
     function atualizarStatusSalvamento(estado) {
-        const status = document.getElementById('faturas-save-status');
-        const botao = document.getElementById('faturas-save-btn');
-        if (!status) return;
-        status.className = `invoice-save-status is-${estado}`;
-        status.textContent = estado === 'pending'
-            ? 'Alterações não salvas'
-            : estado === 'saving' ? 'Salvando...' : 'Tudo salvo';
-        if (botao) botao.disabled = estado === 'saving';
+        document.querySelectorAll('[data-faturas-save-status]').forEach(status => {
+            status.className = `invoice-save-status is-${estado}`;
+            status.textContent = estado === 'pending'
+                ? 'Alterações não salvas'
+                : estado === 'saving' ? 'Salvando...' : 'Tudo salvo';
+        });
+        document.querySelectorAll('[data-faturas-save-btn]').forEach(botao => {
+            botao.disabled = estado === 'saving';
+        });
     }
 
     function classeDiferenca(diferenca) {
@@ -94,7 +95,7 @@
 
     window.salvarPlanejamentoFaturas = function () {
         const mes = dadosMes();
-        document.querySelectorAll('#faturas-planejador-lista [data-fatura-cartao]').forEach(campo => {
+        document.querySelectorAll('[data-faturas-lista] [data-fatura-cartao]').forEach(campo => {
             const cartao = campo.dataset.faturaCartao;
             const nomeCampo = campo.dataset.faturaCampo;
             if (!cartao || !nomeCampo) return;
@@ -117,18 +118,14 @@
     };
 
     window.renderizarPlanejadorFaturas = function () {
-        const lista = document.getElementById('faturas-planejador-lista');
-        if (!lista) return;
+        const planejadores = document.querySelectorAll('[data-invoice-planner]');
+        if (!planejadores.length) return;
         const cartoes = cartoesCredito();
         const mes = dadosMes();
         const entradas = totalEntradas();
         let totalReal = 0;
         let totalSeparado = 0;
-
-        const tituloMes = document.getElementById('faturas-mes-referencia');
-        if (tituloMes) tituloMes.textContent = `${MESES[dataFiltro.getMonth()]} de ${dataFiltro.getFullYear()}`;
-
-        lista.innerHTML = cartoes.map(cartao => {
+        const linhas = cartoes.map(cartao => {
             const previsto = valorPrevisto(cartao.nome);
             const registro = mes[cartao.nome] || {};
             const real = Object.prototype.hasOwnProperty.call(registro, 'real') ? Number(registro.real) : previsto;
@@ -148,18 +145,32 @@
             </tr>`;
         }).join('');
 
-        const vazio = document.getElementById('faturas-planejador-vazio');
-        if (vazio) {
-            vazio.hidden = cartoes.length > 0;
-            vazio.innerHTML = '<strong>Nenhum cartão de crédito cadastrado.</strong><span>Adicione um cartão em Minha carteira para montar o planejamento.</span>';
-        }
-
         const saldo = entradas - totalReal;
-        document.getElementById('faturas-total-entradas').textContent = moeda(entradas);
-        document.getElementById('faturas-total-real').textContent = moeda(totalReal);
-        document.getElementById('faturas-total-separado').textContent = moeda(totalSeparado);
-        document.getElementById('faturas-saldo-geral').textContent = moeda(saldo);
-        document.getElementById('faturas-saldo-legenda').textContent = saldo >= 0 ? 'Sobra após quitar as faturas' : 'Valor que ainda faltará no mês';
-        document.getElementById('faturas-card-saldo').classList.toggle('is-negative', saldo < 0);
+        planejadores.forEach(planejador => {
+            const selecionar = atributo => planejador.querySelector(`[data-faturas-${atributo}]`);
+            const tituloMes = selecionar('mes-referencia');
+            const lista = selecionar('lista');
+            const vazio = selecionar('vazio');
+
+            if (tituloMes) tituloMes.textContent = `${MESES[dataFiltro.getMonth()]} de ${dataFiltro.getFullYear()}`;
+            if (lista) lista.innerHTML = linhas;
+            if (vazio) {
+                vazio.hidden = cartoes.length > 0;
+                vazio.innerHTML = '<strong>Nenhum cartão de crédito cadastrado.</strong><span>Adicione um cartão em Minha carteira para montar o planejamento.</span>';
+            }
+
+            const totalEntradasEl = selecionar('total-entradas');
+            const totalRealEl = selecionar('total-real');
+            const totalSeparadoEl = selecionar('total-separado');
+            const saldoEl = selecionar('saldo-geral');
+            const legendaEl = selecionar('saldo-legenda');
+            const cardSaldoEl = selecionar('card-saldo');
+            if (totalEntradasEl) totalEntradasEl.textContent = moeda(entradas);
+            if (totalRealEl) totalRealEl.textContent = moeda(totalReal);
+            if (totalSeparadoEl) totalSeparadoEl.textContent = moeda(totalSeparado);
+            if (saldoEl) saldoEl.textContent = moeda(saldo);
+            if (legendaEl) legendaEl.textContent = saldo >= 0 ? 'Sobra após quitar as faturas' : 'Valor que ainda faltará no mês';
+            if (cardSaldoEl) cardSaldoEl.classList.toggle('is-negative', saldo < 0);
+        });
     };
 })();

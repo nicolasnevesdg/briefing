@@ -24,7 +24,7 @@ messaging.onBackgroundMessage(payload => {
     self.registration.showNotification(title, options);
 });
 
-const CACHE_NAME = 'gugetfin-shell-20261004-5';
+const CACHE_NAME = 'gugetfin-shell-20261004-6';
 const APP_SHELL = [
     './',
     './index.html',

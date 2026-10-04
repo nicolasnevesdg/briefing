@@ -3620,6 +3620,214 @@ main.settings-mode #settings-view {
     }
 }
 
+/* Planejamento mobile: faturas e calendário compartilham o mesmo acordeão. */
+.mobile-planning-card { display: none; }
+
+@media (max-width: 1024px) {
+    .mobile-planning-card { display: block; }
+    .mobile-planning-card .chart-content-wrapper { width: 100%; box-sizing: border-box; }
+    .mobile-planning-card.expanded .chart-content-wrapper { max-height: 12000px; }
+
+    .mobile-invoice-planner { width: 100%; padding: 0 0 8px; }
+    .mobile-invoice-planner .invoice-planner-header { gap: 12px; margin-bottom: 16px; }
+    .mobile-invoice-planner .invoice-planner-header h2 { margin: 4px 0; font-size: 20px; }
+    .mobile-invoice-planner .invoice-planner-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .mobile-invoice-planner .invoice-planner-summary article { min-width: 0; padding: 13px; }
+    .mobile-invoice-planner .invoice-planner-summary strong { font-size: 17px; }
+    .mobile-invoice-planner .invoice-planner-board { padding: 12px; }
+
+    .mobile-financial-calendar { width: 100%; padding: 2px 0 10px; color: var(--text-main); }
+    .mobile-calendar-selected-date {
+        margin: 0 0 18px;
+        color: var(--text-sec);
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .mobile-calendar-weekdays,
+    .mobile-calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+    }
+    .mobile-calendar-weekdays { margin-bottom: 6px; }
+    .mobile-calendar-weekdays span {
+        color: var(--text-sec);
+        font-size: 9px;
+        font-weight: 750;
+        text-align: center;
+    }
+
+    .mobile-calendar-day {
+        min-width: 0;
+        min-height: 48px;
+        padding: 3px 1px;
+        border: 0;
+        border-radius: 14px;
+        background: transparent;
+        color: var(--text-main);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 4px;
+        font: inherit;
+        cursor: pointer;
+    }
+    .mobile-calendar-day > span:first-child {
+        width: 29px;
+        height: 29px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 850;
+        transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .mobile-calendar-day.is-selected > span:first-child {
+        background: rgba(0, 166, 111, 0.11);
+        box-shadow: inset 0 0 0 1px rgba(0, 166, 111, 0.25);
+        color: var(--dark-green);
+    }
+    .mobile-calendar-day.is-today > span:first-child {
+        background: var(--dark-green);
+        box-shadow: none;
+        color: #fff;
+    }
+    .mobile-calendar-day.is-empty { pointer-events: none; }
+
+    .mobile-calendar-markers {
+        min-height: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+    }
+    .mobile-calendar-markers i,
+    .mobile-calendar-entry-dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #64748b;
+        display: block;
+    }
+    .mobile-calendar-markers .is-gasto,
+    .mobile-calendar-entry.is-gasto .mobile-calendar-entry-dot { background: #ef5b62; }
+    .mobile-calendar-markers .is-terceiro,
+    .mobile-calendar-entry.is-terceiro .mobile-calendar-entry-dot { background: #f59e0b; }
+    .mobile-calendar-markers .is-entrada,
+    .mobile-calendar-entry.is-entrada .mobile-calendar-entry-dot { background: #20c997; }
+    .mobile-calendar-markers .is-vencimento,
+    .mobile-calendar-entry.is-vencimento .mobile-calendar-entry-dot { background: #8b5cf6; }
+
+    .mobile-calendar-list-head {
+        position: relative;
+        margin-top: 22px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+    .mobile-calendar-list-head > div > span,
+    .mobile-calendar-list-head > div > strong { display: block; }
+    .mobile-calendar-list-head > div > span {
+        color: var(--text-sec);
+        font-size: 9px;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+    .mobile-calendar-list-head > div > strong {
+        margin-top: 3px;
+        color: var(--text-main);
+        font-size: 16px;
+        font-weight: 900;
+    }
+
+    .mobile-calendar-filter { position: relative; z-index: 4; }
+    .mobile-calendar-filter summary {
+        min-width: 96px;
+        min-height: 36px;
+        padding: 0 10px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-app);
+        color: var(--dark-green);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 850;
+        list-style: none;
+        cursor: pointer;
+    }
+    .mobile-calendar-filter summary::-webkit-details-marker { display: none; }
+    .mobile-calendar-filter[open] summary i { transform: rotate(180deg); }
+    .mobile-calendar-filter-options {
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        width: 150px;
+        padding: 6px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--sidebar-bg);
+        box-shadow: 0 14px 32px rgba(9, 21, 18, 0.16);
+    }
+    .mobile-calendar-filter-options button {
+        width: 100%;
+        min-height: 34px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 9px;
+        background: transparent;
+        color: var(--text-sec);
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 800;
+        text-align: left;
+    }
+    .mobile-calendar-filter-options button.active {
+        background: rgba(0, 166, 111, 0.1);
+        color: var(--dark-green);
+    }
+
+    .mobile-calendar-day-list { margin-top: 10px; display: flex; flex-direction: column; }
+    .mobile-calendar-entry {
+        width: 100%;
+        min-width: 0;
+        padding: 12px 2px;
+        border: 0;
+        border-bottom: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-main);
+        display: grid;
+        grid-template-columns: 8px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        font-family: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+    .mobile-calendar-entry-dot { width: 7px; height: 7px; }
+    .mobile-calendar-entry-copy { min-width: 0; }
+    .mobile-calendar-entry-copy strong,
+    .mobile-calendar-entry-copy small {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .mobile-calendar-entry-copy strong { font-size: 12px; font-weight: 850; }
+    .mobile-calendar-entry-copy small { margin-top: 3px; color: var(--text-sec); font-size: 9px; font-weight: 700; }
+    .mobile-calendar-entry-value { color: var(--text-main); font-size: 11px; font-weight: 900; white-space: nowrap; }
+    .mobile-calendar-empty { padding: 24px 10px; color: var(--text-sec); font-size: 11px; font-weight: 700; text-align: center; }
+}
+
 .settings-google-card {
     gap: 18px;
 }
