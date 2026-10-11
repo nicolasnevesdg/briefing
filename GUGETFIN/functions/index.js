@@ -46,6 +46,11 @@ const servicos = {
     googleDriveClientId: GOOGLE_DRIVE_CLIENT_ID,
     googleDriveRedirectUri: GOOGLE_DRIVE_REDIRECT_URI,
     whatsAppPhoneNumberId: '1244702925390116',
+    whatsAppExpenseFlowId: '1140517515063253',
+    whatsAppIncomeFlowId: '1092844836869500',
+    // A Meta libera a publicação após verificar a empresa ou atingir 30 conversas de qualidade.
+    // Enquanto isso, o modo draft permite testes e a conversa guiada segue como alternativa.
+    whatsAppRegistrationFlowMode: 'draft',
     publicSiteUrl: 'https://nicolasneves.com.br/GUGETFIN'
 };
 

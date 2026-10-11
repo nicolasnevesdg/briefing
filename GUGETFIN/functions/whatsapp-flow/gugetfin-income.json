@@ -1,0 +1,47 @@
+{
+  "version": "7.3",
+  "screens": [{
+    "id": "INCOME_FORM",
+    "title": "Nova entrada",
+    "terminal": true,
+    "success": true,
+    "data": {
+      "categories": {
+        "type": "array",
+        "items": { "type": "object", "properties": { "id": { "type": "string" }, "title": { "type": "string" } } },
+        "__example__": [{ "id": "category:0", "title": "Renda Extra" }]
+      }
+    },
+    "layout": {
+      "type": "SingleColumnLayout",
+      "children": [{
+        "type": "Form",
+        "name": "income_form",
+        "children": [
+          { "type": "TextHeading", "text": "Cadastre em poucos passos" },
+          { "type": "TextCaption", "text": "Preencha os dados e confirme no final." },
+          { "type": "TextInput", "name": "name", "label": "Nome da entrada", "input-type": "text", "helper-text": "Ex.: Salário", "required": true },
+          { "type": "TextInput", "name": "amount", "label": "Valor", "input-type": "text", "helper-text": "Ex.: 2500,00", "required": true },
+          { "type": "DatePicker", "name": "date", "label": "Data do recebimento", "required": true },
+          { "type": "Dropdown", "name": "category", "label": "Categoria", "data-source": "${data.categories}", "required": true },
+          { "type": "TextArea", "name": "description", "label": "Descrição (opcional)", "helper-text": "Acrescente algum detalhe, se quiser.", "required": false },
+          {
+            "type": "Footer",
+            "label": "Cadastrar entrada",
+            "on-click-action": {
+              "name": "complete",
+              "payload": {
+                "type": "income",
+                "name": "${form.name}",
+                "amount": "${form.amount}",
+                "date": "${form.date}",
+                "category": "${form.category}",
+                "description": "${form.description}"
+              }
+            }
+          }
+        ]
+      }]
+    }
+  }]
+}

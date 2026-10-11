@@ -1,0 +1,70 @@
+{
+  "version": "7.3",
+  "screens": [{
+    "id": "EXPENSE_FORM",
+    "title": "Nova saída",
+    "terminal": true,
+    "success": true,
+    "data": {
+      "accounts": {
+        "type": "array",
+        "items": { "type": "object", "properties": { "id": { "type": "string" }, "title": { "type": "string" } } },
+        "__example__": [{ "id": "account:0", "title": "Nubank" }]
+      },
+      "categories": {
+        "type": "array",
+        "items": { "type": "object", "properties": { "id": { "type": "string" }, "title": { "type": "string" } } },
+        "__example__": [{ "id": "category:0", "title": "Alimentação" }]
+      }
+    },
+    "layout": {
+      "type": "SingleColumnLayout",
+      "children": [{
+        "type": "Form",
+        "name": "expense_form",
+        "children": [
+          { "type": "TextHeading", "text": "Cadastre em poucos passos" },
+          { "type": "TextCaption", "text": "As opções abaixo vêm da sua conta GugetFin." },
+          { "type": "TextInput", "name": "name", "label": "Nome do gasto", "input-type": "text", "helper-text": "Ex.: Mercado", "required": true },
+          { "type": "TextInput", "name": "amount", "label": "Valor total", "input-type": "text", "helper-text": "Ex.: 25,90", "required": true },
+          { "type": "DatePicker", "name": "date", "label": "Data da compra", "required": true },
+          {
+            "type": "Dropdown",
+            "name": "payment_method",
+            "label": "Pagamento",
+            "data-source": [
+              { "id": "credit", "title": "Crédito" },
+              { "id": "debit", "title": "Débito" },
+              { "id": "pix", "title": "Pix" },
+              { "id": "cash", "title": "Dinheiro" },
+              { "id": "fixed", "title": "Gasto fixo" }
+            ],
+            "required": true
+          },
+          { "type": "Dropdown", "name": "account", "label": "Conta ou cartão", "data-source": "${data.accounts}", "required": false },
+          { "type": "TextInput", "name": "installments", "label": "Parcelas", "input-type": "number", "helper-text": "Só para crédito. Vazio = 1", "required": false },
+          { "type": "Dropdown", "name": "category", "label": "Categoria", "data-source": "${data.categories}", "required": true },
+          { "type": "TextArea", "name": "description", "label": "Descrição (opcional)", "helper-text": "Acrescente algum detalhe, se quiser.", "required": false },
+          {
+            "type": "Footer",
+            "label": "Cadastrar saída",
+            "on-click-action": {
+              "name": "complete",
+              "payload": {
+                "type": "expense",
+                "name": "${form.name}",
+                "amount": "${form.amount}",
+                "date": "${form.date}",
+                "payment_method": "${form.payment_method}",
+                "account": "${form.account}",
+                "installments": "${form.installments}",
+                "category": "${form.category}",
+                "description": "${form.description}"
+              }
+            }
+          }
+        ]
+      }]
+    }
+  }]
+}

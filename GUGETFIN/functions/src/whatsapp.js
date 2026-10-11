@@ -2,6 +2,7 @@ const { createHash, createHmac, randomBytes, randomUUID, timingSafeEqual } = req
 const { FieldValue } = require('firebase-admin/firestore');
 const { ApiError, criarLancamentoApi, texto } = require('./domain');
 const { avancarConversa, inicio, interacaoInicio } = require('./whatsapp-conversation');
+const { consumirRespostaFlow, prepararFlow, tipoSolicitado } = require('./whatsapp-flow');
 
 const CAMINHO_WEBHOOK = '/v1/whatsapp/webhook';
 const COLECAO_LINKS = '_gugetWhatsappLinks';
@@ -57,12 +58,22 @@ function extrairMensagens(body) {
             const value = alteracao.value || {};
             for (const mensagem of Array.isArray(value.messages) ? value.messages : []) {
                 const respostaInterativa = mensagem?.interactive?.button_reply || mensagem?.interactive?.list_reply;
+                const respostaFlow = mensagem?.interactive?.nfm_reply;
+                let flowResponse = null;
+                if (respostaFlow?.response_json) {
+                    try {
+                        flowResponse = JSON.parse(respostaFlow.response_json);
+                    } catch (_) {
+                        flowResponse = null;
+                    }
+                }
                 mensagens.push({
                     id: texto(mensagem?.id, 180),
                     from: texto(mensagem?.from, 40),
                     type: texto(mensagem?.type, 30),
-                    text: texto(mensagem?.text?.body || respostaInterativa?.id, 1000),
-                    choiceTitle: texto(respostaInterativa?.title, 120),
+                    text: texto(mensagem?.text?.body || respostaInterativa?.id || (flowResponse ? 'flow:complete' : ''), 1000),
+                    choiceTitle: texto(respostaInterativa?.title || respostaFlow?.body, 120),
+                    flowResponse,
                     phoneNumberId: texto(value?.metadata?.phone_number_id, 40)
                 });
             }
@@ -231,6 +242,61 @@ async function processarMensagem(servicos, mensagem) {
     }
     const dados = usuarioSnap.data()?.dados || {};
     const sessaoRef = servicos.db.collection(COLECAO_SESSOES).doc(waIdHash);
+
+    if (mensagem.flowResponse) {
+        try {
+            const resposta = await consumirRespostaFlow(servicos, {
+                resposta: mensagem.flowResponse,
+                uid,
+                waId: mensagem.from,
+                agora: new Date()
+            });
+            await cadastrarLancamento(servicos, uid, resposta.lancamento, mensagem.id);
+            await resposta.tokenRef.update({ usedAt: FieldValue.serverTimestamp(), messageIdHash: hash(mensagem.id) });
+            await sessaoRef.delete().catch(() => null);
+            const interacao = interacaoInicio();
+            interacao.body = 'Pronto! O lançamento foi cadastrado no GugetFin.\n\nQuer cadastrar outra entrada ou saída?';
+            await enviarResultado(servicos, mensagem.from, {
+                resposta: `Pronto! O lançamento foi cadastrado no GugetFin.\n\n${inicio()}`,
+                interacao
+            }, mensagem.phoneNumberId);
+        } catch (error) {
+            servicos.logger.warn('Resposta do WhatsApp Flow recusada.', {
+                messageIdHash: hash(mensagem.id), error: error?.message || 'invalid_flow_response'
+            });
+            const interacao = interacaoInicio();
+            interacao.body = `Não consegui concluir esse formulário: ${texto(error?.message || 'dados inválidos', 300)}\n\nAbra um novo cadastro para tentar novamente.`;
+            await enviarResultado(servicos, mensagem.from, {
+                resposta: `${interacao.body}\n\n${inicio()}`,
+                interacao
+            }, mensagem.phoneNumberId);
+        }
+        return;
+    }
+
+    const tipoFlow = tipoSolicitado(mensagem.text);
+    if (tipoFlow) {
+        const flow = await prepararFlow(servicos, {
+            uid,
+            waId: mensagem.from,
+            tipo: tipoFlow,
+            dados,
+            agora: new Date()
+        });
+        if (flow) {
+            try {
+                await enviarPayload(servicos, mensagem.from, flow.payload, mensagem.phoneNumberId);
+                await sessaoRef.delete().catch(() => null);
+                return;
+            } catch (error) {
+                await flow.tokenRef.delete().catch(() => null);
+                servicos.logger.warn('WhatsApp Flow recusado; usando conversa guiada.', {
+                    messageIdHash: hash(mensagem.id), error: error?.message || 'flow_send_failed'
+                });
+            }
+        }
+    }
+
     const sessaoSnap = await sessaoRef.get();
     const resultado = avancarConversa(sessaoSnap.exists ? sessaoSnap.data()?.state : null, mensagem.text, dados, new Date());
 

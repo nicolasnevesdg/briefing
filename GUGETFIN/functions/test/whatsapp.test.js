@@ -56,6 +56,35 @@ test('extrai seleção de lista interativa do webhook da Meta', () => {
     assert.equal(mensagens[0].choiceTitle, 'Mercado');
 });
 
+test('extrai resposta concluída de um WhatsApp Flow', () => {
+    const mensagens = extrairMensagens({
+        object: 'whatsapp_business_account',
+        entry: [{
+            changes: [{
+                field: 'messages',
+                value: {
+                    metadata: { phone_number_id: '123' },
+                    messages: [{
+                        id: 'wamid.flow', from: '5521999999999', type: 'interactive',
+                        interactive: {
+                            type: 'nfm_reply',
+                            nfm_reply: {
+                                response_json: JSON.stringify({
+                                    flow_token: 'token-seguro', type: 'expense', name: 'Mercado'
+                                })
+                            }
+                        }
+                    }]
+                }
+            }]
+        }]
+    });
+
+    assert.equal(mensagens[0].text, 'flow:complete');
+    assert.equal(mensagens[0].flowResponse.type, 'expense');
+    assert.equal(mensagens[0].flowResponse.name, 'Mercado');
+});
+
 test('monta payload oficial de botões do WhatsApp', () => {
     const payload = montarPayloadWhatsApp('5521999999999', 'Escolha', {
         type: 'buttons',
