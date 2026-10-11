@@ -1325,13 +1325,15 @@ window.removerAnexo = function(tipo) {
 /* ========================================================= */
 
 function abrirCalendarioFinanceiro() {
-    const main = document.querySelector('main');
+    const main = typeof definirModoPrincipal === 'function'
+        ? definirModoPrincipal('calendar-mode')
+        : document.querySelector('main');
     if (!main) return;
 
-    main.classList.remove('settings-mode');
-    main.classList.remove('visualizacoes-mode');
-    main.classList.remove('insights-mode');
-    main.classList.add('calendar-mode');
+    if (typeof definirModoPrincipal !== 'function') {
+        main.classList.remove('settings-mode', 'visualizacoes-mode', 'insights-mode', 'dashboard-mode', 'mobile-transactions-mode');
+        main.classList.add('calendar-mode');
+    }
 
     const mes = typeof m !== 'undefined' ? m : new Date().getMonth();
     const ano = typeof a !== 'undefined' ? a : new Date().getFullYear();
@@ -1340,13 +1342,15 @@ function abrirCalendarioFinanceiro() {
 }
 
 function abrirDashboardFinanceira() {
-    const main = document.querySelector('main');
+    const main = typeof definirModoPrincipal === 'function'
+        ? definirModoPrincipal('dashboard-mode')
+        : document.querySelector('main');
     if (!main) return;
 
-    main.classList.remove('calendar-mode');
-    main.classList.remove('settings-mode');
-    main.classList.remove('visualizacoes-mode');
-    main.classList.remove('insights-mode');
+    if (typeof definirModoPrincipal !== 'function') {
+        main.classList.remove('calendar-mode', 'settings-mode', 'visualizacoes-mode', 'insights-mode', 'mobile-transactions-mode');
+        main.classList.add('dashboard-mode');
+    }
 }
 
 function formatarMoedaCalendario(valor) {

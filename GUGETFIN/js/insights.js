@@ -863,8 +863,12 @@ function irParaInsights() {
         secao.style.setProperty('display', 'none', 'important');
     });
 
-    main.classList.remove('calendar-mode', 'visualizacoes-mode', 'settings-mode', 'dashboard-mode');
-    main.classList.add('insights-mode');
+    if (typeof definirModoPrincipal === 'function') {
+        definirModoPrincipal('insights-mode');
+    } else {
+        main.classList.remove('calendar-mode', 'visualizacoes-mode', 'settings-mode', 'dashboard-mode', 'mobile-transactions-mode');
+        main.classList.add('insights-mode');
+    }
 
     if (typeof marcarViewSidebar === 'function') marcarViewSidebar('insights');
     document.querySelectorAll('.mobile-tab-bar .tab-btn').forEach(btn => {

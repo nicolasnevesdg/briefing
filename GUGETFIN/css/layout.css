@@ -1216,8 +1216,8 @@ td { padding: 12px 4px; border-bottom: 1px solid #f1f5f9; font-size: 12px; font-
 
 /* --- BLINDAGEM DESKTOP (PC) --- */
 @media (min-width: 1025px) {
-    /* Força a Home a estar sempre visível */
-    #aba-home.tab-content {
+    /* A Home só pode ser forçada quando a Dashboard estiver ativa. */
+    main.dashboard-mode #aba-home.tab-content.active {
         display: block !important;
         opacity: 1 !important;
         visibility: visible !important;

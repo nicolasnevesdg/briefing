@@ -40,6 +40,28 @@ function feedbackTatil(tipo = 'leve') {
 
 window.feedbackTatil = feedbackTatil;
 
+const GUGETFIN_MODOS_PRINCIPAIS = [
+    'dashboard-mode',
+    'calendar-mode',
+    'visualizacoes-mode',
+    'settings-mode',
+    'insights-mode',
+    'mobile-transactions-mode',
+    'invoice-mode',
+    'planning-mode'
+];
+
+function definirModoPrincipal(modo = '') {
+    const main = document.querySelector('main');
+    if (!main) return null;
+
+    main.classList.remove(...GUGETFIN_MODOS_PRINCIPAIS);
+    if (modo) main.classList.add(modo);
+    return main;
+}
+
+window.definirModoPrincipal = definirModoPrincipal;
+
 document.addEventListener('click', event => {
     const controleMobile = event.target.closest([
         '.mobile-tab-bar .tab-btn',
@@ -108,14 +130,10 @@ function ajustarTelas() {
         }
     } else {
         const main = document.querySelector('main');
-        if (main && (
-            main.classList.contains('calendar-mode') ||
-            main.classList.contains('visualizacoes-mode') ||
-            main.classList.contains('insights-mode') ||
-            main.classList.contains('settings-mode')
-        )) {
-            return;
-        }
+        // No desktop, somente a Dashboard pode restaurar seus blocos. Antes,
+        // esta rotina também reabria a Dashboard por cima de Faturas e de
+        // outras páginas quando o navegador disparava um resize.
+        if (!main?.classList.contains('dashboard-mode')) return;
 
         // NO PC: Arranca o "none !important" das abas mães e dos cards!
         const elementosParaMostrar = [
@@ -1824,11 +1842,7 @@ function marcarViewSidebar(view) {
 }
 
 function irParaDashboard() {
-    const main = document.querySelector('main');
-    if (main) {
-        main.classList.remove('insights-mode');
-        main.classList.add('dashboard-mode');
-    }
+    definirModoPrincipal('dashboard-mode');
 
     if (typeof abrirDashboardFinanceira === 'function') {
         abrirDashboardFinanceira();
@@ -1890,7 +1904,7 @@ function ocultarAbasDashboardParaView() {
 }
 
 function irParaCalendario() {
-    document.querySelector('main')?.classList.remove('dashboard-mode', 'insights-mode');
+    definirModoPrincipal('calendar-mode');
     ocultarAbasDashboardParaView();
 
     marcarPrimeiroPassoDashboard('calendario');
@@ -1911,11 +1925,7 @@ function irParaConfiguracoes(aba = 'perfil') {
         secao.style.setProperty('display', 'none', 'important');
     });
 
-    main.classList.remove('calendar-mode');
-    main.classList.remove('visualizacoes-mode');
-    main.classList.remove('insights-mode');
-    main.classList.remove('dashboard-mode');
-    main.classList.add('settings-mode');
+    definirModoPrincipal('settings-mode');
 
     marcarViewSidebar('settings');
     selecionarAbaConfiguracoes(aba);
@@ -1938,11 +1948,7 @@ function irParaVisualizacoes(aba = 'terceiros') {
 
     ocultarAbasDashboardParaView();
 
-    main.classList.remove('calendar-mode');
-    main.classList.remove('settings-mode');
-    main.classList.remove('insights-mode');
-    main.classList.remove('dashboard-mode');
-    main.classList.add('visualizacoes-mode');
+    definirModoPrincipal('visualizacoes-mode');
 
     marcarViewSidebar('visualizacoes');
     selecionarAbaVisualizacoes(aba);

@@ -2828,14 +2828,29 @@ function navegar(abaId) {
 
     const tipoMovimentacao = obterTipoMovimentacaoMobile(abaId);
 
-    const main = document.querySelector('main');
-    if (main) {
-        main.classList.remove('calendar-mode');
-        main.classList.remove('visualizacoes-mode');
-        main.classList.remove('settings-mode');
-        main.classList.remove('insights-mode');
-        main.classList.toggle('dashboard-mode', abaId === 'home');
-        main.classList.toggle('mobile-transactions-mode', Boolean(tipoMovimentacao));
+    const modo = abaId === 'home'
+        ? 'dashboard-mode'
+        : tipoMovimentacao
+            ? 'mobile-transactions-mode'
+            : abaId === 'pagamento-faturas'
+                ? 'invoice-mode'
+                : abaId === 'planejamento' ? 'planning-mode' : '';
+    const main = typeof definirModoPrincipal === 'function'
+        ? definirModoPrincipal(modo)
+        : document.querySelector('main');
+
+    if (main && typeof definirModoPrincipal !== 'function') {
+        main.classList.remove(
+            'calendar-mode',
+            'visualizacoes-mode',
+            'settings-mode',
+            'insights-mode',
+            'dashboard-mode',
+            'mobile-transactions-mode',
+            'invoice-mode',
+            'planning-mode'
+        );
+        if (modo) main.classList.add(modo);
     }
 
     document.querySelectorAll('.sidebar-view-nav .sidebar-view-btn').forEach(botao => botao.classList.remove('active'));
@@ -2996,14 +3011,6 @@ window.addEventListener('resize', () => {
 
 function irParaVisualizacoesMobile(aba = 'terceiros') {
     fecharMenuAcoesMobile();
-
-    const main = document.querySelector('main');
-    if (main) {
-        main.classList.remove('calendar-mode');
-        main.classList.remove('settings-mode');
-        main.classList.remove('insights-mode');
-        main.classList.add('visualizacoes-mode');
-    }
 
     document.querySelectorAll('.tab-content').forEach(secao => {
         secao.classList.remove('active');
