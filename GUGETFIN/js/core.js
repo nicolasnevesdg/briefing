@@ -199,7 +199,10 @@ function atualizarListaBancos() {
     const tipoPagamentoEl = document.getElementById('g-tipo');
     
     // O VALOR CORRETO É 'cartao', 'debito' ou 'fixo' baseado no seu HTML
-    const tipoPagamento = tipoPagamentoEl ? tipoPagamentoEl.value : 'cartao'; 
+    const tipoPagamento = tipoPagamentoEl ? tipoPagamentoEl.value : 'cartao';
+    const formaFixo = document.getElementById('g-forma-pagamento-fixo')?.value || 'Crédito';
+    const exigeCartaoCredito = tipoPagamento === 'cartao'
+        || (tipoPagamento === 'fixo' && formaFixo === 'Crédito');
     
     selectBanco.innerHTML = '';
     if (!salsiData.config.bancos) return;
@@ -210,7 +213,7 @@ function atualizarListaBancos() {
         const isDebitoOnly = detalhe ? detalhe.isDebitoOnly : nomeBanco.includes('(débito)');
         
         // A REGRA DE OURO: Se o gasto for "cartao" (Crédito) E o cartão for "apenas débito", pula ele!
-        if (tipoPagamento === 'cartao' && isDebitoOnly) return; 
+        if (exigeCartaoCredito && isDebitoOnly) return;
         
         const opt = document.createElement('option');
         opt.value = nomeBanco;
@@ -539,6 +542,31 @@ function calcularCompetenciaPorVencimentoFatura(dataCompra, fechamento, vencimen
     return new Date(anoFechamento, mesVencimento, 1);
 }
 
+function gastoFixoUsaNovaCompetencia(t) {
+    return t?.tipo === 'fixo' && Number(t?.competenciaVersao || 0) >= 2;
+}
+
+function gastoFixoPagoNoCredito(t) {
+    return gastoFixoUsaNovaCompetencia(t) && t?.formaPagamento === 'Crédito';
+}
+
+function gastoUsaCompetenciaFatura(t) {
+    return t?.tipo === 'cartao' || gastoFixoPagoNoCredito(t);
+}
+
+function gastoFixoContaComoCredito(t) {
+    if (t?.tipo !== 'fixo') return false;
+    if (gastoFixoUsaNovaCompetencia(t)) return gastoFixoPagoNoCredito(t);
+
+    // Compatibilidade: fixos antigos continuam com a interpretação que já tinham.
+    const banco = String(t?.banco || '');
+    if (!banco) return false;
+    const detalhesBanco = salsiData.config?.detalhesBancos?.find(detalhe => detalhe.nome === banco);
+    return detalhesBanco
+        ? !detalhesBanco.isDebitoOnly
+        : !banco.toLowerCase().includes('débito');
+}
+
 function calcularCompetenciaInicialGasto(t) {
     const dataCompra = new Date(t.dataCompra + "T12:00:00");
     const delayManual = parseInt(t.delayPagamento) || 0;
@@ -552,10 +580,11 @@ function calcularCompetenciaInicialGasto(t) {
     }
 
     /*
-        Débito, Pix, dinheiro e fixos seguem o mês da data da compra,
-        salvo se tiver delay manual.
+        Débito, Pix e dinheiro seguem o mês da compra. Fixos antigos também
+        permanecem nessa regra para que o histórico nunca seja reorganizado.
+        Somente fixos v2 pagos no crédito seguem fechamento e vencimento.
     */
-    if (t.tipo !== 'cartao') {
+    if (!gastoUsaCompetenciaFatura(t)) {
         return criarDataCompetencia(dataCompra, 0);
     }
 
@@ -1424,25 +1453,29 @@ ${tagNovo}
                     // 2. A MÁGICA DO RESUMO MENSAL: 
                     // Soma o Gasto Fixo na barra do Banco (para formar a Fatura real no painel central),
                     // MAS não adiciona no "totalCartMes", blindando a aba de Cartões contra bugs de filtro!
-                    if (t.tipo === 'fixo' && t.banco) {
-                        const detalheBanco = salsiData.config.detalhesBancos?.find(d => d.nome === t.banco);
-                        const isDebitoOnly = detalheBanco ? detalheBanco.isDebitoOnly : t.banco.toLowerCase().includes('débito');
-                        
-                        if (!isDebitoOnly) {
-                            bankSum[t.banco] = (bankSum[t.banco] || 0) + val; 
-                        }
+                    if (t.tipo === 'fixo' && t.banco && gastoFixoContaComoCredito(t)) {
+                        bankSum[t.banco] = (bankSum[t.banco] || 0) + val;
                     }
                 }
 
                 // Lógicas específicas de renderização das Tabelas
                 if (t.tipo === 'fixo') {
                     if (t.pago === true) totalFixoMes += val;
+                    const fixoNovaRegra = gastoFixoUsaNovaCompetencia(t);
+                    const formaFixo = fixoNovaRegra ? (t.formaPagamento || 'Débito') : 'Organização antiga';
+                    const origemFixo = fixoNovaRegra && t.banco && t.formaPagamento !== 'Dinheiro'
+                        ? ` · ${t.banco}`
+                        : '';
+                    const detalheFixo = `${formaFixo}${origemFixo} · ocorrência ${dFmt}`;
                     
                     const estiloPC = t.pago ? '' : 'style="opacity: 0.5; font-style: italic;"';
                     if(fTable) {
                         fTable.innerHTML += `
                             <tr ${estiloPC} class="desktop-only-row" data-gasto-index="${idx}">
-                                <td style="cursor: pointer; font-weight: 500; width: 50%;" onclick="verDetalhes(${idx})">${t.nome} ${tagNovo}</td>
+                                <td style="cursor: pointer; width: 50%;" onclick="verDetalhes(${idx})">
+                                    <div style="font-weight: 600;">${t.nome} ${tagNovo}</div>
+                                    <div style="font-size: 10px; color: var(--text-sec); margin-top: 3px;">${detalheFixo}</div>
+                                </td>
                                 <td style="width: 25%;">R$ ${val.toFixed(2)}</td>
                                 <td style="text-align: center; width: 15%;"><input type="checkbox" ${t.pago ? 'checked' : ''} onchange="alternarStatusPago(${idx})"></td>
                                 <td style="width: 10%;"><button class="btn-del" onclick="excluirGasto(${idx})">×</button></td>
@@ -1465,6 +1498,7 @@ ${tagNovo}
                                     <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
                                         <input type="checkbox" ${t.pago ? 'checked' : ''} onclick="event.stopPropagation()" onchange="alternarStatusPago(${idx})" style="transform: scale(1.3); cursor: pointer; accent-color: #21c25e;">
                                         ${tagStatus}
+                                        <span style="font-size: 9px; color: var(--text-sec);">${detalheFixo}</span>
                                     </div>
                                 </div>
                                 <div class="cartao-valor-grupo">

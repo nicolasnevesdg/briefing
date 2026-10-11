@@ -57,6 +57,23 @@ test('cria gasto Pix como débito', () => {
     assert.equal(resultado.item.parcelas, 1);
 });
 
+test('cria gasto fixo novo com competência versionada', () => {
+    const resultado = criarLancamentoApi({
+        type: 'expense',
+        name: 'Streaming',
+        amount: 49.9,
+        date: '2026-09-19',
+        paymentMethod: 'fixed',
+        fixedPaymentMethod: 'credit',
+        account: 'Nubank',
+        category: 'Mercado'
+    }, dados, contexto);
+
+    assert.equal(resultado.item.tipo, 'fixo');
+    assert.equal(resultado.item.formaPagamento, 'Crédito');
+    assert.equal(resultado.item.competenciaVersao, 2);
+});
+
 test('aceita valor monetário no formato brasileiro', () => {
     const resultado = criarLancamentoApi({
         type: 'expense',

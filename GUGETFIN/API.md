@@ -106,6 +106,8 @@ Idempotency-Key: identificador-unico-do-dispositivo
 
 Formas de pagamento aceitas: `credit`, `debit`, `pix`, `cash` e `fixed`.
 
+Ao usar `fixed`, o campo opcional `fixedPaymentMethod` define como o gasto fixo é pago: `credit`, `debit`, `pix` ou `cash`. Quando omitido, o GugetFin considera `credit` e calcula automaticamente o mês da fatura.
+
 ### Cadastrar entrada
 
 ```json

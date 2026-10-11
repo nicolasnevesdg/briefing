@@ -31,10 +31,13 @@ function atualizarGraficoAnual() {
 
         salsiData.transacoes.forEach(t => {
             const d = new Date(t.dataCompra + "T00:00:00");
-            
-            let mesRef = d.getMonth() + (t.delayPagamento || 0);
-            let anoRef = d.getFullYear();
-            if (mesRef > 11) { mesRef -= 12; anoRef++; }
+            const usaNovaRegraFixo = typeof gastoFixoUsaNovaCompetencia === 'function'
+                && gastoFixoUsaNovaCompetencia(t);
+            const competencia = usaNovaRegraFixo && typeof calcularCompetenciaInicialGasto === 'function'
+                ? calcularCompetenciaInicialGasto(t)
+                : new Date(d.getFullYear(), d.getMonth() + (t.delayPagamento || 0), 1);
+            const mesRef = competencia.getMonth();
+            const anoRef = competencia.getFullYear();
             
             const diff = (ano - anoRef) * 12 + (m - mesRef);
 
@@ -899,7 +902,19 @@ function verDetalhes(index) {
     } else if (t.tipo === 'cartao') {
         textoPagamento = `Crédito (${t.banco})`;
     } else if (t.tipo === 'fixo') {
-        textoPagamento = `Gasto Fixo`; // Fixos geralmente debitam em conta
+        if (typeof gastoFixoUsaNovaCompetencia === 'function' && gastoFixoUsaNovaCompetencia(t)) {
+            const forma = t.formaPagamento || 'Débito';
+            const origem = forma === 'Dinheiro' ? '' : (t.banco ? ` (${t.banco})` : '');
+            textoPagamento = `${forma}${origem}`;
+
+            if (forma === 'Crédito' && typeof calcularCompetenciaInicialGasto === 'function') {
+                const competencia = calcularCompetenciaInicialGasto(t);
+                const referencia = competencia.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+                textoPagamento += ` · fatura de ${referencia}`;
+            }
+        } else {
+            textoPagamento = 'Gasto fixo · organização antiga';
+        }
     }
 
     // Aplica no modal

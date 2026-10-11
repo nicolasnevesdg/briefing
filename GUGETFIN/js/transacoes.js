@@ -1,6 +1,7 @@
 function ajustarCamposModal() {
     const tipo = document.getElementById('g-tipo').value;
     const isCaixinha = tipo === 'caixinha';
+    const isFixo = tipo === 'fixo';
     const modalGasto = document.getElementById('modal-gasto');
     if (modalGasto) modalGasto.classList.toggle('modo-caixinha', isCaixinha);
     
@@ -11,13 +12,22 @@ function ajustarCamposModal() {
 
     const campoForma = document.getElementById('g-forma-pagamento');
     const formaPag = campoForma ? campoForma.value : 'Débito';
+    const campoFormaFixo = document.getElementById('g-forma-pagamento-fixo');
+    const formaFixo = campoFormaFixo ? campoFormaFixo.value : 'Crédito';
+    const divFormaFixo = document.getElementById('div-forma-pagamento-fixo');
+    if (divFormaFixo) divFormaFixo.style.display = isFixo ? 'block' : 'none';
+    const notaRegraFixo = document.getElementById('g-fixo-regra-nota');
+    if (notaRegraFixo) notaRegraFixo.style.display = isFixo && formaFixo === 'legado' ? 'block' : 'none';
 
     const divCartaoCampos = document.getElementById('div-cartao-campos');
     const inputParcelas = document.getElementById('g-parcelas');
     const selectBanco = document.getElementById('g-banco');
+    if (isFixo && inputParcelas) inputParcelas.value = 1;
 
     if (divCartaoCampos) {
-        if (isCaixinha || (tipo === 'debito' && formaPag === 'Dinheiro')) {
+        if (isCaixinha
+            || (tipo === 'debito' && formaPag === 'Dinheiro')
+            || (isFixo && formaFixo === 'Dinheiro')) {
             divCartaoCampos.style.display = 'none';
         } else {
             divCartaoCampos.style.display = window.innerWidth > 1024 ? 'grid' : 'flex';
@@ -32,7 +42,8 @@ function ajustarCamposModal() {
     const campoNomeTerceiro = document.getElementById('div-nome-terceiro');
 
     if (campoCategoria) campoCategoria.style.display = isCaixinha ? 'none' : '';
-    if (campoCompetencia) campoCompetencia.style.display = (tipo === 'cartao' && !isCaixinha) ? '' : 'none';
+    const usaFatura = tipo === 'cartao' || (isFixo && formaFixo === 'Crédito');
+    if (campoCompetencia) campoCompetencia.style.display = (usaFatura && !isCaixinha) ? '' : 'none';
     if (blocoTerceiro) blocoTerceiro.style.display = isCaixinha ? 'none' : '';
     if (campoNomeTerceiro && isCaixinha) campoNomeTerceiro.style.display = 'none';
 
@@ -61,6 +72,8 @@ async function confirmarGasto() {
     
     const campoForma = document.getElementById('g-forma-pagamento');
     const formaPag = campoForma ? campoForma.value : 'Débito';
+    const campoFormaFixo = document.getElementById('g-forma-pagamento-fixo');
+    const formaFixo = campoFormaFixo ? campoFormaFixo.value : 'Crédito';
 
     const indexEditEl = document.getElementById('g-index-edit');
     const indexEdit = indexEditEl ? parseInt(indexEditEl.value) : -1;
@@ -171,7 +184,9 @@ const nomeTerceiroValor = document.getElementById('g-nome-terceiro').value || ""
     valorParcela: vTotal / nParc,
     parcelas: nParc,
     dataCompra: document.getElementById('g-data').value,
-    banco: document.getElementById('g-banco').value,
+    banco: ((tipo === 'debito' && formaPag === 'Dinheiro') || (tipo === 'fixo' && formaFixo === 'Dinheiro'))
+        ? ''
+        : document.getElementById('g-banco').value,
     categoria: document.getElementById('g-categoria').value,
     observacao: document.getElementById('g-observacao') ? document.getElementById('g-observacao').value.trim() : "",
     pago: false,
@@ -191,6 +206,20 @@ const nomeTerceiroValor = document.getElementById('g-nome-terceiro').value || ""
     criadoEm: indexEdit >= 0 ? (salsiData.transacoes[indexEdit].criadoEm || null) : agoraCadastro,
     destaqueAte: indexEdit >= 0 ? (salsiData.transacoes[indexEdit].destaqueAte || 0) : agoraCadastro + tempoDestaqueNovo
 };
+
+    if (tipo === 'fixo') {
+        const anterior = indexEdit >= 0 ? salsiData.transacoes[indexEdit] : null;
+        const manterLegado = formaFixo === 'legado'
+            && anterior?.tipo === 'fixo'
+            && Number(anterior?.competenciaVersao || 0) < 2;
+
+        if (manterLegado) {
+            novosDados.formaPagamento = anterior.formaPagamento || null;
+        } else {
+            novosDados.competenciaVersao = 2;
+            novosDados.formaPagamento = formaFixo;
+        }
+    }
 
     if (indexEdit >= 0) {
         novosDados.pago = salsiData.transacoes[indexEdit].pago; 
@@ -224,7 +253,16 @@ const nomeTerceiroValor = document.getElementById('g-nome-terceiro').value || ""
             }
         }
 
-        if (typeof mostrarToast === 'function') mostrarToast("Lançamento salvo com sucesso! 💸");
+        if (typeof mostrarToast === 'function') {
+            if (tipo === 'fixo' && Number(novosDados.competenciaVersao || 0) >= 2
+                && typeof calcularCompetenciaInicialGasto === 'function') {
+                const competencia = calcularCompetenciaInicialGasto(novosDados);
+                const mesCompetencia = competencia.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+                mostrarToast(`Gasto fixo salvo em ${mesCompetencia}.`);
+            } else {
+                mostrarToast("Lançamento salvo com sucesso! 💸");
+            }
+        }
     }
     
     renderizar();
@@ -833,6 +871,11 @@ function abrirModalGasto() {
     const formaPag = document.getElementById('g-forma-pagamento');
     if(formaPag) formaPag.value = 'Débito';
 
+    const formaFixo = document.getElementById('g-forma-pagamento-fixo');
+    if (formaFixo) formaFixo.value = 'Crédito';
+    const notaRegraFixo = document.getElementById('g-fixo-regra-nota');
+    if (notaRegraFixo) notaRegraFixo.style.display = 'none';
+
     const checkTerceiro = document.getElementById('g-terceiro');
     if(checkTerceiro) checkTerceiro.checked = false;
     document.getElementById('g-nome-terceiro').value = '';
@@ -899,6 +942,21 @@ function editarGasto(index) {
     
     if (t.tipo === 'debito' && t.formaPagamento) {
         document.getElementById('g-forma-pagamento').value = t.formaPagamento;
+    }
+
+    const formaFixo = document.getElementById('g-forma-pagamento-fixo');
+    const notaRegraFixo = document.getElementById('g-fixo-regra-nota');
+    if (formaFixo) {
+        if (t.tipo === 'fixo' && Number(t.competenciaVersao || 0) >= 2) {
+            formaFixo.value = t.formaPagamento || 'Crédito';
+            if (notaRegraFixo) notaRegraFixo.style.display = 'none';
+        } else if (t.tipo === 'fixo') {
+            formaFixo.value = 'legado';
+            if (notaRegraFixo) notaRegraFixo.style.display = 'block';
+        } else {
+            formaFixo.value = 'Crédito';
+            if (notaRegraFixo) notaRegraFixo.style.display = 'none';
+        }
     }
 
     const checkTerceiro = document.getElementById('g-terceiro');
@@ -1024,6 +1082,7 @@ function importarDadosJS(event) {
 // ==========================================
 function atualizarAlertaFatura() {
     const tipo = document.getElementById('g-tipo')?.value;
+    const formaFixo = document.getElementById('g-forma-pagamento-fixo')?.value || 'Crédito';
     const bancoSelecionado = document.getElementById('g-banco')?.value;
     const dataInput = document.getElementById('g-data')?.value;
     const inicioPagamento = parseInt(document.getElementById('g-inicio-pagamento')?.value) || 0;
@@ -1031,8 +1090,10 @@ function atualizarAlertaFatura() {
 
     if (!alertaDiv) return;
 
+    const usaFatura = tipo === 'cartao' || (tipo === 'fixo' && formaFixo === 'Crédito');
+
     // Só mostra se for crédito e tiver banco/data preenchidos
-    if (tipo !== 'cartao' || !bancoSelecionado || !dataInput) {
+    if (!usaFatura || !bancoSelecionado || !dataInput) {
         alertaDiv.style.display = 'none';
         return;
     }
@@ -1129,19 +1190,19 @@ let motivoAviso = "";
     if (tipoAviso === "forcado") {
     classeAlerta = "is-info";
     textoAlertaFinal = `
-        Esta compra será lançada na fatura de 
+        Este ${tipo === 'fixo' ? 'gasto fixo' : 'gasto'} será lançado na fatura de
         <strong>${mesNome}/${anoAlvo}</strong>, ${motivoAviso}
     `;
 } else if (tipoAviso === "virou-fatura") {
     classeAlerta = "is-success";
     textoAlertaFinal = `
-        Esta compra será cobrada na fatura de 
+        Este ${tipo === 'fixo' ? 'gasto fixo' : 'gasto'} será cobrado na fatura de
         <strong>${mesNome}/${anoAlvo}</strong>, ${motivoAviso}
     `;
 } else {
     classeAlerta = "is-warning";
     textoAlertaFinal = `
-        Esta compra será cobrada na fatura de 
+        Este ${tipo === 'fixo' ? 'gasto fixo' : 'gasto'} será cobrado na fatura de
         <strong>${mesNome}/${anoAlvo}</strong>, ${motivoAviso}
     `;
 }
@@ -1190,6 +1251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('g-banco')?.addEventListener('change', atualizarAlertaFatura);
     document.getElementById('g-data')?.addEventListener('change', atualizarAlertaFatura);
     document.getElementById('g-tipo')?.addEventListener('change', atualizarAlertaFatura);
+    document.getElementById('g-forma-pagamento-fixo')?.addEventListener('change', atualizarAlertaFatura);
     document.getElementById('g-inicio-pagamento')?.addEventListener('change', atualizarAlertaFatura);
 });
 

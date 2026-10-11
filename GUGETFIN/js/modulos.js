@@ -1011,16 +1011,21 @@ function gerarRespostaAssistente(pergunta, chat) {
         if (t.eDeTerceiro) return; 
 
         const d = new Date(t.dataCompra + "T00:00:00");
-        let mesRef = d.getMonth() + (t.delayPagamento || 0);
-        let anoRef = d.getFullYear();
-        if (mesRef > 11) { mesRef -= 12; anoRef++; }
+        const usaNovaRegraFixo = typeof gastoFixoUsaNovaCompetencia === 'function'
+            && gastoFixoUsaNovaCompetencia(t);
+        const competencia = usaNovaRegraFixo && typeof calcularCompetenciaInicialGasto === 'function'
+            ? calcularCompetenciaInicialGasto(t)
+            : new Date(d.getFullYear(), d.getMonth() + (t.delayPagamento || 0), 1);
+        const mesRef = competencia.getMonth();
+        const anoRef = competencia.getFullYear();
         
         const diffAtual = (a - anoRef) * 12 + (m - mesRef);
         const diffPassado = (prevA - anoRef) * 12 + (prevM - mesRef);
         const diffFuturo = (nextA - anoRef) * 12 + (nextM - mesRef);
 
         const val = t.tipo === 'cartao' ? t.valorParcela : t.valorTotal;
-        const bancoCredito = t.tipo === 'cartao' || (t.tipo === 'fixo' && t.banco && !(salsiData.config.detalhesBancos?.find(d => d.nome === t.banco)?.isDebitoOnly || t.banco.toLowerCase().includes('débito')));
+        const bancoCredito = t.tipo === 'cartao'
+            || (typeof gastoFixoContaComoCredito === 'function' && gastoFixoContaComoCredito(t));
 
         // 1. DADOS DO MÊS ATUAL
         if (diffAtual >= 0 && diffAtual < t.parcelas) {

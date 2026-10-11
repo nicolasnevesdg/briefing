@@ -42,13 +42,18 @@
         const mes = dataFiltro.getMonth();
         const ano = dataFiltro.getFullYear();
         return (salsiData.transacoes || []).reduce((total, transacao) => {
-            if (transacao.tipo !== 'cartao' || transacao.banco !== cartao) return total;
+            const usaFatura = typeof gastoUsaCompetenciaFatura === 'function'
+                ? gastoUsaCompetenciaFatura(transacao)
+                : transacao.tipo === 'cartao';
+            if (!usaFatura || transacao.banco !== cartao) return total;
             const inicio = typeof calcularCompetenciaInicialGasto === 'function'
                 ? calcularCompetenciaInicialGasto(transacao)
                 : new Date(`${transacao.dataCompra}T12:00:00`);
             const diferenca = (ano - inicio.getFullYear()) * 12 + (mes - inicio.getMonth());
             return diferenca >= 0 && diferenca < Number(transacao.parcelas || 1)
-                ? total + Number(transacao.valorParcela || transacao.valorTotal || 0)
+                ? total + Number(transacao.tipo === 'cartao'
+                    ? (transacao.valorParcela || transacao.valorTotal || 0)
+                    : (transacao.valorTotal || transacao.valorParcela || 0))
                 : total;
         }, 0);
     }

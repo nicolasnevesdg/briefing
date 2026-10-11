@@ -11,8 +11,13 @@ const FORMAS_PAGAMENTO = {
     pix: { tipo: 'debito', formaPagamento: 'Pix' },
     cash: { tipo: 'debito', formaPagamento: 'Dinheiro' },
     dinheiro: { tipo: 'debito', formaPagamento: 'Dinheiro' },
-    fixed: { tipo: 'fixo', formaPagamento: null },
-    fixo: { tipo: 'fixo', formaPagamento: null }
+    fixed: { tipo: 'fixo', formaPagamento: 'Crédito' },
+    fixo: { tipo: 'fixo', formaPagamento: 'Crédito' }
+};
+
+const FORMAS_PAGAMENTO_FIXO = {
+    credit: 'Crédito', credito: 'Crédito', cartao: 'Crédito', card: 'Crédito',
+    debit: 'Débito', debito: 'Débito', pix: 'Pix', cash: 'Dinheiro', dinheiro: 'Dinheiro'
 };
 
 class ApiError extends Error {
@@ -141,8 +146,22 @@ function criarGasto(body, dados, contexto) {
         });
     }
 
+    const formaPagamentoFixo = pagamento.tipo === 'fixo'
+        ? FORMAS_PAGAMENTO_FIXO[normalizarComparacao(
+            body.fixedPaymentMethod || body.formaPagamentoFixo || body.fixedMethod || 'credit'
+        )]
+        : null;
+    if (pagamento.tipo === 'fixo' && !formaPagamentoFixo) {
+        throw new ApiError(400, 'invalid_fixed_payment_method', 'Forma de pagamento do gasto fixo inválida.', {
+            available: ['credit', 'debit', 'pix', 'cash']
+        });
+    }
+    const formaPagamentoFinal = pagamento.tipo === 'fixo'
+        ? formaPagamentoFixo
+        : pagamento.formaPagamento;
+
     const categoria = resolverOpcao(body.category || body.categoria, obterCategorias(dados), 'category');
-    const exigeConta = pagamento.formaPagamento !== 'Dinheiro';
+    const exigeConta = formaPagamentoFinal !== 'Dinheiro';
     const banco = exigeConta
         ? resolverOpcao(body.account || body.accountName || body.conta || body.cartao || body.banco, obterContas(dados), 'account')
         : '';
@@ -164,13 +183,14 @@ function criarGasto(body, dados, contexto) {
         categoria,
         observacao: texto(body.description || body.descricao || body.observacao, 500),
         pago: false,
-        delayPagamento: pagamento.tipo === 'cartao'
+        delayPagamento: pagamento.tipo === 'cartao' || (pagamento.tipo === 'fixo' && formaPagamentoFinal === 'Crédito')
             ? inteiroEntre(body.startDelay ?? body.inicioPagamento, 0, 60, 0)
             : 0,
         eDeTerceiro: false,
         nomeTerceiro: '',
         terceiro: null,
-        formaPagamento: pagamento.formaPagamento,
+        formaPagamento: formaPagamentoFinal,
+        ...(pagamento.tipo === 'fixo' ? { competenciaVersao: 2 } : {}),
         comprovanteUrl: '',
         criadoEm,
         destaqueAte: criadoEm + (5 * 60 * 1000),
