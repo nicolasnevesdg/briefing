@@ -12,3 +12,21 @@
 .clock-main{font-family:'DSEG7','Courier New',monospace;font-style:normal;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.1em;line-height:1;white-space:nowrap}
 .clock-seconds{font-family:'DM Sans',sans-serif;font-size:.09em;color:var(--muted);letter-spacing:.02em;margin-left:.25em;align-self:flex-end;margin-bottom:.05em;min-width:1.8em}
 .clock-next{margin-top:0}
+
+/* Editor dimensionado para leitura a distância na tela horizontal do celular. */
+#editor{width:min(760px,calc(100vw - 80px));max-height:calc(100dvh - 24px);padding:32px 36px;border-radius:22px}
+#editor header{margin-bottom:26px}
+#editor header small{font-size:11px;letter-spacing:.18em}
+#editor h2{font-size:34px;line-height:1.1}
+#editor header button{font-size:32px}
+#editor label{gap:9px;font-size:16px;margin-bottom:18px}
+#editor input,#editor select,#editor textarea{font-size:18px;min-height:54px;padding:15px 16px;border-radius:10px}
+#editor input[type=color]{height:54px;padding:5px}
+#editor textarea{min-height:110px;line-height:1.45}
+#editor .fields{gap:18px}
+#editor .emojis{gap:7px;margin:0 0 18px}
+#editor .emojis button{font-size:26px;padding:8px}
+#editor .emojis button:last-child{font-size:14px}
+#editor footer{gap:12px;margin-top:26px}
+#editor footer button{font-size:18px;padding:14px 20px}
+@media(max-width:760px){#editor{width:calc(100vw - 24px);padding:24px}#editor .fields{gap:10px;flex-wrap:wrap}#editor .fields label{flex:1 1 180px}}
