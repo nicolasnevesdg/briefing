@@ -30,3 +30,52 @@
 #editor footer{gap:12px;margin-top:26px}
 #editor footer button{font-size:18px;padding:14px 20px}
 @media(max-width:760px){#editor{width:calc(100vw - 24px);padding:24px}#editor .fields{gap:10px;flex-wrap:wrap}#editor .fields label{flex:1 1 180px}}
+
+/* Tipografia ampliada para leitura a distância na tela usada como painel. */
+body{font-size:18px}
+small,.eyebrow{font-size:13px}
+h1{font-size:38px}
+h2{font-size:30px}
+h3{font-size:21px}
+nav button span{font-size:14px}
+.brightness small{font-size:12px}
+.wordmark{font-size:22px}
+.wordmark i{font-size:28px}
+.top-time{font-size:34px}
+.top-date{font-size:15px}
+.month-name{font-size:28px}
+.arrows button{font-size:24px}
+.weekdays{font-size:14px}
+.day{height:clamp(42px,8vh,68px);font-size:18px}
+.dots i,.category-dot{width:6px;height:6px}
+.calendar-footer{font-size:14px;gap:16px}
+.heading-date{font-size:16px}
+.today-button{font-size:15px}
+.add{width:46px;height:46px;font-size:30px}
+.filter{font-size:15px;padding:8px 14px}
+.items{padding-right:10px}
+.item{gap:17px;padding:20px 0}
+.check{width:28px;height:28px;font-size:15px}
+.item-title{font-size:20px}
+.item-meta{font-size:14px;gap:10px;flex-wrap:wrap}
+.item-hour{font-size:15px}
+.empty p{font-size:16px}
+.day-bottom{font-size:14px}
+.clock-date{font-size:15px}
+.clock-next{font-size:16px}
+.clock-label{font-size:12px}
+.setting{font-size:16px}
+.setting-featured b{font-size:17px}
+.setting-featured small{font-size:13px}
+.settings-card p,.settings-card button{font-size:16px}
+input,select,textarea{font-size:18px;padding:12px}
+dialog label{font-size:16px}
+dialog header small{font-size:11px}
+.separator,.connection{font-size:14px}
+#import-summary,.import-row{font-size:15px}
+#toast{font-size:16px}
+.overdue-banner{margin:0 0 10px;padding:11px 14px;border:1px solid #604326;background:#241b12;color:#efc58e;border-radius:10px;font-size:15px}
+.overdue-tag{color:#efaa72;font-weight:700}
+
+@media(max-height:500px) and (min-width:600px){h1{font-size:34px}.top-time{font-size:30px}.calendar-footer{font-size:13px}.clock-date{font-size:14px}.clock-next{font-size:15px}}
+@media(max-width:599px){.clock-date{font-size:13px}.day{height:50px}}
