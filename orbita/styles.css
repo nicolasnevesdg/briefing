@@ -8,15 +8,15 @@
 /* Mostrador digital de sete segmentos, desenhado para reproduzir a referência. */
 #app{width:calc(100% * var(--ui-inverse));height:calc(100dvh * var(--ui-inverse));zoom:1;transform:scale(var(--ui-scale));transform-origin:top left}
 .clock-digits{display:flex;align-items:center;color:var(--text);font-family:inherit;font-size:clamp(120px,27cqw,500px);font-weight:400;letter-spacing:0;line-height:1;margin:3vh 0 2vh}
-.seven-group{display:flex;gap:.035em}
-.seven-digit{position:relative;display:block;width:.52em;height:1em}
+.seven-group{display:flex;gap:.1em}
+.seven-digit{position:relative;display:block;width:.62em;height:1em}
 .segment{position:absolute;display:block;background:currentColor}
-.segment.a,.segment.g,.segment.d{left:11%;width:78%;height:7.5%;clip-path:polygon(5% 0,95% 0,100% 50%,95% 100%,5% 100%,0 50%)}
-.segment.a{top:0}.segment.g{top:46.25%}.segment.d{bottom:0}
-.segment.b,.segment.c,.segment.e,.segment.f{width:10%;height:42%;clip-path:polygon(50% 0,100% 7%,100% 93%,50% 100%,0 93%,0 7%)}
-.segment.f{left:1%;top:4%}.segment.b{right:1%;top:4%}.segment.e{left:1%;bottom:4%}.segment.c{right:1%;bottom:4%}
-.clock-colon{position:relative;width:.2em;height:1em;margin:0 .08em;color:var(--text);align-self:center}
-.clock-colon i{position:absolute;left:50%;width:.085em;height:.085em;border-radius:50%;background:currentColor;transform:translateX(-50%)}
+.segment.a,.segment.g,.segment.d{left:11%;width:78%;height:11%;clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%)}
+.segment.a{top:0}.segment.g{top:44.5%}.segment.d{bottom:0}
+.segment.b,.segment.c,.segment.e,.segment.f{width:12%;height:41%;clip-path:polygon(50% 0,100% 7%,100% 93%,50% 100%,0 93%,0 7%)}
+.segment.f{left:0;top:4%}.segment.b{right:0;top:4%}.segment.e{left:0;bottom:4%}.segment.c{right:0;bottom:4%}
+.clock-colon{position:relative;width:.2em;height:1em;margin:0 .11em;color:var(--text);align-self:center}
+.clock-colon i{position:absolute;left:50%;width:.1em;height:.1em;border-radius:50%;background:currentColor;transform:translateX(-50%)}
 .clock-colon i:first-child{top:32%}.clock-colon i:last-child{bottom:32%}
 .clock-seconds{font-family:'DM Sans',sans-serif;font-size:.09em;color:var(--muted);letter-spacing:.02em;margin-left:.7em;align-self:flex-end;margin-bottom:.25em;min-width:1.8em}
 .clock-next{margin-top:0}
